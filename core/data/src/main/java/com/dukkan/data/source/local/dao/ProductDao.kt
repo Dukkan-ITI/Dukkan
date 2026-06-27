@@ -1,10 +1,10 @@
-package com.dukkan.data.local.dao
+package com.dukkan.data.source.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.dukkan.data.local.entity.ProductEntity
+import com.dukkan.data.source.local.entity.ProductEntity
 import kotlinx.coroutines.flow.Flow
 
 
