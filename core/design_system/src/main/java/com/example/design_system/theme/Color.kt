@@ -3,8 +3,8 @@ package com.example.design_system.theme
 import androidx.compose.ui.graphics.Color
 
 // Primary/Accent Colors
-val JunoAccent = Color(0xFF5B43F0)
-val JunoAccentDark = Color(0xFF7A66F5) // lighter for dark mode readability
+val DukkanAccent = Color(0xFF5B43F0)
+val DukkanAccentDark = Color(0xFF7A66F5) // lighter for dark mode readability
 
 // Light Theme Colors
 val LightBackground = Color(0xFFE9E7E1)
