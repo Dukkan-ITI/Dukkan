@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
-    primary = JunoAccent,
+    primary = DukkanAccent,
     background = LightBackground,
     surface = LightSurface,
     onPrimary = Color.White,
@@ -19,7 +19,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 private val DarkColorScheme = darkColorScheme(
-    primary = JunoAccentDark,
+    primary = DukkanAccentDark,
     background = DarkBackground,
     surface = DarkSurface,
     onPrimary = Color.White,
@@ -38,7 +38,7 @@ fun AppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = JunoTypography,
+        typography = DukkanTypography,
         content = content
     )
 }
