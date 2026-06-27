@@ -25,3 +25,5 @@ dependencyResolutionManagement {
 rootProject.name = "Dukkan"
 include(":app")
 include(":core:design_system")
+
+include(":core:data")
