@@ -36,5 +36,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation(platform(libs.androidx.compose.bom.v20240200))
 }
