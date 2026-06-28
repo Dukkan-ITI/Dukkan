@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    id("dukkan.hilt")
 }
 
 android {
@@ -58,4 +60,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+// Modules
+dependencies {
+    implementation(project(":core:design_system"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
 }
