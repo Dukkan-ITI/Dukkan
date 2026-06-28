@@ -1,10 +1,11 @@
-query ProductQuery($id: ID) {
+query ProductQuery($id: ID!) {
     product(id: $id) {
         id
         title
         handle
         featuredImage {
             url
+            thumbhash
         }
         productType
         priceRange {
