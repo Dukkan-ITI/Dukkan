@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "187682081726",
+    "project_id": "dukkan-56a11",
+    "storage_bucket": "dukkan-56a11.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187682081726:android:07746a2f4c82788e5f47ef",
+        "android_client_info": {
+          "package_name": "com.dukkan.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187682081726-hc0s0oifd88ilj37lv6rpja41klm7v78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dukkan.app",
+            "certificate_hash": "9e07cf5ed5209937ec5f3f4dbe514c3016ac4436"
+          }
+        },
+        {
+          "client_id": "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt6ycjkHhebNN3A0-SDdW4e2JOtmytcME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
