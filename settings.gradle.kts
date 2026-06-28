@@ -25,3 +25,5 @@ dependencyResolutionManagement {
 rootProject.name = "Dukkan"
 include(":app")
 include(":core:data")
+
+include(":features:onboarding")
