@@ -60,8 +60,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
     // Modules
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
 }
