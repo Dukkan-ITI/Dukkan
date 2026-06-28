@@ -30,3 +30,4 @@ include(":core:data")
 include(":core:navigation")
 
 include(":features:onboarding")
+include(":features:home")
