@@ -6,10 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dukkan.navigation.Screen
+
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -30,7 +30,7 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Greeting(name = "to Dukkan")
+
             }
         }
 
