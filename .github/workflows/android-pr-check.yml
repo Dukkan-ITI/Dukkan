@@ -38,8 +38,12 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
+      - name: Inject secrets into gradle.properties
+        run: |
+          echo "shopifyStorefrontToken=${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}" >> gradle.properties
+
       - name: Build Android App
-        run: ./gradlew :app:assembleDebug --stacktrace
+        run: ./gradlew :app:assembleDebug
 
       - name: Upload Android APK
         if: github.event_name == 'push'
