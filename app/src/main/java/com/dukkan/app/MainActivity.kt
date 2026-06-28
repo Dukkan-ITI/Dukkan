@@ -1,29 +1,39 @@
 package com.dukkan.app
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import com.dukkan.app.ui.theme.DukkanTheme
 import com.dukkan.onboarding.view.OnboardingView
 
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        enableEdgeToEdge()
         setContent {
-            DukkanTheme {
-                OnboardingView(
-                    onFinish = {
+            DukkanTheme() {
+                val navController = rememberNavController()
 
-                    }
-                )
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    AppNavGraph(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                DukkanTheme {
+                    OnboardingView(
+                        onFinish = {
+
+                        }
+                    )
+                }
             }
         }
     }
