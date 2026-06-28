@@ -25,9 +25,11 @@ navigationRuntimeKtx = "2.9.8"
 foundation = "1.11.3"
 glance = "1.1.1"
 navigationComposeVersion = "2.9.8"
+runtime = "1.11.3"
 
 [libraries]
 androidx-compose-bom-v20240200 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose-v277 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 firebase-bom-v34150 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
@@ -60,6 +62,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
