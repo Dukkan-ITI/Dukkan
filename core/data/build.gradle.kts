@@ -1,6 +1,21 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("com.apollographql.apollo").version("5.0.1")
     id("com.google.devtools.ksp")
+}
+
+apollo {
+    service("service") {
+        packageName.set("com.dukkan")
+
+        introspection {
+            endpointUrl.set("https://mad46-and5.myshopify.com/api/2026-04/graphql.json")
+            headers.put("X-Shopify-Storefront-Access-Token",
+                providers.gradleProperty("shopifyStorefrontToken").get()
+            )
+            schemaFile.set(file("src/main/graphql/com/dukkan/schema.json"))
+        }
+    }
 }
 
 java {
@@ -36,6 +51,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    implementation("com.apollographql.apollo:apollo-runtime:5.0.1")
 
 
     //firebase dependencies
@@ -47,6 +63,4 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-
-
 }
