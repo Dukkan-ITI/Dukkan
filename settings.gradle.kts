@@ -29,3 +29,5 @@ include(":core:design_system")
 
 include(":core:data")
 include(":core:navigation")
+
+include(":features:onboarding")
