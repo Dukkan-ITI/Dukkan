@@ -1,7 +1,6 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.data.source.remote.dto.UserAuthDto
-import com.dukkan.data.source.remote.dto.UserAuthDto
 import com.google.firebase.auth.FirebaseUser
 import com.msayeh.domain.model.AuthUser
 

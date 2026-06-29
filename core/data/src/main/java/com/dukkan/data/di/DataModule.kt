@@ -7,8 +7,6 @@ import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.source.remote.FirebaseAuthDataSourceImp
 import com.dukkan.data.source.remote.IFirebaseAuthDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
-import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
-import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
 import com.msayeh.domain.repository.AuthRepository
 import com.msayeh.domain.repository.ProductsRepository
 import dagger.Module
@@ -30,10 +28,7 @@ object DataModule {
         )
         .build()
 
-    @Singleton
-    @Provides
-    fun provideProductsDataSource(apolloClient: ApolloClient): ProductsDataSource =
-        ProductsDataSourceImpl(apolloClient)
+
 
     @Singleton
     @Provides
