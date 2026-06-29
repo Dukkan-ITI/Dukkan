@@ -2,6 +2,7 @@ package com.dukkan.app
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,9 +75,9 @@ fun AppNavGraph(
         }
 
         composable(route = Screen.Home.route) {
-            androidx.compose.foundation.layout.Box(
-                modifier = androidx.compose.ui.Modifier.fillMaxSize().androidx.compose.foundation.layout.systemBarsPadding(),
-                contentAlignment = androidx.compose.ui.Alignment.Center
+            Box(
+                modifier = Modifier.fillMaxSize().systemBarsPadding(),
+                contentAlignment = Alignment.Center
             ) {
                 androidx.compose.material3.Text("Dummy Screen")
             }
