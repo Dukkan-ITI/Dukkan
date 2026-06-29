@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    id("dukkan.hilt")
 }
 
 android {
@@ -26,7 +27,7 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":core:domain"))
     implementation(project(":core:design_system"))
     implementation(platform(libs.androidx.compose.bom.v20240200))
     implementation(libs.androidx.activity.compose)
