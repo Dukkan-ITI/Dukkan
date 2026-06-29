@@ -31,7 +31,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
+import com.dukkan.favorites.R
 
 
 @Composable
@@ -51,7 +53,9 @@ fun FavoriteItem(
                 model = product.imageUrl,
                 contentDescription = product.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                placeholder = painterResource(R.drawable.ic_placeholder),
+                error = painterResource(R.drawable.ic_image_error)
             )
 
             IconButton(
