@@ -3,6 +3,7 @@ package com.dukkan.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.dukkan.data.source.local.LocalConstants
 import com.dukkan.data.source.local.dao.FavoriteDao
 import com.dukkan.data.source.local.database.AppDatabase
 import dagger.Module
@@ -20,11 +21,14 @@ object DatabaseModule {
     @Singleton
     fun provideAppDatabase(
         @ApplicationContext context: Context
-    ): AppDatabase = Room.databaseBuilder(
-        context,
-        AppDatabase::class.java,
-        "dukkan_db"
-    ).build()
+    ): AppDatabase =
+        Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            LocalConstants.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton
