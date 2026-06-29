@@ -12,6 +12,7 @@ sealed interface RegisterUiState {
         val nameError: String? = null,
         val emailError: String? = null,
         val passwordError: String? = null,
+        val isGoogleLoading: Boolean = false,
     ) : RegisterUiState {
         val isSubmitEnabled: Boolean
             get() = name.isNotBlank()

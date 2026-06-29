@@ -1,13 +1,6 @@
 package com.darkzoom.auth.register.view
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.darkzoom.auth.register.viewmodel.RegisterUiState
-import com.darkzoom.auth.register.viewmodel.RegisterViewModel
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +12,25 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkzoom.auth.R
+import com.darkzoom.auth.register.viewmodel.RegisterEvent
+import com.darkzoom.auth.register.viewmodel.RegisterUiState
+import com.darkzoom.auth.register.viewmodel.RegisterViewModel
+import com.darkzoom.auth.shared.GoogleSignInHelper
 import com.darkzoom.auth.shared.components.AuthErrorScreen
 import com.darkzoom.auth.shared.components.AuthGuestLink
 import com.darkzoom.auth.shared.components.AuthLoadingScreen
@@ -34,8 +40,10 @@ import com.darkzoom.auth.shared.components.AuthTabRow
 import com.darkzoom.auth.shared.components.AuthTextField
 import com.darkzoom.auth.shared.components.AuthVerificationHint
 import com.example.design_system.theme.AppTheme
+import kotlinx.coroutines.launch
 
-
+private const val WEB_CLIENT_ID =
+    "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com"
 
 @Composable
 fun RegisterScreen(
@@ -43,12 +51,36 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: RegisterViewModel = viewModel(),
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val googleSignInHelper = remember { GoogleSignInHelper(WEB_CLIENT_ID) }
 
     LaunchedEffect(state) {
         if (state is RegisterUiState.Success) onRegisterSuccess()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                RegisterEvent.TriggerGoogleSignIn -> {
+                    scope.launch {
+                        try {
+                            val activity = context as Activity
+                            val idToken = googleSignInHelper.signIn(activity)
+                            viewModel.onGoogleIdTokenReceived(idToken)
+                        } catch (e: GetCredentialCancellationException) {
+                        } catch (e: Exception) {
+                            viewModel.onGoogleSignInFailed(
+                                e.message ?: "Google sign-in failed"
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     when (val currentState = state) {
@@ -60,7 +92,6 @@ fun RegisterScreen(
             onRegisterClick = viewModel::onRegisterClicked,
             onNavigateToLogin = onNavigateToLogin,
             onGoogleClick = viewModel::onGoogleClicked,
-            onAppleClick = viewModel::onAppleClicked,
             onContinueAsGuest = onContinueAsGuest,
             modifier = modifier,
         )
@@ -91,7 +122,6 @@ internal fun RegisterContent(
     onRegisterClick: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onGoogleClick: () -> Unit,
-    onAppleClick: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -113,7 +143,7 @@ internal fun RegisterContent(
         AuthTabRow(
             isSignInSelected = false,
             onSignInClick = onNavigateToLogin,
-            onRegisterClick = {  },
+            onRegisterClick = {},
         )
 
         Spacer(Modifier.height(20.dp))
@@ -156,12 +186,11 @@ internal fun RegisterContent(
             enabled = state.isSubmitEnabled,
         )
 
-
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
             onGoogleClick = onGoogleClick,
-            onAppleClick = onAppleClick,
+            isGoogleLoading = state.isGoogleLoading,
         )
 
         Spacer(Modifier.weight(1f))
@@ -211,50 +240,6 @@ private fun RegisterContentFilledPreview() {
             onRegisterClick = {},
             onNavigateToLogin = {},
             onGoogleClick = {},
-            onAppleClick = {},
-            onContinueAsGuest = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "Empty")
-@Composable
-private fun RegisterContentEmptyPreview() {
-    AppTheme {
-        RegisterContent(
-            state = RegisterUiState.Form(),
-            onNameChange = {},
-            onEmailChange = {},
-            onPasswordChange = {},
-            onRegisterClick = {},
-            onNavigateToLogin = {},
-            onGoogleClick = {},
-            onAppleClick = {},
-            onContinueAsGuest = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "With errors")
-@Composable
-private fun RegisterContentErrorsPreview() {
-    AppTheme {
-        RegisterContent(
-            state = RegisterUiState.Form(
-                name = "",
-                nameError = "Name is required",
-                email = "bad-email",
-                emailError = "Enter a valid email address",
-                password = "123",
-                passwordError = "Password must be at least 6 characters",
-            ),
-            onNameChange = {},
-            onEmailChange = {},
-            onPasswordChange = {},
-            onRegisterClick = {},
-            onNavigateToLogin = {},
-            onGoogleClick = {},
-            onAppleClick = {},
             onContinueAsGuest = {},
         )
     }
@@ -276,7 +261,6 @@ private fun RegisterContentDarkPreview() {
             onRegisterClick = {},
             onNavigateToLogin = {},
             onGoogleClick = {},
-            onAppleClick = {},
             onContinueAsGuest = {},
         )
     }
