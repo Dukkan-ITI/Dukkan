@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wishlist_empty">Your wishlist is empty</string>
+    <string name="wishlist_hint">Tap ♥ on any product to save it</string>
+    <string name="remove_from_wishlist">Remove from wishlist</string>
+</resources>

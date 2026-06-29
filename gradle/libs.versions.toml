@@ -19,6 +19,8 @@ room = "2.8.4"
 uiTextGoogleFonts = "1.11.3"
 navigation = "2.8.8"
 ksp = "2.0.21-1.0.27"
+coroutines = "1.7.3"
+
 
 #firebase
 firebaseBom = "34.1.0"
@@ -36,6 +38,7 @@ foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
 
 [libraries]
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 androidx-compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.6.0" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
