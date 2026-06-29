@@ -2,13 +2,19 @@ package com.darkzoom.auth.register.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.msayeh.domain.usecase.RegisterUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val registerUseCase: RegisterUseCase
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<RegisterUiState>(RegisterUiState.Form())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
@@ -31,7 +37,14 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = RegisterUiState.Loading
-
+            val result = registerUseCase(form.email, form.password)
+            if (result.isSuccess) {
+                _uiState.value = RegisterUiState.Success
+            } else {
+                _uiState.value = RegisterUiState.Error(
+                    message = result.exceptionOrNull()?.message ?: "Unknown error"
+                )
+            }
         }
     }
 

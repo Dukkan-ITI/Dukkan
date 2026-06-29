@@ -1,0 +1,11 @@
+package com.msayeh.domain.repository
+
+import com.msayeh.domain.model.AuthUser
+
+interface AuthRepository {
+    suspend fun login(email: String, password: String): Result<AuthUser>
+    suspend fun register(email: String, password: String): Result<AuthUser>
+    suspend fun loginWithGoogle(idToken: String): Result<AuthUser>
+    suspend fun getCurrentUser(): AuthUser?
+    suspend fun signOut()
+}
