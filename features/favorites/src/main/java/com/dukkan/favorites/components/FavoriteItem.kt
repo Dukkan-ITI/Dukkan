@@ -54,7 +54,7 @@ fun FavoriteItem(
                 contentDescription = product.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-                placeholder = painterResource(R.drawable.ic_placeholder),
+            placeholder = painterResource(R.drawable.ic_placeholder),
                 error = painterResource(R.drawable.ic_image_error)
             )
 
