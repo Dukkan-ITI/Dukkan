@@ -26,6 +26,7 @@ navigationRuntimeKtx = "2.9.8"
 
 # Hilt
 hilt = "2.60"
+javaxInject = "1"
 
 
 foundation = "1.11.3"
@@ -72,6 +73,7 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 
 # build-logic plugins
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -90,3 +92,4 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 #fireabse
 google-services = { id = "com.google.gms.google-services", version = "4.5.0" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
