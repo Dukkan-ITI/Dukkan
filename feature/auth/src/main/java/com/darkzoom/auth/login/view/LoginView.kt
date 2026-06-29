@@ -1,13 +1,6 @@
 package com.darkzoom.auth.login.view
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.darkzoom.auth.login.viewmodel.LoginUiState
-import com.darkzoom.auth.login.viewmodel.LoginViewModel
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,11 +12,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkzoom.auth.R
+import com.darkzoom.auth.shared.GoogleSignInHelper
 import com.darkzoom.auth.shared.components.AuthErrorScreen
 import com.darkzoom.auth.shared.components.AuthGuestLink
 import com.darkzoom.auth.shared.components.AuthLoadingScreen
@@ -31,7 +36,14 @@ import com.darkzoom.auth.shared.components.AuthPrimaryButton
 import com.darkzoom.auth.shared.components.AuthSocialRow
 import com.darkzoom.auth.shared.components.AuthTabRow
 import com.darkzoom.auth.shared.components.AuthTextField
+import com.darkzoom.auth.login.viewmodel.LoginEvent
+import com.darkzoom.auth.login.viewmodel.LoginUiState
+import com.darkzoom.auth.login.viewmodel.LoginViewModel
 import com.example.design_system.theme.AppTheme
+import kotlinx.coroutines.launch
+
+private const val WEB_CLIENT_ID =
+    "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com"
 
 @Composable
 fun LoginScreen(
@@ -39,12 +51,36 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val googleSignInHelper = remember { GoogleSignInHelper(WEB_CLIENT_ID) }
 
     LaunchedEffect(state) {
         if (state is LoginUiState.Success) onLoginSuccess()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                LoginEvent.TriggerGoogleSignIn -> {
+                    scope.launch {
+                        try {
+                            val activity = context as Activity
+                            val idToken = googleSignInHelper.signIn(activity)
+                            viewModel.onGoogleIdTokenReceived(idToken)
+                        } catch (e: GetCredentialCancellationException) {
+                        } catch (e: Exception) {
+                            viewModel.onGoogleSignInFailed(
+                                e.message ?: "Google sign-in failed"
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     when (val currentState = state) {
@@ -55,7 +91,6 @@ fun LoginScreen(
             onLoginClick = viewModel::onLoginClicked,
             onNavigateToRegister = onNavigateToRegister,
             onGoogleClick = viewModel::onGoogleClicked,
-            onAppleClick = viewModel::onAppleClicked,
             onContinueAsGuest = onContinueAsGuest,
             modifier = modifier,
         )
@@ -85,7 +120,6 @@ internal fun LoginContent(
     onLoginClick: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onGoogleClick: () -> Unit,
-    onAppleClick: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,7 +140,7 @@ internal fun LoginContent(
 
         AuthTabRow(
             isSignInSelected = true,
-            onSignInClick = {  },
+            onSignInClick = {},
             onRegisterClick = onNavigateToRegister,
         )
 
@@ -137,12 +171,11 @@ internal fun LoginContent(
             enabled = state.isSubmitEnabled,
         )
 
-
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
             onGoogleClick = onGoogleClick,
-            onAppleClick = onAppleClick,
+            isGoogleLoading = state.isGoogleLoading,
         )
 
         Spacer(Modifier.weight(1f))
@@ -187,46 +220,22 @@ private fun LoginContentFilledPreview() {
             onLoginClick = {},
             onNavigateToRegister = {},
             onGoogleClick = {},
-            onAppleClick = {},
             onContinueAsGuest = {},
         )
     }
 }
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "Empty")
+@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "Google Loading")
 @Composable
-private fun LoginContentEmptyPreview() {
+private fun LoginContentGoogleLoadingPreview() {
     AppTheme {
         LoginContent(
-            state = LoginUiState.Form(),
+            state = LoginUiState.Form(isGoogleLoading = true),
             onEmailChange = {},
             onPasswordChange = {},
             onLoginClick = {},
             onNavigateToRegister = {},
             onGoogleClick = {},
-            onAppleClick = {},
-            onContinueAsGuest = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "With errors")
-@Composable
-private fun LoginContentErrorsPreview() {
-    AppTheme {
-        LoginContent(
-            state = LoginUiState.Form(
-                email = "bad-email",
-                emailError = "Enter a valid email address",
-                password = "123",
-                passwordError = "Password must be at least 6 characters",
-            ),
-            onEmailChange = {},
-            onPasswordChange = {},
-            onLoginClick = {},
-            onNavigateToRegister = {},
-            onGoogleClick = {},
-            onAppleClick = {},
             onContinueAsGuest = {},
         )
     }
@@ -243,7 +252,6 @@ private fun LoginContentDarkPreview() {
             onLoginClick = {},
             onNavigateToRegister = {},
             onGoogleClick = {},
-            onAppleClick = {},
             onContinueAsGuest = {},
         )
     }

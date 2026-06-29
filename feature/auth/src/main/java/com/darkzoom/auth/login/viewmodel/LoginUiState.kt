@@ -10,6 +10,7 @@ sealed interface LoginUiState {
         val password: String = "",
         val emailError: String? = null,
         val passwordError: String? = null,
+        val isGoogleLoading: Boolean = false,
     ) : LoginUiState {
         val isSubmitEnabled: Boolean
             get() = email.isNotBlank() && password.length >= 6
