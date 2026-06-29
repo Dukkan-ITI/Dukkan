@@ -25,14 +25,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnboardingView(
     viewModel: OnboardingViewModel = viewModel(),
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     val state by viewModel.uiState.collectAsState()
 
     OnboardingContent(
         pages = state.pages,
-        onFinish = onFinish
+        onFinish = onFinish,
+        onSignIn = onSignIn
     )
 }
 
@@ -40,7 +42,8 @@ fun OnboardingView(
 @Composable
 fun OnboardingContent(
     pages: List<OnboardingModel>,
-    onFinish: () -> Unit
+    onFinish: () -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(
@@ -99,9 +102,7 @@ fun OnboardingContent(
                 }
 
             },
-            onSignInClick = {
-
-            }
+            onSignInClick = onSignIn
         )
     }
 }

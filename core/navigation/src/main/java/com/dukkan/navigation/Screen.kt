@@ -1,5 +1,6 @@
 package com.dukkan.navigation
 sealed class Screen(val route: String) {
+    object Onboarding : Screen("onboarding_screen")
     object Login : Screen("login_screen")
     object SignUp : Screen("sign_up_screen")
     object Home : Screen("home_screen")
