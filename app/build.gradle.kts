@@ -64,4 +64,5 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:data"))
     implementation(project(":features:onboarding"))
+    implementation(project(":feature:auth"))
 }
