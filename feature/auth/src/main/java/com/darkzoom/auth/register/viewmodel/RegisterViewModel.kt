@@ -14,6 +14,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface RegisterAction {
+    data class NameChanged(val name: String) : RegisterAction
+    data class EmailChanged(val email: String) : RegisterAction
+    data class PasswordChanged(val password: String) : RegisterAction
+    data object RegisterClicked : RegisterAction
+    data object GoogleClicked : RegisterAction
+    data class GoogleIdTokenReceived(val idToken: String) : RegisterAction
+    data class GoogleSignInFailed(val message: String) : RegisterAction
+}
+
 sealed interface RegisterEvent {
     data object TriggerGoogleSignIn : RegisterEvent
 }
@@ -30,54 +40,52 @@ class RegisterViewModel @Inject constructor(
     private val _events = Channel<RegisterEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    fun onNameChanged(name: String) {
-        _uiState.updateForm { copy(name = name, nameError = null) }
-    }
+    fun onAction(action: RegisterAction) {
+        when (action) {
+            is RegisterAction.NameChanged -> {
+                _uiState.updateForm { copy(name = action.name, nameError = null) }
+            }
+            is RegisterAction.EmailChanged -> {
+                _uiState.updateForm { copy(email = action.email, emailError = null) }
+            }
+            is RegisterAction.PasswordChanged -> {
+                _uiState.updateForm { copy(password = action.password, passwordError = null) }
+            }
+            RegisterAction.RegisterClicked -> {
+                val form = _uiState.value as? RegisterUiState.Form ?: return
+                if (!form.isSubmitEnabled) return
 
-    fun onEmailChanged(email: String) {
-        _uiState.updateForm { copy(email = email, emailError = null) }
-    }
-
-    fun onPasswordChanged(password: String) {
-        _uiState.updateForm { copy(password = password, passwordError = null) }
-    }
-
-    fun onRegisterClicked() {
-        val form = _uiState.value as? RegisterUiState.Form ?: return
-        if (!form.isSubmitEnabled) return
-
-        viewModelScope.launch {
-            _uiState.value = RegisterUiState.Loading
-            val result = registerUseCase(form.email, form.password)
-            _uiState.value = if (result.isSuccess) {
-                RegisterUiState.Success
-            } else {
-                RegisterUiState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+                viewModelScope.launch {
+                    _uiState.value = RegisterUiState.Loading
+                    val result = registerUseCase(form.email, form.password)
+                    _uiState.value = if (result.isSuccess) {
+                        RegisterUiState.Success
+                    } else {
+                        RegisterUiState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+                    }
+                }
+            }
+            RegisterAction.GoogleClicked -> {
+                viewModelScope.launch {
+                    _events.send(RegisterEvent.TriggerGoogleSignIn)
+                }
+            }
+            is RegisterAction.GoogleIdTokenReceived -> {
+                viewModelScope.launch {
+                    _uiState.updateForm { copy(isGoogleLoading = true) }
+                    val result = loginWithGoogleUseCase(action.idToken)
+                    _uiState.value = if (result.isSuccess) {
+                        RegisterUiState.Success
+                    } else {
+                        RegisterUiState.Error(result.exceptionOrNull()?.message ?: "Google sign-in failed")
+                    }
+                }
+            }
+            is RegisterAction.GoogleSignInFailed -> {
+                _uiState.updateForm { copy(isGoogleLoading = false) }
+                _uiState.value = RegisterUiState.Error(action.message)
             }
         }
-    }
-
-    fun onGoogleClicked() {
-        viewModelScope.launch {
-            _events.send(RegisterEvent.TriggerGoogleSignIn)
-        }
-    }
-
-    fun onGoogleIdTokenReceived(idToken: String) {
-        viewModelScope.launch {
-            _uiState.updateForm { copy(isGoogleLoading = true) }
-            val result = loginWithGoogleUseCase(idToken)
-            _uiState.value = if (result.isSuccess) {
-                RegisterUiState.Success
-            } else {
-                RegisterUiState.Error(result.exceptionOrNull()?.message ?: "Google sign-in failed")
-            }
-        }
-    }
-
-    fun onGoogleSignInFailed(message: String) {
-        _uiState.updateForm { copy(isGoogleLoading = false) }
-        _uiState.value = RegisterUiState.Error(message)
     }
 }
 

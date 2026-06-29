@@ -39,6 +39,7 @@ import com.darkzoom.auth.shared.components.AuthPrimaryButton
 import com.darkzoom.auth.shared.components.AuthSocialRow
 import com.darkzoom.auth.shared.components.AuthTabRow
 import com.darkzoom.auth.shared.components.AuthTextField
+import com.darkzoom.auth.login.viewmodel.LoginAction
 import com.darkzoom.auth.login.viewmodel.LoginEvent
 import com.darkzoom.auth.login.viewmodel.LoginUiState
 import com.darkzoom.auth.login.viewmodel.LoginViewModel
@@ -73,11 +74,11 @@ fun LoginScreen(
                         try {
                             val activity = context as Activity
                             val idToken = googleSignInHelper.signIn(activity)
-                            viewModel.onGoogleIdTokenReceived(idToken)
+                            viewModel.onAction(LoginAction.GoogleIdTokenReceived(idToken))
                         } catch (e: GetCredentialCancellationException) {
                         } catch (e: Exception) {
-                            viewModel.onGoogleSignInFailed(
-                                e.message ?: "Google sign-in failed"
+                            viewModel.onAction(
+                                LoginAction.GoogleSignInFailed(e.message ?: "Google sign-in failed")
                             )
                         }
                     }
@@ -89,11 +90,8 @@ fun LoginScreen(
     when (val currentState = state) {
         is LoginUiState.Form -> LoginContent(
             state = currentState,
-            onEmailChange = viewModel::onEmailChanged,
-            onPasswordChange = viewModel::onPasswordChanged,
-            onLoginClick = viewModel::onLoginClicked,
+            onAction = viewModel::onAction,
             onNavigateToRegister = onNavigateToRegister,
-            onGoogleClick = viewModel::onGoogleClicked,
             onContinueAsGuest = onContinueAsGuest,
             modifier = modifier,
         )
@@ -105,7 +103,7 @@ fun LoginScreen(
 
         is LoginUiState.Error -> AuthErrorScreen(
             message = currentState.message,
-            onRetry = viewModel::onLoginClicked,
+            onRetry = { viewModel.onAction(LoginAction.LoginClicked) },
             onBack = onNavigateToRegister,
             modifier = modifier,
         )
@@ -118,11 +116,8 @@ fun LoginScreen(
 @Composable
 internal fun LoginContent(
     state: LoginUiState.Form,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onLoginClick: () -> Unit,
+    onAction: (LoginAction) -> Unit,
     onNavigateToRegister: () -> Unit,
-    onGoogleClick: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -152,7 +147,7 @@ internal fun LoginContent(
 
         AuthTextField(
             value = state.email,
-            onValueChange = onEmailChange,
+            onValueChange = { onAction(LoginAction.EmailChanged(it)) },
             placeholder = stringResource(R.string.auth_login_email_placeholder),
             errorMessage = state.emailError,
             imeAction = ImeAction.Next,
@@ -162,13 +157,13 @@ internal fun LoginContent(
 
         AuthTextField(
             value = state.password,
-            onValueChange = onPasswordChange,
+            onValueChange = { onAction(LoginAction.PasswordChanged(it)) },
             placeholder = stringResource(R.string.auth_login_password_placeholder),
             isPassword = true,
             errorMessage = state.passwordError,
             imeAction = ImeAction.Done,
             keyboardActions = KeyboardActions(
-                onDone = { onLoginClick() }
+                onDone = { onAction(LoginAction.LoginClicked) }
             ),
         )
 
@@ -176,14 +171,14 @@ internal fun LoginContent(
 
         AuthPrimaryButton(
             text = stringResource(R.string.auth_login_button),
-            onClick = onLoginClick,
+            onClick = { onAction(LoginAction.LoginClicked) },
             enabled = state.isSubmitEnabled,
         )
 
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
-            onGoogleClick = onGoogleClick,
+            onGoogleClick = { onAction(LoginAction.GoogleClicked) },
             isGoogleLoading = state.isGoogleLoading,
         )
 
@@ -224,11 +219,8 @@ private fun LoginContentFilledPreview() {
     AppTheme {
         LoginContent(
             state = LoginUiState.Form(email = "user@example.com", password = "password123"),
-            onEmailChange = {},
-            onPasswordChange = {},
-            onLoginClick = {},
+            onAction = {},
             onNavigateToRegister = {},
-            onGoogleClick = {},
             onContinueAsGuest = {},
         )
     }
@@ -240,11 +232,8 @@ private fun LoginContentGoogleLoadingPreview() {
     AppTheme {
         LoginContent(
             state = LoginUiState.Form(isGoogleLoading = true),
-            onEmailChange = {},
-            onPasswordChange = {},
-            onLoginClick = {},
+            onAction = {},
             onNavigateToRegister = {},
-            onGoogleClick = {},
             onContinueAsGuest = {},
         )
     }
@@ -256,11 +245,8 @@ private fun LoginContentDarkPreview() {
     AppTheme(darkTheme = true) {
         LoginContent(
             state = LoginUiState.Form(email = "user@example.com", password = "password123"),
-            onEmailChange = {},
-            onPasswordChange = {},
-            onLoginClick = {},
+            onAction = {},
             onNavigateToRegister = {},
-            onGoogleClick = {},
             onContinueAsGuest = {},
         )
     }
