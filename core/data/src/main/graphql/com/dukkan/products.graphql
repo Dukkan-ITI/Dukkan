@@ -7,6 +7,7 @@ query Products {
                 title
                 featuredImage {
                     url
+                    thumbhash
                 }
                 priceRange {
                     maxVariantPrice {
