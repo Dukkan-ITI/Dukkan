@@ -1,6 +1,5 @@
 package com.darkzoom.auth.register.viewmodel
 
-
 interface RegisterInteractionListener {
     fun onNameChanged(name: String)
     fun onEmailChanged(email: String)
@@ -8,6 +7,7 @@ interface RegisterInteractionListener {
     fun onRegisterClicked()
     fun onNavigateToLogin()
     fun onGoogleClicked()
-    fun onAppleClicked()
+    fun onGoogleIdTokenReceived(idToken: String)
+    fun onGoogleSignInFailed(message: String)
     fun onContinueAsGuest()
 }
