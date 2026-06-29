@@ -28,7 +28,8 @@ class FavoritesViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = FavoritesUiState.Loading
+            initialValue = FavoritesUiState.Empty
+
         )
 
     fun onUnfav(id: String) {

@@ -3,10 +3,10 @@ package com.dukkan.data.source.local.data_source
 import com.dukkan.data.source.local.dao.FavoriteDao
 import com.dukkan.data.source.local.entity.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
-
-class FavoriteLocalDataSourceImpl(
+class FavoriteLocalDataSourceImpl @Inject constructor(
     private val dao: FavoriteDao
 ) : FavoriteLocalDataSource {
 
