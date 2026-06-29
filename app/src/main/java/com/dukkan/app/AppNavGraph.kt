@@ -74,7 +74,12 @@ fun AppNavGraph(
         }
 
         composable(route = Screen.Home.route) {
-            androidx.compose.material3.Text("Dummy Screen")
+            androidx.compose.foundation.layout.Box(
+                modifier = androidx.compose.ui.Modifier.fillMaxSize().androidx.compose.foundation.layout.systemBarsPadding(),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                androidx.compose.material3.Text("Dummy Screen")
+            }
         }
 
         composable(route = Screen.Search.route) {}
