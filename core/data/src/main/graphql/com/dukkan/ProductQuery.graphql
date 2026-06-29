@@ -4,6 +4,7 @@ query ProductQuery($id: ID!) {
         title
         handle
         featuredImage {
+            altText
             url
             thumbhash
         }
@@ -22,8 +23,7 @@ query ProductQuery($id: ID!) {
         images {
             nodes {
                 altText
-                id
-                src
+                url
                 thumbhash
             }
         }
@@ -36,8 +36,7 @@ query ProductQuery($id: ID!) {
                 title
                 image {
                     altText
-                    id
-                    src
+                    url
                     thumbhash
                 }
                 price {
