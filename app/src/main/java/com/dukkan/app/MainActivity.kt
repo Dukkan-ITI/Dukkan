@@ -10,15 +10,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.dukkan.app.ui.theme.DukkanTheme
-import com.dukkan.onboarding.view.OnboardingView
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DukkanTheme() {
+            DukkanTheme {
                 val navController = rememberNavController()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -27,17 +25,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
-                DukkanTheme {
-                    OnboardingView(
-                        onFinish = {
-
-                        }
-                    )
-                }
             }
         }
     }
 }
-
-
-
