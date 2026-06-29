@@ -30,6 +30,7 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.darkzoom.auth.R
+import com.darkzoom.auth.register.viewmodel.RegisterAction
 import com.darkzoom.auth.register.viewmodel.RegisterEvent
 import com.darkzoom.auth.register.viewmodel.RegisterUiState
 import com.darkzoom.auth.register.viewmodel.RegisterViewModel
@@ -73,11 +74,11 @@ fun RegisterScreen(
                         try {
                             val activity = context as Activity
                             val idToken = googleSignInHelper.signIn(activity)
-                            viewModel.onGoogleIdTokenReceived(idToken)
+                            viewModel.onAction(RegisterAction.GoogleIdTokenReceived(idToken))
                         } catch (e: GetCredentialCancellationException) {
                         } catch (e: Exception) {
-                            viewModel.onGoogleSignInFailed(
-                                e.message ?: "Google sign-in failed"
+                            viewModel.onAction(
+                                RegisterAction.GoogleSignInFailed(e.message ?: "Google sign-in failed")
                             )
                         }
                     }
@@ -89,12 +90,8 @@ fun RegisterScreen(
     when (val currentState = state) {
         is RegisterUiState.Form -> RegisterContent(
             state = currentState,
-            onNameChange = viewModel::onNameChanged,
-            onEmailChange = viewModel::onEmailChanged,
-            onPasswordChange = viewModel::onPasswordChanged,
-            onRegisterClick = viewModel::onRegisterClicked,
+            onAction = viewModel::onAction,
             onNavigateToLogin = onNavigateToLogin,
-            onGoogleClick = viewModel::onGoogleClicked,
             onContinueAsGuest = onContinueAsGuest,
             modifier = modifier,
         )
@@ -106,7 +103,7 @@ fun RegisterScreen(
 
         is RegisterUiState.Error -> AuthErrorScreen(
             message = currentState.message,
-            onRetry = viewModel::onRegisterClicked,
+            onRetry = { viewModel.onAction(RegisterAction.RegisterClicked) },
             onBack = onNavigateToLogin,
             modifier = modifier,
         )
@@ -119,12 +116,8 @@ fun RegisterScreen(
 @Composable
 internal fun RegisterContent(
     state: RegisterUiState.Form,
-    onNameChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onRegisterClick: () -> Unit,
+    onAction: (RegisterAction) -> Unit,
     onNavigateToLogin: () -> Unit,
-    onGoogleClick: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -154,7 +147,7 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.name,
-            onValueChange = onNameChange,
+            onValueChange = { onAction(RegisterAction.NameChanged(it)) },
             placeholder = stringResource(R.string.auth_register_name_placeholder),
             errorMessage = state.nameError,
             imeAction = ImeAction.Next,
@@ -164,7 +157,7 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.email,
-            onValueChange = onEmailChange,
+            onValueChange = { onAction(RegisterAction.EmailChanged(it)) },
             placeholder = stringResource(R.string.auth_register_email_placeholder),
             errorMessage = state.emailError,
             imeAction = ImeAction.Next,
@@ -174,13 +167,13 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.password,
-            onValueChange = onPasswordChange,
+            onValueChange = { onAction(RegisterAction.PasswordChanged(it)) },
             placeholder = stringResource(R.string.auth_register_password_placeholder),
             isPassword = true,
             errorMessage = state.passwordError,
             imeAction = ImeAction.Done,
             keyboardActions = KeyboardActions(
-                onDone = { onRegisterClick() }
+                onDone = { onAction(RegisterAction.RegisterClicked) }
             ),
         )
 
@@ -192,14 +185,14 @@ internal fun RegisterContent(
 
         AuthPrimaryButton(
             text = stringResource(R.string.auth_register_button),
-            onClick = onRegisterClick,
+            onClick = { onAction(RegisterAction.RegisterClicked) },
             enabled = state.isSubmitEnabled,
         )
 
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
-            onGoogleClick = onGoogleClick,
+            onGoogleClick = { onAction(RegisterAction.GoogleClicked) },
             isGoogleLoading = state.isGoogleLoading,
         )
 
@@ -244,12 +237,8 @@ private fun RegisterContentFilledPreview() {
                 email = "user@example.com",
                 password = "password123",
             ),
-            onNameChange = {},
-            onEmailChange = {},
-            onPasswordChange = {},
-            onRegisterClick = {},
+            onAction = {},
             onNavigateToLogin = {},
-            onGoogleClick = {},
             onContinueAsGuest = {},
         )
     }
@@ -265,12 +254,8 @@ private fun RegisterContentDarkPreview() {
                 email = "user@example.com",
                 password = "password123",
             ),
-            onNameChange = {},
-            onEmailChange = {},
-            onPasswordChange = {},
-            onRegisterClick = {},
+            onAction = {},
             onNavigateToLogin = {},
-            onGoogleClick = {},
             onContinueAsGuest = {},
         )
     }

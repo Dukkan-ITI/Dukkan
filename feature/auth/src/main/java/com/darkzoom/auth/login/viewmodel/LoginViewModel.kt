@@ -15,6 +15,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface LoginAction {
+    data class EmailChanged(val email: String) : LoginAction
+    data class PasswordChanged(val password: String) : LoginAction
+    data object LoginClicked : LoginAction
+    data object GoogleClicked : LoginAction
+    data class GoogleIdTokenReceived(val idToken: String) : LoginAction
+    data class GoogleSignInFailed(val message: String) : LoginAction
+}
 
 sealed interface LoginEvent {
     data object TriggerGoogleSignIn : LoginEvent
@@ -33,50 +41,49 @@ class LoginViewModel @Inject constructor(
     private val _events = Channel<LoginEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    fun onEmailChanged(email: String) {
-        _uiState.updateForm { copy(email = email, emailError = null) }
-    }
+    fun onAction(action: LoginAction) {
+        when (action) {
+            is LoginAction.EmailChanged -> {
+                _uiState.updateForm { copy(email = action.email, emailError = null) }
+            }
+            is LoginAction.PasswordChanged -> {
+                _uiState.updateForm { copy(password = action.password, passwordError = null) }
+            }
+            LoginAction.LoginClicked -> {
+                val form = _uiState.value as? LoginUiState.Form ?: return
+                if (!form.isSubmitEnabled) return
 
-    fun onPasswordChanged(password: String) {
-        _uiState.updateForm { copy(password = password, passwordError = null) }
-    }
-
-    fun onLoginClicked() {
-        val form = _uiState.value as? LoginUiState.Form ?: return
-        if (!form.isSubmitEnabled) return
-
-        viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
-            val result = loginUseCase(form.email, form.password)
-            _uiState.value = if (result.isSuccess) {
-                LoginUiState.Success
-            } else {
-                LoginUiState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+                viewModelScope.launch {
+                    _uiState.value = LoginUiState.Loading
+                    val result = loginUseCase(form.email, form.password)
+                    _uiState.value = if (result.isSuccess) {
+                        LoginUiState.Success
+                    } else {
+                        LoginUiState.Error(result.exceptionOrNull()?.message ?: "Unknown error")
+                    }
+                }
+            }
+            LoginAction.GoogleClicked -> {
+                viewModelScope.launch {
+                    _events.send(LoginEvent.TriggerGoogleSignIn)
+                }
+            }
+            is LoginAction.GoogleIdTokenReceived -> {
+                viewModelScope.launch {
+                    _uiState.updateForm { copy(isGoogleLoading = true) }
+                    val result = loginWithGoogleUseCase(action.idToken)
+                    _uiState.value = if (result.isSuccess) {
+                        LoginUiState.Success
+                    } else {
+                        LoginUiState.Error(result.exceptionOrNull()?.message ?: "Google sign-in failed")
+                    }
+                }
+            }
+            is LoginAction.GoogleSignInFailed -> {
+                _uiState.updateForm { copy(isGoogleLoading = false) }
+                _uiState.value = LoginUiState.Error(action.message)
             }
         }
-    }
-
-    fun onGoogleClicked() {
-        viewModelScope.launch {
-            _events.send(LoginEvent.TriggerGoogleSignIn)
-        }
-    }
-
-    fun onGoogleIdTokenReceived(idToken: String) {
-        viewModelScope.launch {
-            _uiState.updateForm { copy(isGoogleLoading = true) }
-            val result = loginWithGoogleUseCase(idToken)
-            _uiState.value = if (result.isSuccess) {
-                LoginUiState.Success
-            } else {
-                LoginUiState.Error(result.exceptionOrNull()?.message ?: "Google sign-in failed")
-            }
-        }
-    }
-
-    fun onGoogleSignInFailed(message: String) {
-        _uiState.updateForm { copy(isGoogleLoading = false) }
-        _uiState.value = LoginUiState.Error(message)
     }
 }
 
