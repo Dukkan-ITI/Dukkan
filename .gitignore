@@ -9,7 +9,17 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# IDE-generated, machine-specific
+/.idea/compiler.xml
+/.idea/kotlinc.xml
+/.idea/deploymentTargetSelector.xml
+.idea/
+*.iml
+# Firebase config (distributed out-of-band)
+google-services.json

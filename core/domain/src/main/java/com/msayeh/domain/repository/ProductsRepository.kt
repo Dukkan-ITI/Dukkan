@@ -1,0 +1,7 @@
+package com.msayeh.domain.repository
+
+import com.msayeh.domain.model.Product
+
+interface ProductsRepository {
+    suspend fun getProductById(productId: String): Result<Product>
+}

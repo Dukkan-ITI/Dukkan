@@ -1,10 +1,12 @@
-query ProductQuery($id: ID) {
+query ProductQuery($id: ID!) {
     product(id: $id) {
         id
         title
         handle
         featuredImage {
+            altText
             url
+            thumbhash
         }
         productType
         priceRange {
@@ -21,8 +23,7 @@ query ProductQuery($id: ID) {
         images {
             nodes {
                 altText
-                id
-                src
+                url
                 thumbhash
             }
         }
@@ -35,8 +36,7 @@ query ProductQuery($id: ID) {
                 title
                 image {
                     altText
-                    id
-                    src
+                    url
                     thumbhash
                 }
                 price {
