@@ -19,6 +19,7 @@ local.properties
 /.idea/compiler.xml
 /.idea/kotlinc.xml
 /.idea/deploymentTargetSelector.xml
-
+.idea/
+*.iml
 # Firebase config (distributed out-of-band)
 google-services.json
