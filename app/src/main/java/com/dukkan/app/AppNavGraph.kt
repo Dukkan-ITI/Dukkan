@@ -9,6 +9,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
 import com.dukkan.navigation.Screen
 
@@ -40,7 +41,7 @@ fun AppNavGraph(
 
         composable(route = Screen.Favorite.route) {
             val viewModel: FavoritesViewModel = hiltViewModel()
-           // FavoritesView(viewModel = viewModel)
+            FavoritesView(viewModel = viewModel)
         }
 
         composable(route = Screen.ShoppingCart.route) {}
