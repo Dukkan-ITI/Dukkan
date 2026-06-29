@@ -31,3 +31,5 @@ include(":core:data")
 include(":core:navigation")
 
 include(":features:onboarding")
+include(":features:product_details")
+include(":core:domain")
