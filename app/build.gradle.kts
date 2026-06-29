@@ -41,6 +41,7 @@ dependencies {
     implementation(project(":features:onboarding"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
+    implementation(project(":features:home"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
