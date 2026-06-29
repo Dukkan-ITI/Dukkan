@@ -18,8 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -153,6 +155,7 @@ internal fun RegisterContent(
             onValueChange = onNameChange,
             placeholder = stringResource(R.string.auth_register_name_placeholder),
             errorMessage = state.nameError,
+            imeAction = ImeAction.Next,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -162,6 +165,7 @@ internal fun RegisterContent(
             onValueChange = onEmailChange,
             placeholder = stringResource(R.string.auth_register_email_placeholder),
             errorMessage = state.emailError,
+            imeAction = ImeAction.Next,
         )
 
         Spacer(Modifier.height(12.dp))
@@ -172,6 +176,10 @@ internal fun RegisterContent(
             placeholder = stringResource(R.string.auth_register_password_placeholder),
             isPassword = true,
             errorMessage = state.passwordError,
+            imeAction = ImeAction.Done,
+            keyboardActions = KeyboardActions(
+                onDone = { onRegisterClick() }
+            ),
         )
 
         Spacer(Modifier.height(13.dp))
