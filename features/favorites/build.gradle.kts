@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("dukkan.hilt")
 }
 
 android {
@@ -29,4 +30,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+    implementation(project(":core:domain"))
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
 }
