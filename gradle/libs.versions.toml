@@ -19,6 +19,8 @@ room = "2.8.4"
 uiTextGoogleFonts = "1.11.3"
 navigation = "2.8.8"
 ksp = "2.0.21-1.0.27"
+credentialManager = "1.3.0"
+googleid = "1.1.1"
 
 #firebase
 firebaseBom = "34.1.0"
@@ -76,6 +78,10 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
+credential-manager = { group = "androidx.credentials", name = "credentials", version.ref = "credentialManager" }
+credential-manager-play-services = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialManager" }
+googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 
 # build-logic plugins
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
