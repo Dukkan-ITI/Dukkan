@@ -30,3 +30,6 @@ bin/
 **/bin/
 .agents/
 skills-lock.json
+# JVM Crash Logs
+hs_err_pid*.log
+replay_pid*.log

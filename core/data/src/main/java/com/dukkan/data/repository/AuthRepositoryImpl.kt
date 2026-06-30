@@ -1,13 +1,13 @@
 package com.dukkan.data.repository
 
 import com.dukkan.data.mapper.toDomain
-import com.dukkan.data.source.remote.IFirebaseAuthDataSource
+import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
 import com.msayeh.domain.model.AuthUser
 import com.msayeh.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val authDataSource: IFirebaseAuthDataSource
+    private val authDataSource: FirebaseAuthDataSourceImpl
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<AuthUser> {

@@ -5,7 +5,7 @@ import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AuthRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.source.remote.FirebaseAuthDataSourceImp
-import com.dukkan.data.source.remote.IFirebaseAuthDataSource
+import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.msayeh.domain.repository.AuthRepository
 import com.msayeh.domain.repository.ProductsRepository
@@ -37,11 +37,11 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseAuthDataSource(): IFirebaseAuthDataSource =
+    fun provideFirebaseAuthDataSourceImpl(): FirebaseAuthDataSourceImpl =
         FirebaseAuthDataSourceImp()
 
     @Singleton
     @Provides
-    fun provideAuthRepository(authDataSource: IFirebaseAuthDataSource): AuthRepository =
+    fun provideAuthRepository(authDataSource: FirebaseAuthDataSourceImpl): AuthRepository =
         AuthRepositoryImpl(authDataSource)
 }
