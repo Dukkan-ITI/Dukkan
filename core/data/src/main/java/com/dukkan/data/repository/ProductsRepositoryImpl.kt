@@ -15,4 +15,11 @@ class ProductsRepositoryImpl(private val productsDataSource: ProductsDataSource)
             }
         }
     }
+
+    override suspend fun getProducts(limit: Int, after: String?): List<Product> {
+        val response = productsDataSource.getProducts(first = limit, after = after)
+        return response?.products?.edges?.mapNotNull { edge ->
+            edge.node?.toDomainModel()
+        } ?: emptyList()
+    }
 }

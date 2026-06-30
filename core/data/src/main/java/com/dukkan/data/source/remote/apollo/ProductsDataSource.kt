@@ -4,6 +4,6 @@ import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
 
 interface ProductsDataSource {
-    suspend fun getProducts(): ProductsQuery.Products?
+    suspend fun getProducts(first: Int = 10, after: String? = null): ProductsQuery.Data?
     suspend fun getProductById(id: String): ProductQuery.Product?
 }

@@ -1,6 +1,7 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.ProductQuery
+import com.dukkan.ProductsQuery
 import com.msayeh.domain.model.Money
 import com.msayeh.domain.model.NetworkImage
 import com.msayeh.domain.model.Product
@@ -43,6 +44,29 @@ fun ProductQuery.Image.toDomainModel(): NetworkImage = networkImage(url, thumbha
 fun ProductQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 fun ProductQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 fun ProductQuery.Price.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
+fun ProductsQuery.Node.toDomainModel(): Product {
+    return Product(
+        id = id,
+        title = title,
+        featuredImage = featuredImage?.toDomainModel(),
+        minPrice = priceRange.minVariantPrice.toDomainModel(),
+        maxPrice = priceRange.maxVariantPrice.toDomainModel(),
+        description = description,
+        productType = null,
+        images = null,
+        variants = null,
+    )
+}
+
+fun ProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
+    if (url !is String) return null
+    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+}
+
+fun ProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
+fun ProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 private fun networkImage(url: Any?, thumbhash: String?, altText: String?): NetworkImage {
     require(url is String) { "Image URL is required" }
