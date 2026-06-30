@@ -23,5 +23,7 @@ local.properties
 # Kotlin compiler local state / error logs
 .kotlin/
 
+.idea/
+*.iml
 # Firebase config (distributed out-of-band)
 google-services.json

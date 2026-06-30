@@ -56,6 +56,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.hilt.navigation.compose)
+
 }
 
 // Modules
@@ -65,4 +67,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":features:onboarding"))
     implementation(project(":features:product_details"))
+    implementation(project(":core:domain"))
+    implementation(project(":features:favorites"))
+
 }
