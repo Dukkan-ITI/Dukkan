@@ -39,7 +39,7 @@ android {
     }
 }
 
-dependencies {
+dependencies {    
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":features:onboarding"))
     implementation(project(":features:product_details"))
     implementation(project(":core:domain"))
+    implementation(project(":features:home"))
     implementation(project(":features:favorites"))
 
 }

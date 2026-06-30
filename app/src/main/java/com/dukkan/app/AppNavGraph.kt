@@ -17,6 +17,11 @@ import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
 import com.dukkan.navigation.Screen
 import com.msayeh.product_details.view.ProductDetailsScreen
+import com.dukkan.home.view.HomeScreen
+import com.dukkan.favorites.view.FavoritesView
+import com.dukkan.favorites.viewmodel.FavoritesViewModel
+import com.dukkan.navigation.Screen
+import com.dukkan.onboarding.view.OnboardingView
 
 @Composable
 fun AppNavGraph(
@@ -25,23 +30,26 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Onboarding.route,
         modifier = modifier
     ) {
+
+        composable(route = Screen.Onboarding.route) {
+            OnboardingView {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Onboarding.route) { inclusive = true }
+                }
+            }
+        }
 
         composable(route = Screen.Login.route) {}
 
         composable(route = Screen.SignUp.route) {}
 
         composable(route = Screen.Home.route) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                ElevatedButton(onClick = { navController.navigate(Screen.ProductDetail.createRoute("15789895385374")) }) {
-                    Text("Navigate to Product Details")
-                }
-            }
+            HomeScreen(
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         composable(route = Screen.Search.route) {}
