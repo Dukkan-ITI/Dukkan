@@ -35,6 +35,8 @@ javaxInject = "1"
 foundation = "1.11.3"
 glance = "1.1.1"
 navigationComposeVersion = "2.9.8"
+runtime = "1.11.3"
+ui = "1.11.3"
 foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
 
@@ -46,6 +48,7 @@ androidx-compose-material-icons = { group = "androidx.compose.material", name = 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.6.0" }
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
 androidx-compose-bom-v20240200 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose-v277 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -80,6 +83,8 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
