@@ -2,13 +2,18 @@ package com.dukkan.app
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.dukkan.navigation.Screen
+import com.msayeh.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -30,7 +35,9 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-
+                ElevatedButton(onClick = { navController.navigate(Screen.ProductDetail.createRoute("15789895385374")) }) {
+                    Text("Navigate to Product Details")
+                }
             }
         }
 
@@ -42,6 +49,13 @@ fun AppNavGraph(
 
         composable(route = Screen.Profile.route) {}
 
-        composable(route = Screen.ProductDetail.route) {}
+        composable(
+            route = Screen.ProductDetail.route,
+            arguments = listOf(navArgument(Screen.ProductDetail.ARG_PRODUCT_ID) {
+                type = NavType.StringType
+            })
+        ) {
+            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
+        }
     }
 }

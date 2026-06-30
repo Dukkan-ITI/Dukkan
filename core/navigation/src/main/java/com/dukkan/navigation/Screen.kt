@@ -1,4 +1,5 @@
 package com.dukkan.navigation
+
 sealed class Screen(val route: String) {
     object Login : Screen("login_screen")
     object SignUp : Screen("sign_up_screen")
@@ -9,6 +10,7 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile_screen")
 
     object ProductDetail : Screen("product_detail_screen/{productId}") {
+        const val ARG_PRODUCT_ID = "productId"
         fun createRoute(productId: String) = "product_detail_screen/$productId"
     }
 }
