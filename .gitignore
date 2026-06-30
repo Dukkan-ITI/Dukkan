@@ -20,5 +20,8 @@ local.properties
 /.idea/kotlinc.xml
 /.idea/deploymentTargetSelector.xml
 
+# Kotlin compiler local state / error logs
+.kotlin/
+
 # Firebase config (distributed out-of-band)
 google-services.json

@@ -15,7 +15,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = LightText,
     onSurface = LightText,
     onSurfaceVariant = LightMutedText,
-    outline = LightBorder
+    outline = LightBorder,
+    inverseOnSurface = LightSubText
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -26,7 +27,8 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = DarkText,
     onSurface = DarkText,
     onSurfaceVariant = DarkMutedText,
-    outline = DarkBorder
+    outline = DarkBorder,
+    inverseOnSurface = DarkSubText
 )
 
 @Composable

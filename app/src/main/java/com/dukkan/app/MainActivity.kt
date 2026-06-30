@@ -11,8 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.design_system.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.dukkan.app.ui.theme.DukkanTheme
-import com.dukkan.onboarding.view.OnboardingView
 
 
 @AndroidEntryPoint
@@ -21,20 +19,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DukkanTheme() {
+            AppTheme {
                 val navController = rememberNavController()
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavGraph(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding)
-                    )
-                }
-                DukkanTheme {
-                    OnboardingView(
-                        onFinish = {
-
-                        }
                     )
                 }
             }
