@@ -21,11 +21,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 val navController = rememberNavController()
-                    AppNavGraph(
-                        navController = navController,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppNavGraph(
+                    navController = navController
+                )
             }
         }
     }

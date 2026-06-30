@@ -28,7 +28,10 @@ object DataModule {
         )
         .build()
 
-
+    @Singleton
+    @Provides
+    fun provideProductsDataSource(apolloClient: ApolloClient): ProductsDataSource =
+        com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl(apolloClient)
 
     @Singleton
     @Provides
