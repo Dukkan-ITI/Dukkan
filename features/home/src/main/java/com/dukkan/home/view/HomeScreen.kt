@@ -1,25 +1,32 @@
 package com.dukkan.home.view
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.home.components.*
+import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
-import com.example.design_system.theme.AppTheme
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onSeeAllClicked: () -> Unit = {}
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -30,26 +37,55 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 12.dp)
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 12.dp)
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeHeader()
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeSearchBar()
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                HomeBanner()
-            }
-
-            homeProductSection(
-                onFavoriteClick = { product, isFavorite ->
-                    viewModel.onFavoriteClick(product, isFavorite)
+            when (val state = uiState) {
+                is HomeUiState.Loading -> {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
                 }
-            )
+                is HomeUiState.Error -> {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().padding(22.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = state.message,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+                is HomeUiState.Success -> {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeHeader()
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeSearchBar()
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeBanner()
+                    }
+
+                    homeProductSection(
+                        products = state.products,
+                        onSeeAllClick = onSeeAllClicked,
+                        onFavoriteClick = { product, isFavorite ->
+                            viewModel.onFavoriteClick(product, isFavorite)
+                        }
+                    )
+                }
+            }
         }
     }
 }

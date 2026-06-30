@@ -56,15 +56,16 @@ fun LazyGridScope.homeProductSection(
         }
     }
 
-    items(6) { index ->
+    items(products) { product ->
         HomeProductCard(
-            title = stringResource(R.string.product,index + 1),
-            priceLabel = stringResource(R.string.price, 100),
+            title = product.title,
+            priceLabel = "${product.minPrice.amount} ${product.minPrice.currencyCode}",
+            imageUrl = product.featuredImage?.url,
             isFavorite = false,
             onFavoriteClick = {
-                 onFavoriteClick(products[index], false)
+                onFavoriteClick(product, false)
             },
-            modifier = Modifier.padding(bottom = 18.dp, start = 18.dp, end = 18.dp)
+            modifier = Modifier.padding(bottom = 18.dp)
         )
     }
 }

@@ -44,7 +44,7 @@ fun HomeBanner(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 12.dp)
+                .padding(vertical = 12.dp)
                 .clip(RoundedCornerShape(28.dp))
                 .background(MaterialTheme.colorScheme.primary)
         ) {
