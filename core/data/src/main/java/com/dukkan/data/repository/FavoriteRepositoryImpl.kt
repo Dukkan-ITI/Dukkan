@@ -2,7 +2,7 @@ package com.dukkan.data.repository
 
 
 
-import com.dukkan.data.mapper.toDomain
+import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.mapper.toEntity
 import com.dukkan.data.source.local.data_source.FavoriteLocalDataSource
 import com.msayeh.domain.model.FavoriteProduct
@@ -18,7 +18,7 @@ class FavoriteRepositoryImpl @Inject constructor(
 ) : FavoriteRepository {
 
     override fun getAllFavorites(): Flow<List<FavoriteProduct>> =
-        localDataSource.getAllFavorites().map { list -> list.map { it.toDomain() } }
+        localDataSource.getAllFavorites().map { list -> list.map { it.toDomainModel() } }
 
     override suspend fun addFavorite(product: FavoriteProduct) =
         localDataSource.addFavorite(product.toEntity())

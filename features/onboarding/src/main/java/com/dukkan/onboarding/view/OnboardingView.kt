@@ -25,16 +25,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnboardingView(
     viewModel: OnboardingViewModel = viewModel(),
-    onFinish: () -> Unit,
-    onSignIn: () -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
 
     val state by viewModel.uiState.collectAsState()
 
     OnboardingContent(
         pages = state.pages,
-        onFinish = onFinish,
-        onSignIn = onSignIn
+        onNavigateToLogin = onNavigateToLogin
     )
 }
 
@@ -42,8 +40,7 @@ fun OnboardingView(
 @Composable
 fun OnboardingContent(
     pages: List<OnboardingModel>,
-    onFinish: () -> Unit,
-    onSignIn: () -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(
@@ -92,7 +89,7 @@ fun OnboardingContent(
             onContinue = {
 
                 if (pagerState.currentPage == pages.lastIndex) {
-                    onFinish()
+                    onNavigateToLogin()
                 } else {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(
@@ -102,7 +99,7 @@ fun OnboardingContent(
                 }
 
             },
-            onSignInClick = onSignIn
+            onSignInClick = onNavigateToLogin
         )
     }
 }

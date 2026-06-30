@@ -1,6 +1,6 @@
 package com.dukkan.data.repository
 
-import com.dukkan.data.mapper.toDomain
+import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
 import com.msayeh.domain.model.AuthUser
 import com.msayeh.domain.repository.AuthRepository
@@ -14,7 +14,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val user = authDataSource.loginWithEmailAndPassword(email, password)
             if (user != null) {
-                Result.success(user.toDomain())
+                Result.success(user.toDomainModel())
             } else {
                 Result.failure(Exception("Login failed"))
             }
@@ -27,7 +27,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val user = authDataSource.registerWithEmailAndPassword(email, password)
             if (user != null) {
-                Result.success(user.toDomain())
+                Result.success(user.toDomainModel())
             } else {
                 Result.failure(Exception("Registration failed"))
             }
@@ -40,7 +40,7 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val user = authDataSource.loginWithGoogle(idToken)
             if (user != null) {
-                Result.success(user.toDomain())
+                Result.success(user.toDomainModel())
             } else {
                 Result.failure(Exception("Google login failed"))
             }
@@ -50,7 +50,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCurrentUser(): AuthUser? {
-        return authDataSource.getCurrentUser()?.toDomain()
+        return authDataSource.getCurrentUser()?.toDomainModel()
     }
 
     override suspend fun signOut() {
