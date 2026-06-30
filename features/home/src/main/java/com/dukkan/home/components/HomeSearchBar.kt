@@ -28,7 +28,6 @@ fun HomeSearchBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 22.dp)
             .border(
                 width = 1.5.dp,
                 color = MaterialTheme.colorScheme.outline,

@@ -26,7 +26,7 @@ fun HomeHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 22.dp, vertical = 14.dp)
+            .padding(vertical = 14.dp)
     ) {
         Text(
             text = stringResource(R.string.hey_there),

@@ -17,16 +17,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.dukkan.home.R
 
 @Composable
 fun HomeProductCard(
     title: String,
     priceLabel: String,
+    imageUrl: String?,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -42,13 +47,23 @@ fun HomeProductCard(
                 .clip(RoundedCornerShape(24.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.banner_placeholder),
+                error = painterResource(id = R.drawable.banner_placeholder),
+                fallback = painterResource(id = R.drawable.banner_placeholder),
+            )
+
             IconButton(
                 onClick = onFavoriteClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 10.dp, end = 10.dp)
                     .size(32.dp)
-                    .shadow(elevation = 4.dp, shape = CircleShape, spotColor = Color(0x0F000000))
+                    .shadow(elevation = 4.dp, shape = CircleShape, spotColor = Color.Black)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
@@ -72,7 +87,12 @@ fun HomeProductCard(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
                 ),
-                color = MaterialTheme.colorScheme.onSurface
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .padding(end = 8.dp)
             )
             Text(
                 text = priceLabel,
