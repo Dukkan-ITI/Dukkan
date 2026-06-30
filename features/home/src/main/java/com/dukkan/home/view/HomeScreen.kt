@@ -20,26 +20,21 @@ import com.example.design_system.theme.AppTheme
 fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
-    var selectedCategory by remember { mutableStateOf("All") }
-    val categories = listOf("All", "New In", "Clothing", "Shoes")
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
 
-    AppTheme {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.background
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-
-                HomeHeader()
-                HomeSearchBar()
-                Spacer(modifier = Modifier.height(10.dp))
-                HomeBanner()
-                HomeProductSection(modifier = Modifier.weight(1f))
-            }
+            HomeHeader()
+            HomeSearchBar()
+            Spacer(modifier = Modifier.height(10.dp))
+            HomeBanner()
+            HomeProductSection(modifier = Modifier.weight(1f))
         }
     }
 }
