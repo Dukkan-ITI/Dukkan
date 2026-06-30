@@ -13,10 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dukkan.home.R
 import com.example.design_system.theme.AppTheme
 
 @Composable
@@ -34,7 +36,7 @@ fun HomeCategoryList(
     ) {
         items(categories) { category ->
             val isSelected = category == selectedCategory
-            
+
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(18.dp))
@@ -45,8 +47,8 @@ fun HomeCategoryList(
                     )
                     .border(
                         width = 1.5.dp,
-                        color = if (isSelected) Color.Transparent 
-                                else MaterialTheme.colorScheme.outlineVariant,
+                        color = if (isSelected) Color.Transparent
+                        else MaterialTheme.colorScheme.outlineVariant,
                         shape = RoundedCornerShape(18.dp)
                     )
                     .padding(horizontal = 18.dp, vertical = 8.dp)
@@ -58,7 +60,7 @@ fun HomeCategoryList(
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
                     ),
                     color = if (isSelected) MaterialTheme.colorScheme.surface
-                            else MaterialTheme.colorScheme.onSurfaceVariant
+                    else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -70,8 +72,12 @@ fun HomeCategoryList(
 fun HomeCategoryListPreview() {
     AppTheme {
         HomeCategoryList(
-            categories = listOf("All", "New In", "Clothing", "Shoes"),
-            selectedCategory = "All",
+            categories = listOf(
+                stringResource(R.string.all),
+                stringResource(R.string.new_in), stringResource(R.string.clothing),
+                stringResource(R.string.shoes)
+            ),
+            selectedCategory = stringResource(R.string.all),
             onCategorySelected = {},
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         )

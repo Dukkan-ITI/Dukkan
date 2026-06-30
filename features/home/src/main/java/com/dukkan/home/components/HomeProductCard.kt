@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,16 +17,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.design_system.theme.AppTheme
+import com.dukkan.home.R
 
 @Composable
 fun HomeProductCard(
     title: String,
     priceLabel: String,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -40,7 +43,7 @@ fun HomeProductCard(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             IconButton(
-                onClick = { /* Handle Wishlist */ },
+                onClick = onFavoriteClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 10.dp, end = 10.dp)
@@ -50,10 +53,10 @@ fun HomeProductCard(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Add to Wishlist",
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = stringResource(R.string.add_to_favorites),
                     modifier = Modifier.size(15.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -78,24 +81,6 @@ fun HomeProductCard(
                     fontSize = 14.sp
                 ),
                 color = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeProductCardPreview() {
-    AppTheme {
-        Box(
-            modifier = Modifier
-                .width(180.dp)
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp)
-        ) {
-            HomeProductCard(
-                title = "Running Sneakers",
-                priceLabel = "$49.99"
             )
         }
     }

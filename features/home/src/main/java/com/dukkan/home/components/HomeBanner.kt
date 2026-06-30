@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +37,7 @@ fun HomeBanner(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp, top = 18.dp),
+            .padding(bottom = 20.dp, top = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
@@ -49,7 +50,7 @@ fun HomeBanner(
         ) {
             Image(
                 painter = painterResource(R.drawable.banner_placeholder),
-                contentDescription = "Summer drop",
+                contentDescription = stringResource(R.string.summer_drop),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -65,7 +66,7 @@ fun HomeBanner(
             ) {
                 Column() {
                     Text(
-                        text = "SUMMER CAPSULE",
+                        text = stringResource(R.string.summer_capsule),
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.5.sp,
@@ -77,7 +78,7 @@ fun HomeBanner(
                     Spacer(modifier = Modifier.height(5.dp))
 
                     Text(
-                        text = "Soft & easy\nlinen set",
+                        text = stringResource(R.string.soft_easy_linen_set),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.ExtraBold
                         ),
@@ -97,7 +98,7 @@ fun HomeBanner(
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
-                        text = "Shop",
+                        text = stringResource(R.string.shop),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF181620)
