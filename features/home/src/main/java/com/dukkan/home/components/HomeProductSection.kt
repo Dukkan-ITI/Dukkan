@@ -4,24 +4,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dukkan.home.R
 import com.example.design_system.theme.AppTheme
+import com.msayeh.domain.model.Product
 
-@Composable
-fun HomeProductSection(
-    modifier: Modifier = Modifier,
-    onSeeAllClick: () -> Unit = {}
+fun LazyGridScope.homeProductSection(
+    products: List<Product> = emptyList(),
+    onSeeAllClick: () -> Unit = {},
+    onFavoriteClick: (Product, Boolean) -> Unit = { _, _ -> }
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    item(span = { GridItemSpan(maxLineSpan) }) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -30,7 +36,7 @@ fun HomeProductSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Picked for you",
+                text = stringResource(R.string.picked_for_you),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
@@ -39,7 +45,7 @@ fun HomeProductSection(
             )
 
             Text(
-                text = "See all",
+                text = stringResource(R.string.see_all),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp
@@ -48,30 +54,30 @@ fun HomeProductSection(
                 modifier = Modifier.clickable { onSeeAllClick() }
             )
         }
+    }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            items(6) { index ->
-                HomeProductCard(
-                    title = "Product ${index + 1}",
-                    priceLabel = "$49.99"
-                )
-            }
-        }
+    items(6) { index ->
+        HomeProductCard(
+            title = stringResource(R.string.product,index + 1),
+            priceLabel = stringResource(R.string.price, 100),
+            isFavorite = false,
+            onFavoriteClick = {
+                 onFavoriteClick(products[index], false)
+            },
+            modifier = Modifier.padding(bottom = 18.dp, start = 18.dp, end = 18.dp)
+        )
     }
 }
 
-@Preview(showBackground = true, )
+@Preview(showBackground = true)
 @Composable
 fun HomeProductSectionPreview() {
     AppTheme {
-        HomeProductSection(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
-        )
+        ) {
+            homeProductSection()
+        }
     }
 }
