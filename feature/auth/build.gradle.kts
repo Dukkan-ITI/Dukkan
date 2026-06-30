@@ -29,7 +29,7 @@ android {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:design_system"))
-    implementation(platform(libs.androidx.compose.bom.v20240200))
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
