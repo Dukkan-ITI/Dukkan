@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dukkan.auth.AuthScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
 import com.dukkan.navigation.Screen
@@ -28,50 +29,19 @@ fun AppNavGraph(
 
         composable(route = Screen.Onboarding.route) {
             OnboardingView(
-                onFinish = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
-                    }
-                },
-                onSignIn = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(route = Screen.Login.route) {
-            com.dukkan.auth.login.view.LoginScreen(
-                onNavigateToRegister = { navController.navigate(Screen.SignUp.route) },
-                onLoginSuccess = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                },
-                onContinueAsGuest = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-
-        composable(route = Screen.SignUp.route) {
-            com.dukkan.auth.register.view.RegisterScreen(
                 onNavigateToLogin = {
-                    navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                    navController.navigate(Screen.Auth.route) {
+                        popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
-                },
-                onRegisterSuccess = {
+                }
+            )
+        }
+
+        composable(route = Screen.Auth.route) {
+            AuthScreen(
+                onNavigateToHome = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.SignUp.route) { inclusive = true }
-                    }
-                },
-                onContinueAsGuest = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.SignUp.route) { inclusive = true }
+                        popUpTo(Screen.Auth.route) { inclusive = true }
                     }
                 }
             )

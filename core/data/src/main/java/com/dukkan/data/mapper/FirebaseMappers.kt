@@ -14,7 +14,7 @@ fun FirebaseUser?.toUserAuthDto(): UserAuthDto? {
     }
 }
 
-fun UserAuthDto.toDomain(): AuthUser {
+fun UserAuthDto.toDomainModel(): AuthUser {
     return AuthUser(
         uid = uid,
         email = email,
