@@ -1,16 +1,12 @@
 package com.dukkan.favorites.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,22 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.msayeh.domain.model.FavoriteProduct
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import com.dukkan.favorites.R
-
+import com.msayeh.domain.model.FavoriteProduct
 
 @Composable
 fun FavoriteItem(
@@ -42,66 +34,71 @@ fun FavoriteItem(
     onUnfav: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(170.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .aspectRatio(0.8f)
+                .clip(RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             AsyncImage(
                 model = product.imageUrl,
                 contentDescription = product.title,
-                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
-            placeholder = painterResource(R.drawable.ic_placeholder),
-                error = painterResource(R.drawable.ic_image_error)
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.ic_placeholder),
+                error = painterResource(id = R.drawable.ic_image_error),
+                fallback = painterResource(id = R.drawable.ic_placeholder),
             )
 
             IconButton(
                 onClick = onUnfav,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .padding(top = 10.dp, end = 10.dp)
                     .size(32.dp)
-                    .background(
-                        color = Color.Black.copy(alpha = 0.25f),
-                        shape = CircleShape
-                    )
+                    .shadow(elevation = 4.dp, shape = CircleShape, spotColor = Color.Black)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Favorite,
-                    contentDescription = "Remove from wishlist",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    contentDescription = stringResource(R.string.remove_from_wishlist),
+                    modifier = Modifier.size(15.dp),
+                    tint = Color.Red
                 )
             }
         }
 
-        Spacer(Modifier.height(8.dp))
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = product.title,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .weight(1f, fill = false)
+                    .padding(end = 8.dp)
             )
-            Spacer(Modifier.width(4.dp))
             Text(
-                text = "$${product.price}",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onBackground
+                text = "${product.price} ${product.currencyCode}",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 14.sp
+                ),
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
