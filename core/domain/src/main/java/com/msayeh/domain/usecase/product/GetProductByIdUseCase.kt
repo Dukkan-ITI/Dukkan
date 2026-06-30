@@ -1,4 +1,4 @@
-package com.msayeh.domain.usecase
+package com.msayeh.domain.usecase.product
 
 import com.msayeh.domain.model.Product
 import com.msayeh.domain.repository.ProductsRepository

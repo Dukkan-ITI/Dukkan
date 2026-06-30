@@ -8,6 +8,7 @@ sealed class Screen(val route: String) {
     object Favorite : Screen("favorite_screen")
     object ShoppingCart : Screen("shopping_cart_screen")
     object Profile : Screen("profile_screen")
+    object Onboarding : Screen("onboarding_screen")
 
     object ProductDetail : Screen("product_detail_screen/{productId}") {
         const val ARG_PRODUCT_ID = "productId"
