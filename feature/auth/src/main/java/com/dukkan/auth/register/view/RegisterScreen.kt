@@ -1,6 +1,5 @@
 package com.dukkan.auth.register.view
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,110 +7,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.auth.R
 import com.dukkan.auth.register.viewmodel.RegisterAction
-import com.dukkan.auth.register.viewmodel.RegisterEvent
 import com.dukkan.auth.register.viewmodel.RegisterUiState
-import com.dukkan.auth.register.viewmodel.RegisterViewModel
-import com.dukkan.auth.shared.GoogleSignInHelper
-import com.dukkan.auth.shared.components.AuthErrorScreen
 import com.dukkan.auth.shared.components.AuthGuestLink
-import com.dukkan.auth.shared.components.AuthLoadingScreen
 import com.dukkan.auth.shared.components.AuthPrimaryButton
 import com.dukkan.auth.shared.components.AuthSocialRow
-import com.dukkan.auth.shared.components.AuthTabRow
 import com.dukkan.auth.shared.components.AuthTextField
 import com.dukkan.auth.shared.components.AuthVerificationHint
-import com.example.design_system.theme.AppTheme
-import kotlinx.coroutines.launch
-
-private const val WEB_CLIENT_ID =
-    "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com"
-
-@Composable
-fun RegisterScreen(
-    onNavigateToLogin: () -> Unit,
-    onRegisterSuccess: () -> Unit,
-    onContinueAsGuest: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: RegisterViewModel = hiltViewModel(),
-) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val googleSignInHelper = remember { GoogleSignInHelper() }
-
-    LaunchedEffect(state) {
-        if (state is RegisterUiState.Success) onRegisterSuccess()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                RegisterEvent.TriggerGoogleSignIn -> {
-                    scope.launch {
-                        try {
-                            val activity = context as Activity
-                            val idToken = googleSignInHelper.signIn(activity)
-                            viewModel.onAction(RegisterAction.GoogleIdTokenReceived(idToken))
-                        } catch (e: GetCredentialCancellationException) {
-                        } catch (e: Exception) {
-                            viewModel.onAction(
-                                RegisterAction.GoogleSignInFailed(e.message ?: "Google sign-in failed")
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    when (val currentState = state) {
-        is RegisterUiState.Form -> RegisterContent(
-            state = currentState,
-            onAction = viewModel::onAction,
-            onNavigateToLogin = onNavigateToLogin,
-            onContinueAsGuest = onContinueAsGuest,
-            modifier = modifier,
-        )
-
-        is RegisterUiState.Loading -> AuthLoadingScreen(
-            label = stringResource(R.string.auth_register_loading_label),
-            modifier = modifier,
-        )
-
-        is RegisterUiState.Error -> AuthErrorScreen(
-            message = currentState.message,
-            onRetry = { viewModel.onAction(RegisterAction.RegisterClicked) },
-            onBack = onNavigateToLogin,
-            modifier = modifier,
-        )
-
-        is RegisterUiState.Success -> Unit
-    }
-}
-
 
 @Composable
 internal fun RegisterContent(
@@ -125,25 +39,16 @@ internal fun RegisterContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp)
-            .padding(top = 30.dp, bottom = 40.dp),
+            .padding(bottom = 40.dp),
     ) {
 
-        Spacer(Modifier.height(34.dp))
+        Spacer(Modifier.height(4.dp))
 
         RegisterHeadline()
 
-        Spacer(Modifier.height(26.dp))
-
-        AuthTabRow(
-            isSignInSelected = false,
-            onSignInClick = onNavigateToLogin,
-            onRegisterClick = {},
-        )
-
-        Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(30.dp))
 
         AuthTextField(
             value = state.name,
@@ -227,36 +132,3 @@ private fun RegisterHeadline(modifier: Modifier = Modifier) {
 }
 
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "Filled")
-@Composable
-private fun RegisterContentFilledPreview() {
-    AppTheme {
-        RegisterContent(
-            state = RegisterUiState.Form(
-                name = "John Doe",
-                email = "user@example.com",
-                password = "password123",
-            ),
-            onAction = {},
-            onNavigateToLogin = {},
-            onContinueAsGuest = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, widthDp = 390, heightDp = 844, name = "Dark")
-@Composable
-private fun RegisterContentDarkPreview() {
-    AppTheme(darkTheme = true) {
-        RegisterContent(
-            state = RegisterUiState.Form(
-                name = "John Doe",
-                email = "user@example.com",
-                password = "password123",
-            ),
-            onAction = {},
-            onNavigateToLogin = {},
-            onContinueAsGuest = {},
-        )
-    }
-}

@@ -13,6 +13,7 @@ class GoogleSignInHelper {
     companion object {
         const val WEB_CLIENT_ID = "187682081726-3uu2n467cah51k3g40e35o1cv4ne0the.apps.googleusercontent.com"
     }
+    
     suspend fun signIn(activityContext: Context): String {
         val credentialManager = CredentialManager.create(activityContext)
 
