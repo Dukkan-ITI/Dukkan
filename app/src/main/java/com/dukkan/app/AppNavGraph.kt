@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dukkan.home.view.HomeScreen
 import com.dukkan.auth.AuthScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
@@ -26,6 +27,14 @@ fun AppNavGraph(
         startDestination = Screen.Onboarding.route,
         modifier = modifier
     ) {
+
+        composable(route = Screen.Onboarding.route) {
+            OnboardingView {
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Onboarding.route) { inclusive = true }
+                }
+            }
+        }
 
         composable(route = Screen.Onboarding.route) {
             OnboardingView(
@@ -48,12 +57,9 @@ fun AppNavGraph(
         }
 
         composable(route = Screen.Home.route) {
-            Box(
-                modifier = Modifier.fillMaxSize().systemBarsPadding(),
-                contentAlignment = Alignment.Center
-            ) {
-                androidx.compose.material3.Text("Dummy Screen")
-            }
+            HomeScreen(
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         composable(route = Screen.Search.route) {}

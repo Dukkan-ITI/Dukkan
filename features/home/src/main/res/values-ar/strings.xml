@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="summer_drop">تشكيلة الصيف</string>
+    <string name="summer_capsule">كبسولة الصيف</string>
+    <string name="soft_easy_linen_set"><![CDATA[طقم كتان\nناعم ومريح]]></string>
+    <string name="shop">تسوق</string>
+    <string name="all">الكل</string>
+    <string name="new_in">وصل حديثاً</string>
+    <string name="clothing">ملابس</string>
+    <string name="shoes">أحذية</string>
+    <string name="hey_there">مرحباً! 👋</string>
+    <string name="what_are_we_wearing">"ماذا سنرتدي\n"</string>
+    <string name="today">اليوم؟</string>
+    <string name="add_to_favorites">أضف إلى المفضلة</string>
+    <string name="picked_for_you">اخترنا لك</string>
+    <string name="see_all">عرض الكل</string>
+    <string name="product">منتج %1$d</string>
+    <string name="price">$%1$d</string>
+    <string name="search">بحث</string>
+    <string name="search_products">ابحث عن المنتجات...</string>
+</resources>
