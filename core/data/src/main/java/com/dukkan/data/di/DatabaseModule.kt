@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.dukkan.data.source.local.LocalConstants
 import com.dukkan.data.source.local.dao.FavoriteDao
 import com.dukkan.data.source.local.database.AppDatabase
+import com.dukkan.data.source.local.dao.CartDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,4 +34,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideFavoriteDao(db: AppDatabase): FavoriteDao = db.favoriteDao()
+
+    @Provides
+    @Singleton
+    fun provideCartDao(db: AppDatabase): CartDao = db.cartDao()
 }
