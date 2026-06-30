@@ -1,6 +1,7 @@
 package com.msayeh.product_details.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -59,13 +61,21 @@ fun ProductImagePager(
             .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
-        HorizontalPager(state = pagerState) { page ->
-            val image = images[page]
-            AsyncImage(
-                model = image.url,
-                contentDescription = image.altText,
+        if (images.isEmpty()) {
+            Image(
+                painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
+                contentDescription = "Image",
                 modifier = Modifier.fillMaxSize(),
             )
+        } else {
+            HorizontalPager(state = pagerState) { page ->
+                val image = images[page]
+                AsyncImage(
+                    model = image.url,
+                    contentDescription = image.altText,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
 
         Row(

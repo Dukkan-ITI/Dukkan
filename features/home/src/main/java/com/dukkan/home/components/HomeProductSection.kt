@@ -18,14 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.dukkan.home.R
 import com.example.design_system.theme.AppTheme
 import com.msayeh.domain.model.Product
+import com.msayeh.domain.model.asString
 
 fun LazyGridScope.homeProductSection(
     products: List<Product> = emptyList(),
     onSeeAllClick: () -> Unit = {},
-    onFavoriteClick: (Product, Boolean) -> Unit = { _, _ -> }
+    onFavoriteClick: (Product, Boolean) -> Unit = { _, _ -> },
+    onProductClick: (Product) -> Unit = { _ -> }
 ) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         Row(
@@ -59,11 +62,14 @@ fun LazyGridScope.homeProductSection(
     items(products) { product ->
         HomeProductCard(
             title = product.title,
-            priceLabel = "${product.minPrice.amount} ${product.minPrice.currencyCode}",
+            priceLabel = product.maxPrice.asString(),
             imageUrl = product.featuredImage?.url,
             isFavorite = false,
             onFavoriteClick = {
                 onFavoriteClick(product, false)
+            },
+            onCardClick = {
+                onProductClick(product)
             },
             modifier = Modifier.padding(bottom = 18.dp)
         )

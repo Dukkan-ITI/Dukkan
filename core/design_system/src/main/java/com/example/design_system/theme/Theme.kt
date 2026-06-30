@@ -19,7 +19,6 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = LightMutedText,
     outline = LightBorder,
     inverseOnSurface = LightSubText
-    tertiary = GreetingText
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -32,7 +31,6 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = DarkMutedText,
     outline = DarkBorder,
     inverseOnSurface = DarkSubText
-    tertiary = GreetingText
 )
 
 data class DukkanExtendedColors(

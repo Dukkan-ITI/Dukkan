@@ -18,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.design_system.components.ErrorScreen
 import com.example.design_system.components.LoadingScreen
@@ -87,7 +87,7 @@ private fun LoadedProductDetails(
                 .verticalScroll(rememberScrollState()),
         ) {
             ProductImagePager(
-                images = images,
+                images = images.mapNotNull { it },
                 isFavorite = isFavorite,
                 onBackClick = onBackClick,
                 onFavoriteClick = { isFavorite = !isFavorite },

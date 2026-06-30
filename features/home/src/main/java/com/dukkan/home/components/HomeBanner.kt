@@ -49,7 +49,7 @@ fun HomeBanner(
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Image(
-                painter = painterResource(R.drawable.banner_placeholder),
+                painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
                 contentDescription = stringResource(R.string.summer_drop),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
