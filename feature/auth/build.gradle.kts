@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.darkzoom.auth"
+    namespace = "com.dukkan.auth"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1

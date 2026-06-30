@@ -42,7 +42,7 @@ fun AppNavGraph(
         }
 
         composable(route = Screen.Login.route) {
-            com.darkzoom.auth.login.view.LoginScreen(
+            com.dukkan.auth.login.view.LoginScreen(
                 onNavigateToRegister = { navController.navigate(Screen.SignUp.route) },
                 onLoginSuccess = {
                     navController.navigate(Screen.Home.route) {
@@ -58,7 +58,7 @@ fun AppNavGraph(
         }
 
         composable(route = Screen.SignUp.route) {
-            com.darkzoom.auth.register.view.RegisterScreen(
+            com.dukkan.auth.register.view.RegisterScreen(
                 onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(Screen.SignUp.route) { inclusive = true }
