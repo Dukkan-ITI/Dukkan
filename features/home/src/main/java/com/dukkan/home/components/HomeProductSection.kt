@@ -24,6 +24,7 @@ import com.msayeh.domain.model.Product
 
 fun LazyGridScope.homeProductSection(
     products: List<Product> = emptyList(),
+    favoriteIds: Set<String> = emptySet(),
     onSeeAllClick: () -> Unit = {},
     onFavoriteClick: (Product, Boolean) -> Unit = { _, _ -> }
 ) {
@@ -57,13 +58,14 @@ fun LazyGridScope.homeProductSection(
     }
 
     items(products) { product ->
+        val isFav = product.id in favoriteIds
         HomeProductCard(
             title = product.title,
             priceLabel = "${product.minPrice.amount} ${product.minPrice.currencyCode}",
             imageUrl = product.featuredImage?.url,
-            isFavorite = false,
+            isFavorite = isFav,
             onFavoriteClick = {
-                onFavoriteClick(product, false)
+                onFavoriteClick(product, isFav)
             },
             modifier = Modifier.padding(bottom = 18.dp)
         )

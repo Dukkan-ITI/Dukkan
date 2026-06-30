@@ -79,6 +79,7 @@ fun HomeScreen(
 
                     homeProductSection(
                         products = state.products,
+                        favoriteIds = state.favoriteIds,
                         onSeeAllClick = onSeeAllClicked,
                         onFavoriteClick = { product, isFavorite ->
                             viewModel.onFavoriteClick(product, isFavorite)
