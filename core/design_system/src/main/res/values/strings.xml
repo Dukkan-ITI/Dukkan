@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_all">All</string>
+    <string name="filter_new_in">New In</string>
+    <string name="filter_clothing">Clothing</string>
+    <string name="filter_shoes">Shoes</string>
+    <string name="brand_nike">Nike</string>
+    <string name="brand_adidas">Adidas</string>
+    <string name="brand_puma">Puma</string>
+    <string name="see_all_label">See All</string>
+    <string name="add_to_favorites">Add to Favorites</string>
+</resources>
