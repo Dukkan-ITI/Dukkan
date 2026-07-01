@@ -36,7 +36,7 @@ fun AuthTabRow(
     onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pillBackground = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+    val pillBackground = MaterialTheme.colorScheme.surfaceVariant
 
     Row(
         modifier = modifier

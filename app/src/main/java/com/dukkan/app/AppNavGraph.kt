@@ -25,7 +25,7 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Auth.route,
         modifier = modifier
     ) {
 

@@ -23,20 +23,20 @@ import com.dukkan.auth.shared.components.AuthGuestLink
 import com.dukkan.auth.shared.components.AuthPrimaryButton
 import com.dukkan.auth.shared.components.AuthSocialRow
 import com.dukkan.auth.shared.components.AuthTextField
-import com.dukkan.auth.login.viewmodel.LoginAction
-import com.dukkan.auth.login.viewmodel.LoginUiState
+import com.dukkan.auth.viewmodel.AuthAction
+import com.dukkan.auth.viewmodel.AuthUiState
 
 @Composable
 internal fun LoginContent(
-    state: LoginUiState.Form,
-    onAction: (LoginAction) -> Unit,
+    state: AuthUiState.Form,
+    onAction: (AuthAction) -> Unit,
     onNavigateToRegister: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp)
@@ -51,7 +51,7 @@ internal fun LoginContent(
 
         AuthTextField(
             value = state.email,
-            onValueChange = { onAction(LoginAction.EmailChanged(it)) },
+            onValueChange = { onAction(AuthAction.EmailChanged(it)) },
             placeholder = stringResource(R.string.auth_login_email_placeholder),
             errorMessage = state.emailError,
             imeAction = ImeAction.Next,
@@ -61,13 +61,13 @@ internal fun LoginContent(
 
         AuthTextField(
             value = state.password,
-            onValueChange = { onAction(LoginAction.PasswordChanged(it)) },
+            onValueChange = { onAction(AuthAction.PasswordChanged(it)) },
             placeholder = stringResource(R.string.auth_login_password_placeholder),
             isPassword = true,
             errorMessage = state.passwordError,
             imeAction = ImeAction.Done,
             keyboardActions = KeyboardActions(
-                onDone = { onAction(LoginAction.LoginClicked) }
+                onDone = { onAction(AuthAction.SubmitClicked) }
             ),
         )
 
@@ -75,18 +75,17 @@ internal fun LoginContent(
 
         AuthPrimaryButton(
             text = stringResource(R.string.auth_login_button),
-            onClick = { onAction(LoginAction.LoginClicked) },
+            onClick = { onAction(AuthAction.SubmitClicked) },
             enabled = state.isSubmitEnabled,
         )
 
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
-            onGoogleClick = { onAction(LoginAction.GoogleClicked) },
+            onGoogleClick = { onAction(AuthAction.GoogleClicked) },
             isGoogleLoading = state.isGoogleLoading,
         )
 
-        Spacer(Modifier.weight(1f))
         Spacer(Modifier.height(30.dp))
 
         AuthGuestLink(onClick = onContinueAsGuest)
