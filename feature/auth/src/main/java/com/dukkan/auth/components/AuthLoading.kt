@@ -1,7 +1,6 @@
-package com.dukkan.auth.shared.components
+package com.dukkan.auth.components
 
 
-import androidx.compose.animation.core.Ease
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat

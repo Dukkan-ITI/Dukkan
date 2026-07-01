@@ -1,6 +1,7 @@
 package com.msayeh.domain.repository
 
 import com.msayeh.domain.model.AuthUser
+import com.msayeh.domain.model.ShopifyToken
 
 interface AuthRepository {
     suspend fun login(email: String, password: String): Result<AuthUser>
@@ -8,4 +9,5 @@ interface AuthRepository {
     suspend fun loginWithGoogle(idToken: String): Result<AuthUser>
     suspend fun getCurrentUser(): AuthUser?
     suspend fun signOut()
+    suspend fun getShopifyToken(): ShopifyToken?
 }
