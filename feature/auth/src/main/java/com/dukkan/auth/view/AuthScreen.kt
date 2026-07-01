@@ -51,7 +51,6 @@ import com.dukkan.auth.components.AuthPrimaryButton
 import com.dukkan.auth.components.AuthSocialRow
 import com.dukkan.auth.components.AuthTabRow
 import com.dukkan.auth.components.AuthTextField
-import com.dukkan.auth.components.AuthVerificationHint
 import com.dukkan.auth.viewmodel.AuthAction
 import com.dukkan.auth.viewmodel.AuthEvent
 import com.dukkan.auth.viewmodel.AuthUiState
@@ -236,7 +235,6 @@ private fun AuthFormContent(
             ) {
                 Column {
                     Spacer(Modifier.height(13.dp))
-                    AuthVerificationHint()
                 }
             }
 
