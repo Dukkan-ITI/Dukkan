@@ -19,7 +19,6 @@ navigationCompose = "2.7.7"
 room = "2.8.4"
 coil = "2.7.0"
 uiTextGoogleFonts = "1.11.3"
-coil = "2.7.0"
 navigation = "2.8.8"
 ksp = "2.0.21-1.0.27"
 coroutines = "1.7.3"
@@ -45,8 +44,7 @@ uiTooling = "1.11.3"
 runtime = "1.11.3"
 foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
-uiToolingPreview = "1.11.3"
-uiTooling = "1.11.3"
+
 
 [libraries]
 
@@ -109,8 +107,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "uiToolingPreview" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
