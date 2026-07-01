@@ -1,4 +1,4 @@
-package com.dukkan.auth.shared.components
+package com.dukkan.auth.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -55,8 +55,10 @@ fun AuthTextField(
     val borderColor = when {
         hasError -> MaterialTheme.colorScheme.error
         isFocused -> MaterialTheme.colorScheme.primary
-        else -> MaterialTheme.colorScheme.outline
+        else -> MaterialTheme.colorScheme.outlineVariant
     }
+    
+    val borderWidth = if (isFocused || hasError) 2.dp else 1.dp
 
     val shape = RoundedCornerShape(14.dp)
 
@@ -83,8 +85,8 @@ fun AuthTextField(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceVariant, shape)
-                        .border(1.5.dp, borderColor, shape)
+                        .background(MaterialTheme.colorScheme.surface, shape)
+                        .border(borderWidth, borderColor, shape)
                         .padding(horizontal = 17.dp, vertical = 15.dp),
                     contentAlignment = Alignment.CenterStart,
                 ) {

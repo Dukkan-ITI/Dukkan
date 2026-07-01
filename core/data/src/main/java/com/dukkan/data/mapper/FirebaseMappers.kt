@@ -1,8 +1,10 @@
 package com.dukkan.data.mapper
 
+import com.dukkan.data.source.remote.dto.ShopifyCustomerTokenDto
 import com.dukkan.data.source.remote.dto.UserAuthDto
 import com.google.firebase.auth.FirebaseUser
 import com.msayeh.domain.model.AuthUser
+import com.msayeh.domain.model.ShopifyToken
 
 fun FirebaseUser?.toUserAuthDto(): UserAuthDto? {
     return this?.let {
@@ -22,3 +24,5 @@ fun UserAuthDto.toDomainModel(): AuthUser {
     )
 }
 
+fun ShopifyCustomerTokenDto.toDomainModel(): ShopifyToken =
+    ShopifyToken(accessToken = accessToken, expiresAt = expiresAt)

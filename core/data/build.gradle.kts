@@ -62,6 +62,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.apollo.runtime)
+    implementation(libs.androidx.datastore.preferences)
 }
 
 // Room

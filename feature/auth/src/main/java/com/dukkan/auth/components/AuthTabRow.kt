@@ -1,4 +1,4 @@
-package com.dukkan.auth.shared.components
+package com.dukkan.auth.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween

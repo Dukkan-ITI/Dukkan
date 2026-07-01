@@ -1,6 +1,12 @@
-package com.dukkan.auth.shared.components
+package com.dukkan.auth.components
 
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,10 +44,18 @@ fun AuthPrimaryButton(
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.5.sp),
-        )
+        AnimatedContent(
+            targetState = text,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+            },
+            label = "ButtonTextAnimation"
+        ) { targetText ->
+            Text(
+                text = targetText,
+                style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.5.sp),
+            )
+        }
     }
 }
 
