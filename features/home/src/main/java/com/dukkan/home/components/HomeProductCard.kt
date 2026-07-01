@@ -1,7 +1,16 @@
 package com.dukkan.home.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,10 +43,13 @@ fun HomeProductCard(
     imageUrl: String?,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onCardClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onCardClick),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
@@ -52,9 +64,9 @@ fun HomeProductCard(
                 contentDescription = title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.banner_placeholder),
-                error = painterResource(id = R.drawable.banner_placeholder),
-                fallback = painterResource(id = R.drawable.banner_placeholder),
+                placeholder = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
+                error = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
+                fallback = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
             )
 
             IconButton(

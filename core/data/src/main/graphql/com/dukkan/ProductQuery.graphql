@@ -20,14 +20,14 @@ query ProductQuery($id: ID!) {
             }
         }
         description
-        images {
+        images(first: 20) {
             nodes {
                 altText
                 url
                 thumbhash
             }
         }
-        variants {
+        variants(first: 10) {
             nodes {
                 availableForSale
                 currentlyNotInStock
