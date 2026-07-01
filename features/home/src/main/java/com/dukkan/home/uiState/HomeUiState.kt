@@ -7,6 +7,7 @@ sealed interface HomeUiState {
 
     data class Success(
         val products: List<Product>,
+        val favoriteIds: Set<String> = emptySet(),
         val endCursor: String? = null,
         val hasNextPage: Boolean = false
     ) : HomeUiState
