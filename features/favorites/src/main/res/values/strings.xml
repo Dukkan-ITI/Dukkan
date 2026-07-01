@@ -3,4 +3,8 @@
     <string name="wishlist_empty">Your wishlist is empty</string>
     <string name="wishlist_hint">Tap ♥ on any product to save it</string>
     <string name="remove_from_wishlist">Remove from wishlist</string>
+    <string name="remove_from_wishlist_title">Remove from wishlist?</string>
+    <string name="remove_from_wishlist_message">Remove "%s" from your wishlist?</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
 </resources>

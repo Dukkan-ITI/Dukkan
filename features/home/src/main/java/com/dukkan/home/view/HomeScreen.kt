@@ -1,6 +1,13 @@
 package com.dukkan.home.view
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,7 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.home.components.*
+import com.dukkan.home.components.HomeBanner
+import com.dukkan.home.components.HomeHeader
+import com.dukkan.home.components.HomeSearchBar
+import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.msayeh.domain.model.Product
@@ -24,6 +34,7 @@ import com.msayeh.domain.model.Product
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    onNavigateToProductDetails: (productId: String) -> Unit = {},
     onSeeAllClicked: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -34,6 +45,9 @@ fun HomeScreen(
         onSeeAllClicked = onSeeAllClicked,
         onFavoriteClick = { product, isFavorite ->
             viewModel.onFavoriteClick(product, isFavorite)
+        },
+        onProductClick = { product ->
+            onNavigateToProductDetails(product.id)
         }
     )
 }
@@ -43,7 +57,8 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     onSeeAllClicked: () -> Unit,
-    onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit
+    onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
+    onProductClick: (product: Product) -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -57,7 +72,7 @@ fun HomeScreenContent(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 12.dp)
         ) {
-            when (val state = uiState) {
+            when (uiState) {
                 is HomeUiState.Loading -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
@@ -70,6 +85,7 @@ fun HomeScreenContent(
                         }
                     }
                 }
+
                 is HomeUiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
@@ -79,12 +95,13 @@ fun HomeScreenContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = state.message,
+                                text = uiState.message,
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
                     }
                 }
+
                 is HomeUiState.Success -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         HomeHeader()
@@ -100,9 +117,11 @@ fun HomeScreenContent(
                     }
 
                     homeProductSection(
-                        products = state.products,
+                        products = uiState.products,
+                        favoriteIds = uiState.favoriteIds,
                         onSeeAllClick = onSeeAllClicked,
-                        onFavoriteClick = onFavoriteClick
+                        onFavoriteClick = onFavoriteClick,
+                        onProductClick = onProductClick
                     )
                 }
             }
