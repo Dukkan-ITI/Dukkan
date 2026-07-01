@@ -20,7 +20,7 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import com.dukkan.shopping_cart.R
-import com.msayeh.domain.model.CartItem
+import com.msayeh.domain.model.cart.CartLine
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
 
@@ -41,7 +41,7 @@ fun ShoppingCartView(
         onPromoCodeChange = viewModel::onPromoCodeChange,
         onApplyPromoCode = viewModel::applyPromoCode,
         onDismissRemoveDialog = viewModel::dismissRemoveDialog,
-        onConfirmRemoveItem = viewModel::confirmRemoveItem
+        onConfirmRemoveItem = viewModel::confirmRemoveItem,
     )
 }
 
@@ -50,13 +50,15 @@ private fun ShoppingCartContent(
     state: ShoppingCartState,
     onStartShoppingClick: () -> Unit,
     onCheckoutClick: () -> Unit,
-    onQuantityChanged: (CartItem, Int) -> Unit,
-    onRemoveClick: (CartItem) -> Unit,
+    onQuantityChanged: (CartLine, Int) -> Unit,
+    onRemoveClick: (CartLine) -> Unit,
     onPromoCodeChange: (String) -> Unit,
     onApplyPromoCode: () -> Unit,
     onDismissRemoveDialog: () -> Unit,
-    onConfirmRemoveItem: () -> Unit
+    onConfirmRemoveItem: () -> Unit,
 ) {
+    val cartLines = state.cart?.lines ?: emptyList()
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -78,7 +80,7 @@ private fun ShoppingCartContent(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = stringResource(R.string.items_count_format, state.cartItems.size),
+                        text = stringResource(R.string.items_count_format, cartLines.size),
                         color = Color.Gray,
                         fontSize = 16.sp,
                         modifier = Modifier.padding(bottom = 4.dp)
@@ -86,18 +88,25 @@ private fun ShoppingCartContent(
                 }
             }
 
+            if (state.isLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(), color = Color(0xFF6B8AFF))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (state.cartItems.isEmpty()) {
+                if (cartLines.isEmpty()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
                             EmptyCartState(onStartShoppingClick)
                         }
                     }
                 } else {
-                    items(state.cartItems, key = { it.id }) { item ->
+                    items(cartLines, key = { it.id }) { item ->
                         CartItemRow(
                             item = item,
                             onQuantityChanged = onQuantityChanged,
@@ -118,21 +127,39 @@ private fun ShoppingCartContent(
                     Spacer(modifier = Modifier.height(16.dp))
                     SummarySection(state)
                     
+                    val totalAmount = state.cart?.cost?.totalAmount
+                    val totalText = if (totalAmount != null)
+                        "${totalAmount.amount.toPlainString()} ${totalAmount.currencyCode}" else ""
+
                     Button(
                         onClick = onCheckoutClick,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(64.dp)
+                            .height(80.dp)
                             .padding(top = 16.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B8AFF))
                     ) {
-                        Text(
-                            text = stringResource(R.string.checkout_format, state.total),
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Checkout",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            if (totalText.isNotBlank()) {
+                                Text(
+                                    text = totalText,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
                 }
