@@ -6,13 +6,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.dukkan.home.view.HomeScreen
 import com.dukkan.auth.view.AuthScreen
 import com.dukkan.favorites.view.FavoritesView
+import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
-import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.shopping_cart.view.ShoppingCartView
-
+import com.msayeh.product_details.view.ProductDetailsScreen
+import com.dukkan.onboarding.view.OnboardingView
 
 @Composable
 fun AppNavGraph(
@@ -21,59 +21,58 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Auth.route,
+        startDestination = Screen.Auth,
         modifier = modifier
     ) {
 
-        composable(route = Screen.Onboarding.route) {
-            OnboardingView {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Onboarding.route) { inclusive = true }
-                }
-            }
-        }
+        composable<Screen.Login> {}
 
-        composable(route = Screen.Onboarding.route) {
+        composable<Screen.Onboarding> {
             OnboardingView(
                 onNavigateToLogin = {
-                    navController.navigate(Screen.Auth.route) {
-                        popUpTo(Screen.Onboarding.route) { inclusive = true }
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Onboarding> { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(route = Screen.Auth.route) {
+        composable<Screen.Auth> {
             AuthScreen(
                 onNavigateToHome = {
-                    navController.navigate(Screen.Home.route) {
-                        popUpTo(Screen.Auth.route) { inclusive = true }
+                    navController.navigate(Screen.Home) {
+                        popUpTo<Screen.Auth> { inclusive = true }
                     }
                 }
             )
         }
 
-        composable(route = Screen.Home.route) {
+        composable<Screen.SignUp> {}
+
+        composable<Screen.Home> {
             HomeScreen(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProductDetails = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
             )
         }
 
-        composable(route = Screen.Search.route) {}
+        composable<Screen.Search> {}
 
-        composable(route = Screen.Favorite.route) {
+        composable<Screen.Favorite> {
             FavoritesView()
         }
 
-        composable(route = Screen.ShoppingCart.route) {
+        composable<Screen.ShoppingCart> {
             ShoppingCartView(
-                onStartShoppingClick = { navController.navigate(Screen.Home.route) },
+                onStartShoppingClick = { navController.navigate(Screen.Home) },
                 onCheckoutClick = { }
             )
         }
 
-        composable(route = Screen.Profile.route) {}
-
-        composable(route = Screen.ProductDetail.route) {}
+        composable<Screen.ProductDetail> {
+            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
+        }
     }
 }

@@ -19,7 +19,7 @@ gradlePlugin {
         }
         register("feature") {
             id = "dukkan.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
+            implementationClass = "FeatureConventionPlugin"
         }
     }
 }
