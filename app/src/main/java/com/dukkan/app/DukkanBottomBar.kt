@@ -1,6 +1,7 @@
 package com.dukkan.app
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
@@ -36,42 +38,42 @@ import kotlin.reflect.KClass
 private enum class TopLevelDestination(
     val route: Any,
     val routeClass: KClass<*>,
-    val label: String,
+    @StringRes val label: Int,
     @DrawableRes val selectedIcon: Int,
     @DrawableRes val unselectedIcon: Int,
 ) {
     HOME(
         route = Screen.Home,
         routeClass = Screen.Home::class,
-        label = "Home",
+        label = R.string.bottom_bar_home,
         selectedIcon = R.drawable.ic_home_filled,
         unselectedIcon = R.drawable.ic_home_outlined,
     ),
     SEARCH(
         route = Screen.Search,
         routeClass = Screen.Search::class,
-        label = "Search",
+        label = R.string.bottom_bar_search,
         selectedIcon = R.drawable.ic_search_filled,
         unselectedIcon = R.drawable.ic_search_outlined,
     ),
     FAVORITE(
         route = Screen.Favorite,
         routeClass = Screen.Favorite::class,
-        label = "Favorites",
+        label = R.string.bottom_bar_favorites,
         selectedIcon = R.drawable.ic_favorite_filled,
         unselectedIcon = R.drawable.ic_favorite_outlined,
     ),
     CART(
         route = Screen.ShoppingCart,
         routeClass = Screen.ShoppingCart::class,
-        label = "Cart",
+        label = R.string.bottom_bar_cart,
         selectedIcon = R.drawable.ic_cart_filled,
         unselectedIcon = R.drawable.ic_cart_outlined,
     ),
     PROFILE(
         route = Screen.Profile,
         routeClass = Screen.Profile::class,
-        label = "Profile",
+        label = R.string.bottom_bar_profile,
         selectedIcon = R.drawable.ic_profile_filled,
         unselectedIcon = R.drawable.ic_profile_outlined,
     ),
@@ -146,7 +148,7 @@ private fun DukkanBottomBarItem(
             painter = painterResource(
                 if (selected) destination.selectedIcon else destination.unselectedIcon
             ),
-            contentDescription = destination.label,
+            contentDescription = stringResource(destination.label),
             tint = if (selected) {
                 MaterialTheme.colorScheme.primary
             } else {
