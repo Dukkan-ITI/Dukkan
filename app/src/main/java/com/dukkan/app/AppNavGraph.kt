@@ -1,19 +1,16 @@
 package com.dukkan.app
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.dukkan.home.view.HomeScreen
 import com.dukkan.favorites.view.FavoritesView
-import com.dukkan.favorites.viewmodel.FavoritesViewModel
+import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
-import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.msayeh.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -22,39 +19,40 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Onboarding.route,
+        startDestination = Screen.Home,
         modifier = modifier
     ) {
 
-        composable(route = Screen.Onboarding.route) {
-            OnboardingView {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Onboarding.route) { inclusive = true }
-                }
-            }
-        }
+        composable<Screen.Login> {}
 
-        composable(route = Screen.Login.route) {}
+        composable<Screen.SignUp> {}
 
-        composable(route = Screen.SignUp.route) {}
-
-        composable(route = Screen.Home.route) {
+        composable<Screen.Home> {
             HomeScreen(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProductDetails = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
             )
         }
 
-        composable(route = Screen.Search.route) {}
+        composable<Screen.Search> {}
 
-        composable(route = Screen.Favorite.route) {
-            val viewModel: FavoritesViewModel = hiltViewModel()
-            FavoritesView(viewModel = viewModel)
+        composable<Screen.Favorite> {}
+
+        composable<Screen.Favorite> {
+            FavoritesView()
         }
 
-        composable(route = Screen.ShoppingCart.route) {}
+        composable<Screen.ShoppingCart> {
+            ShoppingCartView(
+                onStartShoppingClick = { navController.navigate(Screen.Home) },
+                onCheckoutClick = { }
+            )
+        }
 
-        composable(route = Screen.Profile.route) {}
-
-        composable(route = Screen.ProductDetail.route) {}
+        composable<Screen.ProductDetail> {
+            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
+        }
     }
 }
