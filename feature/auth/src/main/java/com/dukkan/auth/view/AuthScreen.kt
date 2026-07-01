@@ -150,10 +150,10 @@ private fun AuthFormContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 40.dp)
             .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-            .systemBarsPadding(),
+            .systemBarsPadding()
+            .padding(top = 40.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(80.dp))
