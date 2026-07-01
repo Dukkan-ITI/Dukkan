@@ -58,12 +58,6 @@ fun AppTheme(
             content = content
         )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = DukkanTypography,
-        content = content
-    )
 }
 
 // A handy object to make accessing it look just like MaterialTheme

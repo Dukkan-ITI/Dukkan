@@ -19,25 +19,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.auth.R
-import com.dukkan.auth.register.viewmodel.RegisterAction
-import com.dukkan.auth.register.viewmodel.RegisterUiState
 import com.dukkan.auth.shared.components.AuthGuestLink
 import com.dukkan.auth.shared.components.AuthPrimaryButton
 import com.dukkan.auth.shared.components.AuthSocialRow
 import com.dukkan.auth.shared.components.AuthTextField
-import com.dukkan.auth.shared.components.AuthVerificationHint
+import com.dukkan.auth.viewmodel.AuthAction
+import com.dukkan.auth.viewmodel.AuthUiState
 
 @Composable
 internal fun RegisterContent(
-    state: RegisterUiState.Form,
-    onAction: (RegisterAction) -> Unit,
+    state: AuthUiState.Form,
+    onAction: (AuthAction) -> Unit,
     onNavigateToLogin: () -> Unit,
     onContinueAsGuest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 28.dp)
@@ -52,7 +51,7 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.name,
-            onValueChange = { onAction(RegisterAction.NameChanged(it)) },
+            onValueChange = { onAction(AuthAction.NameChanged(it)) },
             placeholder = stringResource(R.string.auth_register_name_placeholder),
             errorMessage = state.nameError,
             imeAction = ImeAction.Next,
@@ -62,7 +61,7 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.email,
-            onValueChange = { onAction(RegisterAction.EmailChanged(it)) },
+            onValueChange = { onAction(AuthAction.EmailChanged(it)) },
             placeholder = stringResource(R.string.auth_register_email_placeholder),
             errorMessage = state.emailError,
             imeAction = ImeAction.Next,
@@ -72,36 +71,33 @@ internal fun RegisterContent(
 
         AuthTextField(
             value = state.password,
-            onValueChange = { onAction(RegisterAction.PasswordChanged(it)) },
+            onValueChange = { onAction(AuthAction.PasswordChanged(it)) },
             placeholder = stringResource(R.string.auth_register_password_placeholder),
             isPassword = true,
             errorMessage = state.passwordError,
             imeAction = ImeAction.Done,
             keyboardActions = KeyboardActions(
-                onDone = { onAction(RegisterAction.RegisterClicked) }
+                onDone = { onAction(AuthAction.SubmitClicked) }
             ),
         )
 
         Spacer(Modifier.height(13.dp))
 
-        AuthVerificationHint()
-
         Spacer(Modifier.height(22.dp))
 
         AuthPrimaryButton(
             text = stringResource(R.string.auth_register_button),
-            onClick = { onAction(RegisterAction.RegisterClicked) },
+            onClick = { onAction(AuthAction.SubmitClicked) },
             enabled = state.isSubmitEnabled,
         )
 
         Spacer(Modifier.height(30.dp))
 
         AuthSocialRow(
-            onGoogleClick = { onAction(RegisterAction.GoogleClicked) },
+            onGoogleClick = { onAction(AuthAction.GoogleClicked) },
             isGoogleLoading = state.isGoogleLoading,
         )
 
-        Spacer(Modifier.weight(1f))
         Spacer(Modifier.height(30.dp))
 
         AuthGuestLink(onClick = onContinueAsGuest)

@@ -83,7 +83,7 @@ fun AuthTextField(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface, shape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant, shape)
                         .border(1.5.dp, borderColor, shape)
                         .padding(horizontal = 17.dp, vertical = 15.dp),
                     contentAlignment = Alignment.CenterStart,

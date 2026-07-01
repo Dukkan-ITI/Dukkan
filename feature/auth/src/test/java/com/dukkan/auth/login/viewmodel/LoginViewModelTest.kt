@@ -1,27 +1,32 @@
-package com.dukkan.auth.login.viewmodel
+package com.dukkan.auth.viewmodel
 
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class LoginViewModelTest {
+class AuthViewModelTest {
     @Test
     fun `login form is invalid for empty email`() {
-        val viewModel = LoginViewModel()
+        val viewModel = AuthViewModel()
 
-        viewModel.onEmailChanged("")
-        viewModel.onPasswordChanged("123456")
+        viewModel.onAction(AuthAction.EmailChanged(""))
+        viewModel.onAction(AuthAction.PasswordChanged("123456"))
 
-        assertFalse(viewModel.isLoginEnabled())
+        val state = viewModel.uiState.value as? AuthUiState.Form
+        assertFalse(state?.isSubmitEnabled == true)
     }
 
     @Test
-    fun `login form is valid for complete credentials`() {
-        val viewModel = LoginViewModel()
+    fun `register form becomes enabled with full details`() {
+        val viewModel = AuthViewModel()
 
-        viewModel.onEmailChanged("user@example.com")
-        viewModel.onPasswordChanged("123456")
+        viewModel.onAction(AuthAction.ToggleMode)
+        viewModel.onAction(AuthAction.NameChanged("Ada"))
+        viewModel.onAction(AuthAction.EmailChanged("ada@example.com"))
+        viewModel.onAction(AuthAction.PasswordChanged("123456"))
 
-        assertTrue(viewModel.isLoginEnabled())
+        val state = viewModel.uiState.value as? AuthUiState.Form
+        assertTrue(state?.isSubmitEnabled == true)
+        assertTrue(state?.isLoginMode == false)
     }
 }
