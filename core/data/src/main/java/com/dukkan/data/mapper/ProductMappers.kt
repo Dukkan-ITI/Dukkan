@@ -11,8 +11,7 @@ fun ProductQuery.Product.toDomainModel(): Product {
     return Product(
         id = id,
         title = title,
-        featuredImage = featuredImage?.toDomainModel()
-            ?: throw IllegalArgumentException("Featured image is required"),
+        featuredImage = featuredImage?.toDomainModel(),
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
         description = description,
