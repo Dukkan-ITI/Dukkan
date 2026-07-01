@@ -1,6 +1,27 @@
 plugins {
     alias(libs.plugins.android.library)
-    id("com.google.devtools.ksp")
+    id("com.apollographql.apollo").version("5.0.1")
+    id("dukkan.hilt")
+}
+
+apollo {
+    service("service") {
+        packageName.set("com.dukkan")
+
+        introspection {
+            endpointUrl.set("https://mad46-and5.myshopify.com/api/2026-04/graphql.json")
+            headers.put("X-Shopify-Storefront-Access-Token",
+                providers.gradleProperty("shopifyStorefrontToken").get()
+            )
+            schemaFile.set(file("src/main/graphql/com/dukkan/schema.json"))
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 android {
@@ -15,10 +36,20 @@ android {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "SHOPIFY_STOREFRONT_TOKEN",
+            "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
+        )
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
 }
@@ -30,12 +61,24 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    implementation(libs.apollo.runtime)
+}
 
-    val room_version = "2.8.4"
-    // Room
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+// Room
+dependencies {
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+}
 
+//firebase dependencies
+dependencies {
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+}
 
+dependencies {
+    implementation(project(":core:domain"))
 }

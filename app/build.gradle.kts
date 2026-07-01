@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.serialization)
+    id("dukkan.hilt")
 }
 
 android {
@@ -38,6 +41,16 @@ android {
 }
 
 dependencies {
+    implementation(project(":features:onboarding"))
+    implementation(project(":core:data"))
+    implementation(project(":core:navigation"))
+    implementation(project(":features:home"))
+    implementation(project(":core:domain"))
+    implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
+    implementation(project(":core:design_system"))
+
+    
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -46,6 +59,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.firebase.bom.v34150)
+    implementation(libs.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
@@ -53,7 +70,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.hilt.navigation.compose)
 
-    // Modules
-    implementation(project(":core:design_system"))
 }
