@@ -28,6 +28,7 @@ import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
+import com.msayeh.domain.model.Product
 
 @Composable
 fun HomeScreen(
@@ -38,6 +39,27 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    HomeScreenContent(
+        modifier = modifier,
+        uiState = uiState,
+        onSeeAllClicked = onSeeAllClicked,
+        onFavoriteClick = { product, isFavorite ->
+            viewModel.onFavoriteClick(product, isFavorite)
+        },
+        onProductClick = { product ->
+            onNavigateToProductDetails(product.id)
+        }
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    onSeeAllClicked: () -> Unit,
+    onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
+    onProductClick: (product: Product) -> Unit
+) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -47,10 +69,10 @@ fun HomeScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 12.dp)
         ) {
-            when (val state = uiState) {
+            when (uiState) {
                 is HomeUiState.Loading -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
@@ -73,7 +95,7 @@ fun HomeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = state.message,
+                                text = uiState.message,
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
@@ -95,15 +117,11 @@ fun HomeScreen(
                     }
 
                     homeProductSection(
-                        products = state.products,
-                        favoriteIds = state.favoriteIds,
+                        products = uiState.products,
+                        favoriteIds = uiState.favoriteIds,
                         onSeeAllClick = onSeeAllClicked,
-                        onFavoriteClick = { product, isFavorite ->
-                            viewModel.onFavoriteClick(product, isFavorite)
-                        },
-                        onProductClick = { product ->
-                            onNavigateToProductDetails(product.id)
-                        }
+                        onFavoriteClick = onFavoriteClick,
+                        onProductClick = onProductClick
                     )
                 }
             }
