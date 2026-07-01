@@ -4,6 +4,11 @@ import kotlinx.serialization.Serializable
 
 sealed class Screen {
     @Serializable
+    object Onboarding
+
+    @Serializable
+    object Auth
+    @Serializable
     object Login
 
     @Serializable

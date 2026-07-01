@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth_login_title">Welcome back</string>
+    <string name="auth_login_subtitle">Sign in to use your bag, wishlist &amp; orders — or keep browsing as a guest.</string>
+    <string name="auth_login_email_label">Email Address</string>
+    <string name="auth_login_email_placeholder">Email address</string>
+    <string name="auth_login_password_label">Password</string>
+    <string name="auth_login_password_placeholder">Password</string>
+    <string name="auth_login_button">Welcome back</string>
+    <string name="auth_login_no_account">Don\'t have an account? Register</string>
+    <string name="auth_login_error_invalid_credentials">Please fill in valid credentials.</string>
+    <string name="auth_login_loading_label">Signing in…</string>
+
+    <string name="auth_register_title">Create your account</string>
+    <string name="auth_register_subtitle">Sign in to use your bag, wishlist &amp; orders — or keep browsing as a guest.</string>
+    <string name="auth_register_name_label">Full Name</string>
+    <string name="auth_register_name_placeholder">Full name</string>
+    <string name="auth_register_email_label">Email Address</string>
+    <string name="auth_register_email_placeholder">Email address</string>
+    <string name="auth_register_password_label">Password</string>
+    <string name="auth_register_password_placeholder">Password</string>
+    <string name="auth_register_confirm_password_label">Confirm Password</string>
+    <string name="auth_register_confirm_password_placeholder">Repeat password</string>
+    <string name="auth_register_button">Create your account</string>
+    <string name="auth_register_have_account">Already have an account? Login</string>
+    <string name="auth_register_error_invalid_fields">Please fill in all fields and ensure passwords match.</string>
+    <string name="auth_register_loading_label">Creating your account…</string>
+    <string name="auth_register_verification_hint">We\'ll send a verification email to confirm your identity before your first order.</string>
+
+    <string name="auth_error_title">Something went wrong</string>
+    <string name="auth_error_retry_button">Try again</string>
+    <string name="auth_error_go_back_button">Go back</string>
+
+    <string name="auth_tab_sign_in">Sign in</string>
+    <string name="auth_tab_register">Register</string>
+
+    <string name="auth_social_google">Google</string>
+    <string name="auth_social_apple">Apple</string>
+
+    <string name="auth_guest_link_label">Continue as guest →</string>
+</resources>

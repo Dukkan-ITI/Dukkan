@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 
-interface IFirebaseAuthDataSource {
+interface FirebaseAuthDataSource {
     suspend fun loginWithEmailAndPassword(email: String, password: String): UserAuthDto?
     suspend fun registerWithEmailAndPassword(email: String, password: String): UserAuthDto?
     suspend fun loginWithGoogle(idToken: String): UserAuthDto?
@@ -14,7 +14,7 @@ interface IFirebaseAuthDataSource {
     suspend fun signOut()
 }
 
-class FirebaseAuthDataSourceImp : IFirebaseAuthDataSource {
+class FirebaseAuthDataSourceImpl : FirebaseAuthDataSource {
 
     private val auth = FirebaseAuth.getInstance()
 

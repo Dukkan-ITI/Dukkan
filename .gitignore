@@ -27,3 +27,13 @@ local.properties
 *.iml
 # Firebase config (distributed out-of-band)
 google-services.json
+
+# Agents and Binaries
+.idea/planningMode.xml
+bin/
+**/bin/
+.agents/
+skills-lock.json
+# JVM Crash Logs
+hs_err_pid*.log
+replay_pid*.log
