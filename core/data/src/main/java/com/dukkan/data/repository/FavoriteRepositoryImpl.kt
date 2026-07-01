@@ -4,7 +4,7 @@ package com.dukkan.data.repository
 
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.mapper.toEntity
-import com.dukkan.data.source.local.data_source.FavoriteLocalDataSource
+import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSource
 import com.msayeh.domain.model.FavoriteProduct
 import com.msayeh.domain.repository.FavoriteRepository
 
