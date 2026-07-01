@@ -17,5 +17,9 @@ gradlePlugin {
             id = "dukkan.hilt"
             implementationClass = "HiltConventionPlugin"
         }
+        register("feature") {
+            id = "dukkan.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
     }
 }
