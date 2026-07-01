@@ -1,8 +1,7 @@
-package com.dukkan.data.source.local.data_source
+package com.dukkan.data.source.local.data_source.favorites
 
 import com.dukkan.data.source.local.entity.FavoriteEntity
 import kotlinx.coroutines.flow.Flow
-
 
 interface FavoriteLocalDataSource {
     fun getAllFavorites(): Flow<List<FavoriteEntity>>

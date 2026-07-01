@@ -2,8 +2,8 @@ package com.dukkan.data.di
 
 
 import com.dukkan.data.repository.FavoriteRepositoryImpl
-import com.dukkan.data.source.local.data_source.FavoriteLocalDataSource
-import com.dukkan.data.source.local.data_source.FavoriteLocalDataSourceImpl
+import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSource
+import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSourceImpl
 
 import com.msayeh.domain.repository.FavoriteRepository
 import dagger.Binds
