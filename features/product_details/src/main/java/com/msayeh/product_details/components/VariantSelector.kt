@@ -108,6 +108,9 @@ private fun VariantSelectorPreview() {
             image = null,
             availableForSale = size != "L",
             quantityAvailable = 5,
+            compareAtPrice = TODO(),
+            selectedOptions = TODO(),
+            product = TODO(),
         )
     }
     AppTheme {
