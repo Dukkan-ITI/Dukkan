@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -66,6 +67,7 @@ fun ProductImagePager(
                 painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
                 contentDescription = "Image",
                 modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
         } else {
             HorizontalPager(state = pagerState) { page ->
@@ -74,6 +76,7 @@ fun ProductImagePager(
                     model = image.url,
                     contentDescription = image.altText,
                     modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
                 )
             }
         }

@@ -3,6 +3,7 @@ package com.msayeh.product_details.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dukkan.navigation.Screen
 import com.msayeh.domain.usecase.product.GetProductByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +20,7 @@ class ProductDetailsViewModel @Inject constructor(
     private val _state = MutableStateFlow(ProductDetailsState())
     val state = _state.asStateFlow()
 
-    private val productId: String =
-        checkNotNull(savedStateHandle[Screen.ProductDetail.ARG_PRODUCT_ID]) {
-            "Product ID is required"
-        }
+    private val productId: String = savedStateHandle.toRoute<Screen.ProductDetail>().productId
 
     fun getProductDetails() {
         _state.value = _state.value.copy(isLoading = true)
