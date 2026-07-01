@@ -1,6 +1,13 @@
 package com.dukkan.home.view
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -15,7 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.home.components.*
+import com.dukkan.home.components.HomeBanner
+import com.dukkan.home.components.HomeHeader
+import com.dukkan.home.components.HomeSearchBar
+import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
 
@@ -23,6 +33,7 @@ import com.dukkan.home.viewmodel.HomeViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    onNavigateToProductDetails: (productId: String) -> Unit = {},
     onSeeAllClicked: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -43,17 +54,22 @@ fun HomeScreen(
                 is HomeUiState.Loading -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
+
                 is HomeUiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(22.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(22.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -63,6 +79,7 @@ fun HomeScreen(
                         }
                     }
                 }
+
                 is HomeUiState.Success -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         HomeHeader()
@@ -83,6 +100,9 @@ fun HomeScreen(
                         onSeeAllClick = onSeeAllClicked,
                         onFavoriteClick = { product, isFavorite ->
                             viewModel.onFavoriteClick(product, isFavorite)
+                        },
+                        onProductClick = { product ->
+                            onNavigateToProductDetails(product.id)
                         }
                     )
                 }

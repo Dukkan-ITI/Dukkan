@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.design_system.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import com.dukkan.app.ui.theme.DukkanTheme
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

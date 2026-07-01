@@ -2,18 +2,15 @@ package com.dukkan.app
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
-import com.dukkan.navigation.*
+import com.dukkan.navigation.Screen
 import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.msayeh.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -32,7 +29,10 @@ fun AppNavGraph(
 
         composable<Screen.Home> {
             HomeScreen(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProductDetails = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
             )
         }
 
@@ -51,10 +51,8 @@ fun AppNavGraph(
             )
         }
 
-        composable<Screen.ProductDetail> { backStackEntry ->
-            val productDetail = backStackEntry.toRoute<Screen.ProductDetail>()
-
-//            ProductDetailScreen(productId = productDetail.productId)
+        composable<Screen.ProductDetail> {
+            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }
