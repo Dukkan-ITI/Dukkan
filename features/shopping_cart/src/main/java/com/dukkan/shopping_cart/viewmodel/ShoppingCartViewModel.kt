@@ -3,16 +3,11 @@ package com.dukkan.shopping_cart.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
-import com.msayeh.domain.model.CartItem
-import com.msayeh.domain.usecase.cart.AddToCartUseCase
-import com.msayeh.domain.usecase.cart.CalculateCartTotalsUseCase
-import com.msayeh.domain.usecase.cart.GetCartItemsUseCase
-import com.msayeh.domain.usecase.cart.RemoveFromCartUseCase
-import com.msayeh.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.msayeh.domain.model.cart.CartLine
+import com.msayeh.domain.usecase.cart.CartUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,40 +16,36 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingCartViewModel @Inject constructor(
-    private val getCartItemsUseCase: GetCartItemsUseCase,
-    private val addToCartUseCase: AddToCartUseCase,
-    private val updateCartQuantityUseCase: UpdateCartQuantityUseCase,
-    private val removeFromCartUseCase: RemoveFromCartUseCase,
-    private val calculateCartTotalsUseCase: CalculateCartTotalsUseCase
+    private val cartUseCases: CartUseCases
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ShoppingCartState())
     val state: StateFlow<ShoppingCartState> = _state.asStateFlow()
 
     init {
+        loadCart()
+    }
+
+    fun loadCart() {
         viewModelScope.launch {
-            getCartItemsUseCase().collectLatest { items ->
-                val totals = calculateCartTotalsUseCase(items)
-                _state.update {
-                    it.copy(
-                        cartItems = items,
-                        subtotal = totals.subtotal,
-                        shipping = totals.shipping,
-                        total = totals.total
-                    )
-                }
-            }
+            _state.update { it.copy(isLoading = true) }
+            val cart = cartUseCases.getCart()
+            _state.update { it.copy(cart = cart, isLoading = false) }
         }
     }
 
-    fun updateQuantity(cartItem: CartItem, newQuantity: Int) {
+
+
+    fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
         viewModelScope.launch {
-            updateCartQuantityUseCase(cartItem, newQuantity)
+            _state.update { it.copy(isLoading = true) }
+            cartUseCases.updateCartQuantity(cartLine.id, newQuantity)
+            loadCart()
         }
     }
 
-    fun showRemoveDialog(cartItem: CartItem) {
-        _state.update { it.copy(showRemoveDialogForItem = cartItem) }
+    fun showRemoveDialog(cartLine: CartLine) {
+        _state.update { it.copy(showRemoveDialogForItem = cartLine) }
     }
 
     fun dismissRemoveDialog() {
@@ -64,27 +55,34 @@ class ShoppingCartViewModel @Inject constructor(
     fun confirmRemoveItem() {
         _state.value.showRemoveDialogForItem?.let { item ->
             viewModelScope.launch {
-                removeFromCartUseCase(item.id)
-                dismissRemoveDialog()
+                _state.update { it.copy(isLoading = true, showRemoveDialogForItem = null) }
+                cartUseCases.removeFromCart(item.id)
+                loadCart()
             }
         }
     }
 
     fun onPromoCodeChange(code: String) {
-        _state.update { it.copy(promoCode = code) }
+        _state.update { it.copy(promoCode = code, promoError = null) }
     }
 
     fun applyPromoCode() {
         val code = _state.value.promoCode
         if (code.isBlank()) return
-        
+
         _state.update { it.copy(isApplyingPromo = true, promoError = null) }
         viewModelScope.launch {
-            kotlinx.coroutines.delay(1000)
-            if (code == "JUNO20") {
+            val result = cartUseCases.applyDiscountCode(code)
+            if (result.isSuccess) {
                 _state.update { it.copy(isApplyingPromo = false, promoError = null) }
+                loadCart()
             } else {
-                _state.update { it.copy(isApplyingPromo = false, promoError = "Invalid Promo Code") }
+                _state.update {
+                    it.copy(
+                        isApplyingPromo = false,
+                        promoError = result.exceptionOrNull()?.message ?: "Invalid Promo Code"
+                    )
+                }
             }
         }
     }

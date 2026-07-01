@@ -33,7 +33,10 @@ fun ProductQuery.Node1.toDomainModel(): ProductVariant {
         price = price.toDomainModel(),
         image = image?.toDomainModel(),
         availableForSale = availableForSale,
-        quantityAvailable = quantityAvailable ?: 0
+        quantityAvailable = quantityAvailable ?: 0,
+        compareAtPrice = TODO(),
+        selectedOptions = TODO(),
+        product = TODO()
     )
 }
 

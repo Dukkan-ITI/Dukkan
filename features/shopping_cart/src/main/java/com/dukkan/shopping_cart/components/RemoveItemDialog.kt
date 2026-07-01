@@ -15,11 +15,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.res.stringResource
 import com.dukkan.shopping_cart.R
-import com.msayeh.domain.model.CartItem
+import com.msayeh.domain.model.cart.CartLine
 
 @Composable
 fun RemoveItemDialog(
-    item: CartItem,
+    item: CartLine,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -42,7 +42,7 @@ fun RemoveItemDialog(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = stringResource(R.string.remove_item_message, item.title),
+                text = stringResource(R.string.remove_item_message, item.merchandise.product.title),
                 color = Color.Gray,
                 fontSize = 16.sp
             )
