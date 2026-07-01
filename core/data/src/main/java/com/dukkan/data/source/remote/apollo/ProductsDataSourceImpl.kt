@@ -1,5 +1,6 @@
 package com.dukkan.data.source.remote.apollo
 
+import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.dukkan.ProductQuery
@@ -23,6 +24,15 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
     }
 
     override suspend fun getProductById(id: String): ProductQuery.Product? {
-        return apolloClient.query(ProductQuery(id = id)).execute().data?.product
+        val response = apolloClient.query(ProductQuery(id = id)).execute()
+
+        if (response.hasErrors()) {
+            Log.e(
+                "ProductsRepositoryImpl",
+                "getProductById: Error fetching product by ID: $id, Errors: ${response.errors}"
+            )
+        }
+
+        return response.data?.product
     }
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.kotlin.serialization)
     id("dukkan.hilt")
 }
 
@@ -58,6 +59,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.firebase.bom.v34150)
     implementation(libs.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -77,8 +81,9 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":features:onboarding"))
-    implementation(project(":features:favorites"))
     implementation(project(":features:home"))
+    implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
+    implementation(project(":features:product_details"))
     implementation(project(":feature:auth"))
 }
-
