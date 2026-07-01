@@ -27,7 +27,7 @@ class ProductDetailsViewModel @Inject constructor(
     fun getProductDetails() {
         _state.value = _state.value.copy(isLoading = true)
         viewModelScope.launch {
-            getProductByIdUseCase("gid://shopify/Product/$productId").onSuccess { product ->
+            getProductByIdUseCase(productId).onSuccess { product ->
                 _state.value = _state.value.copy(isLoading = false, product = product)
             }.onFailure { error ->
                 _state.value = _state.value.copy(isLoading = false, error = error.message)

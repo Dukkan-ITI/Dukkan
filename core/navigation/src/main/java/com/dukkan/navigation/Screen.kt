@@ -1,5 +1,7 @@
 package com.dukkan.navigation
 
+import android.net.Uri
+
 sealed class Screen(val route: String) {
     object Login : Screen("login_screen")
     object SignUp : Screen("sign_up_screen")
@@ -12,6 +14,6 @@ sealed class Screen(val route: String) {
 
     object ProductDetail : Screen("product_detail_screen/{productId}") {
         const val ARG_PRODUCT_ID = "productId"
-        fun createRoute(productId: String) = "product_detail_screen/$productId"
+        fun createRoute(productId: String) = "product_detail_screen/${Uri.encode(productId)}"
     }
 }
