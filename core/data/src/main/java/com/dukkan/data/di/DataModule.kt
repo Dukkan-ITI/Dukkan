@@ -4,9 +4,10 @@ import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AuthRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
-import com.dukkan.data.source.remote.FirebaseAuthDataSourceImp
+import com.dukkan.data.source.remote.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
+import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
 import com.msayeh.domain.repository.AuthRepository
 import com.msayeh.domain.repository.ProductsRepository
 import dagger.Module
@@ -31,7 +32,7 @@ object DataModule {
     @Singleton
     @Provides
     fun provideProductsDataSource(apolloClient: ApolloClient): ProductsDataSource =
-        com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl(apolloClient)
+        ProductsDataSourceImpl(apolloClient)
 
     @Singleton
     @Provides
@@ -40,11 +41,11 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideFirebaseAuthDataSourceImpl(): FirebaseAuthDataSourceImpl =
-        FirebaseAuthDataSourceImp()
+    fun provideFirebaseAuthDataSource(): FirebaseAuthDataSource =
+        FirebaseAuthDataSourceImpl()
 
     @Singleton
     @Provides
-    fun provideAuthRepository(authDataSource: FirebaseAuthDataSourceImpl): AuthRepository =
+    fun provideAuthRepository(authDataSource: FirebaseAuthDataSource): AuthRepository =
         AuthRepositoryImpl(authDataSource)
 }
