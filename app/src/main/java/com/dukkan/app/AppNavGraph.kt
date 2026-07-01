@@ -2,24 +2,18 @@ package com.dukkan.app
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.dukkan.favorites.view.FavoritesView
-import com.dukkan.favorites.viewmodel.FavoritesViewModel
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
-import com.msayeh.product_details.view.ProductDetailsScreen
-import com.dukkan.navigation.Screen
-import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.msayeh.product_details.view.ProductDetailsScreen
 
 
 @Composable
