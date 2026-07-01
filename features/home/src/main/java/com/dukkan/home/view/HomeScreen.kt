@@ -54,7 +54,7 @@ fun HomeScreenContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 12.dp)
         ) {
             when (val state = uiState) {
