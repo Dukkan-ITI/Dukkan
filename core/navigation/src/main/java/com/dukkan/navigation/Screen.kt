@@ -1,19 +1,32 @@
 package com.dukkan.navigation
 
-import android.net.Uri
+import kotlinx.serialization.Serializable
 
-sealed class Screen(val route: String) {
-    object Login : Screen("login_screen")
-    object SignUp : Screen("sign_up_screen")
-    object Home : Screen("home_screen")
-    object Search : Screen("search_screen")
-    object Favorite : Screen("favorite_screen")
-    object ShoppingCart : Screen("shopping_cart_screen")
-    object Profile : Screen("profile_screen")
-    object Onboarding : Screen("onboarding_screen")
+sealed class Screen {
+    @Serializable
+    object Login
 
-    object ProductDetail : Screen("product_detail_screen/{productId}") {
-        const val ARG_PRODUCT_ID = "productId"
-        fun createRoute(productId: String) = "product_detail_screen/${Uri.encode(productId)}"
-    }
+    @Serializable
+    object SignUp
+
+    @Serializable
+    object Home
+
+    @Serializable
+    object Search
+
+    @Serializable
+    object Favorite
+
+    @Serializable
+    object ShoppingCart
+
+    @Serializable
+    object Profile
+
+    @Serializable
+    data class ProductDetail(val productId: String)
+
+    @Serializable
+    object AllProducts
 }
