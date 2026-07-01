@@ -88,10 +88,9 @@ fun HomeProductCard(
             }
         }
 
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
                 text = title,
@@ -101,10 +100,7 @@ fun HomeProductCard(
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .padding(end = 8.dp)
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = priceLabel,
