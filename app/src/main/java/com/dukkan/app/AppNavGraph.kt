@@ -44,11 +44,7 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(
-                        Screen.ProductDetail.createRoute(
-                            productId.split(
-                                "/"
-                            ).last()
-                        )
+                        Screen.ProductDetail.createRoute(productId)
                     )
                 }
             )
