@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.home.components.*
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
+import com.msayeh.domain.model.Product
 
 @Composable
 fun HomeScreen(
@@ -27,6 +28,23 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    HomeScreenContent(
+        modifier = modifier,
+        uiState = uiState,
+        onSeeAllClicked = onSeeAllClicked,
+        onFavoriteClick = { product, isFavorite ->
+            viewModel.onFavoriteClick(product, isFavorite)
+        }
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    modifier: Modifier = Modifier,
+    uiState: HomeUiState,
+    onSeeAllClicked: () -> Unit,
+    onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit
+) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -43,7 +61,9 @@ fun HomeScreen(
                 is HomeUiState.Loading -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().height(200.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
@@ -53,7 +73,9 @@ fun HomeScreen(
                 is HomeUiState.Error -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(22.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(22.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -80,9 +102,7 @@ fun HomeScreen(
                     homeProductSection(
                         products = state.products,
                         onSeeAllClick = onSeeAllClicked,
-                        onFavoriteClick = { product, isFavorite ->
-                            viewModel.onFavoriteClick(product, isFavorite)
-                        }
+                        onFavoriteClick = onFavoriteClick
                     )
                 }
             }
