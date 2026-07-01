@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.material)
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -40,5 +41,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom.v20240200))
+    implementation(libs.coil.compose)
     debugImplementation(libs.androidx.ui.tooling)
 }
