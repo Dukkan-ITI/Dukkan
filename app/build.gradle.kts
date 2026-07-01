@@ -73,3 +73,16 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
 }
+
+// Modules
+dependencies {
+    implementation(project(":core:design_system"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
+    implementation(project(":features:onboarding"))
+    implementation(project(":features:product_details"))
+    implementation(project(":core:domain"))
+    implementation(project(":features:home"))
+    implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
+}

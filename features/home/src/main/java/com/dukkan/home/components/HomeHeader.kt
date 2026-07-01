@@ -34,7 +34,7 @@ fun HomeHeader(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             ),
-            color = MaterialTheme.colorScheme.tertiary
+            color = MaterialTheme.colorScheme.inverseOnSurface
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
