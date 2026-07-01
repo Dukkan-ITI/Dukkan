@@ -9,12 +9,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.dukkan.home.view.HomeScreen
+import androidx.navigation.toRoute
 import com.dukkan.favorites.view.FavoritesView
-import com.dukkan.navigation.Screen
-import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.home.view.HomeScreen
+import com.dukkan.navigation.*
 import com.dukkan.shopping_cart.view.ShoppingCartView
-
 
 @Composable
 fun AppNavGraph(
@@ -23,43 +22,39 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Home,
         modifier = modifier
     ) {
 
-        composable(route = Screen.Onboarding.route) {
-            OnboardingView {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Onboarding.route) { inclusive = true }
-                }
-            }
-        }
+        composable<Screen.Login> {}
 
-        composable(route = Screen.Login.route) {}
+        composable<Screen.SignUp> {}
 
-        composable(route = Screen.SignUp.route) {}
-
-        composable(route = Screen.Home.route) {
+        composable<Screen.Home> {
             HomeScreen(
                 modifier = Modifier.fillMaxSize()
             )
         }
 
-        composable(route = Screen.Search.route) {}
+        composable<Screen.Search> {}
 
-        composable(route = Screen.Favorite.route) {
+        composable<Screen.Favorite> {}
+
+        composable<Screen.Favorite> {
             FavoritesView()
         }
 
-        composable(route = Screen.ShoppingCart.route) {
+        composable<Screen.ShoppingCart> {
             ShoppingCartView(
-                onStartShoppingClick = { navController.navigate(Screen.Home.route) },
+                onStartShoppingClick = { navController.navigate(Screen.Home) },
                 onCheckoutClick = { }
             )
         }
 
-        composable(route = Screen.Profile.route) {}
+        composable<Screen.ProductDetail> { backStackEntry ->
+            val productDetail = backStackEntry.toRoute<Screen.ProductDetail>()
 
-        composable(route = Screen.ProductDetail.route) {}
+//            ProductDetailScreen(productId = productDetail.productId)
+        }
     }
 }
