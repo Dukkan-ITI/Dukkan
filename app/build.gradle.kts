@@ -46,7 +46,9 @@ dependencies {
     implementation(project(":features:home"))
     implementation(project(":core:domain"))
     implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
     implementation(project(":core:design_system"))
+
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
