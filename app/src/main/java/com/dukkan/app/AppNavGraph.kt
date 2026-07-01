@@ -10,7 +10,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.dukkan.favorites.view.FavoritesView
+import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.*
+import com.dukkan.shopping_cart.view.ShoppingCartView
 
 @Composable
 fun AppNavGraph(
@@ -27,7 +30,7 @@ fun AppNavGraph(
 
         composable<Screen.SignUp> {}
 
-        composable(route = Screen.Home) {
+        composable<Screen.Home> {
             HomeScreen(
                 modifier = Modifier.fillMaxSize()
             )
@@ -37,11 +40,11 @@ fun AppNavGraph(
 
         composable<Screen.Favorite> {}
 
-        composable(route = Screen.Favorite) {
+        composable<Screen.Favorite> {
             FavoritesView()
         }
 
-        composable(route = Screen.ShoppingCart) {
+        composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
                 onCheckoutClick = { }
