@@ -1,12 +1,12 @@
 package com.dukkan.app
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -27,22 +27,26 @@ fun AppNavGraph(
 
         composable<Screen.SignUp> {}
 
-        composable<Screen.Home> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Greeting(name = "to Dukkan")
-            }
+        composable(route = Screen.Home) {
+            HomeScreen(
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         composable<Screen.Search> {}
 
         composable<Screen.Favorite> {}
 
-        composable<Screen.ShoppingCart> {}
+        composable(route = Screen.Favorite) {
+            FavoritesView()
+        }
 
-        composable<Screen.Profile> {}
+        composable(route = Screen.ShoppingCart) {
+            ShoppingCartView(
+                onStartShoppingClick = { navController.navigate(Screen.Home) },
+                onCheckoutClick = { }
+            )
+        }
 
         composable<Screen.ProductDetail> { backStackEntry ->
             val productDetail = backStackEntry.toRoute<Screen.ProductDetail>()

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     id("com.apollographql.apollo").version("5.0.1")
-    id("com.google.devtools.ksp")
+    id("dukkan.hilt")
 }
 
 apollo {
@@ -36,10 +36,20 @@ android {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "SHOPIFY_STOREFRONT_TOKEN",
+            "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
 }
@@ -51,16 +61,24 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation("com.apollographql.apollo:apollo-runtime:5.0.1")
+    implementation(libs.apollo.runtime)
+}
 
+// Room
+dependencies {
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+}
 
-    //firebase dependencies
+//firebase dependencies
+dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    val room_version = "2.8.4"
-    // Room
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+}
+
+dependencies {
+    implementation(project(":core:domain"))
 }
