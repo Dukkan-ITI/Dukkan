@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="add_to_favorites">أضف إلى المفضلة</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_new_in">وصل حديثاً</string>
+    <string name="filter_clothing">ملابس</string>
+    <string name="filter_shoes">أحذية</string>
+    <string name="brand_nike">نايكي</string>
+    <string name="brand_adidas">أديداس</string>
+    <string name="brand_puma">بوما</string>
+    <string name="see_all_label">عرض الكل</string>
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
 </resources>
