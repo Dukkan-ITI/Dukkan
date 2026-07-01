@@ -9,7 +9,9 @@ import androidx.navigation.NavHostController
 
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.dukkan.navigation.Screen
+import androidx.navigation.toRoute
+import com.dukkan.navigation.*
+
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -17,15 +19,15 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Screen.Home,
         modifier = modifier
     ) {
 
-        composable(route = Screen.Login.route) {}
+        composable<Screen.Login> {}
 
-        composable(route = Screen.SignUp.route) {}
+        composable<Screen.SignUp> {}
 
-        composable(route = Screen.Home.route) {
+        composable<Screen.Home> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -34,14 +36,18 @@ fun AppNavGraph(
             }
         }
 
-        composable(route = Screen.Search.route) {}
+        composable<Screen.Search> {}
 
-        composable(route = Screen.Favorite.route) {}
+        composable<Screen.Favorite> {}
 
-        composable(route = Screen.ShoppingCart.route) {}
+        composable<Screen.ShoppingCart> {}
 
-        composable(route = Screen.Profile.route) {}
+        composable<Screen.Profile> {}
 
-        composable(route = Screen.ProductDetail.route) {}
+        composable<Screen.ProductDetail> { backStackEntry ->
+            val productDetail = backStackEntry.toRoute<Screen.ProductDetail>()
+
+//            ProductDetailScreen(productId = productDetail.productId)
+        }
     }
 }
