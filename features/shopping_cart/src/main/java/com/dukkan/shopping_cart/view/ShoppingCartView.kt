@@ -76,14 +76,13 @@ private fun ShoppingCartContent(
                     Text(
                         text = stringResource(R.string.your_bag),
                         color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.headlineLarge
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = stringResource(R.string.items_count_format, state.cart?.lines?.size ?: 0),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
@@ -93,7 +92,16 @@ private fun ShoppingCartContent(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (state.cart?.lines.isNullOrEmpty()) {
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(300.dp),
+                            contentAlignment = androidx.compose.ui.Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                } else if (state.cart?.lines.isNullOrEmpty()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
                             EmptyCartState(onStartShoppingClick)
@@ -135,8 +143,7 @@ private fun ShoppingCartContent(
                     ) {
                         Text(
                             text = stringResource(R.string.checkout_format, state.cart?.cost?.totalAmount?.asString() ?: "0.00"),
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
                     Spacer(modifier = Modifier.height(24.dp))
