@@ -134,7 +134,7 @@ fun SearchScreenContent(
                         ) {
                             androidx.compose.material3.Icon(
                                 imageVector = androidx.compose.material.icons.Icons.Default.List,
-                                contentDescription = "Filters",
+                                contentDescription = stringResource(R.string.search_filters),
                                 tint = if (uiState.activeFilters.isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                             )
                         }
@@ -153,8 +153,8 @@ fun SearchScreenContent(
                                     androidx.compose.material3.InputChip(
                                         selected = true,
                                         onClick = { onApplyFilters(filters.copy(minPrice = null, maxPrice = null)) },
-                                        label = { Text("Price: ${filters.minPrice ?: 0} - ${filters.maxPrice ?: "Any"}") },
-                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                        label = { Text(stringResource(R.string.search_price_range_label, filters.minPrice ?: 0, filters.maxPrice ?: stringResource(R.string.search_any))) },
+                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) }
                                     )
                                 }
                             }
@@ -163,8 +163,8 @@ fun SearchScreenContent(
                                     androidx.compose.material3.InputChip(
                                         selected = true,
                                         onClick = { onApplyFilters(filters.copy(availableOnly = false)) },
-                                        label = { Text("In Stock") },
-                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                        label = { Text(stringResource(R.string.search_in_stock)) },
+                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) }
                                     )
                                 }
                             }
@@ -173,7 +173,7 @@ fun SearchScreenContent(
                                     selected = true,
                                     onClick = { onApplyFilters(filters.copy(vendors = filters.vendors - vendor)) },
                                     label = { Text(vendor) },
-                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) }
                                 )
                             }
                             items(filters.productTypes) { type ->
@@ -181,7 +181,7 @@ fun SearchScreenContent(
                                     selected = true,
                                     onClick = { onApplyFilters(filters.copy(productTypes = filters.productTypes - type)) },
                                     label = { Text(type) },
-                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = stringResource(R.string.search_clear)) }
                                 )
                             }
                         }

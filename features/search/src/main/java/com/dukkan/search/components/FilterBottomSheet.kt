@@ -12,7 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import com.dukkan.search.R
 import androidx.compose.ui.unit.dp
 import com.msayeh.domain.model.SearchFilter
 import com.msayeh.domain.model.SearchProduct
@@ -56,7 +58,7 @@ fun FilterBottomSheet(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Text("Filters", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.search_filters), style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(16.dp))
 
             Column(
@@ -65,7 +67,7 @@ fun FilterBottomSheet(
                     .verticalScroll(rememberScrollState())
             ) {
                 // Price Range
-                Text("Price Range", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.search_price_range), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -74,7 +76,7 @@ fun FilterBottomSheet(
                     OutlinedTextField(
                         value = minPrice,
                         onValueChange = { minPrice = it },
-                        label = { Text("Min") },
+                        label = { Text(stringResource(R.string.search_min)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                         isError = isPriceError
@@ -82,7 +84,7 @@ fun FilterBottomSheet(
                     OutlinedTextField(
                         value = maxPrice,
                         onValueChange = { maxPrice = it },
-                        label = { Text("Max") },
+                        label = { Text(stringResource(R.string.search_max)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                         isError = isPriceError
@@ -90,7 +92,7 @@ fun FilterBottomSheet(
                 }
                 if (isPriceError) {
                     Text(
-                        text = "Min price cannot be greater than Max price",
+                        text = stringResource(R.string.search_min_max_error),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.padding(top = 4.dp)
@@ -100,7 +102,7 @@ fun FilterBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Availability
-                Text("Availability", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.search_availability), style = MaterialTheme.typography.titleMedium)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -109,17 +111,17 @@ fun FilterBottomSheet(
                         checked = availableOnly,
                         onCheckedChange = { availableOnly = it }
                     )
-                    Text("In stock only")
+                    Text(stringResource(R.string.search_in_stock_only))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Vendor / Brand
-                Text("Brand / Vendor", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.search_brand_vendor), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 if (availableVendors.isEmpty()) {
                     Text(
-                        "Search for products first to filter by brand",
+                        stringResource(R.string.search_brand_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -147,11 +149,11 @@ fun FilterBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Product Type
-                Text("Product Type", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.search_product_type), style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 if (availableTypes.isEmpty()) {
                     Text(
-                        "Search for products first to filter by type",
+                        stringResource(R.string.search_type_empty),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -188,7 +190,7 @@ fun FilterBottomSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextButton(onClick = onClearFilters) {
-                    Text("Clear all")
+                    Text(stringResource(R.string.search_clear_all))
                 }
                 Button(
                     onClick = {
@@ -206,7 +208,7 @@ fun FilterBottomSheet(
                     },
                     enabled = !isPriceError
                 ) {
-                    Text(if (activeCount > 0) "Apply ($activeCount)" else "Apply")
+                    Text(if (activeCount > 0) stringResource(R.string.search_apply_with_count, activeCount) else stringResource(R.string.search_apply))
                 }
             }
         }
