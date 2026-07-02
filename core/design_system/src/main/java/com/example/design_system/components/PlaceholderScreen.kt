@@ -28,7 +28,8 @@ fun PlaceholderScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(24.dp)
+            .padding(bottom = bottomBarSpace()),
         contentAlignment = Alignment.Center,
     ) {
         Text(

@@ -20,6 +20,7 @@ import com.dukkan.favorites.components.FavoriteItem
 import com.dukkan.favorites.components.RemoveFavoriteDialog
 import com.dukkan.favorites.uistate.FavoritesUiState
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
+import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.FavoriteProduct
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -67,7 +68,7 @@ private fun FavoritesContent(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(bottom = bottomBarSpace())
     ) {
 
         item(span = { GridItemSpan(2) }) {
