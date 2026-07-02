@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.design_system.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,21 +38,21 @@ fun GuestPlaceholderScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Sign in to access $title",
+                text = stringResource(id = R.string.sign_in_access_title, title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "You need to be signed in to view and interact with your $title.",
+                text = stringResource(id = R.string.sign_in_interact_title, title),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = onSignInClick) {
-                Text("Sign In")
+                Text(stringResource(id = R.string.sign_in))
             }
         }
     }

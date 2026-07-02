@@ -23,6 +23,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.msayeh.product_details.R
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -38,7 +40,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.msayeh.domain.model.NetworkImage
-import com.msayeh.product_details.R
+
 
 /**
  * Full-bleed image gallery for the product. Swipes through [images], with a
@@ -65,7 +67,7 @@ fun ProductImagePager(
         if (images.isEmpty()) {
             Image(
                 painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
-                contentDescription = "Image",
+                contentDescription = stringResource(id = R.string.product_details_image_desc),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )

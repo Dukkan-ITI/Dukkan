@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.dukkan.shopping_cart.R
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,7 +21,7 @@ import com.dukkan.shopping_cart.components.RemoveItemDialog
 import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
-import com.dukkan.shopping_cart.R
+
 import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.CartItem
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,7 +41,7 @@ fun ShoppingCartView(
 
     if (!isLoggedIn) {
         GuestPlaceholderScreen(
-            title = "Cart",
+            title = stringResource(id = R.string.cart_title),
             onSignInClick = onSignInClick
         )
         return

@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,7 +34,7 @@ fun OnboardingPageContent(
     ) {
 
         Text(
-            text = "FEATURE 0${pageIndex + 1}",
+            text = stringResource(id = com.dukkan.onboarding.R.string.feature_page, pageIndex + 1),
             color = Color(0xFFD8FF3E),
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,

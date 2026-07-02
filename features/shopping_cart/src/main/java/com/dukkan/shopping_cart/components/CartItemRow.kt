@@ -85,7 +85,7 @@ fun CartItemRow(
     ) {
         Image(
             painter = rememberAsyncImagePainter(model = item.imageUrl),
-            contentDescription = "Product Image",
+            contentDescription = stringResource(id = R.string.product_image_desc),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(100.dp)

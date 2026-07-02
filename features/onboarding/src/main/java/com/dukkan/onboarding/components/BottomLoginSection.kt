@@ -7,7 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 
@@ -22,17 +26,15 @@ fun BottomLoginSection(
     ) {
 
         Text(
-            text = "Already shopping with us? ",
-            color = Color.White.copy(alpha = .8f),
-            fontSize = 14.sp
-        )
-
-        Text(
-            text = "Sign in",
-            color = Color.White,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = Color.White.copy(alpha = .8f))) {
+                    append(stringResource(id = com.dukkan.onboarding.R.string.already_shopping))
+                }
+                withStyle(style = SpanStyle(color = Color.White, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                    append(stringResource(id = com.dukkan.onboarding.R.string.sign_in))
+                }
+            },
             fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
                 onSignInClick()
             }
