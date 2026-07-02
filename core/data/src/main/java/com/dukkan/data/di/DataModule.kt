@@ -12,6 +12,8 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.ShopifyTokenStoreImpl
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
+import com.dukkan.data.source.remote.FirebaseStoreDataSourceImp
+import com.dukkan.data.source.remote.IFirebaseStoreDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
@@ -79,9 +81,15 @@ object DataModule {
 
     @Singleton
     @Provides
+    fun provideFirebaseStoreDataSource(): IFirebaseStoreDataSource =
+        FirebaseStoreDataSourceImp()
+
+    @Singleton
+    @Provides
     fun provideAuthRepository(
         authDataSource: FirebaseAuthDataSource,
+        firebaseStoreDataSource: IFirebaseStoreDataSource,
         shopifyAuthDataSource: ShopifyAuthDataSource,
         shopifyTokenStore: ShopifyTokenStore,
-    ): AuthRepository = AuthRepositoryImpl(authDataSource, shopifyAuthDataSource, shopifyTokenStore)
+    ): AuthRepository = AuthRepositoryImpl(authDataSource, firebaseStoreDataSource, shopifyAuthDataSource, shopifyTokenStore)
 }

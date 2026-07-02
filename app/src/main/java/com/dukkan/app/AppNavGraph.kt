@@ -20,11 +20,12 @@ import com.msayeh.product_details.view.ProductDetailsScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    startDestination: Any,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Auth,
+        startDestination = startDestination,
         modifier = modifier
     ) {
 
@@ -74,13 +75,24 @@ fun AppNavGraph(
         }
 
         composable<Screen.Favorite> {
-            FavoritesView()
+            FavoritesView(
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { }
+                onCheckoutClick = { },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -94,7 +106,6 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
                 onNavigateToOrderList = {
-                    // TODO: Navigate to order list screen when it's ready
                 }
             )
         }

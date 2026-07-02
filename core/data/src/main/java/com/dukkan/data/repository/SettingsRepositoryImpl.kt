@@ -27,4 +27,8 @@ class SettingsRepositoryImpl(private val store: SettingsStore) : SettingsReposit
     override suspend fun setCurrency(currency: AppCurrency) = store.setCurrency(currency.name)
 
     override suspend fun setLanguage(language: AppLanguage) = store.setLanguage(language.name)
+
+    override val isOnboardingCompleted: Flow<Boolean> = store.isOnboardingCompleted
+
+    override suspend fun setOnboardingCompleted(completed: Boolean) = store.setOnboardingCompleted(completed)
 }

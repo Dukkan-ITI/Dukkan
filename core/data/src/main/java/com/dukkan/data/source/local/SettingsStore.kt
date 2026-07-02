@@ -3,6 +3,7 @@ package com.dukkan.data.source.local
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -15,18 +16,16 @@ private val Context.appSettingsDataStore: DataStore<Preferences> by preferencesD
     name = "app_settings"
 )
 
-/**
- * Persists user app preferences (theme, currency, language) as raw enum names.
- * Emits null when a preference has never been set so the repository can apply defaults.
- */
 interface SettingsStore {
     val themeMode: Flow<String?>
     val currency: Flow<String?>
     val language: Flow<String?>
+    val isOnboardingCompleted: Flow<Boolean>
 
     suspend fun setThemeMode(value: String)
     suspend fun setCurrency(value: String)
     suspend fun setLanguage(value: String)
+    suspend fun setOnboardingCompleted(value: Boolean)
 }
 
 class SettingsStoreImpl @Inject constructor(
@@ -37,6 +36,7 @@ class SettingsStoreImpl @Inject constructor(
         private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
         private val KEY_CURRENCY = stringPreferencesKey("currency")
         private val KEY_LANGUAGE = stringPreferencesKey("language")
+        private val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
     }
 
     override val themeMode: Flow<String?> =
@@ -48,6 +48,9 @@ class SettingsStoreImpl @Inject constructor(
     override val language: Flow<String?> =
         context.appSettingsDataStore.data.map { it[KEY_LANGUAGE] }
 
+    override val isOnboardingCompleted: Flow<Boolean> =
+        context.appSettingsDataStore.data.map { it[KEY_ONBOARDING_COMPLETED] ?: false }
+
     override suspend fun setThemeMode(value: String) {
         context.appSettingsDataStore.edit { it[KEY_THEME_MODE] = value }
     }
@@ -58,5 +61,9 @@ class SettingsStoreImpl @Inject constructor(
 
     override suspend fun setLanguage(value: String) {
         context.appSettingsDataStore.edit { it[KEY_LANGUAGE] = value }
+    }
+
+    override suspend fun setOnboardingCompleted(value: Boolean) {
+        context.appSettingsDataStore.edit { it[KEY_ONBOARDING_COMPLETED] = value }
     }
 }

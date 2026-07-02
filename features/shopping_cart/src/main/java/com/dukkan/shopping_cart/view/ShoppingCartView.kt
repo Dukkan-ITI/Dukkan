@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.dukkan.shopping_cart.R
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,19 +21,31 @@ import com.dukkan.shopping_cart.components.RemoveItemDialog
 import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
-import com.dukkan.shopping_cart.R
+
 import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.CartItem
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
 
+import com.example.design_system.components.GuestPlaceholderScreen
+
 @Composable
 fun ShoppingCartView(
+    onSignInClick: () -> Unit,
     viewModel: ShoppingCartViewModel = hiltViewModel(),
     onStartShoppingClick: () -> Unit = {},
     onCheckoutClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
+    if (!isLoggedIn) {
+        GuestPlaceholderScreen(
+            title = stringResource(id = R.string.cart_title),
+            onSignInClick = onSignInClick
+        )
+        return
+    }
     
     ShoppingCartContent(
         state = state,
