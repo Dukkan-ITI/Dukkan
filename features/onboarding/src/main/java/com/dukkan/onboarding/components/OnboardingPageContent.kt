@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
 import com.dukkan.onboarding.model.OnboardingModel
+import com.dukkan.onboarding.R
 
 @Composable
 fun OnboardingPageContent(
@@ -34,7 +35,7 @@ fun OnboardingPageContent(
     ) {
 
         Text(
-            text = stringResource(id = com.dukkan.onboarding.R.string.feature_page, pageIndex + 1),
+            text = stringResource(id = R.string.feature_page, pageIndex + 1),
             color = Color(0xFFD8FF3E),
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
