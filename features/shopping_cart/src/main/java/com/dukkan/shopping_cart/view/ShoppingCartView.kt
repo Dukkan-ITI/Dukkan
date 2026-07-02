@@ -63,6 +63,7 @@ private fun ShoppingCartContent(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

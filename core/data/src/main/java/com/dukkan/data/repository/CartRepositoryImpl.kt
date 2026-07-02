@@ -1,6 +1,6 @@
 package com.dukkan.data.repository
 
-import com.dukkan.data.mapper.toDomain
+import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.msayeh.domain.model.cart.StoreCart
@@ -15,7 +15,7 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun getCart(): StoreCart? {
         val cartId = localDataSource.getCartId() ?: return null
         val cartResponse = remoteDataSource.getCart(cartId)
-        return cartResponse?.toDomain()
+        return cartResponse?.toDomainModel()
     }
 
     override suspend fun addCartItem(variantId: String) {
