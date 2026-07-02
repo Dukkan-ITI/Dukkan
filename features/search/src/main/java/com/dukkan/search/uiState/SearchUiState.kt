@@ -22,5 +22,7 @@ data class SearchUiState(
 
     // Filter state
     val activeFilters: com.msayeh.domain.model.SearchFilter = com.msayeh.domain.model.SearchFilter(),
-    val isFilterSheetOpen: Boolean = false
+    val isFilterSheetOpen: Boolean = false,
+    val availableVendors: List<String> = emptyList(),
+    val availableProductTypes: List<String> = emptyList()
 )

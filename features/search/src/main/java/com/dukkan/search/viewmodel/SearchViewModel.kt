@@ -85,7 +85,9 @@ class SearchViewModel @Inject constructor(
                             totalCount = result.totalCount,
                             hasNextPage = result.pageInfo.hasNextPage,
                             endCursor = result.pageInfo.endCursor,
-                            isSearchLoading = false
+                            isSearchLoading = false,
+                            availableVendors = result.products.map { it.vendor }.filter { it.isNotBlank() }.distinct(),
+                            availableProductTypes = result.products.map { it.productType }.filter { it.isNotBlank() }.distinct()
                         )
                     }
                 }
@@ -114,12 +116,15 @@ class SearchViewModel @Inject constructor(
             )
                 .onSuccess { result ->
                     _uiState.update { s ->
+                        val newResults = s.searchResults + result.products
                         s.copy(
-                            searchResults = s.searchResults + result.products,
+                            searchResults = newResults,
                             totalCount = result.totalCount,
                             hasNextPage = result.pageInfo.hasNextPage,
                             endCursor = result.pageInfo.endCursor,
-                            isLoadingMore = false
+                            isLoadingMore = false,
+                            availableVendors = newResults.map { it.vendor }.filter { it.isNotBlank() }.distinct(),
+                            availableProductTypes = newResults.map { it.productType }.filter { it.isNotBlank() }.distinct()
                         )
                     }
                 }

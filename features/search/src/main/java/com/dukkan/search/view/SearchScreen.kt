@@ -294,7 +294,8 @@ fun SearchScreenContent(
         if (uiState.isFilterSheetOpen) {
             com.dukkan.search.components.FilterBottomSheet(
                 initialFilters = uiState.activeFilters,
-                searchResults = uiState.searchResults,
+                availableVendors = uiState.availableVendors,
+                availableTypes = uiState.availableProductTypes,
                 onDismissRequest = onDismissFilters,
                 onApplyFilters = onApplyFilters,
                 onClearFilters = onClearFilters
