@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,19 +31,19 @@ fun EmptyCartState(onStartShoppingClick: () -> Unit) {
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .background(Color(0xFF4A90E2), RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(8.dp))
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = stringResource(R.string.your_bag_is_empty),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onBackground,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.start_shopping),
-            color = Color(0xFF6B8AFF),
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.clickable { onStartShoppingClick() }

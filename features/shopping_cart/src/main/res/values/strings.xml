@@ -17,4 +17,6 @@
     <string name="total">Total</string>
     <string name="free">Free</string>
     <string name="items_count_format">%d items</string>
+    <string name="discount_format">Discount (%s)</string>
+    <string name="applied">Applied ✓</string>
 </resources>

@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,14 +64,14 @@ fun CartItemRow(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color(0xFFFF6B6B), RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.error, RoundedCornerShape(20.dp))
                         .padding(horizontal = 24.dp),
                     contentAlignment = Alignment.CenterEnd
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(R.string.remove),
-                        tint = Color.White
+                        tint = MaterialTheme.colorScheme.onError
                     )
                 }
             }
@@ -79,7 +80,7 @@ fun CartItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF1E1E2A), RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(20.dp))
             .padding(16.dp)
             .heightIn(min = 130.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -101,7 +102,7 @@ fun CartItemRow(
             ) {
                 Text(
                     text = item.merchandise.product.title,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -111,7 +112,7 @@ fun CartItemRow(
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(R.string.remove),
-                    tint = Color(0xFFFF4444),
+                    tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .size(22.dp)
                         .clickable { onRemoveClick() }
@@ -120,7 +121,7 @@ fun CartItemRow(
             if (item.merchandise.title.isNotBlank() && item.merchandise.title.lowercase() != "default title") {
                 Text(
                     text = item.merchandise.title,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
             }
@@ -132,12 +133,12 @@ fun CartItemRow(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .background(Color(0xFF2C2C3E), RoundedCornerShape(20.dp))
+                        .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(20.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
                         text = "—",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         modifier = Modifier
                             .clickable {
@@ -151,14 +152,14 @@ fun CartItemRow(
                     )
                     Text(
                         text = "${item.quantity}",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Text(
                         text = "+",
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         modifier = Modifier
                             .clickable { onQuantityChanged(item, item.quantity + 1) }
@@ -168,7 +169,7 @@ fun CartItemRow(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = "${item.cost.amountPerQuantity.amount.toPlainString()} ${item.cost.amountPerQuantity.currencyCode}",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
