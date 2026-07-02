@@ -72,7 +72,12 @@ class SearchViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            searchProductsUseCase(query = trimmed, first = 20, after = null)
+            searchProductsUseCase(
+                query = trimmed,
+                first = 20,
+                after = null,
+                filters = _uiState.value.activeFilters
+            )
                 .onSuccess { result ->
                     _uiState.update { s ->
                         s.copy(
@@ -104,7 +109,8 @@ class SearchViewModel @Inject constructor(
             searchProductsUseCase(
                 query = state.submittedQuery,
                 first = 20,
-                after = state.endCursor
+                after = state.endCursor,
+                filters = state.activeFilters
             )
                 .onSuccess { result ->
                     _uiState.update { s ->
@@ -153,5 +159,33 @@ class SearchViewModel @Inject constructor(
                 isPredictiveLoading = false
             )
         }
+    }
+
+    fun onOpenFilters() {
+        _uiState.update { it.copy(isFilterSheetOpen = true) }
+    }
+
+    fun onDismissFilters() {
+        _uiState.update { it.copy(isFilterSheetOpen = false) }
+    }
+
+    fun onApplyFilters(filters: com.msayeh.domain.model.SearchFilter) {
+        _uiState.update {
+            it.copy(
+                activeFilters = filters,
+                isFilterSheetOpen = false,
+                searchResults = emptyList(),
+                endCursor = null,
+                hasNextPage = false
+            )
+        }
+        val currentQuery = _uiState.value.submittedQuery
+        if (currentQuery.isNotBlank()) {
+            onSearchSubmitted(currentQuery)
+        }
+    }
+
+    fun onClearFilters() {
+        onApplyFilters(com.msayeh.domain.model.SearchFilter())
     }
 }
