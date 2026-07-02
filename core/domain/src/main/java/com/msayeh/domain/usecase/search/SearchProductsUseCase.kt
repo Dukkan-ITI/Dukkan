@@ -10,6 +10,7 @@ class SearchProductsUseCase @Inject constructor(
     suspend operator fun invoke(
         query: String,
         first: Int = 20,
-        after: String? = null
-    ): Result<SearchResult> = searchRepository.searchProducts(query, first, after)
+        after: String? = null,
+        filters: com.msayeh.domain.model.SearchFilter? = null
+    ) = searchRepository.searchProducts(query, first, after, filters)
 }
