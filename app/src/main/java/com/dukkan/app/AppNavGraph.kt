@@ -85,7 +85,6 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
                 onNavigateToOrderList = {
-                    // TODO: Navigate to order list screen when it's ready
                 }
             )
         }

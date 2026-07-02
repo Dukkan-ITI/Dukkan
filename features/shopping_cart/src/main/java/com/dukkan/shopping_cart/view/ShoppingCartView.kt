@@ -62,7 +62,7 @@ private fun ShoppingCartContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0F0F1A))
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -74,14 +74,14 @@ private fun ShoppingCartContent(
                 Row(verticalAlignment = androidx.compose.ui.Alignment.Bottom) {
                     Text(
                         text = stringResource(R.string.your_bag),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = stringResource(R.string.items_count_format, state.cart?.lines?.size ?: 0),
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 16.sp,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
@@ -127,11 +127,13 @@ private fun ShoppingCartContent(
                             .height(64.dp)
                             .padding(top = 16.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B8AFF))
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     ) {
                         Text(
                             text = stringResource(R.string.checkout_format, state.cart?.cost?.totalAmount?.asString() ?: "0.00"),
-                            color = Color.White,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )

@@ -41,6 +41,8 @@ fun ProductDetailsScreen(
         state = state,
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
+        onFavoriteClick = viewModel::toggleFavorite,
+        onAddToCartClick = viewModel::addToCart
     )
 }
 
@@ -49,13 +51,18 @@ private fun ProductDetailsContent(
     state: ProductDetailsState,
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit,
+    onAddToCartClick: (String) -> Unit
 ) {
     when {
         state.isLoading -> LoadingScreen()
         state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
         state.product != null -> LoadedProductDetails(
             product = state.product,
+            state = state,
             onBackClick = onBackClick,
+            onFavoriteClick = onFavoriteClick,
+            onAddToCartClick = onAddToCartClick
         )
     }
 }
@@ -63,13 +70,16 @@ private fun ProductDetailsContent(
 @Composable
 private fun LoadedProductDetails(
     product: Product,
+    state: ProductDetailsState,
     onBackClick: () -> Unit,
+    onFavoriteClick: (Product, Boolean) -> Unit,
+    onAddToCartClick: (String) -> Unit
 ) {
     val images = product.images?.takeIf { it.isNotEmpty() } ?: listOf(product.featuredImage)
     val variants = product.variants.orEmpty()
 
     var selectedVariant by remember(product.id) { mutableStateOf(variants.firstOrNull()) }
-    var isFavorite by remember(product.id) { mutableStateOf(false) }
+    val isFavorite = state.favoriteIds.contains(product.id)
 
     Column(
         modifier = Modifier
@@ -85,7 +95,7 @@ private fun LoadedProductDetails(
                 images = images.mapNotNull { it },
                 isFavorite = isFavorite,
                 onBackClick = onBackClick,
-                onFavoriteClick = { isFavorite = !isFavorite },
+                onFavoriteClick = { onFavoriteClick(product, isFavorite) },
             )
 
             Column(
@@ -114,7 +124,12 @@ private fun LoadedProductDetails(
 
         AddToCartBar(
             price = selectedVariant?.price ?: product.maxPrice,
-            onAddToCart = { /* Handle add to cart */ },
+            onAddToCart = { 
+                val variantId = selectedVariant?.id ?: product.variants?.firstOrNull()?.id ?: ""
+                if (variantId.isNotEmpty()) {
+                    onAddToCartClick(variantId)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
