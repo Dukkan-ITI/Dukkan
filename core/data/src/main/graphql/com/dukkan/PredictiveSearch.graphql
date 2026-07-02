@@ -1,0 +1,28 @@
+query PredictiveSearch($query: String! = "sne") {
+    predictiveSearch(query: $query, types: [PRODUCT, COLLECTION]) {
+        products {
+            id
+            title
+            vendor
+            availableForSale
+            priceRange {
+                minVariantPrice {
+                    amount
+                    currencyCode
+                }
+            }
+            featuredImage {
+                url
+                altText
+            }
+        }
+        collections {
+            id
+            title
+            handle
+            image {
+                url
+            }
+        }
+    }
+}
