@@ -2,7 +2,6 @@ package com.dukkan.settings.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,9 +29,9 @@ fun SettingsCard(
     onLanguageSelected: (AppLanguage) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Resolve labels up-front: SegmentedChips' label lambda is not @Composable.
     val lightLabel = stringResource(R.string.profile_light)
     val darkLabel = stringResource(R.string.profile_dark)
+    val systemLabel = stringResource(R.string.profile_system)
     val englishLabel = stringResource(R.string.profile_language_english)
     val arabicLabel = stringResource(R.string.profile_language_arabic)
 
@@ -45,9 +43,15 @@ fun SettingsCard(
         Column(modifier = Modifier.padding(vertical = 4.dp)) {
             SettingRow(title = stringResource(R.string.profile_appearance)) {
                 SegmentedChips(
-                    options = listOf(ThemeMode.LIGHT, ThemeMode.DARK),
-                    selected = if (themeMode == ThemeMode.DARK) ThemeMode.DARK else ThemeMode.LIGHT,
-                    label = { mode -> if (mode == ThemeMode.DARK) darkLabel else lightLabel },
+                    options = ThemeMode.entries,
+                    selected = themeMode,
+                    label = { mode ->
+                        when (mode) {
+                            ThemeMode.LIGHT -> lightLabel
+                            ThemeMode.DARK -> darkLabel
+                            ThemeMode.SYSTEM -> systemLabel
+                        }
+                    },
                     onSelect = onThemeSelected,
                 )
             }
@@ -86,12 +90,11 @@ private fun SettingRow(
     subtitle: String? = null,
     trailing: @Composable () -> Unit,
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column {
             Text(

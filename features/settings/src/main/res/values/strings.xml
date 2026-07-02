@@ -6,6 +6,7 @@
     <string name="profile_appearance">Appearance</string>
     <string name="profile_light">Light</string>
     <string name="profile_dark">Dark</string>
+    <string name="profile_system">System</string>
 
     <string name="profile_currency">Currency</string>
     <string name="profile_currency_subtitle">Live exchange rates</string>

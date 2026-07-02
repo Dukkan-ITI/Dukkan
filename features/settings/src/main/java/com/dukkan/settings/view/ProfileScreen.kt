@@ -23,6 +23,7 @@ import com.dukkan.settings.components.SettingsCard
 import com.dukkan.settings.components.WishlistRow
 import com.dukkan.settings.viewmodel.ProfileState
 import com.dukkan.settings.viewmodel.ProfileViewModel
+import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.AppCurrency
 import com.msayeh.domain.model.AppLanguage
 import com.msayeh.domain.model.ThemeMode
@@ -67,7 +68,8 @@ private fun ProfileContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 24.dp),
+            .padding(horizontal = 20.dp, vertical = 24.dp)
+            .padding(bottom = bottomBarSpace(), top = 32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         ProfileHeader(
@@ -84,7 +86,6 @@ private fun ProfileContent(
             onLanguageSelected = onLanguageSelected,
         )
 
-        // Personal, account-bound sections are only meaningful when signed in.
         if (state.isLoggedIn) {
             OrderHistorySection(orders = state.orders, onSeeAllClick = onSeeAllClick)
 
