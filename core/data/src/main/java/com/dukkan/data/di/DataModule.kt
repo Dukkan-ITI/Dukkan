@@ -5,6 +5,9 @@ import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AuthRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
+import com.dukkan.data.repository.SettingsRepositoryImpl
+import com.dukkan.data.source.local.SettingsStore
+import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.ShopifyTokenStoreImpl
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
@@ -15,6 +18,7 @@ import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
 import com.msayeh.domain.repository.AuthRepository
 import com.msayeh.domain.repository.ProductsRepository
+import com.msayeh.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,8 +46,21 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideProductsRepository(productsDataSource: ProductsDataSource): ProductsRepository =
-        ProductsRepositoryImpl(productsDataSource)
+    fun provideProductsRepository(
+        productsDataSource: ProductsDataSource,
+        settingsRepository: SettingsRepository,
+    ): ProductsRepository =
+        ProductsRepositoryImpl(productsDataSource, settingsRepository)
+
+    @Singleton
+    @Provides
+    fun provideSettingsStore(@ApplicationContext context: Context): SettingsStore =
+        SettingsStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideSettingsRepository(settingsStore: SettingsStore): SettingsRepository =
+        SettingsRepositoryImpl(settingsStore)
 
     @Singleton
     @Provides
