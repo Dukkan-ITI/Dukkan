@@ -83,6 +83,10 @@ class ProductDetailsViewModel @Inject constructor(
             _state.update { it.copy(isAddingToCart = true) }
             try {
                 cartUseCases.addToCart(variantId)
+                _state.update { it.copy(cartAddedSuccess = true) }
+                // Reset the success flag after 3 seconds
+                kotlinx.coroutines.delay(3000)
+                _state.update { it.copy(cartAddedSuccess = false) }
             } catch (e: Exception) {
                 // Ignore error handling for now or maybe log it
             } finally {

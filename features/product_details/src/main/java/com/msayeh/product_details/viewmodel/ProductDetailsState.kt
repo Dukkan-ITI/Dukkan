@@ -7,5 +7,6 @@ data class ProductDetailsState(
     val product: Product? = null,
     val error: String? = null,
     val favoriteIds: Set<String> = emptySet(),
-    val isAddingToCart: Boolean = false
+    val isAddingToCart: Boolean = false,
+    val cartAddedSuccess: Boolean = false
 )

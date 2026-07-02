@@ -100,34 +100,43 @@ fun CartItemRow(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    text = item.merchandise.product.title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.merchandise.product.title,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "$${item.cost.amountPerQuantity.amount.toPlainString()}",
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.remove),
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .clickable { onRemoveClick() }
-                )
+                Column(horizontalAlignment = Alignment.End) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.remove),
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onRemoveClick() }
+                    )
+                    if (item.merchandise.title.isNotBlank() && item.merchandise.title.lowercase() != "default title") {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = item.merchandise.title,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
-            if (item.merchandise.title.isNotBlank() && item.merchandise.title.lowercase() != "default title") {
-                Text(
-                    text = item.merchandise.title,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 14.sp
-                )
-            }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -141,7 +150,7 @@ fun CartItemRow(
                     Text(
                         text = "—",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .clickable {
                                 if (item.quantity > 1) {
@@ -155,26 +164,18 @@ fun CartItemRow(
                     Text(
                         text = "${item.quantity}",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Text(
                         text = "+",
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .clickable { onQuantityChanged(item, item.quantity + 1) }
                             .padding(horizontal = 12.dp, vertical = 4.dp)
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "${item.cost.amountPerQuantity.amount.toPlainString()} ${item.cost.amountPerQuantity.currencyCode}",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
     }

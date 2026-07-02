@@ -14,13 +14,18 @@ class CartRepositoryImpl @Inject constructor(
     private val tokenStore: ShopifyTokenStore
 ) : CartRepository {
 
+    private var cachedCart: StoreCart? = null
+
     override suspend fun getCart(): StoreCart? {
+        if (cachedCart != null) return cachedCart
         val cartId = localDataSource.getCartId() ?: return null
         val cartResponse = remoteDataSource.getCart(cartId)
-        return cartResponse?.toDomainModel()
+        cachedCart = cartResponse?.toDomainModel()
+        return cachedCart
     }
 
     override suspend fun addCartItem(variantId: String) {
+        cachedCart = null
         var cartId = localDataSource.getCartId()
         if (cartId == null) {
             val customerAccessToken = tokenStore.getToken()?.accessToken
@@ -35,6 +40,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateCartItemQuantity(lineId: String, quantity: Int) {
+        cachedCart = null
         val cartId = localDataSource.getCartId() ?: return
         if (quantity <= 0) {
             remoteDataSource.removeCartItem(cartId, lineId)
@@ -44,6 +50,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeCartItem(lineId: String) {
+        cachedCart = null
         val cartId = localDataSource.getCartId() ?: return
         remoteDataSource.removeCartItem(cartId, lineId)
     }
@@ -60,6 +67,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun applyDiscountCode(discountCode: String): Result<Unit> {
+        cachedCart = null
         val cartId = localDataSource.getCartId()
             ?: return Result.failure(Exception("No active cart found"))
         val result = remoteDataSource.applyDiscountCode(cartId, discountCode)

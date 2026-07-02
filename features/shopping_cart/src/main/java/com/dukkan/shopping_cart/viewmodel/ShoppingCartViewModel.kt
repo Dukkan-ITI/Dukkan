@@ -28,7 +28,9 @@ class ShoppingCartViewModel @Inject constructor(
 
     fun loadCart() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            if (_state.value.cart == null) {
+                _state.update { it.copy(isLoading = true) }
+            }
             val cart = cartUseCases.getCart()
             _state.update { it.copy(cart = cart, isLoading = false) }
         }
