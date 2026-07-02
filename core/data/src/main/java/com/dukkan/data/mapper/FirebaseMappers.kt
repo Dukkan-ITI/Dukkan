@@ -7,13 +7,8 @@ import com.msayeh.domain.model.AuthUser
 import com.msayeh.domain.model.ShopifyToken
 
 fun FirebaseUser?.toUserAuthDto(): UserAuthDto? {
-    return this?.let {
-        UserAuthDto(
-            uid = it.uid,
-            email = it.email.orEmpty(),
-            name = it.displayName.orEmpty()
-        )
-    }
+    this ?: return null
+    return UserAuthDto(uid = uid, email = email ?: "", name = displayName ?: "")
 }
 
 fun UserAuthDto.toDomainModel(): AuthUser {

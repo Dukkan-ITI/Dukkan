@@ -25,14 +25,25 @@ import com.dukkan.shopping_cart.R
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
+import com.example.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun ShoppingCartView(
+    onSignInClick: () -> Unit,
     viewModel: ShoppingCartViewModel = hiltViewModel(),
     onStartShoppingClick: () -> Unit = {},
     onCheckoutClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
+    if (!isLoggedIn) {
+        GuestPlaceholderScreen(
+            title = stringResource(id = R.string.cart_title),
+            onSignInClick = onSignInClick
+        )
+        return
+    }
     
     ShoppingCartContent(
         state = state,

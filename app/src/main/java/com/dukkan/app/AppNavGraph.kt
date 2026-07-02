@@ -13,17 +13,19 @@ import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.dukkan.search.view.SearchScreen
 import com.example.design_system.components.PlaceholderScreen
 import com.msayeh.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    startDestination: Any,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Auth,
+        startDestination = startDestination,
         modifier = modifier
     ) {
 
@@ -56,22 +58,41 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.Search)
                 }
             )
         }
 
         composable<Screen.Search> {
-            PlaceholderScreen(title = "Search", modifier = Modifier.fillMaxSize())
+            SearchScreen(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProductDetails = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
+            )
         }
 
         composable<Screen.Favorite> {
-            FavoritesView()
+            FavoritesView(
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { }
+                onCheckoutClick = { },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                }
             )
         }
 

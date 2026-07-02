@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.onboarding.components.BottomSection
 
 import com.dukkan.onboarding.components.GradientOverlay
@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingView(
-    viewModel: OnboardingViewModel = viewModel(),
+    viewModel: OnboardingViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit
 ) {
 
@@ -32,7 +32,9 @@ fun OnboardingView(
 
     OnboardingContent(
         pages = state.pages,
-        onNavigateToLogin = onNavigateToLogin
+        onNavigateToLogin = {
+            viewModel.completeOnboarding(onNavigateToLogin)
+        }
     )
 }
 

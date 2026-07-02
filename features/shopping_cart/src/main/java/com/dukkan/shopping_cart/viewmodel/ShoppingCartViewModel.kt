@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.msayeh.domain.model.cart.CartLine
+import com.msayeh.domain.usecase.GetCurrentUserUseCase
 import com.msayeh.domain.usecase.cart.CartUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,27 +17,33 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingCartViewModel @Inject constructor(
-    private val cartUseCases: CartUseCases
+    private val cartUseCases: CartUseCases,
+    private val getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
+
+    private val _isLoggedIn = MutableStateFlow(false)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     private val _state = MutableStateFlow(ShoppingCartState())
     val state: StateFlow<ShoppingCartState> = _state.asStateFlow()
 
     init {
-        loadCart()
-    }
-
-    fun loadCart() {
         viewModelScope.launch {
-            if (_state.value.cart == null) {
-                _state.update { it.copy(isLoading = true) }
+            val user = getCurrentUser()
+            _isLoggedIn.value = user != null
+            if (user != null) {
+                loadCart()
             }
-            val cart = cartUseCases.getCart()
-            _state.update { it.copy(cart = cart, isLoading = false) }
         }
     }
 
-
+    private suspend fun loadCart() {
+        if (_state.value.cart == null) {
+            _state.update { it.copy(isLoading = true) }
+        }
+        val cart = cartUseCases.getCart()
+        _state.update { it.copy(cart = cart, isLoading = false) }
+    }
 
     fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
         viewModelScope.launch {

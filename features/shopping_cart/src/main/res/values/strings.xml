@@ -1,4 +1,5 @@
 <resources>
+    <string name="cart_title">Shopping Cart</string>
     <string name="your_bag">Your bag</string>
     <string name="add_dummy">Add Dummy</string>
     <string name="checkout_format">Checkout • $%s</string>
