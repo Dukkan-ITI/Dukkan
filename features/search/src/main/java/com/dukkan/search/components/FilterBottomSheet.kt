@@ -21,7 +21,8 @@ import com.msayeh.domain.model.SearchProduct
 @Composable
 fun FilterBottomSheet(
     initialFilters: SearchFilter,
-    searchResults: List<SearchProduct>,
+    availableVendors: List<String>,
+    availableTypes: List<String>,
     onDismissRequest: () -> Unit,
     onApplyFilters: (SearchFilter) -> Unit,
     onClearFilters: () -> Unit
@@ -32,12 +33,7 @@ fun FilterBottomSheet(
     var selectedVendors by remember { mutableStateOf(initialFilters.vendors.toSet()) }
     var selectedTypes by remember { mutableStateOf(initialFilters.productTypes.toSet()) }
 
-    val availableVendors = remember(searchResults) {
-        searchResults.map { it.vendor }.filter { it.isNotBlank() }.distinct()
-    }
-    val availableTypes = remember(searchResults) {
-        searchResults.map { it.productType }.filter { it.isNotBlank() }.distinct()
-    }
+
 
     val minVal = minPrice.toDoubleOrNull()
     val maxVal = maxPrice.toDoubleOrNull()
