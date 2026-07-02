@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.dukkan.app
 
 import androidx.annotation.DrawableRes
@@ -32,6 +34,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dukkan.navigation.Screen
 import com.example.design_system.components.FloatingBottomBarHeight
 import com.example.design_system.components.FloatingBottomBarMargin
+import kotlinx.serialization.ExperimentalSerializationApi
 
 /**
  * The top-level destinations reachable from the bottom navigation bar, in display order.
@@ -39,9 +42,9 @@ import com.example.design_system.components.FloatingBottomBarMargin
 private enum class TopLevelDestination(
     val route: Any,
     val routeName: String,
-    @StringRes val label: Int,
-    @DrawableRes val selectedIcon: Int,
-    @DrawableRes val unselectedIcon: Int,
+    @param:StringRes val label: Int,
+    @param:DrawableRes val selectedIcon: Int,
+    @param:DrawableRes val unselectedIcon: Int,
 ) {
     HOME(
         route = Screen.Home,
