@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.res.stringResource
+import com.dukkan.auth.R
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +36,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import com.example.design_system.theme.AppTheme
 
 @Composable
@@ -43,6 +48,8 @@ fun AuthTextField(
     placeholder: String,
     modifier: Modifier = Modifier,
     isPassword: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onTogglePasswordVisibility: (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -74,7 +81,7 @@ fun AuthTextField(
             ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             interactionSource = interactionSource,
-            visualTransformation = if (isPassword) PasswordVisualTransformation()
+            visualTransformation = if (isPassword && !isPasswordVisible) PasswordVisualTransformation()
             else VisualTransformation.None,
             keyboardOptions = KeyboardOptions(
                 keyboardType = if (isPassword) KeyboardType.Password else keyboardType,
@@ -82,22 +89,45 @@ fun AuthTextField(
             ),
             keyboardActions = keyboardActions,
             decorationBox = { innerTextField ->
-                Box(
+                androidx.compose.foundation.layout.Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surface, shape)
-                        .border(borderWidth, borderColor, shape)
-                        .padding(horizontal = 17.dp, vertical = 15.dp),
-                    contentAlignment = Alignment.CenterStart,
+                        .border(borderWidth, borderColor, shape),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (value.isEmpty()) {
-                        Text(
-                            text = placeholder,
-                            style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.5.sp),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 17.dp, vertical = 15.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (value.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.5.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
+                    if (isPassword && onTogglePasswordVisibility != null) {
+                        androidx.compose.material3.IconButton(
+                            onClick = onTogglePasswordVisibility,
+                            modifier = Modifier.padding(end = 4.dp)
+                        ) {
+                            val icon = if (isPasswordVisible) {
+                                Icons.Filled.Visibility
+                            } else {
+                                Icons.Filled.VisibilityOff
+                            }
+                            androidx.compose.material3.Icon(
+                                imageVector = icon,
+                                contentDescription = if (isPasswordVisible) stringResource(R.string.auth_content_description_hide_password) else stringResource(R.string.auth_content_description_show_password),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             },
         )
