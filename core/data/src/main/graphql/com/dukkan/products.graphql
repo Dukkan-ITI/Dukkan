@@ -1,4 +1,4 @@
-query Products($first: Int = 10, $after: String) {
+query Products($first: Int = 10, $after: String, $country: CountryCode!, $language: LanguageCode!) @inContext(country: $country, language: $language) {
     products(first: $first, after: $after) {
         pageInfo {
             hasNextPage
