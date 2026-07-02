@@ -1,7 +1,6 @@
 package com.dukkan.data.repository
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
@@ -44,11 +43,9 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 firebaseStoreDataSource.saveUser(user)
             } catch (e: Exception) {
-                Log.w("AuthRepo", "Firestore saveUser failed (non-fatal): ${e.message}")
             }
 
             val shopifyCreated = shopifyAuthDataSource.createShopifyCustomer(email, password, firstName, lastName)
-            Log.d("AuthRepo", "Shopify customer created: $shopifyCreated")
 
             fetchAndStoreShopifyToken(email, password)
 
@@ -66,7 +63,6 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 firebaseStoreDataSource.saveUser(user)
             } catch (e: Exception) {
-                Log.w("AuthRepo", "Firestore saveUser failed (non-fatal): ${e.message}")
             }
 
             val syntheticPassword = "GAuth_${user.uid}!"
@@ -82,9 +78,6 @@ class AuthRepositoryImpl @Inject constructor(
             
             if (shopifyToken != null) {
                 shopifyTokenStore.saveToken(shopifyToken)
-                Log.d("AuthRepo", "Shopify token stored via synthetic password. Token: ${shopifyToken.accessToken}")
-            } else {
-                Log.w("AuthRepo", "Failed to get Shopify token for Google user. (They may have registered previously with an email/password)")
             }
 
             Result.success(user.toDomainModel())
@@ -97,9 +90,6 @@ class AuthRepositoryImpl @Inject constructor(
         val token = shopifyAuthDataSource.createCustomerTokenWithMultipass(multipassToken)
         if (token != null) {
             shopifyTokenStore.saveToken(token)
-            Log.d("AuthRepo", "Shopify token stored via Multipass. Token is: ${token.accessToken}")
-        } else {
-            Log.w("AuthRepo", "Multipass token exchange failed (token is null)")
         }
     }
 
@@ -129,7 +119,6 @@ class AuthRepositoryImpl @Inject constructor(
                 stored.toDomainModel()
             }
         } catch (e: Exception) {
-            Log.e("AuthRepo", "Error parsing token expiry: ${e.message}")
             stored.toDomainModel()
         }
     }
@@ -139,12 +128,8 @@ class AuthRepositoryImpl @Inject constructor(
             val token = shopifyAuthDataSource.createCustomerToken(email, password)
             if (token != null) {
                 shopifyTokenStore.saveToken(token)
-                Log.d("AuthRepo", "Shopify token stored successfully. Token is: ${token.accessToken}")
-            } else {
-                Log.w("AuthRepo", "Shopify token was null — not stored")
             }
         } catch (e: Exception) {
-            Log.w("AuthRepo", "fetchAndStoreShopifyToken failed (non-fatal): ${e.message}")
         }
     }
 }
