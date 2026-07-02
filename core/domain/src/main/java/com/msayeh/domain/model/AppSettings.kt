@@ -16,7 +16,6 @@ enum class ThemeMode {
  */
 enum class AppCurrency(val code: String, val countryCode: String) {
     USD("USD", "US"),
-    EUR("EUR", "DE"),
     GBP("EGP", "EG"),
 }
 
