@@ -1,5 +1,16 @@
-query SearchProducts($query: String! = "sneaker", $first: Int! = 20, $after: String) {
-    search(query: $query, first: $first, after: $after, types: [PRODUCT]) {
+query SearchProducts(
+    $query: String! = "sneaker",
+    $first: Int! = 20,
+    $after: String,
+    $filters: [ProductFilter!]
+) {
+    search(
+        query: $query,
+        first: $first,
+        after: $after,
+        types: [PRODUCT],
+        productFilters: $filters
+    ) {
         totalCount
         pageInfo {
             hasNextPage
@@ -11,6 +22,7 @@ query SearchProducts($query: String! = "sneaker", $first: Int! = 20, $after: Str
                     id
                     title
                     vendor
+                    productType
                     availableForSale
                     priceRange {
                         minVariantPrice {
