@@ -14,6 +14,11 @@ android {
         }
     }
 
+
+    lint {
+        abortOnError = true
+    }
+
     defaultConfig {
         applicationId = "com.dukkan.app"
         minSdk = 24
