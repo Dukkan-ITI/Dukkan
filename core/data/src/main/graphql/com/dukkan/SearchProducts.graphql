@@ -1,0 +1,41 @@
+query SearchProducts($query: String! = "sneaker", $first: Int! = 20, $after: String) {
+    search(query: $query, first: $first, after: $after, types: [PRODUCT]) {
+        totalCount
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        edges {
+            node {
+                ... on Product {
+                    id
+                    title
+                    vendor
+                    availableForSale
+                    priceRange {
+                        minVariantPrice {
+                            amount
+                            currencyCode
+                        }
+                    }
+                    featuredImage {
+                        url
+                        altText
+                    }
+                    variants(first: 5) {
+                        nodes {
+                            id
+                            title
+                            availableForSale
+                            quantityAvailable
+                            price {
+                                amount
+                                currencyCode
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
