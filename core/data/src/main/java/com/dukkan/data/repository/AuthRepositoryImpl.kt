@@ -19,7 +19,6 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val user = authDataSource.loginWithEmailAndPassword(email, password)
             if (user != null) {
-                // Best-effort: create and persist Shopify token — never fails the login result
                 val shopifyToken = shopifyAuthDataSource.createCustomerToken(email, password)
                 if (shopifyToken != null) shopifyTokenStore.saveToken(shopifyToken)
                 Result.success(user.toDomainModel())
@@ -35,7 +34,6 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val user = authDataSource.registerWithEmailAndPassword(email, password)
             if (user != null) {
-                // Best-effort: create and persist Shopify token — never fails the register result
                 val shopifyToken = shopifyAuthDataSource.createCustomerToken(email, password)
                 if (shopifyToken != null) shopifyTokenStore.saveToken(shopifyToken)
                 Result.success(user.toDomainModel())
