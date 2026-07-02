@@ -15,9 +15,10 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun searchProducts(
         query: String,
         first: Int,
-        after: String?
+        after: String?,
+        filters: com.msayeh.domain.model.SearchFilter?
     ): Result<SearchResult> = runCatching {
-        searchDataSource.searchProducts(query, first, after)
+        searchDataSource.searchProducts(query, first, after, filters)
             ?.toSearchResult()
             ?: SearchResult(emptyList(), com.msayeh.domain.model.PageInfo(false, null), 0)
     }
