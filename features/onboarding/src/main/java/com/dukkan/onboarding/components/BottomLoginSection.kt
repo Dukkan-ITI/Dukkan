@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
+import com.dukkan.onboarding.R
 
 @Composable
 fun BottomLoginSection(
@@ -28,10 +29,10 @@ fun BottomLoginSection(
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Color.White.copy(alpha = .8f))) {
-                    append(stringResource(id = com.dukkan.onboarding.R.string.already_shopping))
+                    append(stringResource(id = R.string.already_shopping))
                 }
                 withStyle(style = SpanStyle(color = Color.White, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
-                    append(stringResource(id = com.dukkan.onboarding.R.string.sign_in))
+                    append(stringResource(id = R.string.sign_in))
                 }
             },
             fontSize = 14.sp,
