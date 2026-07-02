@@ -18,13 +18,17 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.content.Context
+import com.dukkan.search.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchProductsUseCase: SearchProductsUseCase,
-    private val predictiveSearchUseCase: PredictiveSearchUseCase
+    private val predictiveSearchUseCase: PredictiveSearchUseCase,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -95,7 +99,7 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { s ->
                         s.copy(
                             isSearchLoading = false,
-                            error = e.localizedMessage ?: "Search failed"
+                            error = e.localizedMessage ?: context.getString(R.string.search_failed)
                         )
                     }
                 }
@@ -132,7 +136,7 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { s ->
                         s.copy(
                             isLoadingMore = false,
-                            error = e.localizedMessage ?: "Load more failed"
+                            error = e.localizedMessage ?: context.getString(R.string.search_load_more_failed)
                         )
                     }
                 }
