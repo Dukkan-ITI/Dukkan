@@ -20,6 +20,7 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import com.dukkan.shopping_cart.R
+import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.CartItem
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
@@ -88,7 +89,8 @@ private fun ShoppingCartContent(
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(bottom = bottomBarSpace())
             ) {
                 if (state.cartItems.isEmpty()) {
                     item {
@@ -134,7 +136,6 @@ private fun ShoppingCartContent(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }

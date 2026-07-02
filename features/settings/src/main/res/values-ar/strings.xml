@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_sign_in">تسجيل الدخول</string>
+    <string name="profile_sign_in_subtitle">الوصول إلى طلباتك وقائمة أمنياتك</string>
+
+    <string name="profile_appearance">المظهر</string>
+    <string name="profile_light">فاتح</string>
+    <string name="profile_dark">داكن</string>
+    <string name="profile_system">النظام</string>
+
+    <string name="profile_currency">العملة</string>
+    <string name="profile_currency_subtitle">أسعار صرف حية</string>
+
+    <string name="profile_language">اللغة</string>
+    <string name="profile_language_english">English</string>
+    <string name="profile_language_arabic">العربية</string>
+
+    <string name="profile_order_history">سجل الطلبات</string>
+
+    <string name="profile_my_wishlist">قائمة أمنياتي</string>
+    <string name="profile_saved_addresses">العناوين المحفوظة</string>
+    <string name="profile_edit">تعديل</string>
+    <string name="profile_log_out">تسجيل الخروج</string>
+    <string name="profile_see_all">عرض الكل</string>
+</resources>

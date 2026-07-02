@@ -28,6 +28,7 @@ import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
+import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.Product
 
 @Composable
@@ -73,7 +74,7 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = 12.dp)
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = bottomBarSpace())
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {

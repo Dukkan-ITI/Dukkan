@@ -1,0 +1,15 @@
+plugins {
+    id("dukkan.feature")
+}
+
+android {
+    namespace = "com.dukkan.settings"
+}
+
+dependencies {
+    implementation(project(":core:design_system"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:navigation"))
+
+    implementation(libs.androidx.compose.material.icons.core)
+}

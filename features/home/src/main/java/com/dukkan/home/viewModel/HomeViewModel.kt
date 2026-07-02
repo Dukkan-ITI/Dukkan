@@ -7,6 +7,8 @@ import com.msayeh.domain.model.Product
 import com.msayeh.domain.usecase.favorite.GetFavoritesUseCase
 import com.msayeh.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.msayeh.domain.usecase.product.GetProductsUseCase
+import com.msayeh.domain.usecase.settings.GetCurrencyUseCase
+import com.msayeh.domain.usecase.settings.GetLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dukkan.home.uiState.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,7 +26,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    getFavorites: GetFavoritesUseCase
+    getFavorites: GetFavoritesUseCase,
+    getCurrency: GetCurrencyUseCase,
+    getLanguage: GetLanguageUseCase,
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
@@ -52,7 +57,17 @@ class HomeViewModel @Inject constructor(
     private var hasNextPage: Boolean = false
 
     init {
-        loadInitialProducts()
+        // Reload products whenever the selected currency or language changes so the
+        // Shopify @inContext presentment currency / localized content stays in sync.
+        viewModelScope.launch {
+            combine(getCurrency(), getLanguage()) { currency, language -> currency to language }
+                .distinctUntilChanged()
+                .collect {
+                    endCursor = null
+                    hasNextPage = false
+                    loadInitialProducts()
+                }
+        }
     }
 
     fun loadInitialProducts() {
