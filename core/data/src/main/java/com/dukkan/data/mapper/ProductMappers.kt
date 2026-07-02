@@ -5,6 +5,7 @@ import com.dukkan.ProductsQuery
 import com.msayeh.domain.model.Money
 import com.msayeh.domain.model.NetworkImage
 import com.msayeh.domain.model.Product
+import com.msayeh.domain.model.ProductSummary
 import com.msayeh.domain.model.ProductVariant
 
 fun ProductQuery.Product.toDomainModel(): Product {
@@ -33,9 +34,9 @@ fun ProductQuery.Node1.toDomainModel(): ProductVariant {
         image = image?.toDomainModel(),
         availableForSale = availableForSale,
         quantityAvailable = quantityAvailable ?: 0,
-        compareAtPrice = TODO(),
-        selectedOptions = TODO(),
-        product = TODO()
+        compareAtPrice = null,
+        selectedOptions = emptyList(),
+        product = ProductSummary(id = "", title = "", vendor = "")
     )
 }
 
