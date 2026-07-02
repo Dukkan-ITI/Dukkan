@@ -16,7 +16,7 @@ env:
 
 jobs:
   android-build:
-    name: Android Build
+    name: Android Build & Lint
     runs-on: ubuntu-latest
     timeout-minutes: 40
 
@@ -60,6 +60,19 @@ jobs:
 
       - name: Build Android App
         run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
+
+      - name: Run Android Lint
+        run: ./gradlew :app:lintDebug --stacktrace --no-daemon
+
+      - name: Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-lint-report
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-debug.xml
+          if-no-files-found: warn
 
       - name: Upload Android APK
         if: github.event_name == 'push'
