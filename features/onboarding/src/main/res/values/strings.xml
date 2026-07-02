@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="already_shopping">Already shopping with us? </string>
+    <string name="sign_in">Sign in</string>
+    <string name="feature_page">FEATURE %02d</string>
+    <string name="skip">Skip</string>
+</resources>
