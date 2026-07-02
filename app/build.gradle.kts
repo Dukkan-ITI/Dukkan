@@ -86,4 +86,5 @@ dependencies {
     implementation(project(":features:shopping_cart"))
     implementation(project(":features:product_details"))
     implementation(project(":feature:auth"))
+    implementation(project(":features:search"))
 }

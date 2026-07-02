@@ -35,7 +35,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToProductDetails: (productId: String) -> Unit = {},
-    onSeeAllClicked: () -> Unit = {}
+    onSeeAllClicked: () -> Unit = {},
+    onSearchClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -43,6 +44,7 @@ fun HomeScreen(
         modifier = modifier,
         uiState = uiState,
         onSeeAllClicked = onSeeAllClicked,
+        onSearchClick = onSearchClick,
         onFavoriteClick = { product, isFavorite ->
             viewModel.onFavoriteClick(product, isFavorite)
         },
@@ -57,6 +59,7 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
     onSeeAllClicked: () -> Unit,
+    onSearchClick: () -> Unit = {},
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
     onProductClick: (product: Product) -> Unit
 ) {
@@ -107,7 +110,7 @@ fun HomeScreenContent(
                         HomeHeader()
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeSearchBar()
+                        HomeSearchBar(onSearchClick = onSearchClick)
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Spacer(modifier = Modifier.height(10.dp))
