@@ -87,7 +87,8 @@ fun CartItemRow(
     ) {
         AsyncImage(
             model = item.merchandise.image?.url,
-            contentDescription = item.merchandise.image?.altText ?: "Product Image",
+            contentDescription = item.merchandise.image?.altText
+                ?: stringResource(R.string.product_image_content_desc),
             contentScale = ContentScale.Crop,
             placeholder = painterResource(R.drawable.ic_placeholder),
             error = painterResource(R.drawable.ic_placeholder),
@@ -111,7 +112,10 @@ fun CartItemRow(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "$${item.cost.amountPerQuantity.amount.toPlainString()}",
+                        text = stringResource(
+                            R.string.price_format,
+                            item.cost.amountPerQuantity.amount.toPlainString(),
+                        ),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.titleMedium
                     )
@@ -148,7 +152,7 @@ fun CartItemRow(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = "—",
+                        text = stringResource(R.string.quantity_decrease),
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
@@ -168,7 +172,7 @@ fun CartItemRow(
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Text(
-                        text = "+",
+                        text = stringResource(R.string.quantity_increase),
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier

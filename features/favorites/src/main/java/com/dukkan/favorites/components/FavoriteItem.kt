@@ -93,7 +93,7 @@ fun FavoriteItem(
                     .padding(end = 8.dp)
             )
             Text(
-                text = "${product.price} ${product.currencyCode}",
+                text = stringResource(R.string.price_with_currency_format, product.price, product.currencyCode),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 14.sp

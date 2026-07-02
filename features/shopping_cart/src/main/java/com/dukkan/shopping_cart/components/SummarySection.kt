@@ -49,7 +49,12 @@ fun SummarySection(state: ShoppingCartState) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.subtotal), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
-            Text("$subtotalRaw $currency", color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.amount_with_currency_format, subtotalRaw, currency),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -76,9 +81,11 @@ fun SummarySection(state: ShoppingCartState) {
                         fontSize = 15.sp
                     )
                     Text(
-                        text = "-${
-                            String.format("%.2f", discountVal)
-                        } $currency",
+                        text = stringResource(
+                            R.string.discount_amount_format,
+                            String.format("%.2f", discountVal),
+                            currency,
+                        ),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
@@ -107,7 +114,12 @@ fun SummarySection(state: ShoppingCartState) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(stringResource(R.string.total), color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text("$totalRaw $currency", color = MaterialTheme.colorScheme.onSurface, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+            Text(
+                stringResource(R.string.amount_with_currency_format, totalRaw, currency),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
         }
     }
 }

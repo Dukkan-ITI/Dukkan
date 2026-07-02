@@ -38,8 +38,7 @@ class ProductDetailsViewModel @Inject constructor(
     private val productId: String = savedStateHandle.toRoute<Screen.ProductDetail>().productId
 
     init {
-        // Refetch whenever the selected currency or language changes (and once on start)
-        // so the product's presentment currency / localized content stays in sync.
+
         viewModelScope.launch {
             combine(getCurrency(), getLanguage()) { currency, language -> currency to language }
                 .distinctUntilChanged()
@@ -84,11 +83,9 @@ class ProductDetailsViewModel @Inject constructor(
             try {
                 cartUseCases.addToCart(variantId)
                 _state.update { it.copy(cartAddedSuccess = true) }
-                // Reset the success flag after 3 seconds
                 kotlinx.coroutines.delay(3000)
                 _state.update { it.copy(cartAddedSuccess = false) }
             } catch (e: Exception) {
-                // Ignore error handling for now or maybe log it
             } finally {
                 _state.update { it.copy(isAddingToCart = false) }
             }

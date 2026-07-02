@@ -153,7 +153,11 @@ private fun ShoppingCartContent(
                         )
                     ) {
                         Text(
-                            text = stringResource(R.string.checkout_format, state.cart?.cost?.totalAmount?.asString() ?: "0.00"),
+                            text = stringResource(
+                                R.string.checkout_format,
+                                state.cart?.cost?.totalAmount?.asString()
+                                    ?: stringResource(R.string.default_amount),
+                            ),
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
