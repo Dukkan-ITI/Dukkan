@@ -8,46 +8,46 @@ import com.msayeh.domain.model.ProductSummary
 import com.msayeh.domain.model.ProductVariant
 import com.msayeh.domain.model.cart.*
 
-fun GetCartQuery.Cart.toDomain(): StoreCart = StoreCart(
+fun GetCartQuery.Cart.toDomainModel(): StoreCart = StoreCart(
     id = id,
     checkoutUrl = checkoutUrl.toString(),
     totalQuantity = totalQuantity,
-    discountCodes = discountCodes.map { it.toDomain() },
-    cost = cost.toDomain(),
-    lines = lines.edges.map { it.node.toDomain() }
+    discountCodes = discountCodes.map { it.toDomainModel() },
+    cost = cost.toDomainModel(),
+    lines = lines.edges.map { it.node.toDomainModel() }
 )
 
-private fun GetCartQuery.DiscountCode.toDomain(): DiscountCode = DiscountCode(
+private fun GetCartQuery.DiscountCode.toDomainModel(): DiscountCode = DiscountCode(
     code = code,
     applicable = applicable
 )
 
-private fun GetCartQuery.Cost.toDomain(): CartCost = CartCost(
+private fun GetCartQuery.Cost.toDomainModel(): CartCost = CartCost(
     subtotalAmount = subtotalAmount.moneyFields.toMoney(),
     totalAmount = totalAmount.moneyFields.toMoney(),
     totalTaxAmount = totalTaxAmount?.moneyFields?.toMoney(),
     checkoutChargeAmount = checkoutChargeAmount.moneyFields.toMoney()
 )
 
-private fun GetCartQuery.Node.toDomain(): CartLine {
+private fun GetCartQuery.Node.toDomainModel(): CartLine {
     val variantFragment = merchandise.onProductVariant
         ?: error("Unsupported merchandise type for cart line $id")
 
     return CartLine(
         id = id,
         quantity = quantity,
-        cost = cost.toDomain(),
-        merchandise = variantFragment.toDomain()
+        cost = cost.toDomainModel(),
+        merchandise = variantFragment.toDomainModel()
     )
 }
 
-private fun GetCartQuery.Cost1.toDomain(): CartLineCost = CartLineCost(
+private fun GetCartQuery.Cost1.toDomainModel(): CartLineCost = CartLineCost(
     totalAmount = totalAmount.moneyFields.toMoney(),
     amountPerQuantity = amountPerQuantity.moneyFields.toMoney(),
     compareAtAmountPerQuantity = compareAtAmountPerQuantity?.moneyFields?.toMoney()
 )
 
-private fun GetCartQuery.OnProductVariant.toDomain(): ProductVariant = ProductVariant(
+private fun GetCartQuery.OnProductVariant.toDomainModel(): ProductVariant = ProductVariant(
     id = id,
     title = title,
     price = price.moneyFields.toMoney(),

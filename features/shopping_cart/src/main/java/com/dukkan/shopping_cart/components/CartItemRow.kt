@@ -1,6 +1,5 @@
 package com.dukkan.shopping_cart.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.dukkan.shopping_cart.R
 import com.msayeh.domain.model.cart.CartLine
 
@@ -85,10 +85,12 @@ fun CartItemRow(
             .heightIn(min = 130.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(model = item.merchandise.image?.url ?: ""),
+        AsyncImage(
+            model = item.merchandise.image?.url,
             contentDescription = item.merchandise.image?.altText ?: "Product Image",
             contentScale = ContentScale.Crop,
+            placeholder = painterResource(R.drawable.ic_placeholder),
+            error = painterResource(R.drawable.ic_placeholder),
             modifier = Modifier
                 .size(110.dp)
                 .clip(RoundedCornerShape(16.dp))
