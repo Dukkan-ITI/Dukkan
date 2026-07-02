@@ -17,4 +17,6 @@
     <string name="total">Total</string>
     <string name="free">Free</string>
     <string name="items_count_format">%d items</string>
+    <string name="cart_title">Cart</string>
+    <string name="product_image_desc">Product Image</string>
 </resources>

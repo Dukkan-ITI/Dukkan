@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -16,7 +17,7 @@ fun SkipButton(
 ) {
 
     Text(
-        text = "Skip",
+        text = stringResource(id = com.dukkan.onboarding.R.string.skip),
         color = Color.White.copy(
             alpha = if (visible) .8f else 0f
         ),

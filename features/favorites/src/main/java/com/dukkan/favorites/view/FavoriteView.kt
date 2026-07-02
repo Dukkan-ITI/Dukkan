@@ -12,6 +12,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.dukkan.favorites.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +40,7 @@ fun FavoritesView(
 
     if (!isLoggedIn) {
         GuestPlaceholderScreen(
-            title = "Wishlist",
+            title = stringResource(id = R.string.wishlist_title),
             onSignInClick = onSignInClick,
             modifier = modifier
         )
@@ -90,14 +92,14 @@ private fun FavoritesContent(
                 modifier = Modifier.padding(bottom = 8.dp)
             ) {
                 Text(
-                    text = "Wishlist",
+                    text = stringResource(id = R.string.wishlist_title),
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = "${favorites.size} saved",
+                    text = stringResource(id = R.string.wishlist_saved_count, favorites.size),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f),
                     modifier = Modifier.padding(bottom = 3.dp)
