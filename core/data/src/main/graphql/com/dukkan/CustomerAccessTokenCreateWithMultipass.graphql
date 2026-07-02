@@ -1,0 +1,13 @@
+mutation CustomerAccessTokenCreateWithMultipass($multipassToken: String!) {
+  customerAccessTokenCreateWithMultipass(multipassToken: $multipassToken) {
+    customerAccessToken {
+      accessToken
+      expiresAt
+    }
+    customerUserErrors {
+      code
+      field
+      message
+    }
+  }
+}

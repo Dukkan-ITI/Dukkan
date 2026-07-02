@@ -31,7 +31,14 @@ class MainActivity : AppCompatActivity() {
             val appViewModel: AppViewModel = hiltViewModel()
             val themeMode by appViewModel.themeMode.collectAsState()
             val language by appViewModel.language.collectAsState()
-            val darkTheme = when (themeMode) {
+            val startDestination by appViewModel.startDestination.collectAsState()
+
+            if (themeMode == null || language == null || startDestination == null) {
+                // Wait for DataStore to load
+                return@setContent
+            }
+
+            val darkTheme = when (themeMode!!) {
                 ThemeMode.DARK -> true
                 ThemeMode.LIGHT -> false
                 ThemeMode.SYSTEM -> isSystemInDarkTheme()
@@ -39,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
             LaunchedEffect(language) {
                 AppCompatDelegate.setApplicationLocales(
-                    LocaleListCompat.forLanguageTags(language.tag)
+                    LocaleListCompat.forLanguageTags(language!!.tag)
                 )
             }
 
@@ -51,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AppNavGraph(
                         navController = navController,
+                        startDestination = startDestination!!,
                         modifier = Modifier.fillMaxSize()
                     )
                     if (showBottomBar) {

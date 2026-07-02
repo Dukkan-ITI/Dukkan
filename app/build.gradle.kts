@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
@@ -87,7 +88,5 @@ dependencies {
     implementation(project(":features:product_details"))
     implementation(project(":features:settings"))
     implementation(project(":feature:auth"))
-
-    // Required at runtime for the per-app locale service declared in the manifest.
-    implementation(libs.androidx.appcompat)
+    implementation(project(":features:search"))
 }

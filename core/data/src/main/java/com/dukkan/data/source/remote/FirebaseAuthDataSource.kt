@@ -7,8 +7,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 
 interface FirebaseAuthDataSource {
-    suspend fun loginWithEmailAndPassword(email: String, password: String): UserAuthDto?
-    suspend fun registerWithEmailAndPassword(email: String, password: String): UserAuthDto?
+    suspend fun loginWithEmailAndPassword(email: String, password: String): UserAuthDto
+    suspend fun registerWithEmailAndPassword(email: String, password: String, name: String): UserAuthDto
     suspend fun loginWithGoogle(idToken: String): UserAuthDto?
     suspend fun getCurrentUser(): UserAuthDto?
     suspend fun signOut()
@@ -21,25 +21,25 @@ class FirebaseAuthDataSourceImpl : FirebaseAuthDataSource {
     override suspend fun loginWithEmailAndPassword(
         email: String,
         password: String
-    ): UserAuthDto? {
-        return try {
-            val result = auth.signInWithEmailAndPassword(email, password).await()
-            result.user.toUserAuthDto()
-        } catch (_: Exception) {
-            null
-        }
+    ): UserAuthDto {
+        val result = auth.signInWithEmailAndPassword(email, password).await()
+        return result.user.toUserAuthDto() ?: throw Exception("User data is null")
     }
 
     override suspend fun registerWithEmailAndPassword(
         email: String,
-        password: String
-    ): UserAuthDto? {
-        return try {
-            val result = auth.createUserWithEmailAndPassword(email, password).await()
-            result.user.toUserAuthDto()
-        } catch (_: Exception) {
-            null
-        }
+        password: String,
+        name: String
+    ): UserAuthDto {
+        val result = auth.createUserWithEmailAndPassword(email, password).await()
+        val user = result.user ?: throw Exception("User data is null")
+        
+        val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+        user.updateProfile(profileUpdates).await()
+        
+        return UserAuthDto(uid = user.uid, email = user.email ?: "", name = name)
     }
 
     override suspend fun loginWithGoogle(idToken: String): UserAuthDto? {
