@@ -16,10 +16,6 @@ private val Context.appSettingsDataStore: DataStore<Preferences> by preferencesD
     name = "app_settings"
 )
 
-/**
- * Persists user app preferences (theme, currency, language) as raw enum names.
- * Emits null when a preference has never been set so the repository can apply defaults.
- */
 interface SettingsStore {
     val themeMode: Flow<String?>
     val currency: Flow<String?>
