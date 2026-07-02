@@ -18,5 +18,9 @@ data class SearchUiState(
     val endCursor: String? = null,
     val isSearchLoading: Boolean = false,
     val isLoadingMore: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+
+    // Filter state
+    val activeFilters: com.msayeh.domain.model.SearchFilter = com.msayeh.domain.model.SearchFilter(),
+    val isFilterSheetOpen: Boolean = false
 )

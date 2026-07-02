@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -57,7 +61,11 @@ fun SearchScreen(
         },
         onCollectionClick = { collection ->
             viewModel.onSearchSubmitted(collection.title)
-        }
+        },
+        onOpenFilters = viewModel::onOpenFilters,
+        onDismissFilters = viewModel::onDismissFilters,
+        onApplyFilters = viewModel::onApplyFilters,
+        onClearFilters = viewModel::onClearFilters
     )
 }
 
@@ -69,7 +77,11 @@ fun SearchScreenContent(
     onSearchSubmit: (String) -> Unit,
     onLoadMore: () -> Unit,
     onProductClick: (com.msayeh.domain.model.SearchProduct) -> Unit,
-    onCollectionClick: (com.msayeh.domain.model.SearchCollection) -> Unit
+    onCollectionClick: (com.msayeh.domain.model.SearchCollection) -> Unit,
+    onOpenFilters: () -> Unit,
+    onDismissFilters: () -> Unit,
+    onApplyFilters: (com.msayeh.domain.model.SearchFilter) -> Unit,
+    onClearFilters: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -101,12 +113,80 @@ fun SearchScreenContent(
             // Search bar + dropdown in a Box to allow overlay
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column {
-                    SearchBar(
-                        query = uiState.queryInput,
-                        onQueryChange = onQueryChange,
-                        onSearchSubmit = onSearchSubmit,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                    )
+                    androidx.compose.foundation.layout.Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                    ) {
+                        SearchBar(
+                            query = uiState.queryInput,
+                            onQueryChange = onQueryChange,
+                            onSearchSubmit = onSearchSubmit,
+                            modifier = Modifier.weight(1f)
+                        )
+                        androidx.compose.material3.IconButton(
+                            onClick = onOpenFilters,
+                            colors = androidx.compose.material3.IconButtonDefaults.iconButtonColors(
+                                containerColor = if (uiState.activeFilters.isActive) MaterialTheme.colorScheme.primaryContainer else androidx.compose.ui.graphics.Color.Transparent
+                            )
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = androidx.compose.material.icons.Icons.Default.List,
+                                contentDescription = "Filters",
+                                tint = if (uiState.activeFilters.isActive) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    }
+
+                    if (uiState.activeFilters.isActive) {
+                        androidx.compose.foundation.lazy.LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)
+                        ) {
+                            val filters = uiState.activeFilters
+                            if (filters.minPrice != null || filters.maxPrice != null) {
+                                item {
+                                    androidx.compose.material3.InputChip(
+                                        selected = true,
+                                        onClick = { onApplyFilters(filters.copy(minPrice = null, maxPrice = null)) },
+                                        label = { Text("Price: ${filters.minPrice ?: 0} - ${filters.maxPrice ?: "Any"}") },
+                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                    )
+                                }
+                            }
+                            if (filters.availableOnly) {
+                                item {
+                                    androidx.compose.material3.InputChip(
+                                        selected = true,
+                                        onClick = { onApplyFilters(filters.copy(availableOnly = false)) },
+                                        label = { Text("In Stock") },
+                                        trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                    )
+                                }
+                            }
+                            items(filters.vendors) { vendor ->
+                                androidx.compose.material3.InputChip(
+                                    selected = true,
+                                    onClick = { onApplyFilters(filters.copy(vendors = filters.vendors - vendor)) },
+                                    label = { Text(vendor) },
+                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                )
+                            }
+                            items(filters.productTypes) { type ->
+                                androidx.compose.material3.InputChip(
+                                    selected = true,
+                                    onClick = { onApplyFilters(filters.copy(productTypes = filters.productTypes - type)) },
+                                    label = { Text(type) },
+                                    trailingIcon = { androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Default.Close, contentDescription = "Clear") }
+                                )
+                            }
+                        }
+                    }
+
                     if (showDropdown) {
                         PredictiveSuggestionsDropdown(
                             products = uiState.predictiveProducts,
@@ -209,6 +289,16 @@ fun SearchScreenContent(
                     }
                 }
             }
+        }
+
+        if (uiState.isFilterSheetOpen) {
+            com.dukkan.search.components.FilterBottomSheet(
+                initialFilters = uiState.activeFilters,
+                searchResults = uiState.searchResults,
+                onDismissRequest = onDismissFilters,
+                onApplyFilters = onApplyFilters,
+                onClearFilters = onClearFilters
+            )
         }
     }
 }
