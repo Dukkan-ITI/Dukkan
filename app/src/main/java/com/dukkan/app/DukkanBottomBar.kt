@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -33,59 +32,59 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dukkan.navigation.Screen
 import com.example.design_system.components.FloatingBottomBarHeight
 import com.example.design_system.components.FloatingBottomBarMargin
-import kotlin.reflect.KClass
 
 /**
  * The top-level destinations reachable from the bottom navigation bar, in display order.
  */
 private enum class TopLevelDestination(
     val route: Any,
-    val routeClass: KClass<*>,
+    val routeName: String,
     @StringRes val label: Int,
     @DrawableRes val selectedIcon: Int,
     @DrawableRes val unselectedIcon: Int,
 ) {
     HOME(
         route = Screen.Home,
-        routeClass = Screen.Home::class,
+        routeName = Screen.Home.serializer().descriptor.serialName,
         label = R.string.bottom_bar_home,
         selectedIcon = R.drawable.ic_home_filled,
         unselectedIcon = R.drawable.ic_home_outlined,
     ),
     SEARCH(
         route = Screen.Search,
-        routeClass = Screen.Search::class,
+        routeName = Screen.Search.serializer().descriptor.serialName,
         label = R.string.bottom_bar_search,
         selectedIcon = R.drawable.ic_search_filled,
         unselectedIcon = R.drawable.ic_search_outlined,
     ),
     FAVORITE(
         route = Screen.Favorite,
-        routeClass = Screen.Favorite::class,
+        routeName = Screen.Favorite.serializer().descriptor.serialName,
         label = R.string.bottom_bar_favorites,
         selectedIcon = R.drawable.ic_favorite_filled,
         unselectedIcon = R.drawable.ic_favorite_outlined,
     ),
     CART(
         route = Screen.ShoppingCart,
-        routeClass = Screen.ShoppingCart::class,
+        routeName = Screen.ShoppingCart.serializer().descriptor.serialName,
         label = R.string.bottom_bar_cart,
         selectedIcon = R.drawable.ic_cart_filled,
         unselectedIcon = R.drawable.ic_cart_outlined,
     ),
     PROFILE(
         route = Screen.Profile,
-        routeClass = Screen.Profile::class,
+        routeName = Screen.Profile.serializer().descriptor.serialName,
         label = R.string.bottom_bar_profile,
         selectedIcon = R.drawable.ic_profile_filled,
         unselectedIcon = R.drawable.ic_profile_outlined,
     ),
 }
 
+private fun NavDestination.matches(dest: TopLevelDestination): Boolean =
+    hierarchy.any { it.route == dest.routeName }
+
 fun isTopLevelDestination(destination: NavDestination?): Boolean =
-    TopLevelDestination.entries.any { dest ->
-        destination?.hierarchy?.any { it.hasRoute(dest.routeClass) } == true
-    }
+    TopLevelDestination.entries.any { dest -> destination?.matches(dest) == true }
 
 @Composable
 fun DukkanBottomBar(
@@ -113,8 +112,7 @@ fun DukkanBottomBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TopLevelDestination.entries.forEach { dest ->
-                val selected =
-                    currentDestination?.hierarchy?.any { it.hasRoute(dest.routeClass) } == true
+                val selected = currentDestination?.matches(dest) == true
                 DukkanBottomBarItem(
                     destination = dest,
                     selected = selected,
