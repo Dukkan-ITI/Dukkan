@@ -21,15 +21,13 @@ class SearchDataSourceImpl @Inject constructor(
         if (availableOnly) {
             filters += ProductFilter(available = Optional.present(true))
         }
-        minPrice?.let { min ->
-            maxPrice?.let { max ->
-                filters += ProductFilter(
-                    price = Optional.present(PriceRangeFilter(
-                        min = Optional.present(min),
-                        max = Optional.present(max)
-                    ))
-                )
-            }
+        if (minPrice != null || maxPrice != null) {
+            filters += ProductFilter(
+                price = Optional.present(PriceRangeFilter(
+                    min = Optional.presentIfNotNull(minPrice),
+                    max = Optional.presentIfNotNull(maxPrice)
+                ))
+            )
         }
         vendors.forEach { vendor ->
             filters += ProductFilter(productVendor = Optional.present(vendor))
