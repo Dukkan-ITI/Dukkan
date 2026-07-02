@@ -24,13 +24,26 @@ import com.example.design_system.components.bottomBarSpace
 import com.msayeh.domain.model.FavoriteProduct
 import androidx.hilt.navigation.compose.hiltViewModel
 
+import com.example.design_system.components.GuestPlaceholderScreen
+
 @Composable
 fun FavoritesView(
+    onSignInClick: () -> Unit,
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val productToRemove by viewModel.showRemoveDialogForProduct.collectAsState()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
+    if (!isLoggedIn) {
+        GuestPlaceholderScreen(
+            title = "Wishlist",
+            onSignInClick = onSignInClick,
+            modifier = modifier
+        )
+        return
+    }
 
     Column(
         modifier = modifier
