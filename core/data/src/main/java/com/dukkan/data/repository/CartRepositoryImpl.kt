@@ -1,6 +1,7 @@
 package com.dukkan.data.repository
 
 import com.dukkan.data.mapper.toDomainModel
+import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.msayeh.domain.model.cart.StoreCart
@@ -9,7 +10,8 @@ import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
     private val localDataSource: CartLocalDataSource,
-    private val remoteDataSource: CartRemoteDataSource
+    private val remoteDataSource: CartRemoteDataSource,
+    private val tokenStore: ShopifyTokenStore
 ) : CartRepository {
 
     override suspend fun getCart(): StoreCart? {
@@ -21,7 +23,8 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun addCartItem(variantId: String) {
         var cartId = localDataSource.getCartId()
         if (cartId == null) {
-            val createdCart = remoteDataSource.createCart()
+            val customerAccessToken = tokenStore.getToken()?.accessToken
+            val createdCart = remoteDataSource.createCart(customerAccessToken)
             cartId = createdCart?.cart?.id
             cartId?.let { localDataSource.saveCartId(it) }
         }
