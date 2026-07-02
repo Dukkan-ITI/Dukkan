@@ -9,4 +9,9 @@
     <string name="brand_puma">بوما</string>
     <string name="see_all_label">عرض الكل</string>
     <string name="add_to_favorites">إضافة إلى المفضلة</string>
+
+    <string name="profile_order_items">%1$d عناصر</string>
+    <string name="profile_order_status_delivered">تم التوصيل</string>
+    <string name="profile_order_status_in_transit">قيد الشحن</string>
+
 </resources>

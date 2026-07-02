@@ -9,4 +9,8 @@
     <string name="brand_puma">Puma</string>
     <string name="see_all_label">See All</string>
     <string name="add_to_favorites">Add to Favorites</string>
+
+    <string name="profile_order_items">%1$d items</string>
+    <string name="profile_order_status_delivered">Delivered</string>
+    <string name="profile_order_status_in_transit">In transit</string>
 </resources>
