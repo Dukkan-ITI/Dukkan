@@ -1,8 +1,11 @@
 package com.dukkan.shopping_cart.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dukkan.shopping_cart.R
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.msayeh.domain.model.cart.CartLine
 import com.msayeh.domain.usecase.GetCurrentUserUseCase
 import com.msayeh.domain.usecase.cart.CartUseCases
@@ -18,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ShoppingCartViewModel @Inject constructor(
     private val cartUseCases: CartUseCases,
-    private val getCurrentUser: GetCurrentUserUseCase
+    private val getCurrentUser: GetCurrentUserUseCase,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _isLoggedIn = MutableStateFlow(false)
@@ -47,10 +51,21 @@ class ShoppingCartViewModel @Inject constructor(
 
     fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { state ->
+                val cart = state.cart ?: return@update state
+                val updatedLines = cart.lines.map { line ->
+                    if (line.id == cartLine.id) line.copy(quantity = newQuantity) else line
+                }
+                state.copy(cart = cart.copy(lines = updatedLines))
+            }
             cartUseCases.updateCartQuantity(cartLine.id, newQuantity)
-            loadCart()
+            refreshCart()
         }
+    }
+
+    private suspend fun refreshCart() {
+        val cart = cartUseCases.getCart()
+        _state.update { it.copy(cart = cart) }
     }
 
     fun showRemoveDialog(cartLine: CartLine) {
@@ -89,7 +104,8 @@ class ShoppingCartViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isApplyingPromo = false,
-                        promoError = result.exceptionOrNull()?.message ?: "Invalid Promo Code"
+                        promoError = result.exceptionOrNull()?.message
+                            ?: context.getString(R.string.invalid_promo_code)
                     )
                 }
             }

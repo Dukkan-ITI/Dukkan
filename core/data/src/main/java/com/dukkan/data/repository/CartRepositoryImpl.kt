@@ -1,5 +1,6 @@
 package com.dukkan.data.repository
 
+import android.util.Log
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
@@ -29,9 +30,20 @@ class CartRepositoryImpl @Inject constructor(
         var cartId = localDataSource.getCartId()
         if (cartId == null) {
             val customerAccessToken = tokenStore.getToken()?.accessToken
+            Log.d(TAG, "First add to cart — creating cart (hasAccessToken=${customerAccessToken != null})")
+            if (customerAccessToken != null) {
+                Log.d(TAG, "First add to cart — using customer access token: $customerAccessToken")
+            } else {
+                Log.w(TAG, "First add to cart — no customer access token, creating guest cart")
+            }
             val createdCart = remoteDataSource.createCart(customerAccessToken)
             cartId = createdCart?.cart?.id
-            cartId?.let { localDataSource.saveCartId(it) }
+            if (cartId != null) {
+                localDataSource.saveCartId(cartId)
+                Log.d(TAG, "First add to cart — cart created with id: $cartId")
+            } else {
+                Log.e(TAG, "First add to cart — cart creation failed")
+            }
         }
         
         if (cartId != null) {
@@ -87,5 +99,9 @@ class CartRepositoryImpl @Inject constructor(
         } else {
             Result.success(Unit)
         }
+    }
+
+    private companion object {
+        const val TAG = "DukkanCart"
     }
 }
