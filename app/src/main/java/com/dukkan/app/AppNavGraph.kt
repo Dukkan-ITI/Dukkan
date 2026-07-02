@@ -13,6 +13,7 @@ import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.dukkan.search.view.SearchScreen
 import com.example.design_system.components.PlaceholderScreen
 import com.msayeh.product_details.view.ProductDetailsScreen
 
@@ -57,12 +58,20 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
+                },
+                onSearchClick = {
+                    navController.navigate(Screen.Search)
                 }
             )
         }
 
         composable<Screen.Search> {
-            PlaceholderScreen(title = "Search", modifier = Modifier.fillMaxSize())
+            SearchScreen(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToProductDetails = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
+            )
         }
 
         composable<Screen.Favorite> {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_content_description">بحث</string>
+    <string name="search_placeholder">ابحث عن منتجات…</string>
+    <string name="search_empty_initial">ابحث عن المنتجات</string>
+    <string name="search_empty_no_results">لا توجد نتائج لـ "%s"</string>
+    <string name="search_empty_try_different">جرب كلمة مفتاحية أخرى</string>
+    <string name="search_predictive_products_header">منتجات</string>
+    <string name="search_predictive_collections_header">مجموعات</string>
+    <string name="search_results_count">%1$d نتيجة لـ "%2$s"</string>
+    <string name="search_filters">عوامل التصفية</string>
+    <string name="search_price_range">نطاق السعر</string>
+    <string name="search_min">الحد الأدنى</string>
+    <string name="search_max">الحد الأقصى</string>
+    <string name="search_min_max_error">لا يمكن أن يكون الحد الأدنى أكبر من الحد الأقصى</string>
+    <string name="search_availability">التوفر</string>
+    <string name="search_in_stock_only">متوفر في المخزون فقط</string>
+    <string name="search_brand_vendor">العلامة التجارية / البائع</string>
+    <string name="search_brand_empty">ابحث عن المنتجات أولاً للتصفية حسب العلامة التجارية</string>
+    <string name="search_product_type">نوع المنتج</string>
+    <string name="search_type_empty">ابحث عن المنتجات أولاً للتصفية حسب النوع</string>
+    <string name="search_clear_all">مسح الكل</string>
+    <string name="search_apply">تطبيق</string>
+    <string name="search_apply_with_count">تطبيق (%1$d)</string>
+    <string name="search_price_range_label">السعر: %1$s - %2$s</string>
+    <string name="search_any">أي</string>
+    <string name="search_in_stock">متوفر</string>
+    <string name="search_clear">مسح</string>
+    <string name="search_failed">فشل البحث</string>
+    <string name="search_load_more_failed">فشل تحميل المزيد</string>
+</resources>

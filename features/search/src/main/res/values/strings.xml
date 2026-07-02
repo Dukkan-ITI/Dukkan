@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_content_description">Search</string>
+    <string name="search_placeholder">Search products…</string>
+    <string name="search_empty_initial">Search for products</string>
+    <string name="search_empty_no_results">No results for "%s"</string>
+    <string name="search_empty_try_different">Try a different keyword</string>
+    <string name="search_predictive_products_header">Products</string>
+    <string name="search_predictive_collections_header">Collections</string>
+    <string name="search_results_count">%1$d results for "%2$s"</string>
+    <string name="search_filters">Filters</string>
+    <string name="search_price_range">Price Range</string>
+    <string name="search_min">Min</string>
+    <string name="search_max">Max</string>
+    <string name="search_min_max_error">Min price cannot be greater than Max price</string>
+    <string name="search_availability">Availability</string>
+    <string name="search_in_stock_only">In stock only</string>
+    <string name="search_brand_vendor">Brand / Vendor</string>
+    <string name="search_brand_empty">Search for products first to filter by brand</string>
+    <string name="search_product_type">Product Type</string>
+    <string name="search_type_empty">Search for products first to filter by type</string>
+    <string name="search_clear_all">Clear all</string>
+    <string name="search_apply">Apply</string>
+    <string name="search_apply_with_count">Apply (%1$d)</string>
+    <string name="search_price_range_label">Price: %1$s - %2$s</string>
+    <string name="search_any">Any</string>
+    <string name="search_in_stock">In Stock</string>
+    <string name="search_clear">Clear</string>
+    <string name="search_failed">Search failed</string>
+    <string name="search_load_more_failed">Load more failed</string>
+</resources>
