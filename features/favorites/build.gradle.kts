@@ -36,6 +36,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
 
     implementation(project(":core:domain"))
+    implementation(project(":core:design_system"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)

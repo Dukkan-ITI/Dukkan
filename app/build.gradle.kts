@@ -50,7 +50,7 @@ dependencies {
     implementation(project(":features:shopping_cart"))
     implementation(project(":core:design_system"))
 
-    
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -85,6 +85,7 @@ dependencies {
     implementation(project(":features:favorites"))
     implementation(project(":features:shopping_cart"))
     implementation(project(":features:product_details"))
+    implementation(project(":features:settings"))
     implementation(project(":feature:auth"))
     implementation(project(":features:search"))
 }

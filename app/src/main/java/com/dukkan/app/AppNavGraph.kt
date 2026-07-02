@@ -10,11 +10,12 @@ import com.dukkan.auth.view.AuthScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
+import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
 import com.dukkan.search.view.SearchScreen
 import com.example.design_system.components.PlaceholderScreen
 import com.msayeh.product_details.view.ProductDetailsScreen
-import com.dukkan.onboarding.view.OnboardingView
 
 @Composable
 fun AppNavGraph(
@@ -84,7 +85,18 @@ fun AppNavGraph(
         }
 
         composable<Screen.Profile> {
-            PlaceholderScreen(title = "Profile", modifier = Modifier.fillMaxSize())
+            ProfileScreen(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToAuth = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                },
+                onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
+                onNavigateToOrderList = {
+                    // TODO: Navigate to order list screen when it's ready
+                }
+            )
         }
 
         composable<Screen.ProductDetail> {

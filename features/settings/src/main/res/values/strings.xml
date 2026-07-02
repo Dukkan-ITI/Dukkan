@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_sign_in">Sign in</string>
+    <string name="profile_sign_in_subtitle">Access your orders and wishlist</string>
+
+    <string name="profile_appearance">Appearance</string>
+    <string name="profile_light">Light</string>
+    <string name="profile_dark">Dark</string>
+    <string name="profile_system">System</string>
+
+    <string name="profile_currency">Currency</string>
+    <string name="profile_currency_subtitle">Live exchange rates</string>
+
+    <string name="profile_language">Language</string>
+    <string name="profile_language_english">English</string>
+    <string name="profile_language_arabic">العربية</string>
+
+    <string name="profile_order_history">Order history</string>
+
+    <string name="profile_my_wishlist">My wishlist</string>
+    <string name="profile_saved_addresses">Saved addresses</string>
+    <string name="profile_edit">Edit</string>
+    <string name="profile_log_out">Log out</string>
+    <string name="profile_see_all">See all</string>
+</resources>
