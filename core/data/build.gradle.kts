@@ -65,7 +65,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 }
 
-// Room
 dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -73,7 +72,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 }
 
-//firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)

@@ -69,14 +69,10 @@ class AuthRepositoryImpl @Inject constructor(
                 Log.w("AuthRepo", "Firestore saveUser failed (non-fatal): ${e.message}")
             }
 
-            // Since there's no backend for Multipass, we use a synthetic password 
-            // derived from their stable Firebase UID.
             val syntheticPassword = "GAuth_${user.uid}!"
             
-            // 1. Try to login with the synthetic password
             var shopifyToken = shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
             
-            // 2. If it fails, they likely don't exist in Shopify yet. Create them.
             if (shopifyToken == null) {
                 val firstName = user.name.substringBefore(" ").takeIf { it.isNotBlank() } ?: user.email.substringBefore("@")
                 val lastName = user.name.substringAfter(" ", "User").takeIf { it.isNotBlank() } ?: "User"
@@ -84,7 +80,6 @@ class AuthRepositoryImpl @Inject constructor(
                 shopifyToken = shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
             }
             
-            // 3. Save the token
             if (shopifyToken != null) {
                 shopifyTokenStore.saveToken(shopifyToken)
                 Log.d("AuthRepo", "Shopify token stored via synthetic password. Token: ${shopifyToken.accessToken}")
