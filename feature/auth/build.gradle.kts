@@ -24,4 +24,5 @@ dependencies {
     implementation(libs.credential.manager)
     implementation(libs.credential.manager.play.services)
     implementation(libs.googleid)
+    implementation(libs.androidx.compose.material.icons.extended)
 }

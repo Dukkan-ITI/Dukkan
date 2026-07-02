@@ -14,7 +14,8 @@
     <string name="auth_register_title">Create your account</string>
     <string name="auth_register_subtitle">Sign in to use your bag, wishlist &amp; orders — or keep browsing as a guest.</string>
     <string name="auth_register_name_label">Full Name</string>
-    <string name="auth_register_name_placeholder">Full name</string>
+    <string name="auth_register_first_name_placeholder">First name</string>
+    <string name="auth_register_last_name_placeholder">Last name</string>
     <string name="auth_register_email_label">Email Address</string>
     <string name="auth_register_email_placeholder">Email address</string>
     <string name="auth_register_password_label">Password</string>
@@ -38,4 +39,11 @@
     <string name="auth_social_apple">Apple</string>
 
     <string name="auth_guest_link_label">Continue as guest →</string>
+
+    <string name="auth_error_passwords_do_not_match">Passwords do not match</string>
+    <string name="auth_error_unknown">Unknown error</string>
+    <string name="auth_error_google_sign_in_failed">Google sign-in failed</string>
+    <string name="auth_content_description_hide_password">Hide password</string>
+    <string name="auth_content_description_show_password">Show password</string>
+    <string name="auth_close">×</string>
 </resources>

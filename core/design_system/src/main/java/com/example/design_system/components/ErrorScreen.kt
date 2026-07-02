@@ -10,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.example.design_system.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,7 +30,7 @@ fun ErrorScreen(
     message: String,
     modifier: Modifier = Modifier,
     onRetry: (() -> Unit)? = null,
-    retryText: String = "Retry",
+    retryText: String = stringResource(id = R.string.retry_btn),
 ) {
     Column(
         modifier = modifier
@@ -60,7 +62,7 @@ fun ErrorScreen(
 private fun ErrorScreenPreview() {
     AppTheme {
         ErrorScreen(
-            message = "Something went wrong while loading this page.",
+            message = stringResource(id = R.string.error_message_default),
             onRetry = {},
         )
     }

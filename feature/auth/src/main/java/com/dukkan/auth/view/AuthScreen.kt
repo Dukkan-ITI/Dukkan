@@ -44,7 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.auth.R
 import com.dukkan.auth.utils.GoogleSignInHelper
-import com.dukkan.auth.components.AuthErrorScreen
+
 import com.dukkan.auth.components.AuthGuestLink
 import com.dukkan.auth.components.AuthLoadingScreen
 import com.dukkan.auth.components.AuthPrimaryButton
@@ -94,7 +94,7 @@ fun AuthScreen(
                             // Ignored
                         } catch (e: Exception) {
                             authViewModel.onAction(
-                                AuthAction.GoogleSignInFailed(e.message ?: "Google sign-in failed")
+                                AuthAction.GoogleSignInFailed(e.message ?: context.getString(R.string.auth_error_google_sign_in_failed))
                             )
                         }
                     }
@@ -118,14 +118,6 @@ fun AuthScreen(
             )
         }
 
-        is AuthUiState.Error -> {
-            AuthErrorScreen(
-                message = state.message,
-                onRetry = { onAction(AuthAction.SubmitClicked) },
-                onBack = { onAction(AuthAction.ToggleMode) },
-                modifier = modifier
-            )
-        }
 
         is AuthUiState.Form -> {
             AuthFormContent(
@@ -194,10 +186,18 @@ private fun AuthFormContent(
             ) {
                 Column {
                     AuthTextField(
-                        value = state.name,
-                        onValueChange = { onAction(AuthAction.NameChanged(it)) },
-                        placeholder = stringResource(R.string.auth_register_name_placeholder),
-                        errorMessage = state.nameError,
+                        value = state.firstName,
+                        onValueChange = { onAction(AuthAction.FirstNameChanged(it)) },
+                        placeholder = stringResource(R.string.auth_register_first_name_placeholder),
+                        errorMessage = state.firstNameError,
+                        imeAction = ImeAction.Next,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    AuthTextField(
+                        value = state.lastName,
+                        onValueChange = { onAction(AuthAction.LastNameChanged(it)) },
+                        placeholder = stringResource(R.string.auth_register_last_name_placeholder),
+                        errorMessage = state.lastNameError,
                         imeAction = ImeAction.Next,
                     )
                     Spacer(Modifier.height(12.dp))
@@ -219,10 +219,12 @@ private fun AuthFormContent(
                 onValueChange = { onAction(AuthAction.PasswordChanged(it)) },
                 placeholder = stringResource(if (state.isLoginMode) R.string.auth_login_password_placeholder else R.string.auth_register_password_placeholder),
                 isPassword = true,
+                isPasswordVisible = state.isPasswordVisible,
+                onTogglePasswordVisibility = { onAction(AuthAction.TogglePasswordVisibility) },
                 errorMessage = state.passwordError,
-                imeAction = ImeAction.Done,
+                imeAction = if (state.isLoginMode) ImeAction.Done else ImeAction.Next,
                 keyboardActions = KeyboardActions(
-                    onDone = { onAction(AuthAction.SubmitClicked) }
+                    onDone = { if (state.isLoginMode) onAction(AuthAction.SubmitClicked) }
                 ),
             )
 
@@ -234,7 +236,21 @@ private fun AuthFormContent(
                        shrinkVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
             ) {
                 Column {
-                    Spacer(Modifier.height(13.dp))
+                    Spacer(Modifier.height(12.dp))
+                    AuthTextField(
+                        value = state.confirmPassword,
+                        onValueChange = { onAction(AuthAction.ConfirmPasswordChanged(it)) },
+                        placeholder = stringResource(R.string.auth_register_confirm_password_placeholder),
+                        isPassword = true,
+                        isPasswordVisible = state.isConfirmPasswordVisible,
+                        onTogglePasswordVisibility = { onAction(AuthAction.ToggleConfirmPasswordVisibility) },
+                        errorMessage = state.confirmPasswordError,
+                        imeAction = ImeAction.Done,
+                        keyboardActions = KeyboardActions(
+                            onDone = { onAction(AuthAction.SubmitClicked) }
+                        ),
+                    )
+                    Spacer(Modifier.height(1.dp))
                 }
             }
 

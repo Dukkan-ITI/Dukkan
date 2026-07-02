@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+import com.msayeh.domain.usecase.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -25,14 +26,19 @@ class ShoppingCartViewModel @Inject constructor(
     private val addToCartUseCase: AddToCartUseCase,
     private val updateCartQuantityUseCase: UpdateCartQuantityUseCase,
     private val removeFromCartUseCase: RemoveFromCartUseCase,
-    private val calculateCartTotalsUseCase: CalculateCartTotalsUseCase
+    private val calculateCartTotalsUseCase: CalculateCartTotalsUseCase,
+    private val getCurrentUser: GetCurrentUserUseCase
 ) : ViewModel() {
+
+    private val _isLoggedIn = MutableStateFlow(true)
+    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     private val _state = MutableStateFlow(ShoppingCartState())
     val state: StateFlow<ShoppingCartState> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
+            _isLoggedIn.value = getCurrentUser() != null
             getCartItemsUseCase().collectLatest { items ->
                 val totals = calculateCartTotalsUseCase(items)
                 _state.update {

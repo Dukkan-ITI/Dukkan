@@ -1,0 +1,11 @@
+package com.msayeh.domain.usecase.settings
+
+import com.msayeh.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class GetOnboardingStatusUseCase @Inject constructor(
+    private val repository: SettingsRepository
+) {
+    operator fun invoke(): Flow<Boolean> = repository.isOnboardingCompleted
+}

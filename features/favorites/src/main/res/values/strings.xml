@@ -7,4 +7,6 @@
     <string name="remove_from_wishlist_message">Remove "%s" from your wishlist?</string>
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
+    <string name="wishlist_title">Wishlist</string>
+    <string name="wishlist_saved_count">%1$d saved</string>
 </resources>
