@@ -1,0 +1,24 @@
+mutation discountCodeBasicCreate($basicCodeDiscount: DiscountCodeBasicInput!) {
+    discountCodeBasicCreate(basicCodeDiscount: $basicCodeDiscount) {
+        codeDiscountNode {
+            id
+            codeDiscount {
+                ... on DiscountCodeBasic {
+                    title
+                    status
+                    codes(first: 1) {
+                        edges {
+                            node {
+                                code
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
