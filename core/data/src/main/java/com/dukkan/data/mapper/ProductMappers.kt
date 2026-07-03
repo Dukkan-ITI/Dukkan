@@ -2,6 +2,7 @@ package com.dukkan.data.mapper
 
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
+import com.dukkan.VariantPricesQuery
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.NetworkImage
 import com.dukkan.domain.model.Product
@@ -77,3 +78,10 @@ private fun money(amount: Any?, currencyCode: String): Money {
         ?: throw IllegalArgumentException("Amount is required")
     return Money(amount = parsed, currencyCode = currencyCode)
 }
+
+fun VariantPricesQuery.Data.toVariantPriceMap(): Map<String, Money> =
+    nodes.filterNotNull().mapNotNull { node ->
+        val variant = node.onProductVariant ?: return@mapNotNull null
+        val amount = (variant.price.amount as? String)?.toBigDecimalOrNull() ?: return@mapNotNull null
+        variant.id to Money(amount = amount, currencyCode = variant.price.currencyCode.rawValue)
+    }.toMap()

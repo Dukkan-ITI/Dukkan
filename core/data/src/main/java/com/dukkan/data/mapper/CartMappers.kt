@@ -4,13 +4,14 @@ import com.dukkan.data.source.local.entity.CartEntity
 import com.dukkan.domain.model.CartItem
 import com.dukkan.domain.model.Money
 
-fun CartEntity.toDomainModel(): CartItem {
+fun CartEntity.toDomainModel(): CartItem? {
+    val amount = price.toBigDecimalOrNull() ?: return null
     return CartItem(
         id = id,
         title = title,
         imageUrl = imageUrl,
         price = Money(
-            amount = price.toBigDecimal(),
+            amount = amount,
             currencyCode = currencyCode,
         ),
         size = size,

@@ -4,6 +4,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
+import com.dukkan.VariantPricesQuery
 import com.dukkan.type.CountryCode
 import com.dukkan.type.LanguageCode
 import javax.inject.Inject
@@ -45,5 +46,19 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
         ).execute()
 
         return response.data?.product
+    }
+
+    override suspend fun getVariantPrices(
+        variantIds: List<String>,
+        country: String,
+    ): VariantPricesQuery.Data? {
+        val response = apolloClient.query(
+            VariantPricesQuery(
+                ids = variantIds,
+                country = CountryCode.safeValueOf(country),
+            )
+        ).execute()
+
+        return response.data
     }
 }

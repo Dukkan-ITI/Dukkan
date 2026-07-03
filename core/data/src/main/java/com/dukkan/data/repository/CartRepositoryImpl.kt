@@ -16,7 +16,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override fun getAllCartItems(): Flow<List<CartItem>> {
         return localDataSource.getAllCartItems().map { entities ->
-            entities.map { it.toDomainModel() }
+            entities.mapNotNull { it.toDomainModel() }
         }
     }
 

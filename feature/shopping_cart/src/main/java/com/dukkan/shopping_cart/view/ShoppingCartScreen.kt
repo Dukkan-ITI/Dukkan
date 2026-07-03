@@ -114,6 +114,19 @@ private fun ShoppingCartContent(
                 }
             }
 
+            if (state.pricesOutdated) {
+                Text(
+                    text = stringResource(R.string.cart_prices_outdated),
+                    color = Color(0xFFFFC107),
+                    fontSize = 13.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF1E1E2A), RoundedCornerShape(12.dp))
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp),

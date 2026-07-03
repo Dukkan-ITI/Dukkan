@@ -17,7 +17,7 @@ class FavoriteRepositoryImpl @Inject constructor(
 ) : FavoriteRepository {
 
     override fun getAllFavorites(): Flow<List<FavoriteProduct>> =
-        localDataSource.getAllFavorites().map { list -> list.map { it.toDomainModel() } }
+        localDataSource.getAllFavorites().map { list -> list.mapNotNull { it.toDomainModel() } }
 
     override suspend fun addFavorite(product: FavoriteProduct) =
         localDataSource.addFavorite(product.toEntity())

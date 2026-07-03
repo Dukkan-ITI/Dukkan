@@ -18,4 +18,5 @@
     <string name="items_count_format">%d items</string>
     <string name="cart_title">Cart</string>
     <string name="product_image_desc">Product Image</string>
+    <string name="cart_prices_outdated">Prices may be outdated due to a connection issue.</string>
 </resources>

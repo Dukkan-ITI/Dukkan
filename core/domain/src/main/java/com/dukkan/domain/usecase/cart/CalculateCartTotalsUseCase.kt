@@ -1,5 +1,6 @@
 package com.dukkan.domain.usecase.cart
 
+import com.dukkan.domain.model.AppCurrency
 import com.dukkan.domain.model.CartItem
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.calculateSubtotal
@@ -13,12 +14,12 @@ data class CartTotals(
 )
 
 class CalculateCartTotalsUseCase @Inject constructor() {
-    operator fun invoke(items: List<CartItem>, shippingCost: Double = 6.0): CartTotals {
-        val subtotal = items.calculateSubtotal()
+    operator fun invoke(items: List<CartItem>, currency: AppCurrency, shippingCost: Double = 6.0): CartTotals {
+        val subtotal = items.calculateSubtotal(currency.code)
         val finalShipping = if (items.isEmpty()) Money(
             amount = 0.toBigDecimal(),
-            currencyCode = subtotal.currencyCode
-        ) else Money(amount = shippingCost.toBigDecimal(), currencyCode = subtotal.currencyCode)
+            currencyCode = currency.code
+        ) else Money(amount = shippingCost.toBigDecimal(), currencyCode = currency.code)
         val total = subtotal + finalShipping
 
         return CartTotals(

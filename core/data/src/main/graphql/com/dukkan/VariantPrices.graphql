@@ -1,0 +1,12 @@
+query VariantPrices($ids: [ID!]!, $country: CountryCode!) @inContext(country: $country) {
+    nodes(ids: $ids) {
+        __typename
+        ... on ProductVariant {
+            id
+            price {
+                amount
+                currencyCode
+            }
+        }
+    }
+}

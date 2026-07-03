@@ -11,5 +11,6 @@ data class ShoppingCartState(
     val promoCode: String = "",
     val isApplyingPromo: Boolean = false,
     val promoError: String? = null,
-    val showRemoveDialogForItem: CartItem? = null
+    val showRemoveDialogForItem: CartItem? = null,
+    val pricesOutdated: Boolean = false
 )

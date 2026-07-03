@@ -8,13 +8,16 @@ import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.AddToCartUseCase
 import com.dukkan.domain.usecase.cart.CalculateCartTotalsUseCase
 import com.dukkan.domain.usecase.cart.GetCartItemsUseCase
+import com.dukkan.domain.usecase.cart.RefreshCartPricesUseCase
 import com.dukkan.domain.usecase.cart.RemoveFromCartUseCase
 import com.dukkan.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +29,9 @@ class ShoppingCartViewModel @Inject constructor(
     private val updateCartQuantityUseCase: UpdateCartQuantityUseCase,
     private val removeFromCartUseCase: RemoveFromCartUseCase,
     private val calculateCartTotalsUseCase: CalculateCartTotalsUseCase,
-    private val getCurrentUser: GetCurrentUserUseCase
+    private val getCurrentUser: GetCurrentUserUseCase,
+    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val refreshCartPricesUseCase: RefreshCartPricesUseCase,
 ) : ViewModel() {
 
     private val _isLoggedIn = MutableStateFlow(true)
@@ -38,17 +43,28 @@ class ShoppingCartViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             _isLoggedIn.value = getCurrentUser() != null
-            getCartItemsUseCase().collectLatest { items ->
-                val totals = calculateCartTotalsUseCase(items)
-                _state.update {
-                    it.copy(
-                        cartItems = items,
-                        subtotal = totals.subtotal,
-                        shipping = totals.shipping,
-                        total = totals.total
-                    )
+        }
+        viewModelScope.launch {
+            combine(getCartItemsUseCase(), getCurrencyUseCase()) { items, currency -> items to currency }
+                .collectLatest { (items, currency) ->
+                    val totals = calculateCartTotalsUseCase(items, currency)
+                    _state.update {
+                        it.copy(
+                            cartItems = items,
+                            subtotal = totals.subtotal,
+                            shipping = totals.shipping,
+                            total = totals.total
+                        )
+                    }
+
+                    val stale = items.filter { it.price.currencyCode != currency.code }
+                    if (stale.isEmpty()) {
+                        _state.update { it.copy(pricesOutdated = false) }
+                    } else {
+                        val result = refreshCartPricesUseCase(stale, currency)
+                        _state.update { it.copy(pricesOutdated = result.isFailure) }
+                    }
                 }
-            }
         }
     }
 

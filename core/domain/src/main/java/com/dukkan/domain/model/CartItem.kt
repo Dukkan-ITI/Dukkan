@@ -1,5 +1,7 @@
 package com.dukkan.domain.model
 
+import java.math.BigDecimal
+
 data class CartItem(
     val id: String,
     val title: String,
@@ -9,7 +11,8 @@ data class CartItem(
     val quantity: Int
 )
 
-fun List<CartItem>.calculateSubtotal(): Money {
-    val currency = firstOrNull()?.price?.currencyCode ?: return Money(currencyCode = "USD")
-    return fold(Money(currencyCode = currency)) { acc, item -> acc + item.price * item.quantity }
-}
+fun List<CartItem>.calculateSubtotal(currencyCode: String): Money =
+    Money(
+        fold(BigDecimal.ZERO) { acc, item -> acc + item.price.amount * item.quantity.toBigDecimal() },
+        currencyCode
+    )
