@@ -6,6 +6,7 @@ import com.dukkan.ProductsQuery
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.NetworkImage
 import com.dukkan.domain.model.Product
+import com.dukkan.domain.model.ProductSummary
 import com.dukkan.domain.model.ProductVariant
 
 fun ProductQuery.Product.toDomainModel(): Product {
@@ -33,7 +34,10 @@ fun ProductQuery.Node1.toDomainModel(): ProductVariant {
         price = price.toDomainModel(),
         image = image?.toDomainModel(),
         availableForSale = availableForSale,
-        quantityAvailable = quantityAvailable ?: 0
+        quantityAvailable = quantityAvailable ?: 0,
+        compareAtPrice = null,
+        selectedOptions = emptyList(),
+        product = ProductSummary(id = "", title = "", vendor = "")
     )
 }
 
@@ -68,17 +72,6 @@ fun ProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currenc
 
 fun ProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
-private fun networkImage(url: Any?, thumbhash: String?, altText: String?): NetworkImage {
-    require(url is String) { "Image URL is required" }
-    return NetworkImage(url = url, blurredUrl = thumbhash, altText = altText)
-}
-
-private fun money(amount: Any?, currencyCode: String): Money {
-    val parsed = (amount as? String)?.toBigDecimal()
-        ?: throw IllegalArgumentException("Amount is required")
-    return Money(amount = parsed, currencyCode = currencyCode)
-}
-
 fun CollectionProductsQuery.Node.toDomainModel(): Product {
     return Product(
         id = id,
@@ -99,4 +92,16 @@ fun CollectionProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
 }
 
 fun CollectionProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
 fun CollectionProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
+private fun networkImage(url: Any?, thumbhash: String?, altText: String?): NetworkImage {
+    require(url is String) { "Image URL is required" }
+    return NetworkImage(url = url, blurredUrl = thumbhash, altText = altText)
+}
+
+private fun money(amount: Any?, currencyCode: String): Money {
+    val parsed = (amount as? String)?.toBigDecimal()
+        ?: throw IllegalArgumentException("Amount is required")
+    return Money(amount = parsed, currencyCode = currencyCode)
+}

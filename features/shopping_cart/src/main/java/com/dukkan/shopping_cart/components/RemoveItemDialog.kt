@@ -15,11 +15,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.res.stringResource
 import com.dukkan.shopping_cart.R
-import com.dukkan.domain.model.CartItem
+import com.dukkan.domain.model.cart.CartLine
 
 @Composable
 fun RemoveItemDialog(
-    item: CartItem,
+    item: CartLine,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
@@ -31,19 +31,19 @@ fun RemoveItemDialog(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .fillMaxWidth()
-                .background(Color(0xFF1E1E2A), RoundedCornerShape(24.dp))
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
                 .padding(24.dp)
         ) {
             Text(
                 text = stringResource(R.string.remove_item_title),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = stringResource(R.string.remove_item_message, item.title),
-                color = Color.Gray,
+                text = stringResource(R.string.remove_item_message, item.merchandise.product.title),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(32.dp))
@@ -54,23 +54,23 @@ fun RemoveItemDialog(
                 OutlinedButton(
                     onClick = onDismiss,
                     shape = RoundedCornerShape(100.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                    border = BorderStroke(1.dp, Color(0xFF3E3E4A)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp)
                 ) {
-                    Text(stringResource(R.string.cancel), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                 }
                 Button(
                     onClick = onConfirm,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B6B)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error, contentColor = MaterialTheme.colorScheme.onError),
                     shape = RoundedCornerShape(100.dp),
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp)
                 ) {
-                    Text(stringResource(R.string.remove), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.remove), fontWeight = FontWeight.Bold)
                 }
             }
         }

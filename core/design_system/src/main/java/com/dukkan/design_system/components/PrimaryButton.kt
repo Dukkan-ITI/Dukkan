@@ -14,22 +14,39 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.design_system.theme.BricolageGrotesque
 
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
+
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PrimaryButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
+) {
     Button(
         onClick = onClick,
         modifier = modifier,
+        enabled = !isLoading,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         contentPadding = PaddingValues(16.dp)
     ) {
-        Text(
-            text = text, color = MaterialTheme.colorScheme.onPrimary,
-            style = TextStyle(
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = BricolageGrotesque
-            ),
-        )
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Text(
+                text = text, color = MaterialTheme.colorScheme.onPrimary,
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = BricolageGrotesque
+                ),
+            )
+        }
     }
 }
 

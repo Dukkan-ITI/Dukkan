@@ -22,6 +22,7 @@ import com.dukkan.design_system.theme.AppTheme
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.ProductVariant
 import com.dukkan.product_details.R
+import com.dukkan.domain.model.ProductSummary
 
 /**
  * Renders the product's [variants] as a row of selectable size chips. Variants
@@ -108,7 +109,12 @@ private fun VariantSelectorPreview() {
             image = null,
             availableForSale = size != "L",
             quantityAvailable = 5,
-        )
+            compareAtPrice = null,
+            selectedOptions =emptyList(),
+            product = ProductSummary(
+                id = "",
+                title = "",
+                vendor = ""))
     }
     AppTheme {
         VariantSelector(
