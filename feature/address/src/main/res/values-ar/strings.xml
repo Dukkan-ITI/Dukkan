@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_addresses_title">العناوين المحفوظة</string>
+    <string name="saved_addresses_back">رجوع</string>
+    <string name="saved_addresses_add_new">إضافة عنوان جديد</string>
+    <string name="saved_addresses_empty_title">لا توجد عناوين محفوظة بعد</string>
+    <string name="saved_addresses_empty_message">أضف عنوانًا لتسريع عملية الدفع.</string>
+    <string name="saved_addresses_default_badge">افتراضي</string>
+    <string name="saved_addresses_edit">تعديل</string>
+    <string name="saved_addresses_delete">حذف</string>
+    <string name="saved_addresses_set_default">تعيين كافتراضي</string>
+
+    <string name="saved_addresses_form_title_add">إضافة عنوان</string>
+    <string name="saved_addresses_form_title_edit">تعديل العنوان</string>
+    <string name="saved_addresses_field_first_name">الاسم الأول</string>
+    <string name="saved_addresses_field_last_name">اسم العائلة</string>
+    <string name="saved_addresses_field_company">الشركة</string>
+    <string name="saved_addresses_field_address1">العنوان*</string>
+    <string name="saved_addresses_field_address2">شقة، جناح، إلخ</string>
+    <string name="saved_addresses_field_city">المدينة*</string>
+    <string name="saved_addresses_field_province">المحافظة</string>
+    <string name="saved_addresses_field_country">الدولة*</string>
+    <string name="saved_addresses_field_zip">الرمز البريدي</string>
+    <string name="saved_addresses_field_phone">رقم الهاتف*</string>
+    <string name="saved_addresses_error_invalid_phone">أدخل رقم هاتف صحيح</string>
+    <string name="saved_addresses_save">حفظ العنوان</string>
+
+    <string name="saved_addresses_delete_title">حذف العنوان؟</string>
+    <string name="saved_addresses_delete_message">هل أنت متأكد أنك تريد حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="saved_addresses_delete_confirm">حذف</string>
+    <string name="cancel">إلغاء</string>
+</resources>

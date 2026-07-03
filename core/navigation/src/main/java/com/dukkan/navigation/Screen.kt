@@ -8,6 +8,7 @@ sealed class Screen {
 
     @Serializable
     object Auth
+
     @Serializable
     object Login
 
@@ -34,4 +35,7 @@ sealed class Screen {
 
     @Serializable
     object AllProducts
+
+    @Serializable
+    object SavedAddresses
 }
