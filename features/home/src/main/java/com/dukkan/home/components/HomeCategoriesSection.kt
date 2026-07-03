@@ -31,7 +31,11 @@ fun HomeCategoriesSection(
         ) {
             Text(
                 text = stringResource(R.string.categories, categories.size),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = stringResource(R.string.see_all),
