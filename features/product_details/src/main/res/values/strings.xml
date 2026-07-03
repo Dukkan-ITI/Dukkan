@@ -7,4 +7,6 @@
     <string name="product_details_back">Back</string>
     <string name="product_details_favorite">Add to favorites</string>
     <string name="product_details_image_desc">Product image</string>
+    <string name="product_details_added_to_cart">Added to cart!</string>
+    <string name="product_details_success">Success</string>
 </resources>

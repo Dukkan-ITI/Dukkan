@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cart_title">سلة التسوق</string>
+    <string name="your_bag">حقيبتك</string>
+    <string name="add_dummy">إضافة تجريبية</string>
+    <string name="checkout_format">الدفع • $%1$s</string>
+    <string name="remove_item_title">إزالة المنتج؟</string>
+    <string name="remove_item_message">إزالة \"%s\" من حقيبتك؟</string>
+    <string name="cancel">إلغاء</string>
+    <string name="remove">إزالة</string>
+    <string name="your_bag_is_empty">حقيبتك فارغة</string>
+    <string name="start_shopping">ابدأ التسوق ←</string>
+    <string name="size_format">المقاس %s</string>
+    <string name="price_format">$%1$s</string>
+    <string name="promo_code_hint">كود الخصم (جرب JUNO20)</string>
+    <string name="apply">تطبيق</string>
+    <string name="subtotal">المجموع الفرعي</string>
+    <string name="shipping">الشحن</string>
+    <string name="total">الإجمالي</string>
+    <string name="free">مجاني</string>
+    <string name="items_count_format">%d منتج</string>
+    <string name="discount_format">خصم (%s)</string>
+    <string name="applied">تم التطبيق ✓</string>
+    <string name="invalid_promo_code">كود خصم غير صالح</string>
+    <string name="product_image_content_desc">صورة المنتج</string>
+    <string name="quantity_decrease">−</string>
+    <string name="quantity_increase">+</string>
+    <string name="amount_with_currency_format">%1$s %2$s</string>
+    <string name="discount_amount_format">-%1$s %2$s</string>
+    <string name="default_amount">0.00</string>
+</resources>

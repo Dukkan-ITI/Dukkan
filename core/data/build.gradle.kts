@@ -62,9 +62,9 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.apollo.runtime)
-    implementation(libs.androidx.datastore.preferences)
 }
 
+// Room
 dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -72,6 +72,12 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 }
 
+// DataStore
+dependencies {
+    implementation(libs.androidx.datastore.preferences)
+}
+
+//firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
