@@ -100,8 +100,7 @@ class CartRepositoryImpl @Inject constructor(
         val cartId = localDataSource.getCartId()
             ?: return Result.failure(Exception("No active cart found"))
 
-        // نجمع الأكواد المطبقة حاليًا + الكود الجديد، عشان الإضافة متمسحش القديم
-        // (لأن الـ mutation replace-all، لازم نبعت القائمة كاملة مش الكود لوحده)
+
         val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
         val updatedCodes = (existingCodes + discountCode).distinct()
 
@@ -131,8 +130,7 @@ class CartRepositoryImpl @Inject constructor(
         val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
         val remainingCodes = existingCodes.filter { !it.equals(discountCode, ignoreCase = true) }
 
-        // بعت القائمة الباقية (أو فاضية لو مفيش كودات تانية) — ده اللي بيمسح
-        // الكود فعليًا من على الكارت على السيرفر
+
         val result = remoteDataSource.applyDiscountCodes(cartId, remainingCodes)
             ?: return Result.failure(Exception("Failed to remove discount code"))
 
