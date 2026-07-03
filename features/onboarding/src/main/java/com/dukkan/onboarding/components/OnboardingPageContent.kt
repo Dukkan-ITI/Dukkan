@@ -45,7 +45,7 @@ fun OnboardingPageContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = page.title,
+            text = stringResource(id = page.titleRes),
             color = Color.White,
             fontSize = 36.sp,
             fontWeight = FontWeight.ExtraBold,
@@ -55,7 +55,7 @@ fun OnboardingPageContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = page.description,
+            text = stringResource(id = page.descriptionRes),
             color = Color.White.copy(alpha = .8f),
             fontSize = 16.sp,
             lineHeight = 24.sp

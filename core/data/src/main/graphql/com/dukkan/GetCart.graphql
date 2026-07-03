@@ -1,0 +1,58 @@
+fragment MoneyFields on MoneyV2 {
+    amount
+    currencyCode
+}
+
+query GetCart($cartId: ID!) {
+    cart(id: $cartId) {
+        id
+        checkoutUrl
+        totalQuantity
+        discountCodes {
+            code
+            applicable
+        }
+        cost {
+            subtotalAmount { ...MoneyFields }
+            totalAmount { ...MoneyFields }
+            totalTaxAmount { ...MoneyFields }
+            checkoutChargeAmount { ...MoneyFields }
+        }
+        lines(first: 20) {
+            edges {
+                node {
+                    id
+                    quantity
+                    cost {
+                        totalAmount { ...MoneyFields }
+                        amountPerQuantity { ...MoneyFields }
+                        compareAtAmountPerQuantity { ...MoneyFields }
+                    }
+                    merchandise {
+                        ... on ProductVariant {
+                            id
+                            title
+                            price { ...MoneyFields }
+                            compareAtPrice { ...MoneyFields }
+                            availableForSale
+                            quantityAvailable
+                            selectedOptions {
+                                name
+                                value
+                            }
+                            image {
+                                url
+                                altText
+                            }
+                            product {
+                                id
+                                title
+                                vendor
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
