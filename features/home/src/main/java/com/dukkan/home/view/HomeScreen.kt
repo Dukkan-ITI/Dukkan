@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.home.components.HomeBanner
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
@@ -117,7 +118,11 @@ fun HomeScreenContent(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeBanner()
+                        CouponBannerSection(
+                            onShopClick = {
+
+                            }
+                        )
                     }
 
                     homeProductSection(
