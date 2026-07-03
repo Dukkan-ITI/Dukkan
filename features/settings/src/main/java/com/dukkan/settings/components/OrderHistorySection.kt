@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.settings.R
-import com.example.design_system.components.OrderCard
-import com.example.design_system.components.OrderUi
+import com.dukkan.design_system.components.OrderCard
+import com.dukkan.design_system.components.OrderUi
 
 @Composable
 fun OrderHistorySection(

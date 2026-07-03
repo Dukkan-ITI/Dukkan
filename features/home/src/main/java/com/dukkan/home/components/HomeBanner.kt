@@ -32,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.home.R
-import com.example.design_system.theme.AppTheme
-import com.example.design_system.theme.DukkanTheme
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.design_system.theme.DukkanTheme
 
 @Composable
 fun HomeBanner(
@@ -55,7 +55,7 @@ fun HomeBanner(
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Image(
-                painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
+                painter = painterResource(com.dukkan.design_system.R.drawable.banner_placeholder),
                 contentDescription = stringResource(R.string.summer_drop),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

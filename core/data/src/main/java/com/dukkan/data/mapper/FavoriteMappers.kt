@@ -1,7 +1,7 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.data.source.local.entity.FavoriteEntity
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.domain.model.FavoriteProduct
 
 fun FavoriteEntity.toDomainModel() = FavoriteProduct(
     id = id,

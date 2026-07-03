@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.msayeh.product_details"
+    namespace = "com.dukkan.product_details"
 }
 
 dependencies {

@@ -4,10 +4,10 @@ package com.dukkan.favorites.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.favorites.uistate.FavoritesUiState
-import com.msayeh.domain.model.FavoriteProduct
-import com.msayeh.domain.usecase.favorite.GetFavoritesUseCase
-import com.msayeh.domain.usecase.favorite.RemoveFavoriteUseCase
-import com.msayeh.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.model.FavoriteProduct
+import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
+import com.dukkan.domain.usecase.favorite.RemoveFavoriteUseCase
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

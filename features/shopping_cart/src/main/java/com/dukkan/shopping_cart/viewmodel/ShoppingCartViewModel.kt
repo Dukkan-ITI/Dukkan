@@ -3,12 +3,12 @@ package com.dukkan.shopping_cart.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
-import com.msayeh.domain.model.CartItem
-import com.msayeh.domain.usecase.cart.AddToCartUseCase
-import com.msayeh.domain.usecase.cart.CalculateCartTotalsUseCase
-import com.msayeh.domain.usecase.cart.GetCartItemsUseCase
-import com.msayeh.domain.usecase.cart.RemoveFromCartUseCase
-import com.msayeh.domain.usecase.cart.UpdateCartQuantityUseCase
+import com.dukkan.domain.model.CartItem
+import com.dukkan.domain.usecase.cart.AddToCartUseCase
+import com.dukkan.domain.usecase.cart.CalculateCartTotalsUseCase
+import com.dukkan.domain.usecase.cart.GetCartItemsUseCase
+import com.dukkan.domain.usecase.cart.RemoveFromCartUseCase
+import com.dukkan.domain.usecase.cart.UpdateCartQuantityUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-import com.msayeh.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

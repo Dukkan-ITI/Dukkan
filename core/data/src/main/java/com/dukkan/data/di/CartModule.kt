@@ -3,7 +3,7 @@ package com.dukkan.data.di
 import com.dukkan.data.repository.CartRepositoryImpl
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSourceImpl
-import com.msayeh.domain.repository.CartRepository
+import com.dukkan.domain.repository.CartRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

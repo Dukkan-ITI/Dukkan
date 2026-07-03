@@ -8,7 +8,7 @@ interface SearchDataSource {
         query: String,
         first: Int,
         after: String?,
-        filters: com.msayeh.domain.model.SearchFilter? = null
+        filters: com.dukkan.domain.model.SearchFilter? = null
     ): SearchProductsQuery.Data?
 
     suspend fun predictiveSearch(query: String): PredictiveSearchQuery.Data?

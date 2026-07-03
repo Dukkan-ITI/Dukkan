@@ -2,10 +2,10 @@ package com.dukkan.data.mapper
 
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.NetworkImage
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.model.ProductVariant
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.NetworkImage
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.model.ProductVariant
 
 fun ProductQuery.Product.toDomainModel(): Product {
     return Product(

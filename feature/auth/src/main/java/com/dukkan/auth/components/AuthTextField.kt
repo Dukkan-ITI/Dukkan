@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import com.example.design_system.theme.AppTheme
+import com.dukkan.design_system.theme.AppTheme
 
 @Composable
 fun AuthTextField(

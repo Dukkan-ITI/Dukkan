@@ -2,13 +2,13 @@ package com.dukkan.data.mapper
 
 import com.dukkan.PredictiveSearchQuery
 import com.dukkan.SearchProductsQuery
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.PageInfo
-import com.msayeh.domain.model.PredictiveSearchResult
-import com.msayeh.domain.model.SearchCollection
-import com.msayeh.domain.model.SearchProduct
-import com.msayeh.domain.model.SearchProductVariant
-import com.msayeh.domain.model.SearchResult
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.PageInfo
+import com.dukkan.domain.model.PredictiveSearchResult
+import com.dukkan.domain.model.SearchCollection
+import com.dukkan.domain.model.SearchProduct
+import com.dukkan.domain.model.SearchProductVariant
+import com.dukkan.domain.model.SearchResult
 
 // ─── SearchProducts ───────────────────────────────────────────────────────────
 

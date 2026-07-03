@@ -1,7 +1,7 @@
 package com.dukkan.search.uiState
 
-import com.msayeh.domain.model.SearchCollection
-import com.msayeh.domain.model.SearchProduct
+import com.dukkan.domain.model.SearchCollection
+import com.dukkan.domain.model.SearchProduct
 
 data class SearchUiState(
     // Predictive/autocomplete — keystroke-driven
@@ -21,7 +21,7 @@ data class SearchUiState(
     val error: String? = null,
 
     // Filter state
-    val activeFilters: com.msayeh.domain.model.SearchFilter = com.msayeh.domain.model.SearchFilter(),
+    val activeFilters: com.dukkan.domain.model.SearchFilter = com.dukkan.domain.model.SearchFilter(),
     val isFilterSheetOpen: Boolean = false,
     val availableVendors: List<String> = emptyList(),
     val availableProductTypes: List<String> = emptyList()
