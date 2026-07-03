@@ -3,7 +3,14 @@ package com.dukkan.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.home.R
 import com.example.design_system.theme.AppTheme
-import com.example.design_system.theme.BricolageGrotesque
 import com.example.design_system.theme.DukkanTheme
 
 @Composable
@@ -49,7 +55,7 @@ fun HomeBanner(
                 .background(MaterialTheme.colorScheme.primary)
         ) {
             Image(
-                painter = painterResource(R.drawable.banner_placeholder),
+                painter = painterResource(com.example.design_system.R.drawable.banner_placeholder),
                 contentDescription = stringResource(R.string.summer_drop),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -64,7 +70,7 @@ fun HomeBanner(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Bottom
             ) {
-                Column() {
+                Column {
                     Text(
                         text = stringResource(R.string.summer_capsule),
                         fontSize = 11.sp,

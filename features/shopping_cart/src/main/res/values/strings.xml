@@ -1,4 +1,5 @@
 <resources>
+    <string name="cart_title">Shopping Cart</string>
     <string name="your_bag">Your bag</string>
     <string name="add_dummy">Add Dummy</string>
     <string name="checkout_format">Checkout • $%s</string>
@@ -17,4 +18,14 @@
     <string name="total">Total</string>
     <string name="free">Free</string>
     <string name="items_count_format">%d items</string>
+    <string name="discount_format">Discount (%s)</string>
+    <string name="applied">Applied ✓</string>
+    <string name="invalid_promo_code">Invalid promo code</string>
+    <string name="product_image_content_desc">Product image</string>
+    <string name="quantity_decrease">−</string>
+    <string name="quantity_increase">+</string>
+    <string name="amount_with_currency_format">%1$s %2$s</string>
+    <string name="discount_amount_format">-%1$s %2$s</string>
+    <string name="promo_codes_applied">Applied Codes</string>
+    <string name="default_amount">0.00</string>
 </resources>

@@ -1,4 +1,4 @@
-query ProductQuery($id: ID!) {
+query ProductQuery($id: ID!, $country: CountryCode!, $language: LanguageCode!) @inContext(country: $country, language: $language) {
     product(id: $id) {
         id
         title
@@ -20,14 +20,14 @@ query ProductQuery($id: ID!) {
             }
         }
         description
-        images {
+        images(first: 20) {
             nodes {
                 altText
                 url
                 thumbhash
             }
         }
-        variants {
+        variants(first: 10) {
             nodes {
                 availableForSale
                 currentlyNotInStock

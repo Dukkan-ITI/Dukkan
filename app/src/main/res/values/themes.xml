@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Dukkan" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- AppCompat descendant is required so AppCompatActivity + per-app locale
+         (AppCompatDelegate.setApplicationLocales) work. Actual colours are driven by
+         Compose (AppTheme); this window theme only affects the pre-Compose window. -->
+    <style name="Theme.Dukkan" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="already_shopping">Already shopping with us? </string>
+    <string name="sign_in">Sign in</string>
+    <string name="feature_page">FEATURE %02d</string>
+    <string name="skip">Skip</string>
+    <string name="onboarding_title_1">Welcome to Dukkan</string>
+    <string name="onboarding_desc_1">Discover the best products from top brands tailored just for you.</string>
+    <string name="onboarding_title_2">Shop Safely</string>
+    <string name="onboarding_desc_2">Your security is our priority. Shop with confidence using our secure payment options.</string>
+    <string name="onboarding_title_3">Fast Delivery</string>
+    <string name="onboarding_desc_3">Get your favorite items delivered right to your doorstep in no time.</string>
+    <string name="get_started">Get started</string>
+    <string name="continue_arrow">Continue →</string>
+</resources>

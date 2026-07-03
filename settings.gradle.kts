@@ -26,6 +26,7 @@ dependencyResolutionManagement {
 rootProject.name = "Dukkan"
 include(":app")
 include(":core:design_system")
+include(":feature:auth")
 
 include(":core:data")
 include(":core:navigation")
@@ -37,3 +38,6 @@ include(":core:domain")
 include(":features:favorites")
 include(":features:shopping_cart")
 include(":features:order_list")
+include(":features:search")
+include(":features:settings")
+include(":feature:ads")

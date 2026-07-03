@@ -72,6 +72,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 }
 
+// DataStore
+dependencies {
+    implementation(libs.androidx.datastore.preferences)
+}
+
 //firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))

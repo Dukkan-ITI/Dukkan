@@ -5,14 +5,14 @@ import com.dukkan.ProductsQuery
 import com.msayeh.domain.model.Money
 import com.msayeh.domain.model.NetworkImage
 import com.msayeh.domain.model.Product
+import com.msayeh.domain.model.ProductSummary
 import com.msayeh.domain.model.ProductVariant
 
 fun ProductQuery.Product.toDomainModel(): Product {
     return Product(
         id = id,
         title = title,
-        featuredImage = featuredImage?.toDomainModel()
-            ?: throw IllegalArgumentException("Featured image is required"),
+        featuredImage = featuredImage?.toDomainModel(),
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
         description = description,
@@ -33,7 +33,10 @@ fun ProductQuery.Node1.toDomainModel(): ProductVariant {
         price = price.toDomainModel(),
         image = image?.toDomainModel(),
         availableForSale = availableForSale,
-        quantityAvailable = quantityAvailable ?: 0
+        quantityAvailable = quantityAvailable ?: 0,
+        compareAtPrice = null,
+        selectedOptions = emptyList(),
+        product = ProductSummary(id = "", title = "", vendor = "")
     )
 }
 

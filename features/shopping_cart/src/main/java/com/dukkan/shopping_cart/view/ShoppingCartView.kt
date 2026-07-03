@@ -8,11 +8,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.dukkan.shopping_cart.components.CartItemRow
+import com.msayeh.domain.model.cart.CartLine
+import com.msayeh.domain.model.asString
 import com.dukkan.shopping_cart.components.EmptyCartState
 import com.dukkan.shopping_cart.components.PromoCodeSection
 import com.dukkan.shopping_cart.components.RemoveItemDialog
@@ -20,18 +19,32 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import com.dukkan.shopping_cart.R
-import com.msayeh.domain.model.CartItem
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
+import com.example.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun ShoppingCartView(
+    onSignInClick: () -> Unit,
     viewModel: ShoppingCartViewModel = hiltViewModel(),
     onStartShoppingClick: () -> Unit = {},
     onCheckoutClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
-    
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onScreenEntered()
+    }
+
+    if (!isLoggedIn) {
+        GuestPlaceholderScreen(
+            title = stringResource(id = R.string.cart_title),
+            onSignInClick = onSignInClick
+        )
+        return
+    }
+
     ShoppingCartContent(
         state = state,
         onStartShoppingClick = onStartShoppingClick,
@@ -40,6 +53,7 @@ fun ShoppingCartView(
         onRemoveClick = { viewModel.showRemoveDialog(it) },
         onPromoCodeChange = viewModel::onPromoCodeChange,
         onApplyPromoCode = viewModel::applyPromoCode,
+        onRemovePromoCode = viewModel::removePromoCode,
         onDismissRemoveDialog = viewModel::dismissRemoveDialog,
         onConfirmRemoveItem = viewModel::confirmRemoveItem
     )
@@ -50,54 +64,70 @@ private fun ShoppingCartContent(
     state: ShoppingCartState,
     onStartShoppingClick: () -> Unit,
     onCheckoutClick: () -> Unit,
-    onQuantityChanged: (CartItem, Int) -> Unit,
-    onRemoveClick: (CartItem) -> Unit,
+    onQuantityChanged: (CartLine, Int) -> Unit,
+    onRemoveClick: (CartLine) -> Unit,
     onPromoCodeChange: (String) -> Unit,
     onApplyPromoCode: () -> Unit,
+    onRemovePromoCode: (String) -> Unit,
     onDismissRemoveDialog: () -> Unit,
     onConfirmRemoveItem: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF0F0F1A))
-            .padding(16.dp)
+            .statusBarsPadding()
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = androidx.compose.ui.Alignment.Bottom) {
                     Text(
                         text = stringResource(R.string.your_bag),
-                        color = Color.White,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.headlineLarge
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = stringResource(R.string.items_count_format, state.cartItems.size),
-                        color = Color.Gray,
-                        fontSize = 16.sp,
+                        text = stringResource(R.string.items_count_format, state.cart?.lines?.size ?: 0),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
             }
 
             LazyColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, fill = true)
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (state.cartItems.isEmpty()) {
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(300.dp),
+                            contentAlignment = androidx.compose.ui.Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                        }
+                    }
+                } else if (state.cart?.lines.isNullOrEmpty()) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
                             EmptyCartState(onStartShoppingClick)
                         }
                     }
                 } else {
-                    items(state.cartItems, key = { it.id }) { item ->
+                    items(state.cart?.lines ?: emptyList(), key = { it.id }) { item ->
                         CartItemRow(
                             item = item,
                             onQuantityChanged = onQuantityChanged,
@@ -105,36 +135,49 @@ private fun ShoppingCartContent(
                         )
                     }
                 }
-                
+
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
                     PromoCodeSection(
                         promoCode = state.promoCode,
+                        appliedCodes = state.cart?.appliedDiscounts?.map { it.code } ?: emptyList(),
                         onPromoCodeChange = onPromoCodeChange,
                         onApplyPromoCode = onApplyPromoCode,
+                        onRemovePromoCode = onRemovePromoCode,
                         isApplying = state.isApplyingPromo,
                         error = state.promoError
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                item {
                     SummarySection(state)
-                    
+                }
+
+                item {
                     Button(
                         onClick = onCheckoutClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(64.dp)
-                            .padding(top = 16.dp),
+                            .padding(top = 8.dp),
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6B8AFF))
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     ) {
                         Text(
-                            text = stringResource(R.string.checkout_format, state.total),
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            text = stringResource(
+                                R.string.checkout_format,
+                                state.cart?.cost?.totalAmount?.asString()
+                                    ?: stringResource(R.string.default_amount),
+                            ),
+                            style = MaterialTheme.typography.titleMedium
                         )
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                item {
+                    Spacer(modifier = Modifier.navigationBarsPadding().height(80.dp))
                 }
             }
         }
@@ -148,9 +191,3 @@ private fun ShoppingCartContent(
         }
     }
 }
-
-
-
-
-
-

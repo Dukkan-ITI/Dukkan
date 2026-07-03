@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="product_details_total">Total</string>
+    <string name="product_details_add_to_cart">Add to cart</string>
+    <string name="product_details_select_size">Select size</string>
+    <string name="product_details_details">Details</string>
+    <string name="product_details_back">Back</string>
+    <string name="product_details_favorite">Add to favorites</string>
+    <string name="product_details_image_desc">Product image</string>
+    <string name="product_details_added_to_cart">Added to cart!</string>
+    <string name="product_details_success">Success</string>
+</resources>

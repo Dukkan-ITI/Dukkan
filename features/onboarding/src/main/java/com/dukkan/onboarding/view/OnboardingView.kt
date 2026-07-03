@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.onboarding.components.BottomSection
 
 import com.dukkan.onboarding.components.GradientOverlay
@@ -24,15 +24,17 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingView(
-    viewModel: OnboardingViewModel = viewModel(),
-    onFinish: () -> Unit
+    viewModel: OnboardingViewModel = hiltViewModel(),
+    onNavigateToLogin: () -> Unit
 ) {
 
     val state by viewModel.uiState.collectAsState()
 
     OnboardingContent(
         pages = state.pages,
-        onFinish = onFinish
+        onNavigateToLogin = {
+            viewModel.completeOnboarding(onNavigateToLogin)
+        }
     )
 }
 
@@ -40,7 +42,7 @@ fun OnboardingView(
 @Composable
 fun OnboardingContent(
     pages: List<OnboardingModel>,
-    onFinish: () -> Unit
+    onNavigateToLogin: () -> Unit
 ) {
 
     val pagerState = rememberPagerState(
@@ -76,11 +78,7 @@ fun OnboardingContent(
         TopBar(
             currentPage = pagerState.currentPage,
             pageCount = pages.size,
-            onSkip = {
-                coroutineScope.launch {
-                    pagerState.scrollToPage(pages.lastIndex)
-                }
-            }
+            onSkip = onNavigateToLogin
         )
 
         BottomSection(
@@ -89,7 +87,7 @@ fun OnboardingContent(
             onContinue = {
 
                 if (pagerState.currentPage == pages.lastIndex) {
-                    onFinish()
+                    onNavigateToLogin()
                 } else {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(
@@ -99,9 +97,7 @@ fun OnboardingContent(
                 }
 
             },
-            onSignInClick = {
-
-            }
+            onSignInClick = onNavigateToLogin
         )
     }
 }

@@ -1,14 +1,34 @@
 package com.dukkan.data.di
 
+import android.content.Context
 import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
+import com.dukkan.data.repository.AuthRepositoryImpl
+import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
+import com.dukkan.data.repository.SettingsRepositoryImpl
+import com.dukkan.data.source.local.CouponStore
+import com.dukkan.data.source.local.CouponStoreImpl
+import com.dukkan.data.source.local.SettingsStore
+import com.dukkan.data.source.local.SettingsStoreImpl
+import com.dukkan.data.source.local.ShopifyTokenStore
+import com.dukkan.data.source.local.ShopifyTokenStoreImpl
+import com.dukkan.data.source.remote.FirebaseAuthDataSource
+import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
+import com.dukkan.data.source.remote.FirebaseStoreDataSourceImp
+import com.dukkan.data.source.remote.IFirebaseStoreDataSource
+import com.dukkan.data.source.remote.ShopifyAuthDataSource
+import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
+import com.msayeh.domain.repository.AuthRepository
+import com.msayeh.domain.repository.CouponRepository
 import com.msayeh.domain.repository.ProductsRepository
+import com.msayeh.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,6 +52,58 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideProductsRepository(productsDataSource: ProductsDataSource): ProductsRepository =
-        ProductsRepositoryImpl(productsDataSource)
+    fun provideProductsRepository(
+        productsDataSource: ProductsDataSource,
+        settingsRepository: SettingsRepository,
+    ): ProductsRepository =
+        ProductsRepositoryImpl(productsDataSource, settingsRepository)
+
+    @Singleton
+    @Provides
+    fun provideSettingsStore(@ApplicationContext context: Context): SettingsStore =
+        SettingsStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideSettingsRepository(settingsStore: SettingsStore): SettingsRepository =
+        SettingsRepositoryImpl(settingsStore)
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAuthDataSource(): FirebaseAuthDataSource =
+        FirebaseAuthDataSourceImpl()
+
+    @Singleton
+    @Provides
+    fun provideShopifyAuthDataSource(apolloClient: ApolloClient): ShopifyAuthDataSource =
+        ShopifyAuthDataSourceImpl(apolloClient)
+
+    @Singleton
+    @Provides
+    fun provideShopifyTokenStore(@ApplicationContext context: Context): ShopifyTokenStore =
+        ShopifyTokenStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideFirebaseStoreDataSource(): IFirebaseStoreDataSource =
+        FirebaseStoreDataSourceImp()
+
+    @Singleton
+    @Provides
+    fun provideAuthRepository(
+        authDataSource: FirebaseAuthDataSource,
+        firebaseStoreDataSource: IFirebaseStoreDataSource,
+        shopifyAuthDataSource: ShopifyAuthDataSource,
+        shopifyTokenStore: ShopifyTokenStore,
+    ): AuthRepository = AuthRepositoryImpl(authDataSource, firebaseStoreDataSource, shopifyAuthDataSource, shopifyTokenStore)
+
+    @Singleton
+    @Provides
+    fun provideCouponStore(@ApplicationContext context: Context): CouponStore =
+        CouponStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
+        CouponRepositoryImpl(couponStore)
 }

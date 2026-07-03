@@ -19,7 +19,21 @@ local.properties
 /.idea/compiler.xml
 /.idea/kotlinc.xml
 /.idea/deploymentTargetSelector.xml
+
+# Kotlin compiler local state / error logs
+.kotlin/
+
 .idea/
 *.iml
 # Firebase config (distributed out-of-band)
 google-services.json
+
+# Agents and Binaries
+.idea/planningMode.xml
+bin/
+**/bin/
+.agents/
+skills-lock.json
+# JVM Crash Logs
+hs_err_pid*.log
+replay_pid*.log
