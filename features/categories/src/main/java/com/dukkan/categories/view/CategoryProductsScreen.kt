@@ -52,7 +52,7 @@ fun CategoryProductsScreen(
             }
             is CategoryProductsUiState.Success -> {
                 if (state.products.isEmpty()) {
-                    Text(text = "No products found in this category.")
+                    Text(text = stringResource(id = R.string.no_products_found))
                 } else {
                     CategoryProductsGrid(
                         products = state.products,
