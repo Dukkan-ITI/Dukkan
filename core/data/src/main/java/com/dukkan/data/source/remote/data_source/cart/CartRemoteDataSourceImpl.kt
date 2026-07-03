@@ -66,12 +66,14 @@ class CartRemoteDataSourceImpl @Inject constructor(
         return response.data?.cartLinesRemove
     }
 
-    override suspend fun applyDiscountCode(
+    // بقت بتاخد List<String> بدل String واحد. الـ mutation نفسها "replace all"،
+    // فبعت listOf(code) لإضافة كود واحد، أو emptyList() لمسح كل الأكواد المطبقة.
+    override suspend fun applyDiscountCodes(
         cartId: String,
-        discountCode: String
+        discountCodes: List<String>
     ): ApplyDiscountCodeMutation.CartDiscountCodesUpdate? {
         val response = apolloClient.mutation(
-            ApplyDiscountCodeMutation(cartId, listOf(discountCode))
+            ApplyDiscountCodeMutation(cartId, discountCodes)
         ).execute()
         return response.data?.cartDiscountCodesUpdate
     }

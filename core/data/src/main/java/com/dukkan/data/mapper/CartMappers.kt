@@ -35,7 +35,7 @@ private fun GetCartQuery.Node.toDomainModel(): CartLine {
 
     return CartLine(
         id = id,
-        quantity = quantity,
+        quantity = maxOf(quantity, 1),
         cost = cost.toDomainModel(),
         merchandise = variantFragment.toDomainModel()
     )

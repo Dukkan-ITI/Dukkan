@@ -41,7 +41,7 @@ fun SummarySection(state: ShoppingCartState) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f), RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
         Row(
@@ -78,7 +78,8 @@ fun SummarySection(state: ShoppingCartState) {
                     Text(
                         text = stringResource(R.string.discount_format, discount.code),
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 15.sp
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = stringResource(
@@ -88,7 +89,7 @@ fun SummarySection(state: ShoppingCartState) {
                         ),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.ExtraBold
                     )
                 }
             }
@@ -99,8 +100,8 @@ fun SummarySection(state: ShoppingCartState) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(stringResource(R.string.discount_format, discount.code), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp)
-                    Text(stringResource(R.string.applied), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.discount_format, discount.code), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.applied), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
                 }
             }
         }

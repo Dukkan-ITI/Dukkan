@@ -26,5 +26,6 @@
     <string name="quantity_increase">+</string>
     <string name="amount_with_currency_format">%1$s %2$s</string>
     <string name="discount_amount_format">-%1$s %2$s</string>
+    <string name="promo_codes_applied">Applied Codes</string>
     <string name="default_amount">0.00</string>
 </resources>

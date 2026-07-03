@@ -8,10 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.dukkan.shopping_cart.components.CartItemRow
 import com.msayeh.domain.model.cart.CartLine
 import com.msayeh.domain.model.asString
@@ -22,7 +19,6 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import com.dukkan.shopping_cart.R
-
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
 import com.example.design_system.components.GuestPlaceholderScreen
@@ -37,6 +33,10 @@ fun ShoppingCartView(
     val state by viewModel.state.collectAsState()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.onScreenEntered()
+    }
+
     if (!isLoggedIn) {
         GuestPlaceholderScreen(
             title = stringResource(id = R.string.cart_title),
@@ -44,7 +44,7 @@ fun ShoppingCartView(
         )
         return
     }
-    
+
     ShoppingCartContent(
         state = state,
         onStartShoppingClick = onStartShoppingClick,
@@ -53,6 +53,7 @@ fun ShoppingCartView(
         onRemoveClick = { viewModel.showRemoveDialog(it) },
         onPromoCodeChange = viewModel::onPromoCodeChange,
         onApplyPromoCode = viewModel::applyPromoCode,
+        onRemovePromoCode = viewModel::removePromoCode,
         onDismissRemoveDialog = viewModel::dismissRemoveDialog,
         onConfirmRemoveItem = viewModel::confirmRemoveItem
     )
@@ -67,19 +68,23 @@ private fun ShoppingCartContent(
     onRemoveClick: (CartLine) -> Unit,
     onPromoCodeChange: (String) -> Unit,
     onApplyPromoCode: () -> Unit,
+    onRemovePromoCode: (String) -> Unit,
     onDismissRemoveDialog: () -> Unit,
     onConfirmRemoveItem: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
-            .padding(16.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
@@ -100,7 +105,10 @@ private fun ShoppingCartContent(
             }
 
             LazyColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, fill = true)
+                    .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 if (state.isLoading) {
@@ -127,25 +135,30 @@ private fun ShoppingCartContent(
                         )
                     }
                 }
-                
+
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
                     PromoCodeSection(
                         promoCode = state.promoCode,
+                        appliedCodes = state.cart?.appliedDiscounts?.map { it.code } ?: emptyList(),
                         onPromoCodeChange = onPromoCodeChange,
                         onApplyPromoCode = onApplyPromoCode,
+                        onRemovePromoCode = onRemovePromoCode,
                         isApplying = state.isApplyingPromo,
                         error = state.promoError
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
+                item {
                     SummarySection(state)
-                    
+                }
+
+                item {
                     Button(
                         onClick = onCheckoutClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(64.dp)
-                            .padding(top = 16.dp),
+                            .padding(top = 8.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -161,7 +174,10 @@ private fun ShoppingCartContent(
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
-                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
+                item {
+                    Spacer(modifier = Modifier.navigationBarsPadding().height(80.dp))
                 }
             }
         }
@@ -175,9 +191,3 @@ private fun ShoppingCartContent(
         }
     }
 }
-
-
-
-
-
-
