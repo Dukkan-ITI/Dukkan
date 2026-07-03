@@ -62,7 +62,6 @@ class ShoppingCartViewModel @Inject constructor(
                 cartUseCases.updateCartQuantity(cartLine.id, newQuantity)
                 refreshCart()
             } catch (e: Exception) {
-                // Revert on error by refreshing
                 refreshCart()
             }
         }
@@ -117,8 +116,7 @@ class ShoppingCartViewModel @Inject constructor(
                     )
                 }
                 loadCart()
-                // ملحوظة: اتشال استدعاء removePromoCode(code) اللي كان هنا —
-                // ده كان بيمسح نفس الكوبون فورًا بعد ما يتطبق بنجاح.
+
             } else {
                 _state.update {
                     it.copy(
@@ -134,7 +132,6 @@ class ShoppingCartViewModel @Inject constructor(
     fun removePromoCode(codeToRemove: String) {
         _state.update { it.copy(isApplyingPromo = true) }
         viewModelScope.launch {
-            // بينادي على السيرفر فعليًا يمسح الكود من الكارت (مش بس يعيد جلب الكارت)
             cartUseCases.removeDiscountCode(codeToRemove)
             loadCart()
             _state.update { it.copy(isApplyingPromo = false) }
