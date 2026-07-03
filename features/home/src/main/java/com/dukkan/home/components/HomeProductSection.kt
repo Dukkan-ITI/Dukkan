@@ -18,11 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.dukkan.home.R
-import com.example.design_system.theme.AppTheme
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.model.asString
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.model.asString
 
 fun LazyGridScope.homeProductSection(
     products: List<Product> = emptyList(),

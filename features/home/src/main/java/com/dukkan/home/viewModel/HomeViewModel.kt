@@ -2,19 +2,18 @@ package com.dukkan.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msayeh.domain.model.FavoriteProduct
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.usecase.favorite.GetFavoritesUseCase
-import com.msayeh.domain.usecase.favorite.ToggleFavoriteUseCase
-import com.msayeh.domain.usecase.product.GetProductsUseCase
-import com.msayeh.domain.usecase.settings.GetCurrencyUseCase
-import com.msayeh.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.domain.model.FavoriteProduct
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
+import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
+import com.dukkan.domain.usecase.product.GetProductsUseCase
+import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
+import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dukkan.home.uiState.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn

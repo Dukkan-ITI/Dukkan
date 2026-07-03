@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.design_system"
+    namespace = "com.dukkan.design_system"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1

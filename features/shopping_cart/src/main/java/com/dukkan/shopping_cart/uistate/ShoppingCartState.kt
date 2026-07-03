@@ -1,6 +1,6 @@
 package com.dukkan.shopping_cart.uistate
 
-import com.msayeh.domain.model.CartItem
+import com.dukkan.domain.model.CartItem
 
 data class ShoppingCartState(
     val cartItems: List<CartItem> = emptyList(),

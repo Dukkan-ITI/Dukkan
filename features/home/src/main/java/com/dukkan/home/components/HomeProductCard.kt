@@ -65,9 +65,9 @@ fun HomeProductCard(
                 contentDescription = title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
-                error = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
-                fallback = painterResource(id = com.example.design_system.R.drawable.banner_placeholder),
+                placeholder = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
+                error = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
+                fallback = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
             )
 
             IconButton(

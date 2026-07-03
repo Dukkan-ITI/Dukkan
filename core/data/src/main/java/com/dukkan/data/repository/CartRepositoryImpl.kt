@@ -3,8 +3,8 @@ package com.dukkan.data.repository
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.mapper.toEntity
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
-import com.msayeh.domain.model.CartItem
-import com.msayeh.domain.repository.CartRepository
+import com.dukkan.domain.model.CartItem
+import com.dukkan.domain.repository.CartRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

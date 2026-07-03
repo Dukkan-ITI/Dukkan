@@ -1,7 +1,7 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.data.source.local.entity.CartEntity
-import com.msayeh.domain.model.CartItem
+import com.dukkan.domain.model.CartItem
 
  fun CartEntity.toDomainModel(): CartItem {
     return CartItem(

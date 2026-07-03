@@ -18,9 +18,9 @@ import com.dukkan.data.source.remote.ShopifyAuthDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
-import com.msayeh.domain.repository.AuthRepository
-import com.msayeh.domain.repository.ProductsRepository
-import com.msayeh.domain.repository.SettingsRepository
+import com.dukkan.domain.repository.AuthRepository
+import com.dukkan.domain.repository.ProductsRepository
+import com.dukkan.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

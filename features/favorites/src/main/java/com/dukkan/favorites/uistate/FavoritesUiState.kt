@@ -1,6 +1,6 @@
 package com.dukkan.favorites.uistate
 
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.domain.model.FavoriteProduct
 
 sealed interface FavoritesUiState {
     data object Loading : FavoritesUiState
