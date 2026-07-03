@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dukkan.design_system.components.ProductCard
 import com.dukkan.home.R
 import com.dukkan.design_system.theme.AppTheme
 import com.dukkan.domain.model.Product
@@ -61,7 +62,7 @@ fun LazyGridScope.homeProductSection(
 
     items(products) { product ->
         val isFav = product.id in favoriteIds
-        HomeProductCard(
+        ProductCard(
             title = product.title,
             priceLabel = product.maxPrice.asString(),
             imageUrl = product.featuredImage?.url,

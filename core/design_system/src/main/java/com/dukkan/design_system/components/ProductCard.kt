@@ -1,10 +1,11 @@
-package com.dukkan.home.components
+package com.dukkan.design_system.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,10 +34,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.dukkan.home.R
+import com.dukkan.design_system.R
 
 @Composable
-fun HomeProductCard(
+fun ProductCard(
     title: String,
     priceLabel: String,
     imageUrl: String?,
@@ -65,9 +66,9 @@ fun HomeProductCard(
                 contentDescription = title,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
-                error = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
-                fallback = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
+                placeholder = painterResource(id = R.drawable.banner_placeholder),
+                error = painterResource(id = R.drawable.banner_placeholder),
+                fallback = painterResource(id = R.drawable.banner_placeholder),
             )
 
             IconButton(

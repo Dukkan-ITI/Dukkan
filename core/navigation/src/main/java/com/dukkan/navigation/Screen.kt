@@ -39,5 +39,5 @@ sealed class Screen {
     object Categories
 
     @Serializable
-    data class CategoryProducts(val categoryName: String)
+    data class CategoryProducts(val categoryHandle: String)
 }

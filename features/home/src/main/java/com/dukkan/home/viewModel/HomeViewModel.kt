@@ -2,8 +2,10 @@ package com.dukkan.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dukkan.domain.model.Category.Category
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
+import com.dukkan.domain.usecase.category.GetCategoriesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,26 +28,36 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     getFavorites: GetFavoritesUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
 ) : ViewModel() {
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    private data class ProductsAndCategories(
+        val products: List<Product>,
+        val categories: List<Category>
+    )
+
+    private val _productsAndCategories = MutableStateFlow(ProductsAndCategories(emptyList(), emptyList()))
     private val _isLoading = MutableStateFlow(true)
     private val _error = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<HomeUiState> = combine(
-        _products,
+        _productsAndCategories,
         _isLoading,
         _error,
         getFavorites()
-    ) { products, isLoading, error, favorites ->
+    ) { pc, isLoading, error, favorites ->
         val favoriteIds = favorites.map { it.id }.toSet()
         when {
             isLoading -> HomeUiState.Loading
             error != null -> HomeUiState.Error(error)
-            else -> HomeUiState.Success(products = products, favoriteIds = favoriteIds)
+            else -> HomeUiState.Success(
+                products = pc.products,
+                favoriteIds = favoriteIds,
+                categories = pc.categories
+            )
         }
     }.stateIn(
         scope = viewModelScope,
@@ -74,8 +87,13 @@ class HomeViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                val products = getProductsUseCase(limit = 10)
-                _products.value = products
+                val result = getProductsUseCase(limit = 10)
+                // Assuming GetProductsUseCase returns a wrapper containing products and pagination info
+                // If it returns List<Product>, we would need to adjust the UseCase or Repository
+                val products = result
+                val categories = getCategoriesUseCase().firstOrNull() ?: emptyList()
+
+                _productsAndCategories.value = ProductsAndCategories(products, categories)
                 _isLoading.value = false
             } catch (e: Exception) {
                 _error.value = e.localizedMessage ?: "Error loading products"
@@ -85,12 +103,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadMoreProducts() {
-        if (!hasNextPage) return
+        if (!hasNextPage || _isLoading.value) return
+
         viewModelScope.launch {
             try {
-                val nextProducts = getProductsUseCase(limit = 10, after = endCursor)
-                _products.update { it + nextProducts }
+                val moreProducts = getProductsUseCase(limit = 10)
+                _productsAndCategories.update { current ->
+                    current.copy(products = current.products + moreProducts)
+                }
             } catch (e: Exception) {
+                // Silently fail or handle error for pagination
             }
         }
     }

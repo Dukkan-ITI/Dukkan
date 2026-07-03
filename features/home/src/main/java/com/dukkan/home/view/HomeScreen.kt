@@ -134,7 +134,7 @@ fun HomeScreenContent(
                         HomeCategoriesSection(
                             categories = uiState.categories,
                             onSeeAllClick = onNavigateToCategories,
-                            onCategoryClick = onCategoryClick as (String) -> Unit
+                            onCategoryClick = onCategoryClick
                         )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {

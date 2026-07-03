@@ -36,4 +36,20 @@ class ProductsRepositoryImpl(
             edge.node?.toDomainModel()
         } ?: emptyList()
     }
+
+    override suspend fun getProductsByCollectionHandle(
+        handle: String,
+        limit: Int,
+        after: String?,
+    ): List<Product> {
+        val country = settingsRepository.currency.first().countryCode
+        val language = settingsRepository.language.first().languageCode
+        return productsDataSource.getProductsByCollectionHandle(
+            handle = handle,
+            first = limit,
+            after = after,
+            country = country,
+            language = language,
+        )
+    }
 }

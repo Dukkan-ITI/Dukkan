@@ -10,6 +10,6 @@ sealed interface HomeUiState {
         val products: List<Product>,
         val favoriteIds: Set<String>,
         val categories: List<Category> = emptyList(),
-    ) : HomeUiState()
+    ) : HomeUiState
     data class Error(val message: String) : HomeUiState
 }
