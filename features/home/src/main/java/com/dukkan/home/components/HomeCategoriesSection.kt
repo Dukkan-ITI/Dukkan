@@ -39,7 +39,10 @@ fun HomeCategoriesSection(
             )
             Text(
                 text = stringResource(R.string.see_all),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
+                ),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onSeeAllClick() }
             )
