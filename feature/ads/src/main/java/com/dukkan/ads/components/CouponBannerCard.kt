@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.ads.mapper.toImageResId
-import com.msayeh.domain.model.Coupon
+import com.dukkan.domain.model.Coupon
 import androidx.compose.ui.res.stringResource
 import com.dukkan.ads.R
 

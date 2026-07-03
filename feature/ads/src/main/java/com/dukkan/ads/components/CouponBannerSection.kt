@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.ads.viewmodel.CouponBannerViewModel
-import com.msayeh.domain.model.Coupon
+import com.dukkan.domain.model.Coupon
 import com.dukkan.ads.R
 
 @Composable

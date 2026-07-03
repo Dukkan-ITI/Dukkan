@@ -7,8 +7,8 @@ import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSource
 import com.google.firebase.auth.FirebaseAuth
-import com.msayeh.domain.model.cart.StoreCart
-import com.msayeh.domain.repository.CartRepository
+import com.dukkan.domain.model.cart.StoreCart
+import com.dukkan.domain.repository.CartRepository
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(

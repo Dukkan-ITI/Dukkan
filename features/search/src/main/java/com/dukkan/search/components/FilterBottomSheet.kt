@@ -16,8 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.dukkan.search.R
 import androidx.compose.ui.unit.dp
-import com.msayeh.domain.model.SearchFilter
-import com.msayeh.domain.model.SearchProduct
+import com.dukkan.domain.model.SearchFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

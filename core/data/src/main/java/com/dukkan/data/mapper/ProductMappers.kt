@@ -1,12 +1,13 @@
 package com.dukkan.data.mapper
 
+import com.dukkan.CollectionProductsQuery
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.NetworkImage
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.model.ProductSummary
-import com.msayeh.domain.model.ProductVariant
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.NetworkImage
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.model.ProductSummary
+import com.dukkan.domain.model.ProductVariant
 
 fun ProductQuery.Product.toDomainModel(): Product {
     return Product(
@@ -70,6 +71,29 @@ fun ProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
 fun ProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 fun ProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
+fun CollectionProductsQuery.Node.toDomainModel(): Product {
+    return Product(
+        id = id,
+        title = title,
+        featuredImage = featuredImage?.toDomainModel(),
+        minPrice = priceRange.minVariantPrice.toDomainModel(),
+        maxPrice = priceRange.maxVariantPrice.toDomainModel(),
+        description = description,
+        productType = null,
+        images = null,
+        variants = null,
+    )
+}
+
+fun CollectionProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
+    if (url !is String) return null
+    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+}
+
+fun CollectionProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+
+fun CollectionProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 private fun networkImage(url: Any?, thumbhash: String?, altText: String?): NetworkImage {
     require(url is String) { "Image URL is required" }

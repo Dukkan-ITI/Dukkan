@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.dukkan.favorites.R
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.domain.model.FavoriteProduct
 
 @Composable
 fun RemoveFavoriteDialog(

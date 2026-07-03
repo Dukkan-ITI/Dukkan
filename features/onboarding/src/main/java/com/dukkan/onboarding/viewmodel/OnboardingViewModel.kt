@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dukkan.onboarding.uistate.OnboardingUiState
 import com.dukkan.onboarding.R
 import com.dukkan.onboarding.model.OnboardingModel
-import com.msayeh.domain.usecase.settings.SetOnboardingStatusUseCase
+import com.dukkan.domain.usecase.settings.SetOnboardingStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -8,9 +8,9 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.IFirebaseStoreDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSource
-import com.msayeh.domain.model.AuthUser
-import com.msayeh.domain.model.ShopifyToken
-import com.msayeh.domain.repository.AuthRepository
+import com.dukkan.domain.model.AuthUser
+import com.dukkan.domain.model.ShopifyToken
+import com.dukkan.domain.repository.AuthRepository
 import java.time.Instant
 import javax.inject.Inject
 

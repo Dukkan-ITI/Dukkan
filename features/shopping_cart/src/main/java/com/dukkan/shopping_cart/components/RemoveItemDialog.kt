@@ -15,7 +15,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.res.stringResource
 import com.dukkan.shopping_cart.R
-import com.msayeh.domain.model.cart.CartLine
+import com.dukkan.domain.model.cart.CartLine
 
 @Composable
 fun RemoveItemDialog(
