@@ -78,11 +78,7 @@ fun OnboardingContent(
         TopBar(
             currentPage = pagerState.currentPage,
             pageCount = pages.size,
-            onSkip = {
-                coroutineScope.launch {
-                    pagerState.scrollToPage(pages.lastIndex)
-                }
-            }
+            onSkip = onNavigateToLogin
         )
 
         BottomSection(

@@ -68,7 +68,7 @@ fun FavoriteItem(
                     imageVector = Icons.Filled.Favorite,
                     contentDescription = stringResource(R.string.remove_from_wishlist),
                     modifier = Modifier.size(15.dp),
-                    tint = Color.Red
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -92,7 +92,7 @@ fun FavoriteItem(
                     .padding(end = 8.dp)
             )
             Text(
-                text = "${product.price} ${product.currencyCode}",
+                text = stringResource(R.string.price_with_currency_format, product.price, product.currencyCode),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 14.sp

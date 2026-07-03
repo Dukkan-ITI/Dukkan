@@ -51,6 +51,7 @@ fun FavoritesView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(24.dp))

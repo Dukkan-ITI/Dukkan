@@ -85,7 +85,7 @@ fun ProductCard(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = stringResource(R.string.add_to_favorites),
                     modifier = Modifier.size(15.dp),
-                    tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                    tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                 )
             }
         }

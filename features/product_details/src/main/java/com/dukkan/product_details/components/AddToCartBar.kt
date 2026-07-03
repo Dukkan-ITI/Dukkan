@@ -24,7 +24,7 @@ import com.dukkan.domain.model.asString
 import com.dukkan.product_details.R
 
 @Composable
-fun AddToCartBar(price: Money, onAddToCart: () -> Unit, modifier: Modifier = Modifier) {
+fun AddToCartBar(price: Money, onAddToCart: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false) {
     val outlineColor = MaterialTheme.colorScheme.outline
     Row(
         modifier = modifier
@@ -44,7 +44,7 @@ fun AddToCartBar(price: Money, onAddToCart: () -> Unit, modifier: Modifier = Mod
         verticalAlignment = Alignment.CenterVertically
     ) {
         PriceDisplay(price = price)
-        AddToCartButton(onClick = onAddToCart, modifier = Modifier.weight(1f))
+        AddToCartButton(onClick = onAddToCart, isLoading = isLoading, modifier = Modifier.weight(1f))
     }
 }
 
@@ -69,10 +69,11 @@ private fun PriceDisplay(price: Money) {
 }
 
 @Composable
-fun AddToCartButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun AddToCartButton(onClick: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false) {
     PrimaryButton(
         text = stringResource(R.string.product_details_add_to_cart),
         onClick = onClick,
+        isLoading = isLoading,
         modifier = modifier
     )
 }
