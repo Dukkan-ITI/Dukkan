@@ -2,11 +2,11 @@ package com.dukkan.data.mapper
 
 import com.dukkan.GetCartQuery
 import com.dukkan.fragment.MoneyFields
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.NetworkImage
-import com.msayeh.domain.model.ProductSummary
-import com.msayeh.domain.model.ProductVariant
-import com.msayeh.domain.model.cart.*
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.NetworkImage
+import com.dukkan.domain.model.ProductSummary
+import com.dukkan.domain.model.ProductVariant
+import com.dukkan.domain.model.cart.*
 
 fun GetCartQuery.Cart.toDomainModel(): StoreCart = StoreCart(
     id = id,

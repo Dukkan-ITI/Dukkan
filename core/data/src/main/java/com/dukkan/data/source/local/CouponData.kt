@@ -1,6 +1,6 @@
 package com.dukkan.data.source.local
 
-import com.msayeh.domain.model.Coupon
+import com.dukkan.domain.model.Coupon
 
 object CouponData {
 

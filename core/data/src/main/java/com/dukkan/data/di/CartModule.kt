@@ -7,7 +7,7 @@ import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSourceImpl
 import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSourceImpl
-import com.msayeh.domain.repository.CartRepository
+import com.dukkan.domain.repository.CartRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

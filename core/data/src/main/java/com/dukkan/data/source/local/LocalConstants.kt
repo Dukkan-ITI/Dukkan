@@ -6,7 +6,4 @@ object LocalConstants {
     const val CART_ID_KEY_NAME = "cart_id"
     const val  COUPON_NAME = "coupon_store"
     const val  COUPON_CODE = "coupon_code"
-
-
-
 }

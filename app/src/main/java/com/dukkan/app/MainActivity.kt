@@ -17,8 +17,8 @@ import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.design_system.theme.AppTheme
-import com.msayeh.domain.model.ThemeMode
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.domain.model.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
 
 

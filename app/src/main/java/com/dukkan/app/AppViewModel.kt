@@ -2,12 +2,12 @@ package com.dukkan.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msayeh.domain.model.AppLanguage
-import com.msayeh.domain.model.ThemeMode
-import com.msayeh.domain.usecase.settings.GetLanguageUseCase
-import com.msayeh.domain.usecase.settings.GetThemeUseCase
-import com.msayeh.domain.usecase.settings.GetOnboardingStatusUseCase
-import com.msayeh.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.model.AppLanguage
+import com.dukkan.domain.model.ThemeMode
+import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.domain.usecase.settings.GetThemeUseCase
+import com.dukkan.domain.usecase.settings.GetOnboardingStatusUseCase
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

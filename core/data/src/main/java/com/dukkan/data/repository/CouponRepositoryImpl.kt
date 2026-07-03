@@ -2,8 +2,8 @@ package com.dukkan.data.repository
 
 import com.dukkan.data.source.local.CouponData
 import com.dukkan.data.source.local.CouponStore
-import com.msayeh.domain.model.Coupon
-import com.msayeh.domain.repository.CouponRepository
+import com.dukkan.domain.model.Coupon
+import com.dukkan.domain.repository.CouponRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dukkan.auth.R
-import com.example.design_system.theme.AppTheme
+import com.dukkan.design_system.theme.AppTheme
 
 
 @Composable
