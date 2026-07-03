@@ -7,9 +7,9 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.IFirebaseStoreDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSource
-import com.msayeh.domain.model.AuthUser
-import com.msayeh.domain.model.ShopifyToken
-import com.msayeh.domain.repository.AuthRepository
+import com.dukkan.domain.model.AuthUser
+import com.dukkan.domain.model.ShopifyToken
+import com.dukkan.domain.repository.AuthRepository
 import java.time.Instant
 import javax.inject.Inject
 
@@ -38,14 +38,16 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<AuthUser> {
         return try {
             val fullName = listOf(firstName, lastName).filter { it.isNotBlank() }.joinToString(" ")
-            val user = firebaseAuthDataSource.registerWithEmailAndPassword(email, password, fullName)
+            val user =
+                firebaseAuthDataSource.registerWithEmailAndPassword(email, password, fullName)
 
             try {
                 firebaseStoreDataSource.saveUser(user)
             } catch (e: Exception) {
             }
 
-            val shopifyCreated = shopifyAuthDataSource.createShopifyCustomer(email, password, firstName, lastName)
+            val shopifyCreated =
+                shopifyAuthDataSource.createShopifyCustomer(email, password, firstName, lastName)
 
             fetchAndStoreShopifyToken(email, password)
 
@@ -66,16 +68,25 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             val syntheticPassword = "GAuth_${user.uid}!"
-            
-            var shopifyToken = shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
-            
+
+            var shopifyToken =
+                shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
+
             if (shopifyToken == null) {
-                val firstName = user.name.substringBefore(" ").takeIf { it.isNotBlank() } ?: user.email.substringBefore("@")
-                val lastName = user.name.substringAfter(" ", "User").takeIf { it.isNotBlank() } ?: "User"
-                shopifyAuthDataSource.createShopifyCustomer(user.email, syntheticPassword, firstName, lastName)
-                shopifyToken = shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
+                val firstName = user.name.substringBefore(" ").takeIf { it.isNotBlank() }
+                    ?: user.email.substringBefore("@")
+                val lastName =
+                    user.name.substringAfter(" ", "User").takeIf { it.isNotBlank() } ?: "User"
+                shopifyAuthDataSource.createShopifyCustomer(
+                    user.email,
+                    syntheticPassword,
+                    firstName,
+                    lastName
+                )
+                shopifyToken =
+                    shopifyAuthDataSource.createCustomerToken(user.email, syntheticPassword)
             }
-            
+
             if (shopifyToken != null) {
                 shopifyTokenStore.saveToken(shopifyToken)
             }

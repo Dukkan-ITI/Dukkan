@@ -1,7 +1,6 @@
 [versions]
 agp = "9.2.1"
 apollo = "5.0.1"
-composeBomVersion = "2024.02.00"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -45,15 +44,16 @@ runtime = "1.11.3"
 foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
 
+googleServices = "4.5.0"
+
 
 [libraries]
 
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 androidx-compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version = "2.6.0" }
-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
-androidx-compose-bom-v20240200 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -122,5 +122,5 @@ apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 
 #fireabse
-google-services = { id = "com.google.gms.google-services", version = "4.5.0" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

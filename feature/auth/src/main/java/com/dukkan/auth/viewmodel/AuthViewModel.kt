@@ -3,11 +3,12 @@ package com.dukkan.auth.viewmodel
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msayeh.domain.usecase.GetShopifyTokenUseCase
-import com.msayeh.domain.usecase.LoginUseCase
-import com.msayeh.domain.usecase.LoginWithGoogleUseCase
-import com.msayeh.domain.usecase.RegisterUseCase
+import com.dukkan.domain.usecase.auth.GetShopifyTokenUseCase
+import com.dukkan.domain.usecase.auth.LoginUseCase
+import com.dukkan.domain.usecase.auth.LoginWithGoogleUseCase
+import com.dukkan.domain.usecase.auth.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,7 +70,7 @@ sealed interface AuthUiState {
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
+    @ApplicationContext private val context: android.content.Context,
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
@@ -100,7 +101,7 @@ class AuthViewModel @Inject constructor(
     private fun onFirstNameChanged(firstName: String) {
         _uiState.updateForm { copy(firstName = firstName, firstNameError = null) }
     }
-    
+
     private fun onLastNameChanged(lastName: String) {
         _uiState.updateForm { copy(lastName = lastName, lastNameError = null) }
     }
@@ -112,7 +113,7 @@ class AuthViewModel @Inject constructor(
     private fun onPasswordChanged(password: String) {
         _uiState.updateForm { copy(password = password, passwordError = null) }
     }
-    
+
     private fun onConfirmPasswordChanged(password: String) {
         _uiState.updateForm { copy(confirmPassword = password, confirmPasswordError = null) }
     }
@@ -120,7 +121,7 @@ class AuthViewModel @Inject constructor(
     private fun togglePasswordVisibility() {
         _uiState.updateForm { copy(isPasswordVisible = !isPasswordVisible) }
     }
-    
+
     private fun toggleConfirmPasswordVisibility() {
         _uiState.updateForm { copy(isConfirmPasswordVisible = !isConfirmPasswordVisible) }
     }
@@ -132,7 +133,7 @@ class AuthViewModel @Inject constructor(
     private fun submit() {
         val form = _uiState.value as? AuthUiState.Form ?: return
         if (!form.isSubmitEnabled) return
-        
+
         if (!form.isLoginMode && form.password != form.confirmPassword) {
             _uiState.updateForm { copy(confirmPasswordError = context.getString(com.dukkan.auth.R.string.auth_error_passwords_do_not_match)) }
             return
@@ -150,7 +151,10 @@ class AuthViewModel @Inject constructor(
                 getShopifyTokenUseCase()
                 _uiState.value = AuthUiState.Success
             } else {
-                _uiState.value = form.copy(emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown))
+                _uiState.value = form.copy(
+                    emailError = result.exceptionOrNull()?.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown)
+                )
             }
         }
     }
@@ -169,7 +173,11 @@ class AuthViewModel @Inject constructor(
             if (result.isSuccess == true) {
                 _uiState.value = AuthUiState.Success
             } else {
-                _uiState.value = form.copy(isGoogleLoading = false, emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_google_sign_in_failed))
+                _uiState.value = form.copy(
+                    isGoogleLoading = false,
+                    emailError = result.exceptionOrNull()?.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_google_sign_in_failed)
+                )
             }
         }
     }

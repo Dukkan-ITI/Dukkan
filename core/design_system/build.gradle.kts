@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.design_system"
+    namespace = "com.dukkan.design_system"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -40,7 +40,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation(platform(libs.androidx.compose.bom.v20240200))
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.coil.compose)
     debugImplementation(libs.androidx.ui.tooling)
 }

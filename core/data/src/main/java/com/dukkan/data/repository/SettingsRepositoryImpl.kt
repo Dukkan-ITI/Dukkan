@@ -1,10 +1,10 @@
 package com.dukkan.data.repository
 
 import com.dukkan.data.source.local.SettingsStore
-import com.msayeh.domain.model.AppCurrency
-import com.msayeh.domain.model.AppLanguage
-import com.msayeh.domain.model.ThemeMode
-import com.msayeh.domain.repository.SettingsRepository
+import com.dukkan.domain.model.AppCurrency
+import com.dukkan.domain.model.AppLanguage
+import com.dukkan.domain.model.ThemeMode
+import com.dukkan.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -30,5 +30,6 @@ class SettingsRepositoryImpl(private val store: SettingsStore) : SettingsReposit
 
     override val isOnboardingCompleted: Flow<Boolean> = store.isOnboardingCompleted
 
-    override suspend fun setOnboardingCompleted(completed: Boolean) = store.setOnboardingCompleted(completed)
+    override suspend fun setOnboardingCompleted(completed: Boolean) =
+        store.setOnboardingCompleted(completed)
 }

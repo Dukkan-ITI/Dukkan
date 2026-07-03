@@ -40,17 +40,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.auth.R
-import com.dukkan.auth.utils.GoogleSignInHelper
-
 import com.dukkan.auth.components.AuthGuestLink
 import com.dukkan.auth.components.AuthLoadingScreen
 import com.dukkan.auth.components.AuthPrimaryButton
 import com.dukkan.auth.components.AuthSocialRow
 import com.dukkan.auth.components.AuthTabRow
 import com.dukkan.auth.components.AuthTextField
+import com.dukkan.auth.utils.GoogleSignInHelper
 import com.dukkan.auth.viewmodel.AuthAction
 import com.dukkan.auth.viewmodel.AuthEvent
 import com.dukkan.auth.viewmodel.AuthUiState
@@ -94,7 +93,10 @@ fun AuthScreen(
                             // Ignored
                         } catch (e: Exception) {
                             authViewModel.onAction(
-                                AuthAction.GoogleSignInFailed(e.message ?: context.getString(R.string.auth_error_google_sign_in_failed))
+                                AuthAction.GoogleSignInFailed(
+                                    e.message
+                                        ?: context.getString(R.string.auth_error_google_sign_in_failed)
+                                )
                             )
                         }
                     }
@@ -149,17 +151,19 @@ private fun AuthFormContent(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(80.dp))
-        
+
         AuthHeadline(
             title = if (state.isLoginMode) stringResource(R.string.auth_login_title) else stringResource(
-                R.string.auth_register_title),
+                R.string.auth_register_title
+            ),
             subtitle = if (state.isLoginMode) stringResource(R.string.auth_login_subtitle) else stringResource(
-                R.string.auth_register_subtitle),
+                R.string.auth_register_subtitle
+            ),
             modifier = Modifier.padding(horizontal = 28.dp)
         )
-        
+
         Spacer(modifier = Modifier.height(30.dp))
-        
+
         AuthTabRow(
             isSignInSelected = state.isLoginMode,
             onSignInClick = { if (!state.isLoginMode) onAction(AuthAction.ToggleMode) },
@@ -176,13 +180,23 @@ private fun AuthFormContent(
                 .padding(bottom = 40.dp)
         ) {
             val animationSpec = tween<Float>(durationMillis = 350, easing = FastOutSlowInEasing)
-            
+
             AnimatedVisibility(
                 visible = !state.isLoginMode,
-                enter = fadeIn(animationSpec = animationSpec) + 
-                        expandVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)),
-                exit = fadeOut(animationSpec = animationSpec) + 
-                       shrinkVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
+                enter = fadeIn(animationSpec = animationSpec) +
+                        expandVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        ),
+                exit = fadeOut(animationSpec = animationSpec) +
+                        shrinkVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
             ) {
                 Column {
                     AuthTextField(
@@ -230,10 +244,20 @@ private fun AuthFormContent(
 
             AnimatedVisibility(
                 visible = !state.isLoginMode,
-                enter = fadeIn(animationSpec = animationSpec) + 
-                        expandVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)),
-                exit = fadeOut(animationSpec = animationSpec) + 
-                       shrinkVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
+                enter = fadeIn(animationSpec = animationSpec) +
+                        expandVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        ),
+                exit = fadeOut(animationSpec = animationSpec) +
+                        shrinkVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
             ) {
                 Column {
                     Spacer(Modifier.height(12.dp))
@@ -258,7 +282,8 @@ private fun AuthFormContent(
 
             AuthPrimaryButton(
                 text = if (state.isLoginMode) stringResource(R.string.auth_login_button) else stringResource(
-                    R.string.auth_register_button),
+                    R.string.auth_register_button
+                ),
                 onClick = { onAction(AuthAction.SubmitClicked) },
                 enabled = state.isSubmitEnabled,
             )
@@ -283,7 +308,9 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         AnimatedContent(
             targetState = title,
             transitionSpec = {
-                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(
+                    clip = false
+                )
             },
             label = "TitleAnimation"
         ) { targetTitle ->
@@ -302,7 +329,9 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         AnimatedContent(
             targetState = subtitle,
             transitionSpec = {
-                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(
+                    clip = false
+                )
             },
             label = "SubtitleAnimation"
         ) { targetSubtitle ->

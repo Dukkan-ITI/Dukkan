@@ -1,20 +1,23 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.data.source.local.entity.FavoriteEntity
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.domain.model.FavoriteProduct
+import com.dukkan.domain.model.Money
 
 fun FavoriteEntity.toDomainModel() = FavoriteProduct(
     id = id,
     title = title,
     imageUrl = imageUrl,
-    price = price,
-    currencyCode = currencyCode
+    price = Money(
+        amount = price.toBigDecimal(),
+        currencyCode = currencyCode
+    )
 )
 
 fun FavoriteProduct.toEntity() = FavoriteEntity(
     id = id,
     title = title,
     imageUrl = imageUrl,
-    price = price,
-    currencyCode = currencyCode
+    price = price.amount.toString(),
+    currencyCode = price.currencyCode
 )

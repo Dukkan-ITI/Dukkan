@@ -46,14 +46,18 @@ android {
 }
 
 dependencies {
-    implementation(project(":features:onboarding"))
-    implementation(project(":core:data"))
-    implementation(project(":core:navigation"))
-    implementation(project(":features:home"))
-    implementation(project(":core:domain"))
-    implementation(project(":features:favorites"))
-    implementation(project(":features:shopping_cart"))
     implementation(project(":core:design_system"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:favorites"))
+    implementation(project(":feature:shopping_cart"))
+    implementation(project(":feature:product_details"))
+    implementation(project(":feature:settings"))
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:search"))
 
 
     implementation(platform(libs.androidx.compose.bom))
@@ -78,20 +82,4 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
 
-}
-
-// Modules
-dependencies {
-    implementation(project(":core:design_system"))
-    implementation(project(":core:navigation"))
-    implementation(project(":core:data"))
-    implementation(project(":core:domain"))
-    implementation(project(":features:onboarding"))
-    implementation(project(":features:home"))
-    implementation(project(":features:favorites"))
-    implementation(project(":features:shopping_cart"))
-    implementation(project(":features:product_details"))
-    implementation(project(":features:settings"))
-    implementation(project(":feature:auth"))
-    implementation(project(":features:search"))
 }

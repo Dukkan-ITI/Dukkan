@@ -2,9 +2,9 @@ package com.dukkan.data.repository
 
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.repository.ProductsRepository
-import com.msayeh.domain.repository.SettingsRepository
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.repository.ProductsRepository
+import com.dukkan.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.first
 
 class ProductsRepositoryImpl(

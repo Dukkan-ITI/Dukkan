@@ -9,16 +9,16 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.os.LocaleListCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.design_system.theme.AppTheme
-import com.msayeh.domain.model.ThemeMode
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.domain.model.ThemeMode
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,9 +29,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             val appViewModel: AppViewModel = hiltViewModel()
-            val themeMode by appViewModel.themeMode.collectAsState()
-            val language by appViewModel.language.collectAsState()
-            val startDestination by appViewModel.startDestination.collectAsState()
+            val themeMode by appViewModel.themeMode.collectAsStateWithLifecycle()
+            val language by appViewModel.language.collectAsStateWithLifecycle()
+            val startDestination by appViewModel.startDestination.collectAsStateWithLifecycle()
 
             if (themeMode == null || language == null || startDestination == null) {
                 // Wait for DataStore to load

@@ -7,15 +7,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dukkan.auth.view.AuthScreen
-import com.dukkan.favorites.view.FavoritesView
+import com.dukkan.favorites.view.FavoritesScreen
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
-import com.dukkan.onboarding.view.OnboardingView
-import com.dukkan.settings.view.ProfileScreen
-import com.dukkan.shopping_cart.view.ShoppingCartView
+import com.dukkan.onboarding.view.OnboardingScreen
+import com.dukkan.product_details.view.ProductDetailsScreen
 import com.dukkan.search.view.SearchScreen
-import com.example.design_system.components.PlaceholderScreen
-import com.msayeh.product_details.view.ProductDetailsScreen
+import com.dukkan.settings.view.ProfileScreen
+import com.dukkan.shopping_cart.view.ShoppingCartScreen
 
 @Composable
 fun AppNavGraph(
@@ -32,7 +31,7 @@ fun AppNavGraph(
         composable<Screen.Login> {}
 
         composable<Screen.Onboarding> {
-            OnboardingView(
+            OnboardingScreen(
                 onNavigateToLogin = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Onboarding> { inclusive = true }
@@ -75,7 +74,7 @@ fun AppNavGraph(
         }
 
         composable<Screen.Favorite> {
-            FavoritesView(
+            FavoritesScreen(
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
@@ -85,7 +84,7 @@ fun AppNavGraph(
         }
 
         composable<Screen.ShoppingCart> {
-            ShoppingCartView(
+            ShoppingCartScreen(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
                 onCheckoutClick = { },
                 onSignInClick = {

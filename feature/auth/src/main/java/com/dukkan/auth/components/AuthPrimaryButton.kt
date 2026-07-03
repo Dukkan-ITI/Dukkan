@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.design_system.theme.AppTheme
+import com.dukkan.design_system.theme.AppTheme
 
 
 @Composable
@@ -47,7 +47,9 @@ fun AuthPrimaryButton(
         AnimatedContent(
             targetState = text,
             transitionSpec = {
-                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(
+                    clip = false
+                )
             },
             label = "ButtonTextAnimation"
         ) { targetText ->
