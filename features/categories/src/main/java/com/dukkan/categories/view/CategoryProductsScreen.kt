@@ -24,6 +24,8 @@ import com.dukkan.categories.viewmodel.CategoryProductsViewModel
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.model.asString
+import androidx.compose.ui.res.stringResource
+import com.dukkan.categories.R
 
 @Composable
 fun CategoryProductsScreen(
