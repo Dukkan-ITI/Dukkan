@@ -46,14 +46,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":features:onboarding"))
-    implementation(project(":core:data"))
-    implementation(project(":core:navigation"))
-    implementation(project(":features:home"))
-    implementation(project(":core:domain"))
-    implementation(project(":features:favorites"))
-    implementation(project(":features:shopping_cart"))
-    implementation(project(":core:design_system"))
+
 
 
     implementation(platform(libs.androidx.compose.bom))
@@ -94,4 +87,5 @@ dependencies {
     implementation(project(":features:settings"))
     implementation(project(":feature:auth"))
     implementation(project(":features:search"))
+    implementation(project(":feature:ads"))
 }
