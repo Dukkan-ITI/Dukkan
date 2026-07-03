@@ -19,7 +19,7 @@ import com.dukkan.domain.model.Category.Category
 fun HomeCategoriesSection(
     categories: List<Category>,
     onSeeAllClick: () -> Unit,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (Category) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -34,7 +34,7 @@ fun HomeCategoriesSection(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = stringResource(com.example.design_system.R.string.see_all_label),
+                text = stringResource(R.string.see_all),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onSeeAllClick() }
@@ -47,7 +47,7 @@ fun HomeCategoriesSection(
         ) {
             items(categories.take(10)) { category ->
                 FilterChip(
-                    label = category,
+                    label = category.name,
                     isSelected = false,
                     onClick = { onCategoryClick(category) }
                 )

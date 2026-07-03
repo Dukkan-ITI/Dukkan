@@ -1,5 +1,6 @@
 package com.dukkan.data.mapper
 
+import com.dukkan.CollectionProductsQuery
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
 import com.dukkan.domain.model.Money
@@ -77,3 +78,25 @@ private fun money(amount: Any?, currencyCode: String): Money {
         ?: throw IllegalArgumentException("Amount is required")
     return Money(amount = parsed, currencyCode = currencyCode)
 }
+
+fun CollectionProductsQuery.Node.toDomainModel(): Product {
+    return Product(
+        id = id,
+        title = title,
+        featuredImage = featuredImage?.toDomainModel(),
+        minPrice = priceRange.minVariantPrice.toDomainModel(),
+        maxPrice = priceRange.maxVariantPrice.toDomainModel(),
+        description = description,
+        productType = null,
+        images = null,
+        variants = null,
+    )
+}
+
+fun CollectionProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
+    if (url !is String) return null
+    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+}
+
+fun CollectionProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
+fun CollectionProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
