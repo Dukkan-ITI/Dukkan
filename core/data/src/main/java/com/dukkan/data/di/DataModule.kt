@@ -4,8 +4,11 @@ import android.content.Context
 import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AuthRepositoryImpl
+import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
+import com.dukkan.data.source.local.CouponStore
+import com.dukkan.data.source.local.CouponStoreImpl
 import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
@@ -19,6 +22,7 @@ import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
 import com.msayeh.domain.repository.AuthRepository
+import com.msayeh.domain.repository.CouponRepository
 import com.msayeh.domain.repository.ProductsRepository
 import com.msayeh.domain.repository.SettingsRepository
 import dagger.Module
@@ -92,4 +96,14 @@ object DataModule {
         shopifyAuthDataSource: ShopifyAuthDataSource,
         shopifyTokenStore: ShopifyTokenStore,
     ): AuthRepository = AuthRepositoryImpl(authDataSource, firebaseStoreDataSource, shopifyAuthDataSource, shopifyTokenStore)
+
+    @Singleton
+    @Provides
+    fun provideCouponStore(@ApplicationContext context: Context): CouponStore =
+        CouponStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
+        CouponRepositoryImpl(couponStore)
 }

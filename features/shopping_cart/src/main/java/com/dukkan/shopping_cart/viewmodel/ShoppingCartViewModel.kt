@@ -9,19 +9,21 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import com.msayeh.domain.model.cart.CartLine
 import com.msayeh.domain.usecase.GetCurrentUserUseCase
 import com.msayeh.domain.usecase.cart.CartUseCases
+import com.msayeh.domain.usecase.coupon.CouponUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @HiltViewModel
 class ShoppingCartViewModel @Inject constructor(
     private val cartUseCases: CartUseCases,
     private val getCurrentUser: GetCurrentUserUseCase,
+    private val couponUseCases: CouponUseCases,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -70,6 +72,7 @@ class ShoppingCartViewModel @Inject constructor(
     fun onScreenEntered() {
         viewModelScope.launch {
             refreshCart()
+            loadSavedCoupon()
         }
     }
 
@@ -108,6 +111,7 @@ class ShoppingCartViewModel @Inject constructor(
         viewModelScope.launch {
             val result = cartUseCases.applyDiscountCode(code)
             if (result.isSuccess) {
+                couponUseCases.clearCoupon()
                 _state.update {
                     it.copy(
                         isApplyingPromo = false,
@@ -135,6 +139,18 @@ class ShoppingCartViewModel @Inject constructor(
             cartUseCases.removeDiscountCode(codeToRemove)
             loadCart()
             _state.update { it.copy(isApplyingPromo = false) }
+        }
+    }
+
+    private suspend fun loadSavedCoupon() {
+        val couponCode = couponUseCases.getSavedCoupon().firstOrNull()
+
+        if (!couponCode.isNullOrBlank()) {
+            _state.update {
+                it.copy(
+                    promoCode = couponCode
+                )
+            }
         }
     }
 }
