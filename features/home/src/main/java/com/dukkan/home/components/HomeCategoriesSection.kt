@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import com.dukkan.home.R
 import com.dukkan.design_system.components.FilterChip
 import com.dukkan.domain.model.Category.Category
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeCategoriesSection(
