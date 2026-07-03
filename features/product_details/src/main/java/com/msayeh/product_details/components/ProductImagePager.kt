@@ -96,7 +96,7 @@ fun ProductImagePager(
             ) { tint -> drawBackChevron(tint) }
             CircleIconButton(
                 contentDescription = stringResource(R.string.product_details_favorite),
-                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
                 onClick = onFavoriteClick,
             ) { tint -> drawHeart(tint, filled = isFavorite) }
         }

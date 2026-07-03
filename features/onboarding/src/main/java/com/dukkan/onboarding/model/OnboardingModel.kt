@@ -1,7 +1,9 @@
 package com.dukkan.onboarding.model
 
+import androidx.annotation.StringRes
+
 data class OnboardingModel(
-    val title: String,
-    val description: String,
-    val imageRes: Int
+    @StringRes val titleRes: Int,
+    @StringRes val descriptionRes: Int,
+    val imageRes: Int,
 )
