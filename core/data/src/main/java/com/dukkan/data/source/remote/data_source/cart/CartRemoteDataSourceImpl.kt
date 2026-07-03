@@ -66,8 +66,7 @@ class CartRemoteDataSourceImpl @Inject constructor(
         return response.data?.cartLinesRemove
     }
 
-    // بقت بتاخد List<String> بدل String واحد. الـ mutation نفسها "replace all"،
-    // فبعت listOf(code) لإضافة كود واحد، أو emptyList() لمسح كل الأكواد المطبقة.
+   
     override suspend fun applyDiscountCodes(
         cartId: String,
         discountCodes: List<String>
