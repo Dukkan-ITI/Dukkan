@@ -21,20 +21,20 @@ class OnboardingViewModel @Inject constructor(
         OnboardingUiState(
             pages = listOf(
                 OnboardingModel(
-                    "Welcome to Dukkan",
-                    "Discover the best products from top brands tailored just for you.",
-                    R.drawable.onboarding1
+                    R.string.onboarding_title_1,
+                    R.string.onboarding_desc_1,
+                    R.drawable.onboarding1,
                 ),
                 OnboardingModel(
-                    "Shop Safely",
-                    "Your security is our priority. Shop with confidence using our secure payment options.",
-                    R.drawable.onboarding2
+                    R.string.onboarding_title_2,
+                    R.string.onboarding_desc_2,
+                    R.drawable.onboarding2,
                 ),
                 OnboardingModel(
-                    "Fast Delivery",
-                    "Get your favorite items delivered right to your doorstep in no time.",
-                    R.drawable.onboarding3
-                )
+                    R.string.onboarding_title_3,
+                    R.string.onboarding_desc_3,
+                    R.drawable.onboarding3,
+                ),
             )
         )
     )

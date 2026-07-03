@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.dukkan.onboarding.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -33,10 +35,11 @@ fun ContinueButton(
     ) {
 
         Text(
-            text = if (isLastPage)
-                "Get started"
-            else
-                "Continue → ",
+            text = if (isLastPage) {
+                stringResource(R.string.get_started)
+            } else {
+                stringResource(R.string.continue_arrow)
+            },
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )

@@ -1,14 +1,13 @@
 package com.dukkan.shopping_cart.uistate
 
-import com.msayeh.domain.model.CartItem
+import com.msayeh.domain.model.cart.CartLine
+import com.msayeh.domain.model.cart.StoreCart
 
 data class ShoppingCartState(
-    val cartItems: List<CartItem> = emptyList(),
-    val subtotal: Double = 0.0,
-    val shipping: Double = 0.0,
-    val total: Double = 0.0,
+    val cart: StoreCart? = null,
+    val isLoading: Boolean = false,
     val promoCode: String = "",
     val isApplyingPromo: Boolean = false,
     val promoError: String? = null,
-    val showRemoveDialogForItem: CartItem? = null
+    val showRemoveDialogForItem: CartLine? = null
 )
