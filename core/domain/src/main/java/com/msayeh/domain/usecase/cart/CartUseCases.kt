@@ -9,5 +9,6 @@ class CartUseCases @Inject constructor(
     val removeFromCart: RemoveFromCartUseCase,
     val createCart: CreateCartUseCase,
     val saveCartId: SaveCartIdUseCase,
-    val applyDiscountCode: ApplyDiscountCodeUseCase
+    val applyDiscountCode: ApplyDiscountCodeUseCase,
+    val removeDiscountCode: RemoveDiscountCodeUseCase
 )

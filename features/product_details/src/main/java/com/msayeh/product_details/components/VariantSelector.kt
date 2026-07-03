@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.design_system.theme.AppTheme
 import com.msayeh.domain.model.Money
+import com.msayeh.domain.model.ProductSummary
 import com.msayeh.domain.model.ProductVariant
 import com.msayeh.product_details.R
 
@@ -108,10 +109,12 @@ private fun VariantSelectorPreview() {
             image = null,
             availableForSale = size != "L",
             quantityAvailable = 5,
-            compareAtPrice = TODO(),
-            selectedOptions = TODO(),
-            product = TODO(),
-        )
+            compareAtPrice = null,
+            selectedOptions =emptyList(),
+            product = ProductSummary(
+                id = "",
+                title = "",
+                vendor = ""))
     }
     AppTheme {
         VariantSelector(

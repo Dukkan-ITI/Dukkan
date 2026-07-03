@@ -5,6 +5,8 @@ import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
+import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSource
+import com.google.firebase.auth.FirebaseAuth
 import com.msayeh.domain.model.cart.StoreCart
 import com.msayeh.domain.repository.CartRepository
 import javax.inject.Inject
@@ -12,10 +14,25 @@ import javax.inject.Inject
 class CartRepositoryImpl @Inject constructor(
     private val localDataSource: CartLocalDataSource,
     private val remoteDataSource: CartRemoteDataSource,
-    private val tokenStore: ShopifyTokenStore
+    private val firestoreDataSource: CartFirestoreDataSource,
+    private val tokenStore: ShopifyTokenStore,
+    private val firebaseAuth: FirebaseAuth
 ) : CartRepository {
 
     private var cachedCart: StoreCart? = null
+
+    private fun getCurrentUserId(): String {
+        return firebaseAuth.currentUser?.uid ?: "guest_${System.identityHashCode(this)}"
+    }
+
+    private suspend fun saveCartIdBoth(cartId: String) {
+        localDataSource.saveCartId(cartId)
+        try {
+            firestoreDataSource.saveCartId(cartId, getCurrentUserId())
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to save cart ID to Firestore, but local save succeeded", e)
+        }
+    }
 
     override suspend fun getCart(): StoreCart? {
         if (cachedCart != null) return cachedCart
@@ -39,13 +56,13 @@ class CartRepositoryImpl @Inject constructor(
             val createdCart = remoteDataSource.createCart(customerAccessToken)
             cartId = createdCart?.cart?.id
             if (cartId != null) {
-                localDataSource.saveCartId(cartId)
+                saveCartIdBoth(cartId)
                 Log.d(TAG, "First add to cart — cart created with id: $cartId")
             } else {
                 Log.e(TAG, "First add to cart — cart creation failed")
             }
         }
-        
+
         if (cartId != null) {
             remoteDataSource.addCartItem(cartId, variantId)
         }
@@ -57,7 +74,7 @@ class CartRepositoryImpl @Inject constructor(
         if (quantity <= 0) {
             remoteDataSource.removeCartItem(cartId, lineId)
         } else {
-           remoteDataSource.updateCartItem(cartId, lineId, quantity)
+            remoteDataSource.updateCartItem(cartId, lineId, quantity)
         }
     }
 
@@ -70,19 +87,25 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun createCart(customerAccessToken: String?): String? {
         val createdCart = remoteDataSource.createCart(customerAccessToken)
         val cartId = createdCart?.cart?.id
-        cartId?.let { localDataSource.saveCartId(it) }
+        cartId?.let { saveCartIdBoth(it) }
         return cartId
     }
 
     override suspend fun saveCartId(cartId: String) {
-        localDataSource.saveCartId(cartId)
+        saveCartIdBoth(cartId)
     }
 
     override suspend fun applyDiscountCode(discountCode: String): Result<Unit> {
         cachedCart = null
         val cartId = localDataSource.getCartId()
             ?: return Result.failure(Exception("No active cart found"))
-        val result = remoteDataSource.applyDiscountCode(cartId, discountCode)
+
+        // نجمع الأكواد المطبقة حاليًا + الكود الجديد، عشان الإضافة متمسحش القديم
+        // (لأن الـ mutation replace-all، لازم نبعت القائمة كاملة مش الكود لوحده)
+        val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
+        val updatedCodes = (existingCodes + discountCode).distinct()
+
+        val result = remoteDataSource.applyDiscountCodes(cartId, updatedCodes)
             ?: return Result.failure(Exception("Failed to apply discount code"))
 
         val errors = result.userErrors
@@ -90,7 +113,6 @@ class CartRepositoryImpl @Inject constructor(
             return Result.failure(Exception(errors.first().message))
         }
 
-        // Shopify may return no userErrors but mark the code as not applicable
         val appliedCode = result.cart?.discountCodes
             ?.firstOrNull { it.code.equals(discountCode, ignoreCase = true) }
 
@@ -99,6 +121,32 @@ class CartRepositoryImpl @Inject constructor(
         } else {
             Result.success(Unit)
         }
+    }
+
+    override suspend fun removeDiscountCode(discountCode: String): Result<Unit> {
+        cachedCart = null
+        val cartId = localDataSource.getCartId()
+            ?: return Result.failure(Exception("No active cart found"))
+
+        val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
+        val remainingCodes = existingCodes.filter { !it.equals(discountCode, ignoreCase = true) }
+
+        // بعت القائمة الباقية (أو فاضية لو مفيش كودات تانية) — ده اللي بيمسح
+        // الكود فعليًا من على الكارت على السيرفر
+        val result = remoteDataSource.applyDiscountCodes(cartId, remainingCodes)
+            ?: return Result.failure(Exception("Failed to remove discount code"))
+
+        val errors = result.userErrors
+        if (errors.isNotEmpty()) {
+            return Result.failure(Exception(errors.first().message))
+        }
+
+        return Result.success(Unit)
+    }
+
+    private suspend fun cachedGetAppliedCodesOrEmpty(cartId: String): List<String> {
+        val cart = remoteDataSource.getCart(cartId)
+        return cart?.discountCodes?.map { it.code } ?: emptyList()
     }
 
     private companion object {

@@ -80,7 +80,7 @@ fun CartItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f), RoundedCornerShape(20.dp))
             .padding(16.dp)
             .heightIn(min = 130.dp),
         verticalAlignment = Alignment.CenterVertically

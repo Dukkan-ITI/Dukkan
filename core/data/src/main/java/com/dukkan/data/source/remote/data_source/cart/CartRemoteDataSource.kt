@@ -14,5 +14,9 @@ interface CartRemoteDataSource {
     suspend fun addCartItem(cartId: String, variantId: String): AddCartLinesMutation.CartLinesAdd?
     suspend fun updateCartItem(cartId: String, lineId: String, quantity: Int): UpdateCartLinesMutation.CartLinesUpdate?
     suspend fun removeCartItem(cartId: String, lineId: String): RemoveCartLinesMutation.CartLinesRemove?
-    suspend fun applyDiscountCode(cartId: String, discountCode: String): ApplyDiscountCodeMutation.CartDiscountCodesUpdate?
+
+    // كانت بتاخد كود واحد بس (discountCode: String)، بقت تاخد قائمة كاملة
+    // لأن الـ mutation دي "replace all": أي List بتبعتيها هي اللي هتبقى مطبقة.
+    // بعت قائمة فاضية عشان تمسحي كل الأكواد المطبقة.
+    suspend fun applyDiscountCodes(cartId: String, discountCodes: List<String>): ApplyDiscountCodeMutation.CartDiscountCodesUpdate?
 }

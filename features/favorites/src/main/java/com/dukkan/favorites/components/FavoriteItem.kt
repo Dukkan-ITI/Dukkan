@@ -69,7 +69,7 @@ fun FavoriteItem(
                     imageVector = Icons.Filled.Favorite,
                     contentDescription = stringResource(R.string.remove_from_wishlist),
                     modifier = Modifier.size(15.dp),
-                    tint = Color.Red
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }
