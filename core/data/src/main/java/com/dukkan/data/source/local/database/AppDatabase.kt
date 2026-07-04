@@ -9,7 +9,7 @@ import com.dukkan.data.source.local.entity.FavoriteEntity
 
 
 
-@Database(entities = [FavoriteEntity::class], version = 1)
+@Database(entities = [FavoriteEntity::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
 }
