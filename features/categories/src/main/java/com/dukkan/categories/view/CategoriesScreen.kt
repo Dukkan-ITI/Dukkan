@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.categories.R
 import com.dukkan.categories.viewmodel.CategoriesViewModel
 import com.dukkan.design_system.components.FilterChip
@@ -69,7 +70,7 @@ fun CategoriesScreen(
     onCategoryClick: (String) -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
-    val categories by viewModel.categoriesState.collectAsState()
+    val categories by viewModel.categoriesState.collectAsStateWithLifecycle()
 
     CategoriesScreenContent(
         categories = categories,
