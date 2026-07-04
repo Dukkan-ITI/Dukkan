@@ -8,12 +8,7 @@ plugins {
 
 android {
     namespace = "com.dukkan.app"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
-
+    compileSdk = 35
 
     lint {
         abortOnError = true
@@ -22,7 +17,7 @@ android {
     defaultConfig {
         applicationId = "com.dukkan.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -31,9 +26,11 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -42,9 +39,11 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
 }
 
+// Modules
 dependencies {
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
@@ -61,6 +60,7 @@ dependencies {
     implementation(project(":feature:address"))
     implementation(project(":features:categories"))
     implementation(project(":feature:ads"))
+    implementation(project(":core:payment"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
@@ -84,4 +84,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
 
+    // Required for Paymob SDK resource linking
+    implementation(libs.sdp)
+    implementation(libs.ssp)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 }
