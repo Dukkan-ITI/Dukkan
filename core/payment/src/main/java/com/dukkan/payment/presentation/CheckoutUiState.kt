@@ -20,11 +20,11 @@ internal data class CheckoutUiState(
     val paymobCredentials: PaymobCredentials? = null,
     val result: OrderResult? = null,
     val cashSuccessConfirmation: OrderConfirmation? = null,
-    val error: String? = null,
+    val error: UiText? = null,
 )
 
 internal sealed interface OrderResult {
     data class Success(val confirmation: OrderConfirmation) : OrderResult
-    data class Failure(val reason: String, val canRetry: Boolean) : OrderResult
+    data class Failure(val reason: UiText, val canRetry: Boolean) : OrderResult
     data class Pending(val confirmation: OrderConfirmation?) : OrderResult
 }

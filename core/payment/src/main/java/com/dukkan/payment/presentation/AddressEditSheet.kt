@@ -35,6 +35,8 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import com.dukkan.payment.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +77,7 @@ internal fun AddressEditSheet(
                 )
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
-                    text = "Delivery Address",
+                    text = stringResource(R.string.payment_address_delivery),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -91,7 +93,7 @@ internal fun AddressEditSheet(
                 OutlinedTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = { Text("First Name") },
+                    label = { Text(stringResource(R.string.payment_address_first_name)) },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(20.dp)) },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.weight(1f),
@@ -101,7 +103,7 @@ internal fun AddressEditSheet(
                 OutlinedTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = { Text("Last Name") },
+                    label = { Text(stringResource(R.string.payment_address_last_name)) },
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.weight(1f),
                     singleLine = true
@@ -111,7 +113,7 @@ internal fun AddressEditSheet(
             OutlinedTextField(
                 value = address1,
                 onValueChange = { address1 = it },
-                label = { Text("Street Address") },
+                label = { Text(stringResource(R.string.payment_address_street)) },
                 leadingIcon = { Icon(Icons.Default.Home, contentDescription = null, modifier = Modifier.size(20.dp)) },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -121,7 +123,7 @@ internal fun AddressEditSheet(
             OutlinedTextField(
                 value = city,
                 onValueChange = { city = it },
-                label = { Text("City") },
+                label = { Text(stringResource(R.string.payment_address_city)) },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -130,7 +132,7 @@ internal fun AddressEditSheet(
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = { Text("Phone Number") },
+                label = { Text(stringResource(R.string.payment_address_phone)) },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, modifier = Modifier.size(20.dp)) },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -162,7 +164,7 @@ internal fun AddressEditSheet(
                     .height(56.dp)
             ) {
                 Text(
-                    text = "Confirm Address",
+                    text = stringResource(R.string.payment_address_confirm),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

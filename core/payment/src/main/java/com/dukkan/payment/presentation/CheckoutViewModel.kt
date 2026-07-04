@@ -24,6 +24,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import com.dukkan.payment.R
+import com.dukkan.payment.presentation.CheckoutConstants.KEY_IDEMPOTENCY_KEY
+import com.dukkan.payment.presentation.CheckoutConstants.KEY_ONE_OFF_ADDRESS_JSON
+import com.dukkan.payment.presentation.CheckoutConstants.KEY_ORDER_ID
+import com.dukkan.payment.presentation.CheckoutConstants.KEY_SAVED_ADDRESS_ID
+import com.dukkan.payment.presentation.CheckoutConstants.KEY_SELECTED_METHOD
+import com.dukkan.payment.presentation.CheckoutConstants.MAX_POLL_ATTEMPTS
+import com.dukkan.payment.presentation.CheckoutConstants.POLL_DELAY_MS
 
 @HiltViewModel
 internal class CheckoutViewModel @Inject constructor(
@@ -34,17 +42,6 @@ internal class CheckoutViewModel @Inject constructor(
     private val getCartUseCase: GetCartUseCase,
     private val getAddressesUseCase: GetAddressesUseCase,
 ) : ViewModel() {
-
-    private companion object {
-        const val KEY_ORDER_ID               = "checkout_order_id"
-        const val KEY_IDEMPOTENCY_KEY        = "checkout_idempotency_key"
-        const val KEY_SAVED_ADDRESS_ID       = "checkout_saved_address_id"
-        const val KEY_ONE_OFF_ADDRESS_JSON   = "checkout_one_off_address_json"
-        const val KEY_SELECTED_METHOD        = "checkout_selected_method"
-        
-        const val MAX_POLL_ATTEMPTS          = 13
-        const val POLL_DELAY_MS              = 1_500L
-    }
 
     private val gson = Gson()
 
@@ -200,7 +197,8 @@ internal class CheckoutViewModel @Inject constructor(
                 },
                 onFailure = { e ->
                     
-                    _uiState.update { it.copy(result = OrderResult.Failure(e.message ?: "Unknown error", canRetry = true)) }
+                    val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_unknown)
+                    _uiState.update { it.copy(result = OrderResult.Failure(errorMessage, canRetry = true)) }
                 }
             )
         }
@@ -229,10 +227,11 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 },
                 onFailure = { e ->
+                    val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_initialize)
                     _uiState.update { 
                         it.copy(
                             isCreatingIntention = false, 
-                            result = OrderResult.Failure(e.message ?: "Failed to initialize payment", canRetry = true)
+                            result = OrderResult.Failure(errorMessage, canRetry = true)
                         ) 
                     }
                 },
@@ -244,10 +243,10 @@ internal class CheckoutViewModel @Inject constructor(
         when (status) {
             com.dukkan.payment.presentation.components.PaymobSdkStatus.SUCCESS -> verifyStatus()
             com.dukkan.payment.presentation.components.PaymobSdkStatus.PENDING -> {
-                _uiState.update { it.copy(error = "Payment is pending") }
+                _uiState.update { it.copy(error = UiText.StringResource(R.string.payment_error_pending)) }
             }
             com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
-                val errorMsg = message ?: "Payment was cancelled or failed."
+                val errorMsg = message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_cancelled)
                 _uiState.update { it.copy(result = OrderResult.Failure(errorMsg, canRetry = true)) }
             }
         }
@@ -306,13 +305,14 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 } else {
                     _uiState.update {
-                        it.copy(result = OrderResult.Failure("Payment status: ${confirmation.status}", canRetry = true))
+                        it.copy(result = OrderResult.Failure(UiText.StringResource(R.string.payment_error_status, confirmation.status), canRetry = true))
                     }
                 }
             },
             onFailure = { e ->
+                val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_failed)
                 _uiState.update { 
-                    it.copy(result = OrderResult.Failure(e.message ?: "Payment failed", canRetry = true)) 
+                    it.copy(result = OrderResult.Failure(errorMessage, canRetry = true)) 
                 }
             },
         )

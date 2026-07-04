@@ -416,7 +416,7 @@ private fun PaymentResultOverlay(
                             color = MaterialTheme.colorScheme.error
                         )
                         Text(
-                            text = result.reason,
+                            text = result.reason.asString(),
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
