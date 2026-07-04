@@ -1,5 +1,6 @@
 package com.dukkan.home.uistate
 
+import com.dukkan.domain.model.Brand
 import com.dukkan.domain.model.Category.Category
 import com.dukkan.domain.model.Product
 

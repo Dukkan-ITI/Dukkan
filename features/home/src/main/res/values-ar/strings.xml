@@ -19,4 +19,5 @@
     <string name="search">بحث</string>
     <string name="search_products">ابحث عن المنتجات...</string>
     <string name="categories">الفئات (%1$d)</string>
+    <string name="brands">العلامات التجارية</string>
 </resources>

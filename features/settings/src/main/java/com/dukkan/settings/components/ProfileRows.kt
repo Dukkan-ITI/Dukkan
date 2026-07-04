@@ -84,13 +84,12 @@ fun WishlistRow(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun SavedAddressesRow(modifier: Modifier = Modifier) {
-    // Click behaviour intentionally not wired yet.
+fun SavedAddressesRow(onClick: () -> Unit, modifier: Modifier = Modifier) {
     ProfileRow(
         icon = Icons.Filled.LocationOn,
         label = stringResource(R.string.profile_saved_addresses),
         trailing = stringResource(R.string.profile_edit),
-        onClick = null,
+        onClick = onClick,
         modifier = modifier,
     )
 }
