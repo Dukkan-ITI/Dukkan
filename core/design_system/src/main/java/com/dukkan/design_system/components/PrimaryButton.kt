@@ -22,12 +22,13 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     isLoading: Boolean = false
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
-        enabled = !isLoading,
+        enabled = !isLoading && enabled,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         contentPadding = PaddingValues(16.dp)
     ) {
