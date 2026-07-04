@@ -177,7 +177,6 @@ private fun SavedAddressesContent(
 
     state.deleteCandidate?.let { candidate ->
         DeleteAddressDialog(
-            address = candidate,
             isDeleting = state.isDeleting,
             onDismiss = onDismissDeleteDialog,
             onConfirm = onConfirmDelete,
