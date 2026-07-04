@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen title -->
+    <string name="payment_title">Checkout</string>
+    <string name="payment_navigate_up">Back</string>
+
+    <!-- Step titles -->
+    <string name="payment_step_address_title">Select Delivery Address</string>
+    <string name="payment_step_method_title">Choose Payment Method</string>
+
+    <!-- Address card -->
+    <string name="payment_address_city_country">%1$s, %2$s</string>
+
+    <!-- Payment methods -->
+    <string name="payment_method_cash_title">Cash on Delivery</string>
+    <string name="payment_method_cash_subtitle">Pay when your order arrives</string>
+    <string name="payment_method_online_title">Pay Online</string>
+    <string name="payment_method_online_subtitle">Card, wallet, Google Pay &amp; more</string>
+
+    <!-- Buttons -->
+    <string name="payment_continue">Continue</string>
+    <string name="payment_confirm">Confirm Order</string>
+    <string name="payment_retry">Try Again</string>
+    <string name="payment_track_order">Track My Order</string>
+
+    <!-- Order summary bar -->
+    <string name="payment_summary_items">%1$d items</string>
+
+    <!-- Processing / verifying -->
+    <string name="payment_verifying">Verifying payment…</string>
+
+    <!-- Success -->
+    <string name="payment_success_title">Order Confirmed 🎉</string>
+    <string name="payment_success_order_id">Order #%1$s</string>
+
+    <!-- Failure (definite — retry makes sense) -->
+    <string name="payment_failed_title">Payment Failed</string>
+
+    <!-- Still pending (poll timeout — retry does NOT make sense, would risk double-pay) -->
+    <string name="payment_still_pending_title">Payment Still Processing</string>
+    <string name="payment_still_pending_body">Your payment is being processed. We\'ll notify you once it\'s confirmed. You can track your order below.</string>
+</resources>

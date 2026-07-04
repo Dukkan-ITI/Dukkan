@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen title -->
+    <string name="payment_title">الدفع</string>
+    <string name="payment_navigate_up">رجوع</string>
+
+    <!-- Step titles -->
+    <string name="payment_step_address_title">اختر عنوان التوصيل</string>
+    <string name="payment_step_method_title">اختر طريقة الدفع</string>
+
+    <!-- Address card -->
+    <string name="payment_address_city_country">%1$s، %2$s</string>
+
+    <!-- Payment methods -->
+    <string name="payment_method_cash_title">الدفع عند الاستلام</string>
+    <string name="payment_method_cash_subtitle">ادفع عند وصول طلبك</string>
+    <string name="payment_method_online_title">الدفع الإلكتروني</string>
+    <string name="payment_method_online_subtitle">بطاقة، محفظة، Google Pay والمزيد</string>
+
+    <!-- Buttons -->
+    <string name="payment_continue">متابعة</string>
+    <string name="payment_confirm">تأكيد الطلب</string>
+    <string name="payment_retry">إعادة المحاولة</string>
+    <string name="payment_track_order">تتبع طلبي</string>
+
+    <!-- Order summary bar -->
+    <string name="payment_summary_items">%1$d منتجات</string>
+
+    <!-- Processing / verifying -->
+    <string name="payment_verifying">جارٍ التحقق من الدفع…</string>
+
+    <!-- Success -->
+    <string name="payment_success_title">تم تأكيد الطلب 🎉</string>
+    <string name="payment_success_order_id">طلب رقم #%1$s</string>
+
+    <!-- Failure -->
+    <string name="payment_failed_title">فشلت عملية الدفع</string>
+
+    <!-- Still pending -->
+    <string name="payment_still_pending_title">الدفع قيد المعالجة</string>
+    <string name="payment_still_pending_body">دفعتك قيد المعالجة. سنُعلمك فور التأكيد. يمكنك تتبع طلبك أدناه.</string>
+</resources>
