@@ -57,6 +57,8 @@ fun HomeScreen(
         },
         onNavigateToCategories = onNavigateToCategories,
         onCategoryClick = onCategoryClick,
+        onNavigateToBrands = onNavigateToBrands,
+        onBrandClick = onBrandClick,
     )
 }
 
@@ -138,6 +140,16 @@ fun HomeScreenContent(
                             categories = uiState.categories,
                             onSeeAllClick = onNavigateToCategories,
                             onCategoryClick = onCategoryClick
+                        )
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeBrandsSection(
+                            brands = uiState.brands,
+                            onSeeAllClick = onNavigateToBrands,
+                            onBrandClick = onBrandClick
                         )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
