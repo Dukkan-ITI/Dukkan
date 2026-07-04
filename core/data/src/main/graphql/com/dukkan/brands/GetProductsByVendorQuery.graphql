@@ -12,6 +12,7 @@ query GetProductsByVendor(
                 title
                 featuredImage {
                     url
+                    thumbhash
                 }
                 priceRange {
                     minVariantPrice {
