@@ -87,7 +87,11 @@ private fun ProfileContent(
         )
 
         if (state.isLoggedIn) {
-            OrderHistorySection(orders = state.orders, onSeeAllClick = onSeeAllClick)
+            OrderHistorySection(
+                orders = state.orders,
+                onSeeAllClick = onSeeAllClick,
+                isLoading = state.ordersLoading,
+            )
 
             Column {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))

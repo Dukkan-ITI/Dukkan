@@ -2,8 +2,8 @@ package com.dukkan.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.design_system.components.OrderStatus
 import com.example.design_system.components.OrderUi
+import com.dukkan.settings.mapper.toOrderUi
 import com.msayeh.domain.model.AppCurrency
 import com.msayeh.domain.model.AppLanguage
 import com.msayeh.domain.model.AuthUser
@@ -11,6 +11,7 @@ import com.msayeh.domain.model.ThemeMode
 import com.msayeh.domain.usecase.GetCurrentUserUseCase
 import com.msayeh.domain.usecase.SignOutUseCase
 import com.msayeh.domain.usecase.favorite.GetFavoritesUseCase
+import com.msayeh.domain.usecase.order.GetRecentOrdersUseCase
 import com.msayeh.domain.usecase.settings.GetCurrencyUseCase
 import com.msayeh.domain.usecase.settings.GetLanguageUseCase
 import com.msayeh.domain.usecase.settings.GetThemeUseCase
@@ -27,30 +28,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-val sampleOrders: List<OrderUi> = listOf(
-    OrderUi(
-        id = "#JN-4821",
-        date = "Jun 12, 2026",
-        itemCount = 3,
-        total = "$168",
-        status = OrderStatus.DELIVERED,
-    ),
-    OrderUi(
-        id = "#JN-4790",
-        date = "May 28, 2026",
-        itemCount = 1,
-        total = "$95",
-        status = OrderStatus.DELIVERED,
-    ),
-    OrderUi(
-        id = "#JN-4763",
-        date = "May 09, 2026",
-        itemCount = 2,
-        total = "$120",
-        status = OrderStatus.IN_TRANSIT,
-    ),
-)
-
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     getCurrentUserUseCase: GetCurrentUserUseCase,
@@ -58,6 +35,7 @@ class ProfileViewModel @Inject constructor(
     getThemeUseCase: GetThemeUseCase,
     getCurrencyUseCase: GetCurrencyUseCase,
     getLanguageUseCase: GetLanguageUseCase,
+    private val getRecentOrdersUseCase: GetRecentOrdersUseCase,
     private val setThemeUseCase: SetThemeUseCase,
     private val setCurrencyUseCase: SetCurrencyUseCase,
     private val setLanguageUseCase: SetLanguageUseCase,
@@ -66,11 +44,27 @@ class ProfileViewModel @Inject constructor(
 
     private val _user = MutableStateFlow<AuthUser?>(null)
     private val _isLoading = MutableStateFlow(true)
+    private val _orders = MutableStateFlow<List<OrderUi>>(emptyList())
+    private val _ordersLoading = MutableStateFlow(false)
 
     init {
         viewModelScope.launch {
-            _user.value = getCurrentUserUseCase()
+            val user = getCurrentUserUseCase()
+            _user.value = user
             _isLoading.value = false
+            if (user != null) {
+                loadRecentOrders()
+            }
+        }
+    }
+
+    private fun loadRecentOrders() {
+        viewModelScope.launch {
+            _ordersLoading.value = true
+            getRecentOrdersUseCase()
+                .onSuccess { orders -> _orders.value = orders.map { it.toOrderUi() } }
+                .onFailure { _orders.value = emptyList() }
+            _ordersLoading.value = false
         }
     }
 
@@ -82,12 +76,19 @@ class ProfileViewModel @Inject constructor(
         Triple(theme, currency, language)
     }
 
+    private val ordersState = combine(_orders, _ordersLoading) { orders, ordersLoading ->
+        orders to ordersLoading
+    }
+
     val state: StateFlow<ProfileState> = combine(
         _user,
         _isLoading,
+        ordersState,
         getFavoritesUseCase().map { it.size },
         settings,
-    ) { user, isLoading, favoritesCount, (theme, currency, language) ->
+    ) { user, isLoading, ordersData, favoritesCount, settingsTriple ->
+        val (orders, ordersLoading) = ordersData
+        val (theme, currency, language) = settingsTriple
         ProfileState(
             isLoading = isLoading,
             user = user,
@@ -95,7 +96,8 @@ class ProfileViewModel @Inject constructor(
             themeMode = theme,
             currency = currency,
             language = language,
-            orders = sampleOrders,
+            orders = orders,
+            ordersLoading = ordersLoading,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -112,8 +114,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onLanguageSelected(language: AppLanguage) {
-        // Only persist here. The app root observes the language flow and applies the
-        // per-app locale, so the change is picked up both now and on the next launch.
         viewModelScope.launch { setLanguageUseCase(language) }
     }
 
@@ -121,6 +121,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             signOutUseCase()
             _user.value = null
+            _orders.value = emptyList()
             onComplete()
         }
     }

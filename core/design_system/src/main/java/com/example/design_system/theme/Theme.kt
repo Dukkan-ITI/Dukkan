@@ -35,10 +35,16 @@ private val DarkColorScheme = darkColorScheme(
 
 data class DukkanExtendedColors(
     val bannerTitle: Color,
+    val orderStatusInTransit: Color,
+    val orderStatusProcessing: Color,
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
-    DukkanExtendedColors(bannerTitle = Color.Unspecified)
+    DukkanExtendedColors(
+        bannerTitle = Color.Unspecified,
+        orderStatusInTransit = Color.Unspecified,
+        orderStatusProcessing = Color.Unspecified,
+    )
 }
 @Composable
 fun AppTheme(
@@ -47,9 +53,19 @@ fun AppTheme(
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-    val extendedColors = DukkanExtendedColors(
-        bannerTitle = DukkanBannerTitle
-    )
+    val extendedColors = if (darkTheme) {
+        DukkanExtendedColors(
+            bannerTitle = DukkanBannerTitle,
+            orderStatusInTransit = DarkOrderInTransit,
+            orderStatusProcessing = DarkOrderProcessing,
+        )
+    } else {
+        DukkanExtendedColors(
+            bannerTitle = DukkanBannerTitle,
+            orderStatusInTransit = LightOrderInTransit,
+            orderStatusProcessing = LightOrderProcessing,
+        )
+    }
 
     CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
         MaterialTheme(

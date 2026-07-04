@@ -14,6 +14,7 @@ import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
 import com.dukkan.search.view.SearchScreen
+import com.dukkan.order_list.view.OrderHistoryScreen
 import com.example.design_system.components.PlaceholderScreen
 import com.msayeh.product_details.view.ProductDetailsScreen
 
@@ -105,8 +106,13 @@ fun AppNavGraph(
                     }
                 },
                 onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
-                onNavigateToOrderList = {
-                }
+                onNavigateToOrderList = { navController.navigate(Screen.OrderHistory) }
+            )
+        }
+
+        composable<Screen.OrderHistory> {
+            OrderHistoryScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

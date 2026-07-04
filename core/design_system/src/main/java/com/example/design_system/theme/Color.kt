@@ -23,3 +23,9 @@ val DarkText = Color(0xFFFFFFFF)
 val DarkMutedText = Color(0xFF908C9E)
 val DarkBorder = Color(0xFF2A2736)
 val DarkSubText = Color(0xFF6C6877)
+
+// Order status colors
+val LightOrderInTransit = Color(0xFFD97706)
+val LightOrderProcessing = Color(0xFFCA8A04)
+val DarkOrderInTransit = Color(0xFFFBBF24)
+val DarkOrderProcessing = Color(0xFFFACC15)
