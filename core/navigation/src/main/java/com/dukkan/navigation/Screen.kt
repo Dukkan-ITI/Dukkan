@@ -40,4 +40,7 @@ sealed class Screen {
 
     @Serializable
     data class CategoryProducts(val categoryHandle: String)
+
+    @Serializable
+    object SavedAddresses
 }

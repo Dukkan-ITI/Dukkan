@@ -15,6 +15,7 @@ import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.payment.paymentNavGraph
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
@@ -94,7 +95,7 @@ fun AppNavGraph(
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { },
+                onCheckoutClick = { navController.navigate("payment") },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
@@ -102,6 +103,15 @@ fun AppNavGraph(
                 }
             )
         }
+
+        paymentNavGraph(
+            navController    = navController,
+            onOrderConfirmed = {
+                navController.navigate(Screen.Home) {
+                    popUpTo<Screen.Home> { inclusive = true }
+                }
+            },
+        )
 
         composable<Screen.Profile> {
             ProfileScreen(

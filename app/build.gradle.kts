@@ -14,7 +14,6 @@ android {
         }
     }
 
-
     lint {
         abortOnError = true
     }
@@ -31,6 +30,11 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             optimization {
                 enable = false
             }
@@ -42,10 +46,13 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
 }
 
+// Modules
 dependencies {
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -67,11 +74,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
-
-}
-
-// Modules
-dependencies {
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
     implementation(project(":core:data"))
@@ -86,4 +88,12 @@ dependencies {
     implementation(project(":features:search"))
     implementation(project(":features:categories"))
     implementation(project(":feature:ads"))
+    implementation(project(":feature:address"))
+    implementation(project(":core:payment"))
+
+    // Required for Paymob SDK resource linking
+    implementation(libs.sdp)
+    implementation(libs.ssp)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 }
