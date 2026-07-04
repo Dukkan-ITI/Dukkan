@@ -8,6 +8,7 @@ sealed class Screen {
 
     @Serializable
     object Auth
+
     @Serializable
     object Login
 

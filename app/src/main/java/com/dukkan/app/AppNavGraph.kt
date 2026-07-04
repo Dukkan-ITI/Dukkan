@@ -16,10 +16,10 @@ import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.payment.paymentNavGraph
+import com.dukkan.product_details.view.ProductDetailsScreen
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
-import com.dukkan.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -66,7 +66,9 @@ fun AppNavGraph(
                 onSearchClick = {
                     navController.navigate(Screen.Search)
                 },
-                onNavigateToCategories = { navController.navigate(Screen.Categories) },
+                onNavigateToCategories = {
+                    navController.navigate(Screen.Categories)
+                },
                 onCategoryClick = { category ->
                     navController.navigate(Screen.CategoryProducts(category.handle))
                 }
@@ -94,8 +96,12 @@ fun AppNavGraph(
 
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
-                onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { navController.navigate(Screen.Payment) },
+                onStartShoppingClick = {
+                    navController.navigate(Screen.Home)
+                },
+                onCheckoutClick = {
+                    navController.navigate(Screen.Payment)
+                },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
@@ -105,14 +111,12 @@ fun AppNavGraph(
         }
 
         paymentNavGraph(
-            navController    = navController,
-            onPaymentResult = { result ->
-                // The caller decides what to do with the payment result.
-                // For now, we just navigate back to Home.
+            navController = navController,
+            onPaymentResult = { _ ->
                 navController.navigate(Screen.Home) {
                     popUpTo<Screen.Home> { inclusive = true }
                 }
-            },
+            }
         )
 
         composable<Screen.Profile> {
@@ -123,20 +127,42 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
-                onNavigateToOrderList = {
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 },
-                onNavigateToSavedAddresses = { navController.navigate(Screen.SavedAddresses) }
+                onNavigateToOrderList = {
+                    // TODO
+                },
+                onNavigateToSavedAddresses = {
+                    navController.navigate(Screen.SavedAddresses)
+                }
             )
         }
 
         composable<Screen.ProductDetail> {
-            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
+            ProductDetailsScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable<Screen.SavedAddresses> {
+            SavedAddressesScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth)
+                }
+            )
         }
 
         composable<Screen.Categories> {
             CategoriesScreen(
-                onBackClick = { navController.popBackStack() },
+                onBackClick = {
+                    navController.popBackStack()
+                },
                 onCategoryClick = { category ->
                     navController.navigate(Screen.CategoryProducts(category.handle))
                 }
@@ -145,18 +171,14 @@ fun AppNavGraph(
 
         composable<Screen.CategoryProducts> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.CategoryProducts>()
+
             CategoryProductsScreen(
                 categoryHandle = args.categoryHandle,
                 onProductClick = { product ->
-                    navController.navigate(Screen.ProductDetail(productId = product.id))
+                    navController.navigate(
+                        Screen.ProductDetail(productId = product.id)
+                    )
                 }
-            )
-        }
-
-        composable<Screen.SavedAddresses> {
-            SavedAddressesScreen(
-                onBackClick = { navController.popBackStack() },
-                onSignInClick = { navController.navigate(Screen.Auth) },
             )
         }
     }

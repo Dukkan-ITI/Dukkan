@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,7 +27,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
+
+private object CountryCatalog {
+    @Volatile
+    var countries: List<String>? = null
+
+    fun compute(): List<String> =
+        Locale.getISOCountries()
+            .map { Locale.Builder().setRegion(it).build().displayCountry }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .sorted()
+}
 
 @Composable
 fun CountryDropdownField(
@@ -36,13 +51,20 @@ fun CountryDropdownField(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val countries = remember {
-        Locale.getISOCountries()
-            .map { Locale.Builder().setRegion(it).build().displayCountry }
-            .filter { it.isNotBlank() }
-            .distinct()
-            .sorted()
+    var countries by remember { mutableStateOf(CountryCatalog.countries.orEmpty()) }
+
+    LaunchedEffect(Unit) {
+        if (CountryCatalog.countries == null) {
+            val computed = withContext(Dispatchers.Default) {
+                CountryCatalog.compute()
+            }
+            CountryCatalog.countries = computed
+            countries = computed
+        } else {
+            countries = CountryCatalog.countries.orEmpty()
+        }
     }
+
     val shape = RoundedCornerShape(14.dp)
 
     Box(modifier = modifier.fillMaxWidth()) {
@@ -52,7 +74,11 @@ fun CountryDropdownField(
                 .background(MaterialTheme.colorScheme.surface, shape)
                 .border(
                     width = if (expanded) 2.dp else 1.dp,
-                    color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                    color = if (expanded) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    },
                     shape = shape,
                 )
                 .clip(shape)
@@ -70,6 +96,7 @@ fun CountryDropdownField(
                 },
                 modifier = Modifier.weight(1f),
             )
+
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = null,

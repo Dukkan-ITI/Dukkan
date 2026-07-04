@@ -96,7 +96,24 @@ object DataModule {
         firebaseStoreDataSource: IFirebaseStoreDataSource,
         shopifyAuthDataSource: ShopifyAuthDataSource,
         shopifyTokenStore: ShopifyTokenStore,
-    ): AuthRepository = AuthRepositoryImpl(authDataSource, firebaseStoreDataSource, shopifyAuthDataSource, shopifyTokenStore)
+    ): AuthRepository = AuthRepositoryImpl(
+        authDataSource,
+        firebaseStoreDataSource,
+        shopifyAuthDataSource,
+        shopifyTokenStore
+    )
+
+    @Singleton
+    @Provides
+    fun provideAddressDataSource(apolloClient: ApolloClient): AddressDataSource =
+        AddressDataSourceImpl(apolloClient)
+
+    @Singleton
+    @Provides
+    fun provideAddressRepository(
+        addressDataSource: AddressDataSource,
+        tokenStore: ShopifyTokenStore,
+    ): AddressRepository = AddressRepositoryImpl(addressDataSource, tokenStore)
 
     @Singleton
     @Provides

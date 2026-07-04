@@ -35,7 +35,10 @@ fun AddressCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
+        border = BorderStroke(
+            1.dp,
+            MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)
+        ),
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
@@ -49,6 +52,7 @@ fun AddressCard(
                 val name = listOfNotNull(address.firstName, address.lastName)
                     .filter { it.isNotBlank() }
                     .joinToString(" ")
+
                 if (name.isNotBlank()) {
                     Text(
                         text = name,
@@ -57,6 +61,7 @@ fun AddressCard(
                         color = MaterialTheme.colorScheme.onBackground,
                     )
                 }
+
                 if (address.isDefault) {
                     Text(
                         text = stringResource(R.string.saved_addresses_default_badge),
@@ -68,23 +73,51 @@ fun AddressCard(
             }
 
             address.address1?.takeIf { it.isNotBlank() }?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            address.address2?.takeIf { it.isNotBlank() }?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
-            val cityLine = listOfNotNull(address.city, address.province, address.zip)
+            address.address2?.takeIf { it.isNotBlank() }?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+
+            val cityLine = listOfNotNull(
+                address.city,
+                address.province,
+                address.zip
+            )
                 .filter { it.isNotBlank() }
                 .joinToString(", ")
+
             if (cityLine.isNotBlank()) {
-                Text(text = cityLine, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = cityLine,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
+
             address.country?.takeIf { it.isNotBlank() }?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
+
             address.phone?.takeIf { it.isNotBlank() }?.let {
-                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
             Row(
@@ -97,12 +130,14 @@ fun AddressCard(
                 TextButton(onClick = onEditClick) {
                     Text(stringResource(R.string.saved_addresses_edit))
                 }
+
                 TextButton(onClick = onDeleteClick) {
                     Text(
                         text = stringResource(R.string.saved_addresses_delete),
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
+
                 if (!address.isDefault) {
                     if (isUpdatingDefault) {
                         CircularProgressIndicator(
