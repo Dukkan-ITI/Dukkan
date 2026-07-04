@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -52,9 +54,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,6 +71,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.R
 import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentMethod
@@ -74,12 +82,13 @@ import com.dukkan.payment.presentation.components.PaymobThemeColors
 import com.msayeh.domain.model.Address
 import com.msayeh.domain.model.OrderConfirmation
 import com.msayeh.domain.model.asString
+import com.msayeh.domain.model.cart.CartSummary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CheckoutScreen(
     viewModel: CheckoutViewModel,
-    onOrderConfirmed: (OrderConfirmation) -> Unit,
+    onPaymentResult: (PaymentResult) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -88,12 +97,7 @@ internal fun CheckoutScreen(
     val onEvent = remember(viewModel) { viewModel::onEvent }
 
     LaunchedEffect(uiState.result) {
-        val result = uiState.result
-        if (result is OrderResult.Success) {
-            // Usually we might wait for user to dismiss the overlay, but if we want auto-navigate:
-            // onOrderConfirmed(result.confirmation)
-            // But requirement says: "Keep the result overlay dismissible only via its own explicit actions"
-        }
+        // We now rely entirely on the receipt's Done button to trigger onPaymentResult
     }
 
     DisposableEffect(lifecycleOwner) {
@@ -123,17 +127,11 @@ internal fun CheckoutScreen(
     uiState.result?.let { result ->
         PaymentResultOverlay(
             result = result,
+            cartSummary = uiState.cartSummary,
+            paymentMethod = uiState.selectedMethod,
             onRetry = { onEvent(CheckoutEvent.Retry) },
-            onDone = { 
-                if (result is OrderResult.Success) {
-                    onOrderConfirmed(result.confirmation)
-                } else if (result is OrderResult.Pending) {
-                    // Navigate up or to order tracking. For now we just dismiss or navigate up.
-                    onNavigateUp()
-                } else if (result is OrderResult.Failure) {
-                    onEvent(CheckoutEvent.DismissResult)
-                }
-            }
+            onResult = { onPaymentResult(it) },
+            onDismiss = { onEvent(CheckoutEvent.DismissResult) }
         )
     }
 
@@ -356,9 +354,112 @@ private fun MethodSection(
 @Composable
 private fun PaymentResultOverlay(
     result: OrderResult,
+    cartSummary: CartSummary?,
+    paymentMethod: PaymentMethod?,
     onRetry: () -> Unit,
-    onDone: () -> Unit,
+    onResult: (PaymentResult) -> Unit,
+    onDismiss: () -> Unit,
 ) {
+    if (result is OrderResult.Failure) {
+        Dialog(
+            onDismissRequest = { /* Not dismissible by tap outside */ },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.padding(24.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "Failure",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(72.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.payment_failed_title),
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Text(
+                            text = result.reason,
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        if (result.canRetry) {
+                            Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
+                                Text(stringResource(R.string.payment_retry))
+                            }
+                        }
+                        OutlinedButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) {
+                            Text("Cancel")
+                        }
+                    }
+                }
+            }
+        }
+        return
+    }
+
+    val isPending = result is OrderResult.Pending
+    val orderId = when (result) {
+        is OrderResult.Success -> result.confirmation.orderId
+        is OrderResult.Pending -> result.confirmation?.orderId ?: "---"
+        else -> "---"
+    }
+
+    val totalAmount = when (result) {
+        is OrderResult.Success -> result.confirmation.total.asString()
+        is OrderResult.Pending -> result.confirmation?.total?.asString() ?: cartSummary?.total?.asString() ?: "---"
+        else -> "---"
+    }
+
+    val rawTotal = when (result) {
+        is OrderResult.Success -> result.confirmation.total.amount.toDouble()
+        is OrderResult.Pending -> result.confirmation?.total?.amount?.toDouble() ?: cartSummary?.total?.amount?.toDouble() ?: 0.0
+        else -> 0.0
+    }
+
+    val currency = when (result) {
+        is OrderResult.Success -> result.confirmation.total.currencyCode
+        is OrderResult.Pending -> result.confirmation?.total?.currencyCode ?: cartSummary?.total?.currencyCode ?: ""
+        else -> ""
+    }
+
+    val am = LocalAccessibilityManager.current
+    val isReducedMotion = am?.calculateRecommendedTimeoutMillis(1000, true) == 1000L
+
+    // Animations
+    val slideAnim = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 0f else 300f) }
+    val badgeScale = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
+    val badgeAlpha = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
+    val contentAlpha = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
+
+    LaunchedEffect(Unit) {
+        if (!isReducedMotion) {
+            slideAnim.animateTo(0f, animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.8f, stiffness = 300f))
+            kotlinx.coroutines.delay(100)
+            badgeScale.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(200))
+            badgeAlpha.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(200))
+            kotlinx.coroutines.delay(150)
+            contentAlpha.animateTo(1f, animationSpec = androidx.compose.animation.core.tween(300))
+        }
+    }
+
     Dialog(
         onDismissRequest = { /* Not dismissible by tap outside */ },
         properties = DialogProperties(
@@ -369,111 +470,152 @@ private fun PaymentResultOverlay(
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+            color = Color.Black.copy(alpha = 0.4f)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.BottomCenter
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.padding(24.dp)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .graphicsLayer {
+                            translationY = slideAnim.value
+                        },
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
                 ) {
-                    AnimatedContent(
-                        targetState = result,
-                        label = "result_icon_animation",
-                        transitionSpec = {
-                            scaleIn(animationSpec = tween(400)) togetherWith scaleOut(animationSpec = tween(400))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Badge
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .graphicsLayer {
+                                    scaleX = badgeScale.value
+                                    scaleY = badgeScale.value
+                                    alpha = badgeAlpha.value
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.CheckCircle,
+                                contentDescription = if (isPending) "Pending" else "Success",
+                                tint = if (isPending) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
-                    ) { state ->
-                        when (state) {
-                            is OrderResult.Success -> {
-                                Icon(
-                                    imageVector = Icons.Default.CheckCircle,
-                                    contentDescription = "Success",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(72.dp)
-                                )
-                            }
-                            is OrderResult.Failure -> {
-                                Icon(
-                                    imageVector = Icons.Default.Error,
-                                    contentDescription = "Failure",
-                                    tint = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(72.dp)
-                                )
-                            }
-                            is OrderResult.Pending -> {
-                                Icon(
-                                    imageVector = Icons.Default.HourglassEmpty,
-                                    contentDescription = "Pending",
-                                    tint = MaterialTheme.colorScheme.secondary,
-                                    modifier = Modifier.size(72.dp)
-                                )
-                            }
-                        }
-                    }
 
-                    when (result) {
-                        is OrderResult.Success -> {
-                            Text(
-                                text = stringResource(R.string.payment_success_title),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = stringResource(R.string.payment_success_order_id, result.confirmation.orderId),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = result.confirmation.total.asString(),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                                Text("Done")
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = stringResource(if (isPending) R.string.payment_receipt_pending else R.string.payment_receipt_successful),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = if (isPending) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.alpha(badgeAlpha.value)
+                        )
+
+                        Spacer(modifier = Modifier.height(24.dp))
+
+                        Column(modifier = Modifier.alpha(contentAlpha.value)) {
+                            // Method
+                            val methodText = when (paymentMethod) {
+                                PaymentMethod.CASH -> stringResource(R.string.payment_paid_by_cash)
+                                PaymentMethod.ONLINE -> stringResource(R.string.payment_paid_by_card)
+                                else -> "---"
                             }
-                        }
-                        is OrderResult.Failure -> {
                             Text(
-                                text = stringResource(R.string.payment_failed_title),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            Text(
-                                text = result.reason,
+                                text = methodText,
                                 style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.height(24.dp))
-                            if (result.canRetry) {
-                                Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) {
-                                    Text(stringResource(R.string.payment_retry))
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Reference
+                            Text(
+                                text = stringResource(R.string.payment_reference, orderId),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Divider()
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Items (Staggered or simple fade)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "${cartSummary?.lineCount ?: 0} items",
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    text = totalAmount,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Divider()
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.payment_total),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = totalAmount,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = java.text.DateFormat.getDateTimeInstance().format(java.util.Date()),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        Button(
+                            onClick = {
+                                val methodStr = if (paymentMethod == PaymentMethod.CASH) "CASH" else "CARD"
+                                if (isPending) {
+                                    onResult(PaymentResult.Pending(orderId))
+                                } else {
+                                    onResult(PaymentResult.Success(orderId, rawTotal, currency, methodStr))
                                 }
-                            }
-                            OutlinedButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                                Text("Cancel")
-                            }
-                        }
-                        is OrderResult.Pending -> {
-                            Text(
-                                text = stringResource(R.string.payment_still_pending_title),
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = stringResource(R.string.payment_still_pending_body),
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(24.dp))
-                            Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
-                                Text(stringResource(R.string.payment_track_order))
-                            }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .alpha(contentAlpha.value)
+                        ) {
+                            Text(stringResource(R.string.payment_done))
                         }
                     }
                 }

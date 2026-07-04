@@ -29,14 +29,14 @@
     <!-- Processing / verifying -->
     <string name="payment_verifying">Verifying payment…</string>
 
-    <!-- Success -->
-    <string name="payment_success_title">Order Confirmed 🎉</string>
-    <string name="payment_success_order_id">Order #%1$s</string>
-
-    <!-- Failure (definite — retry makes sense) -->
+    <!-- Receipt UI -->
     <string name="payment_failed_title">Payment Failed</string>
-
-    <!-- Still pending (poll timeout — retry does NOT make sense, would risk double-pay) -->
-    <string name="payment_still_pending_title">Payment Still Processing</string>
-    <string name="payment_still_pending_body">Your payment is being processed. We\'ll notify you once it\'s confirmed. You can track your order below.</string>
+    <string name="payment_receipt_successful">Payment Successful</string>
+    <string name="payment_receipt_pending">Payment Pending</string>
+    <string name="payment_paid_by_card">Paid by Card</string>
+    <string name="payment_paid_by_cash">Cash on Delivery</string>
+    <string name="payment_reference">Order Reference: %1$s</string>
+    <string name="payment_subtotal">Subtotal</string>
+    <string name="payment_total">Total</string>
+    <string name="payment_done">Done</string>
 </resources>
