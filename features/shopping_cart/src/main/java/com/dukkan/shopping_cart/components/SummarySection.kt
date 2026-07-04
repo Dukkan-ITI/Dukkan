@@ -19,38 +19,47 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dukkan.domain.model.asString
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.R
+import java.math.BigDecimal
 
 @Composable
 fun SummarySection(state: ShoppingCartState) {
     val subtotalMoney = state.cart?.cost?.subtotalAmount
-    val totalMoney    = state.cart?.cost?.totalAmount
-    val currency      = subtotalMoney?.currencyCode ?: ""
+    val totalMoney = state.cart?.cost?.totalAmount
 
     val subtotalVal = subtotalMoney?.amount?.toDouble() ?: 0.0
-    val totalVal    = totalMoney?.amount?.toDouble()    ?: 0.0
+    val totalVal = totalMoney?.amount?.toDouble() ?: 0.0
     val discountVal = subtotalVal - totalVal
 
-    val subtotalRaw = subtotalMoney?.amount?.toPlainString() ?: "0.00"
-    val totalRaw    = totalMoney?.amount?.toPlainString()    ?: "0.00"
-
     val discountCodes = state.cart?.appliedDiscounts ?: emptyList()
-    val hasDiscount   = discountCodes.isNotEmpty() && discountVal > 0.001
-    
+    val hasDiscount = discountCodes.isNotEmpty() && discountVal > 0.001
+
+    val discountMoney = subtotalMoney?.let {
+        it.copy(amount = it.amount.subtract(totalMoney?.amount ?: BigDecimal.ZERO))
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f), RoundedCornerShape(16.dp))
+            .background(
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.07f),
+                RoundedCornerShape(16.dp)
+            )
             .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(stringResource(R.string.subtotal), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
             Text(
-                stringResource(R.string.amount_with_currency_format, subtotalRaw, currency),
+                stringResource(R.string.subtotal),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 16.sp
+            )
+            Text(
+                subtotalMoney?.asString() ?: stringResource(R.string.default_amount),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
@@ -63,8 +72,17 @@ fun SummarySection(state: ShoppingCartState) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(stringResource(R.string.shipping), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 16.sp)
-            Text(stringResource(R.string.free), color = MaterialTheme.colorScheme.onSurface, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(
+                stringResource(R.string.shipping),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 16.sp
+            )
+            Text(
+                stringResource(R.string.free),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
         if (hasDiscount) {
@@ -82,11 +100,7 @@ fun SummarySection(state: ShoppingCartState) {
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(
-                            R.string.discount_amount_format,
-                            String.format("%.2f", discountVal),
-                            currency,
-                        ),
+                        text = "-${discountMoney?.asString() ?: ""}",
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.ExtraBold
@@ -100,12 +114,22 @@ fun SummarySection(state: ShoppingCartState) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(stringResource(R.string.discount_format, discount.code), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text(stringResource(R.string.applied), color = MaterialTheme.colorScheme.primary, fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        stringResource(R.string.discount_format, discount.code),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        stringResource(R.string.applied),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
         Divider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
@@ -114,9 +138,14 @@ fun SummarySection(state: ShoppingCartState) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(stringResource(R.string.total), color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Text(
-                stringResource(R.string.amount_with_currency_format, totalRaw, currency),
+                stringResource(R.string.total),
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                totalMoney?.asString() ?: stringResource(R.string.default_amount),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,

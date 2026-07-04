@@ -6,9 +6,11 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSource
+import com.dukkan.domain.repository.SettingsRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.repository.CartRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
@@ -16,10 +18,12 @@ class CartRepositoryImpl @Inject constructor(
     private val remoteDataSource: CartRemoteDataSource,
     private val firestoreDataSource: CartFirestoreDataSource,
     private val tokenStore: ShopifyTokenStore,
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
+    private val settingsRepository: SettingsRepository,
 ) : CartRepository {
 
     private var cachedCart: StoreCart? = null
+    private var cachedCurrencyCountry: String? = null
 
     private fun getCurrentUserId(): String {
         return firebaseAuth.currentUser?.uid ?: "guest_${System.identityHashCode(this)}"
@@ -35,10 +39,29 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCart(): StoreCart? {
-        if (cachedCart != null) return cachedCart
+        val country = settingsRepository.currency.first().countryCode
+
+        Log.d("CartRepo", "Country = $country")
+
+        if (cachedCart != null && cachedCurrencyCountry == country) {
+            Log.d("CartRepo", "Returning cached cart")
+            return cachedCart
+        }
+
         val cartId = localDataSource.getCartId() ?: return null
-        val cartResponse = remoteDataSource.getCart(cartId)
+
+        Log.d("CartRepo", "Fetching cart from Shopify")
+
+        val cartResponse = remoteDataSource.getCart(cartId, country)
+
+        Log.d(
+            "CartRepo",
+            "Currency = ${cartResponse?.cost?.totalAmount?.moneyFields?.currencyCode}, Amount = ${cartResponse?.cost?.totalAmount?.moneyFields?.amount}"
+        )
+
         cachedCart = cartResponse?.toDomainModel()
+        cachedCurrencyCountry = country
+
         return cachedCart
     }
 
@@ -47,7 +70,10 @@ class CartRepositoryImpl @Inject constructor(
         var cartId = localDataSource.getCartId()
         if (cartId == null) {
             val customerAccessToken = tokenStore.getToken()?.accessToken
-            Log.d(TAG, "First add to cart — creating cart (hasAccessToken=${customerAccessToken != null})")
+            Log.d(
+                TAG,
+                "First add to cart — creating cart (hasAccessToken=${customerAccessToken != null})"
+            )
             if (customerAccessToken != null) {
                 Log.d(TAG, "First add to cart — using customer access token: $customerAccessToken")
             } else {
@@ -100,7 +126,6 @@ class CartRepositoryImpl @Inject constructor(
         val cartId = localDataSource.getCartId()
             ?: return Result.failure(Exception("No active cart found"))
 
-
         val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
         val updatedCodes = (existingCodes + discountCode).distinct()
 
@@ -130,7 +155,6 @@ class CartRepositoryImpl @Inject constructor(
         val existingCodes = cachedGetAppliedCodesOrEmpty(cartId)
         val remainingCodes = existingCodes.filter { !it.equals(discountCode, ignoreCase = true) }
 
-
         val result = remoteDataSource.applyDiscountCodes(cartId, remainingCodes)
             ?: return Result.failure(Exception("Failed to remove discount code"))
 
@@ -143,7 +167,8 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     private suspend fun cachedGetAppliedCodesOrEmpty(cartId: String): List<String> {
-        val cart = remoteDataSource.getCart(cartId)
+        val country = settingsRepository.currency.first().countryCode
+        val cart = remoteDataSource.getCart(cartId, country)
         return cart?.discountCodes?.map { it.code } ?: emptyList()
     }
 

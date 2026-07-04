@@ -55,10 +55,12 @@ private fun GetCartQuery.OnProductVariant.toDomainModel(): ProductVariant = Prod
     availableForSale = availableForSale,
     quantityAvailable = quantityAvailable,
     selectedOptions = selectedOptions.map { SelectedOption(name = it.name, value = it.value) },
-    image = image?.let { NetworkImage(
-        url = it.url.toString(), altText = it.altText,
-        blurredUrl = null
-    ) },
+    image = image?.let {
+        NetworkImage(
+            url = it.url.toString(), altText = it.altText,
+            blurredUrl = null
+        )
+    },
     product = ProductSummary(
         id = product.id,
         title = product.title,

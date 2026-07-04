@@ -3,7 +3,7 @@ fragment MoneyFields on MoneyV2 {
     currencyCode
 }
 
-query GetCart($cartId: ID!) {
+query GetCart($cartId: ID!, $country: CountryCode!) @inContext(country: $country) {
     cart(id: $cartId) {
         id
         checkoutUrl
