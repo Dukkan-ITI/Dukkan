@@ -1,9 +1,0 @@
-com.dukkan.feature.payment-pngs-0 D:\iti\Dukkan\feature\payment\build\generated\res\pngs\debug
-com.dukkan.feature.payment-updated_navigation_xml-1 D:\iti\Dukkan\feature\payment\build\generated\updated_navigation_xml\debug
-com.dukkan.feature.payment-mergeDebugResources-2 D:\iti\Dukkan\feature\payment\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
-com.dukkan.feature.payment-mergeDebugResources-3 D:\iti\Dukkan\feature\payment\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
-com.dukkan.feature.payment-debug-4 D:\iti\Dukkan\feature\payment\build\intermediates\merged_res\debug\mergeDebugResources
-com.dukkan.feature.payment-debug-5 D:\iti\Dukkan\feature\payment\build\intermediates\packaged_res\debug\packageDebugResources
-com.dukkan.feature.payment-debug-6 D:\iti\Dukkan\feature\payment\src\debug\res
-com.dukkan.feature.payment-main-7 D:\iti\Dukkan\feature\payment\src\main\res
-gradleHome-0 C:\Users\Hazem\.gradle

@@ -1,1 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.dukkan.feature.payment.presentation.PaymentViewModel

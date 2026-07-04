@@ -1,9 +1,0 @@
-com.dukkan.design_system-pngs-0 D:\iti\Dukkan\core\design_system\build\generated\res\pngs\debug
-com.dukkan.design_system-updated_navigation_xml-1 D:\iti\Dukkan\core\design_system\build\generated\updated_navigation_xml\debug
-com.dukkan.design_system-mergeDebugResources-2 D:\iti\Dukkan\core\design_system\build\intermediates\incremental\debug\mergeDebugResources\merged.dir
-com.dukkan.design_system-mergeDebugResources-3 D:\iti\Dukkan\core\design_system\build\intermediates\incremental\debug\mergeDebugResources\stripped.dir
-com.dukkan.design_system-debug-4 D:\iti\Dukkan\core\design_system\build\intermediates\merged_res\debug\mergeDebugResources
-com.dukkan.design_system-debug-5 D:\iti\Dukkan\core\design_system\build\intermediates\packaged_res\debug\packageDebugResources
-com.dukkan.design_system-debug-6 D:\iti\Dukkan\core\design_system\src\debug\res
-com.dukkan.design_system-main-7 D:\iti\Dukkan\core\design_system\src\main\res
-gradleHome-0 C:\Users\Hazem\.gradle
