@@ -8,7 +8,11 @@ plugins {
 
 android {
     namespace = "com.dukkan.app"
-    compileSdk = 36
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     lint {
         abortOnError = true
