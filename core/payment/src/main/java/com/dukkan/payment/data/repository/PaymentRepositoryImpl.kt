@@ -41,8 +41,8 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartTotal: com.msayeh.domain.model.Money,
     ): Result<PaymentIntentionResult> = runCatching {
         // Option B: Bypass local backend and create intention directly with Paymob API
-        val secretKey = "your_secret_key_here"
-        val publicKey = "your_public_key_here"
+        val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
+        val publicKey = com.dukkan.payment.BuildConfig.PAYMOB_PUBLIC_KEY
         
         val amountInCents = (cartTotal.amount * java.math.BigDecimal("100")).toInt()
         val json = org.json.JSONObject().apply {
