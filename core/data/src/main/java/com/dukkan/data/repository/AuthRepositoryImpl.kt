@@ -1,5 +1,6 @@
 package com.dukkan.data.repository
 
+import android.util.Log
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.dukkan.data.mapper.toDomainModel
@@ -7,9 +8,9 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.IFirebaseStoreDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSource
-import com.msayeh.domain.model.AuthUser
-import com.msayeh.domain.model.ShopifyToken
-import com.msayeh.domain.repository.AuthRepository
+import com.dukkan.domain.model.AuthUser
+import com.dukkan.domain.model.ShopifyToken
+import com.dukkan.domain.repository.AuthRepository
 import java.time.Instant
 import javax.inject.Inject
 
@@ -78,6 +79,9 @@ class AuthRepositoryImpl @Inject constructor(
             
             if (shopifyToken != null) {
                 shopifyTokenStore.saveToken(shopifyToken)
+                Log.d(TAG, "Google login — Shopify access token saved: ${shopifyToken.accessToken}")
+            } else {
+                Log.w(TAG, "Google login — failed to obtain Shopify access token")
             }
 
             Result.success(user.toDomainModel())
@@ -128,8 +132,16 @@ class AuthRepositoryImpl @Inject constructor(
             val token = shopifyAuthDataSource.createCustomerToken(email, password)
             if (token != null) {
                 shopifyTokenStore.saveToken(token)
+                Log.d(TAG, "Login/Register — Shopify access token saved: ${token.accessToken}")
+            } else {
+                Log.w(TAG, "Login/Register — failed to obtain Shopify access token for $email")
             }
         } catch (e: Exception) {
+            Log.e(TAG, "Login/Register — error fetching Shopify access token", e)
         }
+    }
+
+    private companion object {
+        const val TAG = "DukkanAuth"
     }
 }

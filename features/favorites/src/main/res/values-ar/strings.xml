@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wishlist_empty">قائمة المفضلة فارغة</string>
+    <string name="wishlist_hint">اضغط ♥ على أي منتج لحفظه</string>
+    <string name="remove_from_wishlist">إزالة من المفضلة</string>
+    <string name="remove_from_wishlist_title">إزالة من المفضلة؟</string>
+    <string name="remove_from_wishlist_message">إزالة \"%s\" من المفضلة؟</string>
+    <string name="cancel">إلغاء</string>
+    <string name="remove">إزالة</string>
+    <string name="wishlist_title">المفضلة</string>
+    <string name="wishlist_saved_count">%1$d محفوظ</string>
+    <string name="price_with_currency_format">%1$s %2$s</string>
+</resources>

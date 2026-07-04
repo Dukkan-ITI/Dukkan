@@ -18,11 +18,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
+import com.dukkan.design_system.components.ProductCard
 import com.dukkan.home.R
-import com.example.design_system.theme.AppTheme
-import com.msayeh.domain.model.Product
-import com.msayeh.domain.model.asString
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.domain.model.Product
+import com.dukkan.domain.model.asString
 
 fun LazyGridScope.homeProductSection(
     products: List<Product> = emptyList(),
@@ -62,7 +62,7 @@ fun LazyGridScope.homeProductSection(
 
     items(products) { product ->
         val isFav = product.id in favoriteIds
-        HomeProductCard(
+        ProductCard(
             title = product.title,
             priceLabel = product.maxPrice.asString(),
             imageUrl = product.featuredImage?.url,

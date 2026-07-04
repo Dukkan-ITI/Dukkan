@@ -18,4 +18,5 @@
     <string name="price">$%1$d</string>
     <string name="search">Search</string>
     <string name="search_products">Search products...</string>
+    <string name="categories">Categories (%1$d)</string>
 </resources>

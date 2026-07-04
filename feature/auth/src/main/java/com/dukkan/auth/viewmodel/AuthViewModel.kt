@@ -3,10 +3,10 @@ package com.dukkan.auth.viewmodel
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msayeh.domain.usecase.GetShopifyTokenUseCase
-import com.msayeh.domain.usecase.LoginUseCase
-import com.msayeh.domain.usecase.LoginWithGoogleUseCase
-import com.msayeh.domain.usecase.RegisterUseCase
+import com.dukkan.domain.usecase.GetShopifyTokenUseCase
+import com.dukkan.domain.usecase.LoginUseCase
+import com.dukkan.domain.usecase.LoginWithGoogleUseCase
+import com.dukkan.domain.usecase.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

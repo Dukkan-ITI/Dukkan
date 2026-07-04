@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dukkan.favorites.R
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.domain.model.FavoriteProduct
 
 @Composable
 fun FavoriteItem(
@@ -69,7 +68,7 @@ fun FavoriteItem(
                     imageVector = Icons.Filled.Favorite,
                     contentDescription = stringResource(R.string.remove_from_wishlist),
                     modifier = Modifier.size(15.dp),
-                    tint = Color.Red
+                    tint = MaterialTheme.colorScheme.error
                 )
             }
         }
@@ -93,7 +92,7 @@ fun FavoriteItem(
                     .padding(end = 8.dp)
             )
             Text(
-                text = "${product.price} ${product.currencyCode}",
+                text = stringResource(R.string.price_with_currency_format, product.price, product.currencyCode),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 14.sp

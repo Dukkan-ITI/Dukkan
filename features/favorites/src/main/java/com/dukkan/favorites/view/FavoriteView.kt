@@ -22,11 +22,11 @@ import com.dukkan.favorites.components.FavoriteItem
 import com.dukkan.favorites.components.RemoveFavoriteDialog
 import com.dukkan.favorites.uistate.FavoritesUiState
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
-import com.example.design_system.components.bottomBarSpace
-import com.msayeh.domain.model.FavoriteProduct
+import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.FavoriteProduct
 import androidx.hilt.navigation.compose.hiltViewModel
 
-import com.example.design_system.components.GuestPlaceholderScreen
+import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun FavoritesView(
@@ -51,6 +51,7 @@ fun FavoritesView(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(24.dp))
