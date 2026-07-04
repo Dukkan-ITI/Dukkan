@@ -1,0 +1,29 @@
+query GetProductsByVendor(
+    $query: String!
+    $first: Int!
+    $after: String
+    $country: CountryCode
+    $language: LanguageCode
+) @inContext(country: $country, language: $language) {
+    products(query: $query, first: $first, after: $after) {
+        edges {
+            node {
+                id
+                title
+                featuredImage {
+                    url
+                }
+                priceRange {
+                    minVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                    maxVariantPrice {
+                        amount
+                        currencyCode
+                    }
+                }
+            }
+        }
+    }
+}
