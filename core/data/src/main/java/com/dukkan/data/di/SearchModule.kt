@@ -3,7 +3,7 @@ package com.dukkan.data.di
 import com.dukkan.data.repository.SearchRepositoryImpl
 import com.dukkan.data.source.remote.apollo.SearchDataSource
 import com.dukkan.data.source.remote.apollo.SearchDataSourceImpl
-import com.msayeh.domain.repository.SearchRepository
+import com.dukkan.domain.repository.SearchRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

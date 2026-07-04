@@ -5,8 +5,11 @@ import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
+import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
+import com.dukkan.data.source.local.CouponStore
+import com.dukkan.data.source.local.CouponStoreImpl
 import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
@@ -25,6 +28,7 @@ import com.msayeh.domain.repository.AddressRepository
 import com.msayeh.domain.repository.AuthRepository
 import com.msayeh.domain.repository.ProductsRepository
 import com.msayeh.domain.repository.SettingsRepository
+import com.dukkan.domain.repository.CouponRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -108,4 +112,14 @@ object DataModule {
         addressDataSource: AddressDataSource,
         authRepository: AuthRepository,
     ): AddressRepository = AddressRepositoryImpl(addressDataSource, authRepository)
+
+    @Singleton
+    @Provides
+    fun provideCouponStore(@ApplicationContext context: Context): CouponStore =
+        CouponStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
+        CouponRepositoryImpl(couponStore)
 }

@@ -22,14 +22,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dukkan.ads.components.CouponBannerSection
+import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.Category.Category
 import com.dukkan.home.components.HomeBanner
+import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uiState.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
-import com.example.design_system.components.bottomBarSpace
-import com.msayeh.domain.model.Product
+import com.dukkan.domain.model.Product
 
 @Composable
 fun HomeScreen(
@@ -37,7 +40,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToProductDetails: (productId: String) -> Unit = {},
     onSeeAllClicked: () -> Unit = {},
-    onSearchClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    onNavigateToCategories: () -> Unit = {},
+    onCategoryClick: (Category) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -51,7 +56,9 @@ fun HomeScreen(
         },
         onProductClick = { product ->
             onNavigateToProductDetails(product.id)
-        }
+        },
+        onNavigateToCategories = onNavigateToCategories,
+        onCategoryClick = onCategoryClick,
     )
 }
 
@@ -62,7 +69,9 @@ fun HomeScreenContent(
     onSeeAllClicked: () -> Unit,
     onSearchClick: () -> Unit = {},
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
-    onProductClick: (product: Product) -> Unit
+    onProductClick: (product: Product) -> Unit,
+    onNavigateToCategories: () -> Unit = {},
+    onCategoryClick: (Category) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -117,7 +126,24 @@ fun HomeScreenContent(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeBanner()
+                        CouponBannerSection(
+                            onShopClick = {
+
+                            }
+                        )
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeCategoriesSection(
+                            categories = uiState.categories,
+                            onSeeAllClick = onNavigateToCategories,
+                            onCategoryClick = onCategoryClick
+                        )
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     homeProductSection(

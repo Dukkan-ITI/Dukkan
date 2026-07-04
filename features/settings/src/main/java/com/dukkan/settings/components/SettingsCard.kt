@@ -15,9 +15,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.settings.R
-import com.msayeh.domain.model.AppCurrency
-import com.msayeh.domain.model.AppLanguage
-import com.msayeh.domain.model.ThemeMode
+import com.dukkan.domain.model.AppCurrency
+import com.dukkan.domain.model.AppLanguage
+import com.dukkan.domain.model.ThemeMode
 
 @Composable
 fun SettingsCard(

@@ -3,8 +3,8 @@ package com.dukkan.search.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.search.uiState.SearchUiState
-import com.msayeh.domain.usecase.search.PredictiveSearchUseCase
-import com.msayeh.domain.usecase.search.SearchProductsUseCase
+import com.dukkan.domain.usecase.search.PredictiveSearchUseCase
+import com.dukkan.domain.usecase.search.SearchProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -178,7 +178,7 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(isFilterSheetOpen = false) }
     }
 
-    fun onApplyFilters(filters: com.msayeh.domain.model.SearchFilter) {
+    fun onApplyFilters(filters: com.dukkan.domain.model.SearchFilter) {
         _uiState.update {
             it.copy(
                 activeFilters = filters,
@@ -195,6 +195,6 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onClearFilters() {
-        onApplyFilters(com.msayeh.domain.model.SearchFilter())
+        onApplyFilters(com.dukkan.domain.model.SearchFilter())
     }
 }

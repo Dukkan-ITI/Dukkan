@@ -5,8 +5,8 @@ package com.dukkan.data.repository
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.mapper.toEntity
 import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSource
-import com.msayeh.domain.model.FavoriteProduct
-import com.msayeh.domain.repository.FavoriteRepository
+import com.dukkan.domain.model.FavoriteProduct
+import com.dukkan.domain.repository.FavoriteRepository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

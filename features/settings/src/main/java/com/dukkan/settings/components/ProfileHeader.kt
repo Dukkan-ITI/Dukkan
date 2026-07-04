@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.settings.R
-import com.msayeh.domain.model.AuthUser
+import com.dukkan.domain.model.AuthUser
 
 @Composable
 fun ProfileHeader(

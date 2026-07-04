@@ -6,8 +6,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.dukkan.address.view.SavedAddressesScreen
 import com.dukkan.auth.view.AuthScreen
+import com.dukkan.categories.view.CategoriesScreen
+import com.dukkan.categories.view.CategoryProductsScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
@@ -15,7 +18,8 @@ import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
-import com.msayeh.product_details.view.ProductDetailsScreen
+import com.dukkan.search.view.SearchScreen
+import com.dukkan.product_details.view.ProductDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -61,6 +65,10 @@ fun AppNavGraph(
                 },
                 onSearchClick = {
                     navController.navigate(Screen.Search)
+                },
+                onNavigateToCategories = { navController.navigate(Screen.Categories) },
+                onCategoryClick = { category ->
+                    navController.navigate(Screen.CategoryProducts(category.handle))
                 }
             )
         }
@@ -119,6 +127,25 @@ fun AppNavGraph(
             SavedAddressesScreen(
                 onBackClick = { navController.popBackStack() },
                 onSignInClick = { navController.navigate(Screen.Auth) },
+            )
+        }
+
+        composable<Screen.Categories> {
+            CategoriesScreen(
+                onBackClick = { navController.popBackStack() },
+                onCategoryClick = { category ->
+                    navController.navigate(Screen.CategoryProducts(category.handle))
+                }
+            )
+        }
+
+        composable<Screen.CategoryProducts> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.CategoryProducts>()
+            CategoryProductsScreen(
+                categoryHandle = args.categoryHandle,
+                onProductClick = { product ->
+                    navController.navigate(Screen.ProductDetail(productId = product.id))
+                }
             )
         }
     }

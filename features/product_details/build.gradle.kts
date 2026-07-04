@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.msayeh.product_details"
+    namespace = "com.dukkan.product_details"
 }
 
 dependencies {
@@ -12,4 +12,5 @@ dependencies {
     implementation(project(":core:navigation"))
 
     implementation(libs.coil.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
 }
