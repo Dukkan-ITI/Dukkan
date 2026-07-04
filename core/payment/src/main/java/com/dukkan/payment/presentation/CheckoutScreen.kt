@@ -100,7 +100,19 @@ internal fun CheckoutScreen(
     val onEvent = remember(viewModel) { viewModel::onEvent }
 
     LaunchedEffect(uiState.result) {
-        // We now rely entirely on the receipt's Done button to trigger onPaymentResult
+        // We now rely entirely on the receipt's Done button to trigger onPaymentResult for online payments
+    }
+
+    LaunchedEffect(uiState.cashSuccessConfirmation) {
+        val conf = uiState.cashSuccessConfirmation ?: return@LaunchedEffect
+        onPaymentResult(
+            PaymentResult.Success(
+                orderId = conf.orderId,
+                total = conf.total.amount.toDouble(),
+                currency = conf.total.currencyCode,
+                paymentMethod = "CASH"
+            )
+        )
     }
 
     androidx.activity.compose.BackHandler {

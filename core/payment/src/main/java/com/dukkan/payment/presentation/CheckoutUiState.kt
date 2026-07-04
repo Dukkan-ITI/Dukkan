@@ -19,6 +19,7 @@ internal data class CheckoutUiState(
     val isCreatingIntention: Boolean = false,
     val paymobCredentials: PaymobCredentials? = null,
     val result: OrderResult? = null,
+    val cashSuccessConfirmation: OrderConfirmation? = null,
     val error: String? = null,
 )
 

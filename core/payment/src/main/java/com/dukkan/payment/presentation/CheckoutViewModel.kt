@@ -193,7 +193,16 @@ internal class CheckoutViewModel @Inject constructor(
                 cartTotal      = cartTotal,
             )
             _uiState.update { it.copy(isCreatingIntention = false) }
-            handleResult(result)
+            
+            result.fold(
+                onSuccess = { conf ->
+                    _uiState.update { it.copy(cashSuccessConfirmation = conf) }
+                },
+                onFailure = { e ->
+                    // Still show failure if the cash checkout failed for some reason
+                    _uiState.update { it.copy(result = OrderResult.Failure(e.message ?: "Unknown error", canRetry = true)) }
+                }
+            )
         }
     }
 
