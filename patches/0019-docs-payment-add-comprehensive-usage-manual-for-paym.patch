@@ -1,0 +1,90 @@
+From 3bae1a2b77b4ada98a3a7c62b470c90e1df5faf7 Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 16:10:48 +0300
+Subject: [PATCH 19/24] docs(payment): add comprehensive usage manual for
+ payment module
+
+---
+ core/payment/README.md | 70 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+ create mode 100644 core/payment/README.md
+
+diff --git a/core/payment/README.md b/core/payment/README.md
+new file mode 100644
+index 0000000..53e9384
+--- /dev/null
++++ b/core/payment/README.md
+@@ -0,0 +1,70 @@
++# 💳 Payment Module Manual
++
++Welcome to the `core:payment` module! This module provides a complete, modern, and animated checkout experience, including Address Management and Payment Processing (Cash & Online via Paymob).
++
++This quick manual explains how to integrate, configure, and handle the results of this feature.
++
++## 🚀 1. How to Launch the Feature
++To launch the payment flow, simply navigate to the `paymentNavGraph` in your NavHost and provide the user's `CartSummary`. 
++
++The entry point expects you to handle the `onPaymentResult` callback, which is how the module hands control back to you when the user finishes.
++
++```kotlin
++// In your NavHost
++paymentNavGraph(
++    cartSummary = currentCartSummary, // Pass the cart details
++    onPaymentResult = { result ->
++        when (result) {
++            is PaymentResult.Success -> {
++                // The user successfully paid (or chose Cash).
++                // DO YOUR FINAL ORDER COMPLETION LOGIC HERE!
++                val method = result.paymentMethod // "CASH" or "ONLINE"
++                val orderId = result.orderId
++            }
++            is PaymentResult.Pending -> {
++                // Online payment is processing
++            }
++            is PaymentResult.Failure -> {
++                // Payment failed, show a toast or error UI
++            }
++            is PaymentResult.Cancelled -> {
++                // User backed out of the checkout screen
++            }
++        }
++    }
++)
++```
++
++## 🔄 2. The Two Payment Flows
++
++### 💵 Flow A: Cash on Delivery
++When the user selects **Cash**:
++1. They confirm their address.
++2. The module intercepts the success state and **instantly bypasses the receipt screen**.
++3. It immediately fires `PaymentResult.Success` with `paymentMethod = "CASH"`.
++4. **Your job:** When you receive this in `onPaymentResult`, you must trigger the backend API to officially "Complete" the order.
++
++### 💳 Flow B: Online Payment (Paymob)
++When the user selects **Online**:
++1. **Auto-Conversion:** Paymob strictly requires Egyptian Pounds (`EGP`). If the user's cart is in `USD`, the module automatically fetches the live exchange rate (via Open Exchange Rates) and converts the total to `EGP` seamlessly.
++2. **SDK Launch:** It launches the native Paymob Android SDK.
++3. **Receipt Overlay:** Upon finishing, the module displays a beautiful, animated receipt (Success, Pending, or Failure).
++4. **Handoff:** When the user taps "Done" on the receipt, it fires `PaymentResult.Success` with `paymentMethod = "ONLINE"`.
++
++## 🔐 3. Security & API Keys
++We NEVER hardcode API keys in the source code. The keys for Paymob are injected securely during compilation using `BuildConfig`.
++
++**For your local machine to build the project**, you must add the following lines to your global Gradle properties file (`~/.gradle/gradle.properties` on Mac/Linux or `C:\Users\YourName\.gradle\gradle.properties` on Windows):
++
++```properties
++paymobPublicKey=your_public_key_here
++paymobClientSecret=your_secret_key_here
++```
++If you don't do this, the project will use placeholder strings and the Paymob integration will crash!
++
++## 🎨 4. UI Architecture
++- **CheckoutScreen**: The main composable orchestrating the UI.
++- **AddressEditSheet**: A premium, 2-column bottom sheet for editing delivery details.
++- **PaymentResultOverlay**: A fullscreen animated receipt that handles the Paymob visual callbacks. 
++
++If you ever need to add a new Payment Method (like PayPal), simply add a new `MethodTile` in the UI and wire its click to a new intention use-case!
+-- 
+2.45.1.windows.1
+

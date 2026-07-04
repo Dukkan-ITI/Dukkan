@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="brand_adidas">أديداس</string>
+    <string name="brand_nike">نايكي</string>
+    <string name="brand_puma">بوما</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_clothing">ملابس</string>
+    <string name="filter_new_in">وصل حديثاً</string>
+    <string name="filter_shoes">أحذية</string>
+    <string name="profile_order_items">%1$d عناصر</string>
+    <string name="profile_order_status_delivered">تم التوصيل</string>
+    <string name="profile_order_status_in_transit">قيد الشحن</string>
+    <string name="see_all_label">عرض الكل</string>
+</resources>

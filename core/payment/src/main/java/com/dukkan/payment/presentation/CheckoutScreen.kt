@@ -82,10 +82,10 @@ import com.dukkan.payment.presentation.components.MethodTile
 import com.dukkan.payment.presentation.components.OrderSummaryBar
 import com.dukkan.payment.presentation.components.PaymobSdkLauncher
 import com.dukkan.payment.presentation.components.PaymobThemeColors
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.model.OrderConfirmation
-import com.msayeh.domain.model.asString
-import com.msayeh.domain.model.cart.CartSummary
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.OrderConfirmation
+import com.dukkan.domain.model.asString
+import com.dukkan.domain.model.cart.CartSummary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

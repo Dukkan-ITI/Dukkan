@@ -1,0 +1,13 @@
+com.dukkan.favorites
+drawable ic_image_error
+drawable ic_placeholder
+string cancel
+string price_with_currency_format
+string remove
+string remove_from_wishlist
+string remove_from_wishlist_message
+string remove_from_wishlist_title
+string wishlist_empty
+string wishlist_hint
+string wishlist_saved_count
+string wishlist_title

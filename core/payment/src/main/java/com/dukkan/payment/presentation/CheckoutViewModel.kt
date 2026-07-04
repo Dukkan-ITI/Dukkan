@@ -10,11 +10,11 @@ import com.dukkan.payment.domain.usecase.ConfirmCashOrderUseCase
 import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
 import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
 import com.google.gson.Gson
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.model.OrderConfirmation
-import com.msayeh.domain.model.cart.CartSummary
-import com.msayeh.domain.usecase.address.GetAddressesUseCase
-import com.msayeh.domain.usecase.cart.GetCartUseCase
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.OrderConfirmation
+import com.dukkan.domain.model.cart.CartSummary
+import com.dukkan.domain.usecase.address.GetAddressesUseCase
+import com.dukkan.domain.usecase.cart.GetCartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -180,7 +180,7 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
+    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val result = confirmCashOrderUseCase(
@@ -204,7 +204,7 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
+    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val result = createPaymentIntentionUseCase(

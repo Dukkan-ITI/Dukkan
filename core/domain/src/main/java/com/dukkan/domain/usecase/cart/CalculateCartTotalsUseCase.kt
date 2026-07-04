@@ -1,6 +1,6 @@
-package com.msayeh.domain.usecase.cart
+package com.dukkan.domain.usecase.cart
 
-import com.msayeh.domain.model.cart.CartLine
+import com.dukkan.domain.model.cart.CartLine
 import javax.inject.Inject
 
 data class CartTotals(

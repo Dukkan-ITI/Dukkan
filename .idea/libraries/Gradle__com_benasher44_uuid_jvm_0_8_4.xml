@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.benasher44:uuid-jvm:0.8.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.benasher44" artifactId="uuid-jvm" version="0.8.4" baseVersion="0.8.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.benasher44/uuid-jvm/0.8.4/f9a2eba1cc4cb9efa3b86407c9bb9b1b7d8522a6/uuid-jvm-0.8.4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.benasher44/uuid-jvm/0.8.4/f87795341e1472f513e5c856e698d715d8a29db1/uuid-jvm-0.8.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.benasher44/uuid-jvm/0.8.4/7e194e1180f1a0051aacb36f8f229f8050a3b87d/uuid-jvm-0.8.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

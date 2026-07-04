@@ -3,8 +3,8 @@ package com.dukkan.payment.data.mapper
 import com.dukkan.payment.data.remote.dto.IntentionResponseDto
 import com.dukkan.payment.data.remote.dto.OrderConfirmationDto
 import com.dukkan.payment.domain.model.PaymentIntentionResult
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.OrderConfirmation
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.OrderConfirmation
 import java.math.BigDecimal
 
 internal fun OrderConfirmationDto.toDomainModel(): OrderConfirmation = OrderConfirmation(

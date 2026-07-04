@@ -1,0 +1,137 @@
+From f719606cc72e53c0f4e31b43d22e620a1f8db66c Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 15:31:49 +0300
+Subject: [PATCH 14/24] feat(payment): enhance success receipt animation and
+ styling
+
+- Add infinitely pulsing background to success checkmark
+
+- Add bounce rotation effect to success checkmark
+
+- Apply material primary/primaryContainer colors
+
+- Replace deprecated Divider with HorizontalDivider
+---
+ .../payment/presentation/CheckoutScreen.kt    | 76 +++++++++++++++----
+ 1 file changed, 61 insertions(+), 15 deletions(-)
+
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+index 99cc733..4dd2f2d 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+@@ -36,6 +36,9 @@ import androidx.compose.material3.CardDefaults
+ import androidx.compose.material3.CircularProgressIndicator
+ import androidx.compose.material3.Divider
+ import androidx.compose.material3.ExperimentalMaterial3Api
++import androidx.compose.animation.core.animateFloat
++import androidx.compose.foundation.background
++import androidx.compose.material3.HorizontalDivider
+ import androidx.compose.material3.Icon
+ import androidx.compose.material3.IconButton
+ import androidx.compose.material3.MaterialTheme
+@@ -455,6 +458,24 @@ private fun PaymentResultOverlay(
+     val badgeAlpha = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
+     val contentAlpha = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
+ 
++    val infiniteTransition = androidx.compose.animation.core.rememberInfiniteTransition()
++    val pulseScale by infiniteTransition.animateFloat(
++        initialValue = 1f,
++        targetValue = 1.6f,
++        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
++            animation = androidx.compose.animation.core.tween(1500, easing = androidx.compose.animation.core.FastOutSlowInEasing),
++            repeatMode = androidx.compose.animation.core.RepeatMode.Restart
++        ), label = "pulseScale"
++    )
++    val pulseAlpha by infiniteTransition.animateFloat(
++        initialValue = 0.4f,
++        targetValue = 0f,
++        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
++            animation = androidx.compose.animation.core.tween(1500, easing = androidx.compose.animation.core.FastOutSlowInEasing),
++            repeatMode = androidx.compose.animation.core.RepeatMode.Restart
++        ), label = "pulseAlpha"
++    )
++
+     LaunchedEffect(Unit) {
+         if (!isReducedMotion) {
+             slideAnim.animateTo(0f, animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.8f, stiffness = 300f))
+@@ -502,21 +523,46 @@ private fun PaymentResultOverlay(
+                     ) {
+                         // Badge
+                         Box(
+-                            modifier = Modifier
+-                                .size(64.dp)
+-                                .graphicsLayer {
+-                                    scaleX = badgeScale.value
+-                                    scaleY = badgeScale.value
+-                                    alpha = badgeAlpha.value
+-                                },
++                            modifier = Modifier.size(96.dp),
+                             contentAlignment = Alignment.Center
+                         ) {
+-                            Icon(
+-                                imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.CheckCircle,
+-                                contentDescription = if (isPending) "Pending" else "Success",
+-                                tint = if (isPending) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
+-                                modifier = Modifier.fillMaxSize()
+-                            )
++                            if (!isPending) {
++                                // Creative Pulse background
++                                Box(
++                                    modifier = Modifier
++                                        .size(64.dp)
++                                        .graphicsLayer {
++                                            scaleX = pulseScale
++                                            scaleY = pulseScale
++                                            alpha = pulseAlpha * badgeAlpha.value
++                                        }
++                                        .background(MaterialTheme.colorScheme.primary, shape = androidx.compose.foundation.shape.CircleShape)
++                                )
++                            }
++                            
++                            Box(
++                                modifier = Modifier
++                                    .size(64.dp)
++                                    .graphicsLayer {
++                                        scaleX = badgeScale.value
++                                        scaleY = badgeScale.value
++                                        alpha = badgeAlpha.value
++                                        // Bounce rotation effect
++                                        rotationZ = (1f - badgeScale.value) * -45f
++                                    }
++                                    .background(
++                                        if (isPending) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer,
++                                        shape = androidx.compose.foundation.shape.CircleShape
++                                    ),
++                                contentAlignment = Alignment.Center
++                            ) {
++                                Icon(
++                                    imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.CheckCircle,
++                                    contentDescription = if (isPending) "Pending" else "Success",
++                                    tint = if (isPending) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer,
++                                    modifier = Modifier.size(36.dp)
++                                )
++                            }
+                         }
+ 
+                         Spacer(modifier = Modifier.height(16.dp))
+@@ -554,7 +600,7 @@ private fun PaymentResultOverlay(
+                             )
+ 
+                             Spacer(modifier = Modifier.height(16.dp))
+-                            Divider()
++                            HorizontalDivider()
+                             Spacer(modifier = Modifier.height(16.dp))
+ 
+                             // Items (Staggered or simple fade)
+@@ -574,7 +620,7 @@ private fun PaymentResultOverlay(
+                             }
+ 
+                             Spacer(modifier = Modifier.height(16.dp))
+-                            Divider()
++                            HorizontalDivider()
+                             Spacer(modifier = Modifier.height(16.dp))
+ 
+                             Row(
+-- 
+2.45.1.windows.1
+

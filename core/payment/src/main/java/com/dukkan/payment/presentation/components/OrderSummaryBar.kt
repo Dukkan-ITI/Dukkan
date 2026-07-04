@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.payment.R
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.asString
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.asString
 
 @Composable
 internal fun OrderSummaryBar(

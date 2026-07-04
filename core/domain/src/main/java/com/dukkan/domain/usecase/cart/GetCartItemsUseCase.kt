@@ -1,7 +1,7 @@
-package com.msayeh.domain.usecase.cart
+package com.dukkan.domain.usecase.cart
 
-import com.msayeh.domain.model.cart.StoreCart
-import com.msayeh.domain.repository.CartRepository
+import com.dukkan.domain.model.cart.StoreCart
+import com.dukkan.domain.repository.CartRepository
 import javax.inject.Inject
 
 class GetCartItemsUseCase @Inject constructor(private val repository: CartRepository) {

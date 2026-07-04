@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.apollographql.apollo:apollo-runtime-android:5.0.1@aar" external-system-id="GRADLE">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/9.4.1/transforms/ea61b637dcf609f6b53e1065eb5edd81/transformed/apollo-runtime-release/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/9.4.1/transforms/ea61b637dcf609f6b53e1065eb5edd81/transformed/apollo-runtime-release/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.apollographql.apollo/apollo-runtime-android/5.0.1/f17e4ba0e778b11af2c8accddc0d186a9eb092e9/apollo-runtime-android-5.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.apollographql.apollo/apollo-runtime-android/5.0.1/d2e4550026096b8e0310155104c2a6a71cf5bcfb/apollo-runtime-android-5.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

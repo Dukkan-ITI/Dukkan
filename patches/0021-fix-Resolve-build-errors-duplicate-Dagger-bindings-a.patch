@@ -1,0 +1,2284 @@
+From a752d1a92d01d6925cb7933cf747499ca0ac5a40 Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 20:20:16 +0300
+Subject: [PATCH 21/24] fix: Resolve build errors, duplicate Dagger bindings,
+ and package names after rebase
+
+---
+ .idea/misc.xml                                |  1 -
+ app/build.gradle.kts                          | 52 +++++++++++++++++++
+ .../com/dukkan/app/ExampleInstrumentedTest.kt |  2 +-
+ .../main/java/com/dukkan/app/AppNavGraph.kt   |  2 +-
+ app/src/main/java/com/dukkan/app/DukkanApp.kt |  2 +-
+ .../java/com/dukkan/app/ExampleUnitTest.kt    |  2 +-
+ .../bin/main/HiltConventionPlugin.kt          |  2 +-
+ .../src/main/kotlin/HiltConventionPlugin.kt   |  2 +-
+ .../dukkan/data/ExampleInstrumentedTest.kt    |  2 +-
+ .../com/dukkan/data/di/CategoriesModule.kt    |  2 +-
+ .../java/com/dukkan/data/di/DataModule.kt     | 15 +-----
+ .../java/com/dukkan/data/di/DatabaseModule.kt |  2 +-
+ .../java/com/dukkan/data/di/FavoriteModule.kt |  2 +-
+ .../java/com/dukkan/data/di/FirebaseModule.kt |  2 +-
+ .../com/dukkan/data/mapper/AddressMappers.kt  |  4 +-
+ .../com/dukkan/data/mapper/CartMappers.kt     |  2 +-
+ .../com/dukkan/data/mapper/FavoriteMappers.kt |  2 +-
+ .../com/dukkan/data/mapper/ProductMappers.kt  |  2 +-
+ .../data/repository/AddressRepositoryImpl.kt  |  8 +--
+ .../data/repository/CartRepositoryImpl.kt     |  2 +-
+ .../data/repository/FavoriteRepositoryImpl.kt |  2 +-
+ .../dukkan/data/source/local/CouponData.kt    |  2 +-
+ .../data/source/local/LocalConstants.kt       |  2 +-
+ .../data/source/local/dao/FavoriteDao.kt      |  2 +-
+ .../favorites/FavoriteLocalDataSource.kt      |  2 +-
+ .../favorites/FavoriteLocalDataSourceImpl.kt  |  2 +-
+ .../data/source/local/database/AppDatabase.kt |  2 +-
+ .../source/local/entity/FavoriteEntity.kt     |  2 +-
+ .../source/remote/FirebaseAuthDataSource.kt   |  2 +-
+ .../source/remote/FirebaseStoreDataSource.kt  |  2 +-
+ .../data_source/cart/CartRemoteDataSource.kt  |  2 +-
+ .../java/com/dukkan/data/ExampleUnitTest.kt   |  2 +-
+ .../design_system/ExampleInstrumentedTest.kt  |  2 +-
+ .../components/FilterChipItem.kt              |  2 +-
+ .../design_system/components/OrderCard.kt     |  2 +-
+ .../design_system/components/PrimaryButton.kt |  2 +-
+ .../design_system/components/ProductCard.kt   |  2 +-
+ .../com/dukkan/design_system/theme/Color.kt   |  2 +-
+ .../com/dukkan/design_system/theme/Theme.kt   |  2 +-
+ .../com/dukkan/design_system/theme/Type.kt    |  2 +-
+ .../dukkan/design_system/ExampleUnitTest.kt   |  2 +-
+ .../java/com/dukkan/domain/model/Address.kt   |  4 +-
+ .../dukkan/domain/model/Category/Category.kt  |  2 +-
+ .../java/com/dukkan/domain/model/Coupon.kt    |  2 +-
+ .../dukkan/domain/model/OrderConfirmation.kt  |  4 +-
+ .../com/dukkan/domain/model/cart/CartCost.kt  |  2 +-
+ .../dukkan/domain/model/cart/CartSummary.kt   |  4 +-
+ .../com/dukkan/domain/model/cart/StoreCart.kt |  2 +-
+ .../domain/repository/AddressRepository.kt    |  6 +--
+ .../domain/repository/CartRepository.kt       |  2 +-
+ .../domain/repository/CategoriesRepository.kt |  2 +-
+ .../domain/repository/CouponRepository.kt     |  2 +-
+ .../domain/repository/FavoriteRepository.kt   |  2 +-
+ .../domain/repository/ProductsRepository.kt   |  2 +-
+ .../cart/CalculateCartTotalsUseCase.kt        |  4 +-
+ .../domain/usecase/cart/CartUseCases.kt       |  2 +-
+ .../usecase/cart/GetCartItemsUseCase.kt       |  6 +--
+ .../usecase/cart/RemoveDiscountCodeUseCase.kt |  2 +-
+ .../usecase/cart/RemoveFromCartUseCase.kt     |  2 +-
+ .../usecase/category/GetCategoriesUseCase.kt  |  2 +-
+ .../usecase/coupon/ClearCouponUseCase.kt      |  2 +-
+ .../domain/usecase/coupon/CouponUseCases.kt   |  2 +-
+ .../coupon/GetAvailableCouponsUseCase.kt      |  2 +-
+ .../usecase/coupon/GetSavedCouponUseCase.kt   |  2 +-
+ .../usecase/coupon/SaveCouponUseCase.kt       |  2 +-
+ .../usecase/favorite/AddFavoriteUseCase.kt    |  2 +-
+ .../usecase/favorite/GetFavoritesUseCase.kt   |  2 +-
+ .../usecase/favorite/IsFavoriteUseCase.kt     |  2 +-
+ .../usecase/favorite/RemoveFavoriteUseCase.kt |  2 +-
+ .../usecase/favorite/ToggleFavoriteUseCase.kt |  2 +-
+ .../usecase/product/GetProductByIdUseCase.kt  |  2 +-
+ .../product/GetProductsByCategoryUseCase.kt   |  2 +-
+ .../usecase/product/GetProductsUseCase.kt     |  2 +-
+ .../usecase/address/AddAddressUseCase.kt      | 11 ----
+ .../usecase/address/DeleteAddressUseCase.kt   | 10 ----
+ .../usecase/address/GetAddressesUseCase.kt    | 11 ----
+ .../address/SetDefaultAddressUseCase.kt       | 10 ----
+ .../usecase/address/UpdateAddressUseCase.kt   | 11 ----
+ .../navigation/ExampleInstrumentedTest.kt     |  2 +-
+ .../com/dukkan/navigation/ExampleUnitTest.kt  |  2 +-
+ core/payment/build.gradle.kts                 |  1 +
+ .../dukkan/payment/data/mapper/OrderMapper.kt |  4 +-
+ .../data/repository/PaymentRepositoryImpl.kt  | 12 ++---
+ .../payment/domain/model/CheckoutAddress.kt   |  2 +-
+ .../domain/repository/PaymentRepository.kt    |  8 +--
+ .../domain/usecase/ConfirmCashOrderUseCase.kt |  4 +-
+ .../usecase/CreatePaymentIntentionUseCase.kt  |  2 +-
+ .../usecase/VerifyPaymentStatusUseCase.kt     |  2 +-
+ .../payment/presentation/AddressEditSheet.kt  |  2 +-
+ .../payment/presentation/CheckoutScreen.kt    |  8 +--
+ .../payment/presentation/CheckoutUiState.kt   |  6 +--
+ .../payment/presentation/CheckoutViewModel.kt | 14 ++---
+ .../presentation/components/AddressCard.kt    |  2 +-
+ .../components/OrderSummaryBar.kt             |  4 +-
+ .../dukkan/address/ExampleInstrumentedTest.kt |  2 +-
+ .../dukkan/address/components/AddressCard.kt  |  4 +-
+ .../address/components/AddressFormSheet.kt    |  4 +-
+ .../address/components/AddressTextField.kt    |  2 +-
+ .../components/CountryDropdownField.kt        |  2 +-
+ .../address/view/SavedAddressesScreen.kt      | 12 ++---
+ .../viewmodel/SavedAddressesViewModel.kt      | 14 ++---
+ .../com/dukkan/address/ExampleUnitTest.kt     |  2 +-
+ .../com/dukkan/ads/ExampleInstrumentedTest.kt |  2 +-
+ .../dukkan/ads/components/CouponBannerCard.kt |  2 +-
+ .../dukkan/ads/mapper/CouponImageMapper.kt    |  2 +-
+ .../ads/viewmodel/CouponBannerViewModel.kt    |  2 +-
+ .../java/com/dukkan/ads/ExampleUnitTest.kt    |  2 +-
+ .../com/dukkan/auth/components/AuthError.kt   |  2 +-
+ .../dukkan/auth/components/AuthGuestLink.kt   |  2 +-
+ .../com/dukkan/auth/components/AuthLoading.kt |  2 +-
+ .../auth/components/AuthPrimaryButton.kt      |  2 +-
+ .../auth/components/AuthSocialButton.kt       |  2 +-
+ .../com/dukkan/auth/components/AuthTabRow.kt  |  2 +-
+ .../dukkan/auth/components/AuthTextField.kt   |  2 +-
+ .../categories/ExampleInstrumentedTest.kt     |  2 +-
+ .../uiState/CategoryProductsUiState.kt        |  2 +-
+ .../categories/view/CategoriesScreen.kt       |  2 +-
+ .../viewModel/CategoriesViewModel.kt          |  2 +-
+ .../viewModel/CategoryProductsViewModel.kt    |  2 +-
+ .../com/dukkan/categories/ExampleUnitTest.kt  |  2 +-
+ .../favorites/ExampleInstrumentedTest.kt      |  2 +-
+ .../favorites/components/EmptyContent.kt      |  2 +-
+ .../favorites/components/FavoriteItem.kt      |  2 +-
+ .../favorites/uistate/FavoritesUiState.kt     |  2 +-
+ .../com/dukkan/favorites/view/FavoriteView.kt |  2 +-
+ .../favorites/viewmodel/FavoritesViewModel.kt |  2 +-
+ .../com/dukkan/favorites/ExampleUnitTest.kt   |  2 +-
+ .../dukkan/home/ExampleInstrumentedTest.kt    |  2 +-
+ .../com/dukkan/home/components/HomeBanner.kt  |  2 +-
+ .../com/dukkan/home/components/HomeHeader.kt  |  2 +-
+ .../dukkan/home/components/HomeSearchBar.kt   |  2 +-
+ .../com/dukkan/home/uiState/HomeUiState.kt    |  2 +-
+ .../java/com/dukkan/home/view/HomeScreen.kt   |  2 +-
+ .../dukkan/home/viewModel/HomeViewModel.kt    |  2 +-
+ .../java/com/dukkan/home/ExampleUnitTest.kt   |  2 +-
+ .../onboarding/ExampleInstrumentedTest.kt     |  2 +-
+ .../components/BottomLoginSection.kt          |  2 +-
+ .../onboarding/components/BottomSection.kt    |  2 +-
+ .../onboarding/components/ContinueButton.kt   |  2 +-
+ .../onboarding/components/GradientOverlay.kt  |  2 +-
+ .../components/OnboardingBackground.kt        |  2 +-
+ .../components/OnboardingIndicators.kt        |  2 +-
+ .../components/OnboardingPageContent.kt       |  2 +-
+ .../onboarding/components/SkipButton.kt       |  2 +-
+ .../dukkan/onboarding/components/TopBar.kt    |  2 +-
+ .../onboarding/uistate/OnboardingUiState.kt   |  2 +-
+ .../dukkan/onboarding/view/OnboardingView.kt  |  2 +-
+ .../viewmodel/OnboardingViewModel.kt          |  2 +-
+ .../com/dukkan/onboarding/ExampleUnitTest.kt  |  2 +-
+ .../ExampleInstrumentedTest.kt                |  2 +-
+ .../components/AddToCartBar.kt                |  2 +-
+ .../view/ProductDetailsScreen.kt              |  2 +-
+ .../viewmodel/ProductDetailsViewModel.kt      |  2 +-
+ .../dukkan/product_details/ExampleUnitTest.kt |  2 +-
+ .../settings/ExampleInstrumentedTest.kt       |  2 +-
+ .../com/dukkan/settings/ExampleUnitTest.kt    |  2 +-
+ .../shopping_cart/ExampleInstrumentedTest.kt  |  2 +-
+ .../shopping_cart/components/CartItemRow.kt   |  2 +-
+ .../components/PromoCodeSection.kt            |  2 +-
+ .../components/SummarySection.kt              |  2 +-
+ .../shopping_cart/view/ShoppingCartView.kt    |  2 +-
+ .../viewmodel/ShoppingCartViewModel.kt        |  2 +-
+ .../dukkan/shopping_cart/ExampleUnitTest.kt   |  2 +-
+ 163 files changed, 256 insertions(+), 268 deletions(-)
+ delete mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
+ delete mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
+ delete mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
+ delete mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
+ delete mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
+
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+index c875d5c..bd1282a 100644
+--- a/.idea/misc.xml
++++ b/.idea/misc.xml
+@@ -1,4 +1,3 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="jbr-21" project-jdk-type="JavaSDK" />
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 8cc449a..012c15a 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -1,3 +1,55 @@
++plugins {
++    alias(libs.plugins.android.application)
++    alias(libs.plugins.kotlin.compose)
++    alias(libs.plugins.google.services)
++    alias(libs.plugins.kotlin.serialization)
++    id("dukkan.hilt")
++}
++
++android {
++    namespace = "com.dukkan.app"
++    compileSdk {
++        version = release(36) {
++            minorApiLevel = 1
++        }
++    }
++
++    lint {
++        abortOnError = true
++    }
++
++    defaultConfig {
++        applicationId = "com.dukkan.app"
++        minSdk = 24
++        targetSdk = 36
++        versionCode = 1
++        versionName = "1.0"
++
++        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
++    }
++
++    buildTypes {
++        release {
++            isMinifyEnabled = true
++            proguardFiles(
++                getDefaultProguardFile("proguard-android-optimize.txt"),
++                "proguard-rules.pro"
++            )
++            optimization {
++                enable = false
++            }
++        }
++    }
++    compileOptions {
++        sourceCompatibility = JavaVersion.VERSION_11
++        targetCompatibility = JavaVersion.VERSION_11
++    }
++    buildFeatures {
++        compose = true
++        dataBinding = true
++    }
++}
++
+ dependencies {
+     // Modules
+     implementation(project(":core:design_system"))
+diff --git a/app/src/androidTest/java/com/dukkan/app/ExampleInstrumentedTest.kt b/app/src/androidTest/java/com/dukkan/app/ExampleInstrumentedTest.kt
+index d72422d..91ef4fa 100644
+--- a/app/src/androidTest/java/com/dukkan/app/ExampleInstrumentedTest.kt
++++ b/app/src/androidTest/java/com/dukkan/app/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.app", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/app/src/main/java/com/dukkan/app/AppNavGraph.kt b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+index e441a79..15109b0 100644
+--- a/app/src/main/java/com/dukkan/app/AppNavGraph.kt
++++ b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+@@ -182,4 +182,4 @@ fun AppNavGraph(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/app/src/main/java/com/dukkan/app/DukkanApp.kt b/app/src/main/java/com/dukkan/app/DukkanApp.kt
+index 6b6fb58..efbdf7a 100644
+--- a/app/src/main/java/com/dukkan/app/DukkanApp.kt
++++ b/app/src/main/java/com/dukkan/app/DukkanApp.kt
+@@ -4,4 +4,4 @@ import android.app.Application
+ import dagger.hilt.android.HiltAndroidApp
+ 
+ @HiltAndroidApp
+-class DukkanApp: Application()
+\ No newline at end of file
++class DukkanApp: Application()
+diff --git a/app/src/test/java/com/dukkan/app/ExampleUnitTest.kt b/app/src/test/java/com/dukkan/app/ExampleUnitTest.kt
+index 29ed3d3..41a59ed 100644
+--- a/app/src/test/java/com/dukkan/app/ExampleUnitTest.kt
++++ b/app/src/test/java/com/dukkan/app/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/build-logic/convention/bin/main/HiltConventionPlugin.kt b/build-logic/convention/bin/main/HiltConventionPlugin.kt
+index ee42c4c..f5aa2e3 100644
+--- a/build-logic/convention/bin/main/HiltConventionPlugin.kt
++++ b/build-logic/convention/bin/main/HiltConventionPlugin.kt
+@@ -18,4 +18,4 @@ class HiltConventionPlugin: Plugin<Project> {
+             "ksp"(libs.findLibrary("hilt.android.compiler").get())
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/build-logic/convention/src/main/kotlin/HiltConventionPlugin.kt b/build-logic/convention/src/main/kotlin/HiltConventionPlugin.kt
+index ee42c4c..f5aa2e3 100644
+--- a/build-logic/convention/src/main/kotlin/HiltConventionPlugin.kt
++++ b/build-logic/convention/src/main/kotlin/HiltConventionPlugin.kt
+@@ -18,4 +18,4 @@ class HiltConventionPlugin: Plugin<Project> {
+             "ksp"(libs.findLibrary("hilt.android.compiler").get())
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/androidTest/java/com/dukkan/data/ExampleInstrumentedTest.kt b/core/data/src/androidTest/java/com/dukkan/data/ExampleInstrumentedTest.kt
+index 0f33dbd..7a3f61b 100644
+--- a/core/data/src/androidTest/java/com/dukkan/data/ExampleInstrumentedTest.kt
++++ b/core/data/src/androidTest/java/com/dukkan/data/ExampleInstrumentedTest.kt
+@@ -15,4 +15,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.data.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/CategoriesModule.kt b/core/data/src/main/java/com/dukkan/data/di/CategoriesModule.kt
+index 98dd2d0..c35a8f6 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/CategoriesModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/CategoriesModule.kt
+@@ -17,4 +17,4 @@ abstract class CategoriesModule {
+     abstract fun bindCategoriesRepository(
+         categoriesRepositoryImpl: CategoriesRepositoryImpl
+     ): CategoriesRepository
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/DataModule.kt b/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
+index 4bc53f2..72111d4 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
+@@ -103,17 +103,6 @@ object DataModule {
+         shopifyTokenStore
+     )
+ 
+-    @Singleton
+-    @Provides
+-    fun provideAddressDataSource(apolloClient: ApolloClient): AddressDataSource =
+-        AddressDataSourceImpl(apolloClient)
+-
+-    @Singleton
+-    @Provides
+-    fun provideAddressRepository(
+-        addressDataSource: AddressDataSource,
+-        tokenStore: ShopifyTokenStore,
+-    ): AddressRepository = AddressRepositoryImpl(addressDataSource, tokenStore)
+ 
+     @Singleton
+     @Provides
+@@ -134,6 +123,6 @@ object DataModule {
+ 
+     @Singleton
+     @Provides
+-    fun provideCouponRepository(couponStore: com.dukkan.data.source.local.CouponStore): com.msayeh.domain.repository.CouponRepository =
++    fun provideCouponRepository(couponStore: com.dukkan.data.source.local.CouponStore): com.dukkan.domain.repository.CouponRepository =
+         com.dukkan.data.repository.CouponRepositoryImpl(couponStore)
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/DatabaseModule.kt b/core/data/src/main/java/com/dukkan/data/di/DatabaseModule.kt
+index ef34ebf..e9e134c 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/DatabaseModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/DatabaseModule.kt
+@@ -32,4 +32,4 @@ object DatabaseModule {
+     @Provides
+     @Singleton
+     fun provideFavoriteDao(db: AppDatabase): FavoriteDao = db.favoriteDao()
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/FavoriteModule.kt b/core/data/src/main/java/com/dukkan/data/di/FavoriteModule.kt
+index d4369ba..7df67ff 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/FavoriteModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/FavoriteModule.kt
+@@ -27,4 +27,4 @@ abstract class FavoriteModule {
+     abstract fun bindFavoriteLocalDataSource(
+         impl: FavoriteLocalDataSourceImpl
+     ): FavoriteLocalDataSource
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/FirebaseModule.kt b/core/data/src/main/java/com/dukkan/data/di/FirebaseModule.kt
+index f012323..39fed24 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/FirebaseModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/FirebaseModule.kt
+@@ -16,4 +16,4 @@ object FirebaseModule {
+ 
+     @Provides
+     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt b/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
+index 5cf7222..65e262a 100644
+--- a/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
++++ b/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
+@@ -5,7 +5,7 @@ import com.dukkan.CustomerAddressCreateMutation
+ import com.dukkan.CustomerAddressUpdateMutation
+ import com.dukkan.CustomerAddressesQuery
+ import com.dukkan.type.MailingAddressInput
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ fun CustomerAddressesQuery.Node.toDomainModel(defaultAddressId: String?): Address = Address(
+     id = id,
+@@ -63,4 +63,4 @@ fun Address.toMailingAddressInput(): MailingAddressInput = MailingAddressInput(
+     phone = Optional.present(phone),
+     province = Optional.present(province),
+     zip = Optional.present(zip),
+-)
+\ No newline at end of file
++)
+diff --git a/core/data/src/main/java/com/dukkan/data/mapper/CartMappers.kt b/core/data/src/main/java/com/dukkan/data/mapper/CartMappers.kt
+index b88adef..c90c7bd 100644
+--- a/core/data/src/main/java/com/dukkan/data/mapper/CartMappers.kt
++++ b/core/data/src/main/java/com/dukkan/data/mapper/CartMappers.kt
+@@ -66,4 +66,4 @@ private fun GetCartQuery.OnProductVariant.toDomainModel(): ProductVariant = Prod
+     )
+ )
+ 
+-private fun MoneyFields.toMoney(): Money = Money.from(amount as String, currencyCode.rawValue)
+\ No newline at end of file
++private fun MoneyFields.toMoney(): Money = Money.from(amount as String, currencyCode.rawValue)
+diff --git a/core/data/src/main/java/com/dukkan/data/mapper/FavoriteMappers.kt b/core/data/src/main/java/com/dukkan/data/mapper/FavoriteMappers.kt
+index 54c960d..cbd9c03 100644
+--- a/core/data/src/main/java/com/dukkan/data/mapper/FavoriteMappers.kt
++++ b/core/data/src/main/java/com/dukkan/data/mapper/FavoriteMappers.kt
+@@ -17,4 +17,4 @@ fun FavoriteProduct.toEntity() = FavoriteEntity(
+     imageUrl = imageUrl,
+     price = price,
+     currencyCode = currencyCode
+-)
+\ No newline at end of file
++)
+diff --git a/core/data/src/main/java/com/dukkan/data/mapper/ProductMappers.kt b/core/data/src/main/java/com/dukkan/data/mapper/ProductMappers.kt
+index 163e7c7..6a9b850 100644
+--- a/core/data/src/main/java/com/dukkan/data/mapper/ProductMappers.kt
++++ b/core/data/src/main/java/com/dukkan/data/mapper/ProductMappers.kt
+@@ -104,4 +104,4 @@ private fun money(amount: Any?, currencyCode: String): Money {
+     val parsed = (amount as? String)?.toBigDecimal()
+         ?: throw IllegalArgumentException("Amount is required")
+     return Money(amount = parsed, currencyCode = currencyCode)
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt b/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
+index 42162cd..59a4a11 100644
+--- a/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
++++ b/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
+@@ -3,9 +3,9 @@ package com.dukkan.data.repository
+ import com.dukkan.data.mapper.toDomainModel
+ import com.dukkan.data.mapper.toMailingAddressInput
+ import com.dukkan.data.source.remote.apollo.AddressDataSource
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.repository.AddressRepository
+-import com.msayeh.domain.repository.AuthRepository
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.repository.AddressRepository
++import com.dukkan.domain.repository.AuthRepository
+ import javax.inject.Inject
+ 
+ class AddressRepositoryImpl @Inject constructor(
+@@ -124,4 +124,4 @@ class AddressRepositoryImpl @Inject constructor(
+             Result.failure(e)
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/repository/CartRepositoryImpl.kt b/core/data/src/main/java/com/dukkan/data/repository/CartRepositoryImpl.kt
+index cd9accf..c1e3a85 100644
+--- a/core/data/src/main/java/com/dukkan/data/repository/CartRepositoryImpl.kt
++++ b/core/data/src/main/java/com/dukkan/data/repository/CartRepositoryImpl.kt
+@@ -150,4 +150,4 @@ class CartRepositoryImpl @Inject constructor(
+     private companion object {
+         const val TAG = "DukkanCart"
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/repository/FavoriteRepositoryImpl.kt b/core/data/src/main/java/com/dukkan/data/repository/FavoriteRepositoryImpl.kt
+index 3da799e..47c8546 100644
+--- a/core/data/src/main/java/com/dukkan/data/repository/FavoriteRepositoryImpl.kt
++++ b/core/data/src/main/java/com/dukkan/data/repository/FavoriteRepositoryImpl.kt
+@@ -28,4 +28,4 @@ class FavoriteRepositoryImpl @Inject constructor(
+ 
+     override fun isFavorite(id: String): Flow<Boolean> =
+         localDataSource.isFavorite(id)
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/CouponData.kt b/core/data/src/main/java/com/dukkan/data/source/local/CouponData.kt
+index 45019c8..80f3111 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/CouponData.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/CouponData.kt
+@@ -24,4 +24,4 @@ object CouponData {
+             description = "SPECIAL SALE"
+         )
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/LocalConstants.kt b/core/data/src/main/java/com/dukkan/data/source/local/LocalConstants.kt
+index 7c36dae..58fde6e 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/LocalConstants.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/LocalConstants.kt
+@@ -6,4 +6,4 @@ object LocalConstants {
+     const val CART_ID_KEY_NAME = "cart_id"
+     const val  COUPON_NAME = "coupon_store"
+     const val  COUPON_CODE = "coupon_code"
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/dao/FavoriteDao.kt b/core/data/src/main/java/com/dukkan/data/source/local/dao/FavoriteDao.kt
+index 79760c2..e36854f 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/dao/FavoriteDao.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/dao/FavoriteDao.kt
+@@ -24,4 +24,4 @@ interface FavoriteDao {
+     fun isFavorite(id: String): Flow<Boolean>
+ 
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSource.kt b/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSource.kt
+index f7f8e12..9b02394 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSource.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSource.kt
+@@ -8,4 +8,4 @@ interface FavoriteLocalDataSource {
+     suspend fun addFavorite(favorite: FavoriteEntity)
+     suspend fun removeFavorite(id: String)
+     fun isFavorite(id: String): Flow<Boolean>
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSourceImpl.kt b/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSourceImpl.kt
+index 9b1aa0c..7b461ce 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSourceImpl.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/data_source/favorites/FavoriteLocalDataSourceImpl.kt
+@@ -20,4 +20,4 @@ class FavoriteLocalDataSourceImpl @Inject constructor(
+ 
+     override fun isFavorite(id: String): Flow<Boolean> =
+         dao.isFavorite(id)
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/database/AppDatabase.kt b/core/data/src/main/java/com/dukkan/data/source/local/database/AppDatabase.kt
+index 7761b30..4196e71 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/database/AppDatabase.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/database/AppDatabase.kt
+@@ -12,4 +12,4 @@ import com.dukkan.data.source.local.entity.FavoriteEntity
+ @Database(entities = [FavoriteEntity::class], version = 2)
+ abstract class AppDatabase : RoomDatabase() {
+     abstract fun favoriteDao(): FavoriteDao
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/local/entity/FavoriteEntity.kt b/core/data/src/main/java/com/dukkan/data/source/local/entity/FavoriteEntity.kt
+index 6a936f3..f70cf64 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/local/entity/FavoriteEntity.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/local/entity/FavoriteEntity.kt
+@@ -11,4 +11,4 @@ data class FavoriteEntity(
+      val imageUrl: String,
+      val price: String,
+      val currencyCode: String
+-)
+\ No newline at end of file
++)
+diff --git a/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseAuthDataSource.kt b/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseAuthDataSource.kt
+index 1192632..c264147 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseAuthDataSource.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseAuthDataSource.kt
+@@ -59,4 +59,4 @@ class FirebaseAuthDataSourceImpl : FirebaseAuthDataSource {
+     override suspend fun signOut() {
+         auth.signOut()
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseStoreDataSource.kt b/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseStoreDataSource.kt
+index 2b96754..81a3181 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseStoreDataSource.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/remote/FirebaseStoreDataSource.kt
+@@ -24,4 +24,4 @@ class FirebaseStoreDataSourceImp : IFirebaseStoreDataSource {
+             .set(userData)
+             .await()
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/remote/data_source/cart/CartRemoteDataSource.kt b/core/data/src/main/java/com/dukkan/data/source/remote/data_source/cart/CartRemoteDataSource.kt
+index 54ac26c..62423db 100644
+--- a/core/data/src/main/java/com/dukkan/data/source/remote/data_source/cart/CartRemoteDataSource.kt
++++ b/core/data/src/main/java/com/dukkan/data/source/remote/data_source/cart/CartRemoteDataSource.kt
+@@ -17,4 +17,4 @@ interface CartRemoteDataSource {
+ 
+ 
+     suspend fun applyDiscountCodes(cartId: String, discountCodes: List<String>): ApplyDiscountCodeMutation.CartDiscountCodesUpdate?
+-}
+\ No newline at end of file
++}
+diff --git a/core/data/src/test/java/com/dukkan/data/ExampleUnitTest.kt b/core/data/src/test/java/com/dukkan/data/ExampleUnitTest.kt
+index dd7e723..1bfcec5 100644
+--- a/core/data/src/test/java/com/dukkan/data/ExampleUnitTest.kt
++++ b/core/data/src/test/java/com/dukkan/data/ExampleUnitTest.kt
+@@ -9,4 +9,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/androidTest/java/com/dukkan/design_system/ExampleInstrumentedTest.kt b/core/design_system/src/androidTest/java/com/dukkan/design_system/ExampleInstrumentedTest.kt
+index 29ac227..1cc3d42 100644
+--- a/core/design_system/src/androidTest/java/com/dukkan/design_system/ExampleInstrumentedTest.kt
++++ b/core/design_system/src/androidTest/java/com/dukkan/design_system/ExampleInstrumentedTest.kt
+@@ -19,4 +19,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.design_system.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/components/FilterChipItem.kt b/core/design_system/src/main/java/com/dukkan/design_system/components/FilterChipItem.kt
+index e8ce739..7f77a47 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/components/FilterChipItem.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/components/FilterChipItem.kt
+@@ -175,4 +175,4 @@ private fun FilterChipListFilterPreview() {
+             onItemSelected = {}
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/components/OrderCard.kt b/core/design_system/src/main/java/com/dukkan/design_system/components/OrderCard.kt
+index 54ef4a4..4374b83 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/components/OrderCard.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/components/OrderCard.kt
+@@ -90,4 +90,4 @@ fun OrderCard(order: OrderUi) {
+     }
+ }
+ 
+-private val InTransitColor = Color(0xFFF59E0B)
+\ No newline at end of file
++private val InTransitColor = Color(0xFFF59E0B)
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/components/PrimaryButton.kt b/core/design_system/src/main/java/com/dukkan/design_system/components/PrimaryButton.kt
+index aa3d4d9..ce54a47 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/components/PrimaryButton.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/components/PrimaryButton.kt
+@@ -55,4 +55,4 @@ fun PrimaryButton(
+ @Composable
+ private fun PrimaryButtonPreview() {
+     PrimaryButton(text = "Add To cart", onClick = {})
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/components/ProductCard.kt b/core/design_system/src/main/java/com/dukkan/design_system/components/ProductCard.kt
+index da2191f..0fb6bf8 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/components/ProductCard.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/components/ProductCard.kt
+@@ -114,4 +114,4 @@ fun ProductCard(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/theme/Color.kt b/core/design_system/src/main/java/com/dukkan/design_system/theme/Color.kt
+index 4c65f8a..178456d 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/theme/Color.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/theme/Color.kt
+@@ -22,4 +22,4 @@ val DarkSurface = Color(0xFF181620)
+ val DarkText = Color(0xFFFFFFFF)
+ val DarkMutedText = Color(0xFF908C9E)
+ val DarkBorder = Color(0xFF2A2736)
+-val DarkSubText = Color(0xFF6C6877)
+\ No newline at end of file
++val DarkSubText = Color(0xFF6C6877)
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/theme/Theme.kt b/core/design_system/src/main/java/com/dukkan/design_system/theme/Theme.kt
+index cc419fd..4851d4c 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/theme/Theme.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/theme/Theme.kt
+@@ -65,4 +65,4 @@ object DukkanTheme {
+     val extendedColors: DukkanExtendedColors
+         @Composable
+         get() = LocalExtendedColors.current
+-}
+\ No newline at end of file
++}
+diff --git a/core/design_system/src/main/java/com/dukkan/design_system/theme/Type.kt b/core/design_system/src/main/java/com/dukkan/design_system/theme/Type.kt
+index 65cab0a..024bf5a 100644
+--- a/core/design_system/src/main/java/com/dukkan/design_system/theme/Type.kt
++++ b/core/design_system/src/main/java/com/dukkan/design_system/theme/Type.kt
+@@ -71,4 +71,4 @@ val DukkanTypography = Typography(
+         lineHeight = 16.sp,
+         letterSpacing = 0.5.sp
+     )
+-)
+\ No newline at end of file
++)
+diff --git a/core/design_system/src/test/java/com/dukkan/design_system/ExampleUnitTest.kt b/core/design_system/src/test/java/com/dukkan/design_system/ExampleUnitTest.kt
+index 4e8d604..5e5ae68 100644
+--- a/core/design_system/src/test/java/com/dukkan/design_system/ExampleUnitTest.kt
++++ b/core/design_system/src/test/java/com/dukkan/design_system/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/Address.kt b/core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+index a82b532..226ecf9 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/Address.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+@@ -1,4 +1,4 @@
+-package com.msayeh.domain.model
++package com.dukkan.domain.model
+ 
+ data class Address(
+     val id: String? = null,
+@@ -13,4 +13,4 @@ data class Address(
+     val zip: String? = null,
+     val phone: String? = null,
+     val isDefault: Boolean = false,
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/Category/Category.kt b/core/domain/src/main/java/com/dukkan/domain/model/Category/Category.kt
+index 451c3cb..9b3dd24 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/Category/Category.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/Category/Category.kt
+@@ -4,4 +4,4 @@ data class Category(
+     val id: String,
+     val name: String,
+     val handle: String
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/Coupon.kt b/core/domain/src/main/java/com/dukkan/domain/model/Coupon.kt
+index 1f9522c..ecec492 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/Coupon.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/Coupon.kt
+@@ -7,4 +7,4 @@ data class Coupon(
+     val description: String
+ 
+ 
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/OrderConfirmation.kt b/core/domain/src/main/java/com/dukkan/domain/model/OrderConfirmation.kt
+index 7acccf7..562c36e 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/OrderConfirmation.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/OrderConfirmation.kt
+@@ -1,6 +1,6 @@
+-package com.msayeh.domain.model
++package com.dukkan.domain.model
+ 
+-import com.msayeh.domain.model.Money
++import com.dukkan.domain.model.Money
+ 
+ /**
+  * Terminal result emitted by the payment feature when an order is finalised.
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/cart/CartCost.kt b/core/domain/src/main/java/com/dukkan/domain/model/cart/CartCost.kt
+index 45f5ac9..aeff8ad 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/cart/CartCost.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/cart/CartCost.kt
+@@ -7,4 +7,4 @@ data class CartCost(
+     val totalAmount: Money,
+     val totalTaxAmount: Money?,
+     val checkoutChargeAmount: Money
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/cart/CartSummary.kt b/core/domain/src/main/java/com/dukkan/domain/model/cart/CartSummary.kt
+index a0eb818..0d9ea3f 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/cart/CartSummary.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/cart/CartSummary.kt
+@@ -1,6 +1,6 @@
+-package com.msayeh.domain.model.cart
++package com.dukkan.domain.model.cart
+ 
+-import com.msayeh.domain.model.Money
++import com.dukkan.domain.model.Money
+ 
+ /**
+  * Lightweight read-only view of a cart passed to the payment feature.
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/cart/StoreCart.kt b/core/domain/src/main/java/com/dukkan/domain/model/cart/StoreCart.kt
+index f597ba9..5fd98df 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/model/cart/StoreCart.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/model/cart/StoreCart.kt
+@@ -16,4 +16,4 @@ data class StoreCart(
+ data class SelectedOption(
+     val name: String,
+     val value: String
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+index 94c2476..9b6f009 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+@@ -1,6 +1,6 @@
+-package com.msayeh.domain.repository
++package com.dukkan.domain.repository
+ 
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ interface AddressRepository {
+     suspend fun getAddresses(): Result<List<Address>>
+@@ -8,4 +8,4 @@ interface AddressRepository {
+     suspend fun updateAddress(address: Address): Result<Address>
+     suspend fun deleteAddress(addressId: String): Result<String>
+     suspend fun setDefaultAddress(addressId: String): Result<Unit>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/CartRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/CartRepository.kt
+index c277879..9548781 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/CartRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/CartRepository.kt
+@@ -11,4 +11,4 @@ interface CartRepository {
+     suspend fun saveCartId(cartId: String)
+     suspend fun applyDiscountCode(discountCode: String): Result<Unit>
+     suspend fun removeDiscountCode(discountCode: String): Result<Unit>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/CategoriesRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/CategoriesRepository.kt
+index 3fb904a..4340154 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/CategoriesRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/CategoriesRepository.kt
+@@ -5,4 +5,4 @@ import kotlinx.coroutines.flow.Flow
+ 
+ interface CategoriesRepository {
+     fun getCategories(): Flow<List<Category>>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/CouponRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/CouponRepository.kt
+index 1d22842..6153635 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/CouponRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/CouponRepository.kt
+@@ -8,4 +8,4 @@ interface CouponRepository {
+     suspend fun saveCoupon(couponCode: String)
+     suspend fun clearCoupon()
+     fun getAvailableCoupons(): List<Coupon>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/FavoriteRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/FavoriteRepository.kt
+index d88cedf..616b7c2 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/FavoriteRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/FavoriteRepository.kt
+@@ -9,4 +9,4 @@ interface FavoriteRepository {
+     suspend fun addFavorite(product: FavoriteProduct)
+     suspend fun removeFavorite(id: String)
+     fun isFavorite(id: String): Flow<Boolean>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/ProductsRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/ProductsRepository.kt
+index 061cdc5..74dd840 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/repository/ProductsRepository.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/ProductsRepository.kt
+@@ -11,4 +11,4 @@ interface ProductsRepository {
+         limit: Int,
+         after: String? = null,
+     ): List<Product>
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CalculateCartTotalsUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CalculateCartTotalsUseCase.kt
+index 41616a2..64bba15 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CalculateCartTotalsUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CalculateCartTotalsUseCase.kt
+@@ -1,6 +1,6 @@
+-package com.msayeh.domain.usecase.cart
++package com.dukkan.domain.usecase.cart
+ 
+-import com.msayeh.domain.model.cart.CartLine
++import com.dukkan.domain.model.cart.CartLine
+ import javax.inject.Inject
+ 
+ data class CartTotals(
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CartUseCases.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CartUseCases.kt
+index 61929e3..2e6a775 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CartUseCases.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/CartUseCases.kt
+@@ -11,4 +11,4 @@ class CartUseCases @Inject constructor(
+     val saveCartId: SaveCartIdUseCase,
+     val applyDiscountCode: ApplyDiscountCodeUseCase,
+     val removeDiscountCode: RemoveDiscountCodeUseCase
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/GetCartItemsUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/GetCartItemsUseCase.kt
+index fbe485c..3c3b583 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/GetCartItemsUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/GetCartItemsUseCase.kt
+@@ -1,7 +1,7 @@
+-package com.msayeh.domain.usecase.cart
++package com.dukkan.domain.usecase.cart
+ 
+-import com.msayeh.domain.model.cart.StoreCart
+-import com.msayeh.domain.repository.CartRepository
++import com.dukkan.domain.model.cart.StoreCart
++import com.dukkan.domain.repository.CartRepository
+ import javax.inject.Inject
+ 
+ class GetCartItemsUseCase @Inject constructor(private val repository: CartRepository) {
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveDiscountCodeUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveDiscountCodeUseCase.kt
+index ac9f43a..44ff618 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveDiscountCodeUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveDiscountCodeUseCase.kt
+@@ -9,4 +9,4 @@ class RemoveDiscountCodeUseCase @Inject constructor(
+     suspend operator fun invoke(discountCode: String): Result<Unit> {
+         return repository.removeDiscountCode(discountCode)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveFromCartUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveFromCartUseCase.kt
+index 9b60c2b..84bbaf3 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveFromCartUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/cart/RemoveFromCartUseCase.kt
+@@ -7,4 +7,4 @@ class RemoveFromCartUseCase @Inject constructor(private val repository: CartRepo
+     suspend operator fun invoke(lineId: String) {
+         repository.removeCartItem(lineId)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/category/GetCategoriesUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/category/GetCategoriesUseCase.kt
+index cd1aab3..e6f9fb4 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/category/GetCategoriesUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/category/GetCategoriesUseCase.kt
+@@ -11,4 +11,4 @@ class GetCategoriesUseCase @Inject constructor(
+     operator fun invoke(): Flow<List<Category>> {
+         return categoriesRepository.getCategories()
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/ClearCouponUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/ClearCouponUseCase.kt
+index c6f6a7c..779b934 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/ClearCouponUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/ClearCouponUseCase.kt
+@@ -9,4 +9,4 @@ class ClearCouponUseCase @Inject constructor(
+     suspend operator fun invoke() {
+         repository.clearCoupon()
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/CouponUseCases.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/CouponUseCases.kt
+index 052f94a..9991103 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/CouponUseCases.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/CouponUseCases.kt
+@@ -9,4 +9,4 @@ data class CouponUseCases @Inject constructor(
+     val saveCoupon: SaveCouponUseCase,
+     val clearCoupon: ClearCouponUseCase,
+     val getAvailableCoupons: GetAvailableCouponsUseCase
+-)
+\ No newline at end of file
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetAvailableCouponsUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetAvailableCouponsUseCase.kt
+index 5765c79..def61a5 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetAvailableCouponsUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetAvailableCouponsUseCase.kt
+@@ -8,4 +8,4 @@ class GetAvailableCouponsUseCase @Inject constructor(
+     private val repository: CouponRepository
+ ) {
+     operator fun invoke(): List<Coupon> = repository.getAvailableCoupons()
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetSavedCouponUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetSavedCouponUseCase.kt
+index 55c5224..9cae08a 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetSavedCouponUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/GetSavedCouponUseCase.kt
+@@ -8,4 +8,4 @@ class GetSavedCouponUseCase @Inject constructor(
+     private val repository: CouponRepository
+ ) {
+     operator fun invoke(): Flow<String?> = repository.savedCoupon
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/SaveCouponUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/SaveCouponUseCase.kt
+index b3c3472..7585149 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/SaveCouponUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/coupon/SaveCouponUseCase.kt
+@@ -9,4 +9,4 @@ class SaveCouponUseCase @Inject constructor(
+     suspend operator fun invoke(couponCode: String) {
+         repository.saveCoupon(couponCode)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/AddFavoriteUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/AddFavoriteUseCase.kt
+index cd43dd3..2bf3e0f 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/AddFavoriteUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/AddFavoriteUseCase.kt
+@@ -5,4 +5,4 @@ import javax.inject.Inject
+ class AddFavoriteUseCase @Inject constructor(private val repository: FavoriteRepository) {
+     suspend operator fun invoke(product: FavoriteProduct) =
+         repository.addFavorite(product)
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/GetFavoritesUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/GetFavoritesUseCase.kt
+index d54ceab..ebb445a 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/GetFavoritesUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/GetFavoritesUseCase.kt
+@@ -8,4 +8,4 @@ import javax.inject.Inject
+ class GetFavoritesUseCase @Inject constructor(private val repository: FavoriteRepository) {
+     operator fun invoke(): Flow<List<FavoriteProduct>> =
+         repository.getAllFavorites()
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/IsFavoriteUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/IsFavoriteUseCase.kt
+index 6a2320c..73359e6 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/IsFavoriteUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/IsFavoriteUseCase.kt
+@@ -7,4 +7,4 @@ import javax.inject.Inject
+ class IsFavoriteUseCase @Inject constructor(private val repository: FavoriteRepository) {
+     operator fun invoke(id: String): Flow<Boolean> =
+         repository.isFavorite(id)
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/RemoveFavoriteUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/RemoveFavoriteUseCase.kt
+index 046e3e7..bd96925 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/RemoveFavoriteUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/RemoveFavoriteUseCase.kt
+@@ -6,4 +6,4 @@ import javax.inject.Inject
+ class RemoveFavoriteUseCase @Inject constructor(private val repository: FavoriteRepository) {
+     suspend operator fun invoke(id: String) =
+         repository.removeFavorite(id)
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/ToggleFavoriteUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/ToggleFavoriteUseCase.kt
+index 15c0925..2223c24 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/ToggleFavoriteUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/favorite/ToggleFavoriteUseCase.kt
+@@ -10,4 +10,4 @@ class ToggleFavoriteUseCase @Inject constructor(
+     suspend operator fun invoke (product: FavoriteProduct, isFav: Boolean) {
+         if (isFav) remove(product.id) else add(product)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductByIdUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductByIdUseCase.kt
+index 8ce08e7..277696e 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductByIdUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductByIdUseCase.kt
+@@ -9,4 +9,4 @@ class GetProductByIdUseCase @Inject constructor(
+ ) {
+     suspend operator fun invoke(productId: String): Result<Product> =
+         productsRepository.getProductById(productId)
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsByCategoryUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsByCategoryUseCase.kt
+index 792c367..257b175 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsByCategoryUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsByCategoryUseCase.kt
+@@ -14,4 +14,4 @@ class GetProductsByCategoryUseCase @Inject constructor(
+             after = after,
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsUseCase.kt b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsUseCase.kt
+index 6ba8fc6..7f20501 100644
+--- a/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsUseCase.kt
++++ b/core/domain/src/main/java/com/dukkan/domain/usecase/product/GetProductsUseCase.kt
+@@ -10,4 +10,4 @@ class GetProductsUseCase @Inject constructor(
+     suspend operator fun invoke(limit: Int = 10, after: String? = null): List<Product> {
+         return productsRepository.getProducts(limit = limit, after = after)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
+deleted file mode 100644
+index 2562c2e..0000000
+--- a/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
++++ /dev/null
+@@ -1,11 +0,0 @@
+-package com.msayeh.domain.usecase.address
+-
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.repository.AddressRepository
+-import javax.inject.Inject
+-
+-class AddAddressUseCase @Inject constructor(
+-    private val addressRepository: AddressRepository,
+-) {
+-    suspend operator fun invoke(address: Address): Result<Address> = addressRepository.addAddress(address)
+-}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
+deleted file mode 100644
+index 00502e4..0000000
+--- a/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package com.msayeh.domain.usecase.address
+-
+-import com.msayeh.domain.repository.AddressRepository
+-import javax.inject.Inject
+-
+-class DeleteAddressUseCase @Inject constructor(
+-    private val addressRepository: AddressRepository,
+-) {
+-    suspend operator fun invoke(addressId: String): Result<String> = addressRepository.deleteAddress(addressId)
+-}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
+deleted file mode 100644
+index f5a4c47..0000000
+--- a/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
++++ /dev/null
+@@ -1,11 +0,0 @@
+-package com.msayeh.domain.usecase.address
+-
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.repository.AddressRepository
+-import javax.inject.Inject
+-
+-class GetAddressesUseCase @Inject constructor(
+-    private val addressRepository: AddressRepository,
+-) {
+-    suspend operator fun invoke(): Result<List<Address>> = addressRepository.getAddresses()
+-}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
+deleted file mode 100644
+index 2538ea8..0000000
+--- a/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
++++ /dev/null
+@@ -1,10 +0,0 @@
+-package com.msayeh.domain.usecase.address
+-
+-import com.msayeh.domain.repository.AddressRepository
+-import javax.inject.Inject
+-
+-class SetDefaultAddressUseCase @Inject constructor(
+-    private val addressRepository: AddressRepository,
+-) {
+-    suspend operator fun invoke(addressId: String): Result<Unit> = addressRepository.setDefaultAddress(addressId)
+-}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
+deleted file mode 100644
+index ca2202f..0000000
+--- a/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
++++ /dev/null
+@@ -1,11 +0,0 @@
+-package com.msayeh.domain.usecase.address
+-
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.repository.AddressRepository
+-import javax.inject.Inject
+-
+-class UpdateAddressUseCase @Inject constructor(
+-    private val addressRepository: AddressRepository,
+-) {
+-    suspend operator fun invoke(address: Address): Result<Address> = addressRepository.updateAddress(address)
+-}
+diff --git a/core/navigation/src/androidTest/java/com/dukkan/navigation/ExampleInstrumentedTest.kt b/core/navigation/src/androidTest/java/com/dukkan/navigation/ExampleInstrumentedTest.kt
+index e4357d9..da4b981 100644
+--- a/core/navigation/src/androidTest/java/com/dukkan/navigation/ExampleInstrumentedTest.kt
++++ b/core/navigation/src/androidTest/java/com/dukkan/navigation/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.navigation.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/navigation/src/test/java/com/dukkan/navigation/ExampleUnitTest.kt b/core/navigation/src/test/java/com/dukkan/navigation/ExampleUnitTest.kt
+index 0a2b44d..d4c659b 100644
+--- a/core/navigation/src/test/java/com/dukkan/navigation/ExampleUnitTest.kt
++++ b/core/navigation/src/test/java/com/dukkan/navigation/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/core/payment/build.gradle.kts b/core/payment/build.gradle.kts
+index 207cb0e..1cd91d7 100644
+--- a/core/payment/build.gradle.kts
++++ b/core/payment/build.gradle.kts
+@@ -31,6 +31,7 @@ android {
+ }
+ 
+ dependencies {
++    implementation(project(":core:navigation"))
+     implementation(project(":core:domain"))
+     implementation(project(":core:design_system"))
+ 
+diff --git a/core/payment/src/main/java/com/dukkan/payment/data/mapper/OrderMapper.kt b/core/payment/src/main/java/com/dukkan/payment/data/mapper/OrderMapper.kt
+index 4accd41..9d88807 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/data/mapper/OrderMapper.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/data/mapper/OrderMapper.kt
+@@ -3,8 +3,8 @@ package com.dukkan.payment.data.mapper
+ import com.dukkan.payment.data.remote.dto.IntentionResponseDto
+ import com.dukkan.payment.data.remote.dto.OrderConfirmationDto
+ import com.dukkan.payment.domain.model.PaymentIntentionResult
+-import com.msayeh.domain.model.Money
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.Money
++import com.dukkan.domain.model.OrderConfirmation
+ import java.math.BigDecimal
+ 
+ internal fun OrderConfirmationDto.toDomainModel(): OrderConfirmation = OrderConfirmation(
+diff --git a/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt b/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
+index 1d0f884..623dd5c 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
+@@ -9,8 +9,8 @@ import com.dukkan.payment.data.remote.dto.IntentionRequest
+ import com.dukkan.payment.domain.model.CheckoutAddress
+ import com.dukkan.payment.domain.model.PaymentIntentionResult
+ import com.dukkan.payment.domain.repository.PaymentRepository
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.model.OrderConfirmation
+ import javax.inject.Inject
+ 
+ internal class PaymentRepositoryImpl @Inject constructor(
+@@ -24,7 +24,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<OrderConfirmation> = runCatching {
+         
+         OrderConfirmation(
+@@ -38,7 +38,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<PaymentIntentionResult> = runCatching {
+         
+         val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
+@@ -104,13 +104,13 @@ internal class PaymentRepositoryImpl @Inject constructor(
+ 
+     override suspend fun verifyPaymentStatus(
+         orderId: String,
+-        cartTotal: com.msayeh.domain.model.Money?,
++        cartTotal: com.dukkan.domain.model.Money?,
+     ): Result<OrderConfirmation> = runCatching {
+         
+         OrderConfirmation(
+             orderId = orderId,
+             status = "Success",
+-            total = cartTotal ?: com.msayeh.domain.model.Money(java.math.BigDecimal("0.00"), "EGP")
++            total = cartTotal ?: com.dukkan.domain.model.Money(java.math.BigDecimal("0.00"), "EGP")
+         )
+     }
+ 
+diff --git a/core/payment/src/main/java/com/dukkan/payment/domain/model/CheckoutAddress.kt b/core/payment/src/main/java/com/dukkan/payment/domain/model/CheckoutAddress.kt
+index c5e55ad..ac63227 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/domain/model/CheckoutAddress.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/domain/model/CheckoutAddress.kt
+@@ -1,6 +1,6 @@
+ package com.dukkan.payment.domain.model
+ 
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ internal sealed interface CheckoutAddress {
+     data class Saved(val addressId: String) : CheckoutAddress
+diff --git a/core/payment/src/main/java/com/dukkan/payment/domain/repository/PaymentRepository.kt b/core/payment/src/main/java/com/dukkan/payment/domain/repository/PaymentRepository.kt
+index 96d0fc7..807ba52 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/domain/repository/PaymentRepository.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/domain/repository/PaymentRepository.kt
+@@ -1,6 +1,6 @@
+ package com.dukkan.payment.domain.repository
+ 
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.OrderConfirmation
+ import com.dukkan.payment.domain.model.PaymentIntentionResult
+ import com.dukkan.payment.domain.model.CheckoutAddress
+ 
+@@ -10,15 +10,15 @@ internal interface PaymentRepository {
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<OrderConfirmation>
+ 
+     suspend fun createPaymentIntention(
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<PaymentIntentionResult>
+ 
+-    suspend fun verifyPaymentStatus(orderId: String, cartTotal: com.msayeh.domain.model.Money? = null): Result<OrderConfirmation>
++    suspend fun verifyPaymentStatus(orderId: String, cartTotal: com.dukkan.domain.model.Money? = null): Result<OrderConfirmation>
+ }
+diff --git a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/ConfirmCashOrderUseCase.kt b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/ConfirmCashOrderUseCase.kt
+index f08c2fe..fbf4aa3 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/ConfirmCashOrderUseCase.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/ConfirmCashOrderUseCase.kt
+@@ -1,6 +1,6 @@
+ package com.dukkan.payment.domain.usecase
+ 
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.OrderConfirmation
+ import com.dukkan.payment.domain.repository.PaymentRepository
+ import com.dukkan.payment.domain.model.CheckoutAddress
+ import javax.inject.Inject
+@@ -12,7 +12,7 @@ internal class ConfirmCashOrderUseCase @Inject constructor(
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<OrderConfirmation> = repository.confirmCashOrder(
+         idempotencyKey = idempotencyKey,
+         address        = address,
+diff --git a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/CreatePaymentIntentionUseCase.kt b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/CreatePaymentIntentionUseCase.kt
+index 8244c19..c3c7099 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/CreatePaymentIntentionUseCase.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/CreatePaymentIntentionUseCase.kt
+@@ -12,7 +12,7 @@ internal class CreatePaymentIntentionUseCase @Inject constructor(
+         idempotencyKey: String,
+         address: CheckoutAddress,
+         cartId: String,
+-        cartTotal: com.msayeh.domain.model.Money,
++        cartTotal: com.dukkan.domain.model.Money,
+     ): Result<PaymentIntentionResult> = repository.createPaymentIntention(
+         idempotencyKey = idempotencyKey,
+         address        = address,
+diff --git a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/VerifyPaymentStatusUseCase.kt b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/VerifyPaymentStatusUseCase.kt
+index 687d126..0de8737 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/domain/usecase/VerifyPaymentStatusUseCase.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/domain/usecase/VerifyPaymentStatusUseCase.kt
+@@ -1,6 +1,6 @@
+ package com.dukkan.payment.domain.usecase
+ 
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.OrderConfirmation
+ import com.dukkan.payment.domain.repository.PaymentRepository
+ import javax.inject.Inject
+ 
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
+index 4af1e58..45ee61a 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
+@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.size
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+index ae22ca4..f82e201 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+@@ -82,10 +82,10 @@ import com.dukkan.payment.presentation.components.MethodTile
+ import com.dukkan.payment.presentation.components.OrderSummaryBar
+ import com.dukkan.payment.presentation.components.PaymobSdkLauncher
+ import com.dukkan.payment.presentation.components.PaymobThemeColors
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.model.OrderConfirmation
+-import com.msayeh.domain.model.asString
+-import com.msayeh.domain.model.cart.CartSummary
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.model.OrderConfirmation
++import com.dukkan.domain.model.asString
++import com.dukkan.domain.model.cart.CartSummary
+ 
+ @OptIn(ExperimentalMaterial3Api::class)
+ @Composable
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
+index 01ca05c..8cb9acc 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
+@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
+ import com.dukkan.payment.domain.model.CheckoutAddress
+ import com.dukkan.payment.domain.model.PaymentMethod
+ import com.dukkan.payment.domain.model.PaymobCredentials
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.model.cart.CartSummary
+-import com.msayeh.domain.model.OrderConfirmation
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.model.cart.CartSummary
++import com.dukkan.domain.model.OrderConfirmation
+ 
+ @Immutable
+ internal data class CheckoutUiState(
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+index c1c84e4..2ad2a8b 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+@@ -10,11 +10,11 @@ import com.dukkan.payment.domain.usecase.ConfirmCashOrderUseCase
+ import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
+ import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
+ import com.google.gson.Gson
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.model.OrderConfirmation
+-import com.msayeh.domain.model.cart.CartSummary
+-import com.msayeh.domain.usecase.address.GetAddressesUseCase
+-import com.msayeh.domain.usecase.cart.GetCartUseCase
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.model.OrderConfirmation
++import com.dukkan.domain.model.cart.CartSummary
++import com.dukkan.domain.usecase.address.GetAddressesUseCase
++import com.dukkan.domain.usecase.cart.GetCartUseCase
+ import dagger.hilt.android.lifecycle.HiltViewModel
+ import kotlinx.coroutines.delay
+ import kotlinx.coroutines.flow.MutableStateFlow
+@@ -180,7 +180,7 @@ internal class CheckoutViewModel @Inject constructor(
+         }
+     }
+ 
+-    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
++    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
+         viewModelScope.launch {
+             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
+             val result = confirmCashOrderUseCase(
+@@ -204,7 +204,7 @@ internal class CheckoutViewModel @Inject constructor(
+         }
+     }
+ 
+-    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
++    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
+         viewModelScope.launch {
+             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
+             val result = createPaymentIntentionUseCase(
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/components/AddressCard.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/components/AddressCard.kt
+index dfa802c..d6d9320 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/components/AddressCard.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/components/AddressCard.kt
+@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+ import com.dukkan.payment.R
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ @Composable
+ internal fun AddressCard(
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/components/OrderSummaryBar.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/components/OrderSummaryBar.kt
+index 5104d68..ef1171d 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/components/OrderSummaryBar.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/components/OrderSummaryBar.kt
+@@ -14,8 +14,8 @@ import androidx.compose.ui.res.stringResource
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+ import com.dukkan.payment.R
+-import com.msayeh.domain.model.Money
+-import com.msayeh.domain.model.asString
++import com.dukkan.domain.model.Money
++import com.dukkan.domain.model.asString
+ 
+ @Composable
+ internal fun OrderSummaryBar(
+diff --git a/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt b/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
+index 03d8d81..96598e4 100644
+--- a/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
++++ b/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.address.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
+index b971b26..da18e3e 100644
+--- a/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
+@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.unit.dp
+ import com.dukkan.address.R
+-import com.msayeh.domain.model.Address
++import com.dukkan.domain.model.Address
+ 
+ @Composable
+ fun AddressCard(
+@@ -156,4 +156,4 @@ fun AddressCard(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
+index 1599be5..0705393 100644
+--- a/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
+@@ -27,8 +27,8 @@ import androidx.compose.ui.text.input.ImeAction
+ import androidx.compose.ui.text.input.KeyboardType
+ import androidx.compose.ui.unit.dp
+ import com.dukkan.address.R
+-import com.example.design_system.components.PrimaryButton
+-import com.msayeh.domain.model.Address
++import com.dukkan.design_system.components.PrimaryButton
++import com.dukkan.domain.model.Address
+ 
+ @OptIn(ExperimentalMaterial3Api::class)
+ @Composable
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
+index f37e157..2e89ad8 100644
+--- a/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
+@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
+ import androidx.compose.ui.tooling.preview.Preview
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+-import com.example.design_system.theme.AppTheme
++import com.dukkan.design_system.theme.AppTheme
+ 
+ @Composable
+ fun AddressTextField(
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt b/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
+index 1d5185d..866931e 100644
+--- a/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
++++ b/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
+@@ -123,4 +123,4 @@ fun CountryDropdownField(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt b/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
+index 494d016..f09b5cf 100644
+--- a/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
++++ b/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
+@@ -34,12 +34,12 @@ import com.dukkan.address.components.AddressFormSheet
+ import com.dukkan.address.components.DeleteAddressDialog
+ import com.dukkan.address.viewmodel.SavedAddressesState
+ import com.dukkan.address.viewmodel.SavedAddressesViewModel
+-import com.example.design_system.components.ErrorScreen
+-import com.example.design_system.components.GuestPlaceholderScreen
+-import com.example.design_system.components.LoadingScreen
+-import com.example.design_system.components.PrimaryButton
+-import com.example.design_system.theme.AppTheme
+-import com.msayeh.domain.model.Address
++import com.dukkan.design_system.components.ErrorScreen
++import com.dukkan.design_system.components.GuestPlaceholderScreen
++import com.dukkan.design_system.components.LoadingScreen
++import com.dukkan.design_system.components.PrimaryButton
++import com.dukkan.design_system.theme.AppTheme
++import com.dukkan.domain.model.Address
+ 
+ @Composable
+ fun SavedAddressesScreen(
+diff --git a/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
+index 702f7ca..b3d0418 100644
+--- a/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
++++ b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
+@@ -2,13 +2,13 @@ package com.dukkan.address.viewmodel
+ 
+ import androidx.lifecycle.ViewModel
+ import androidx.lifecycle.viewModelScope
+-import com.msayeh.domain.model.Address
+-import com.msayeh.domain.usecase.GetCurrentUserUseCase
+-import com.msayeh.domain.usecase.address.AddAddressUseCase
+-import com.msayeh.domain.usecase.address.DeleteAddressUseCase
+-import com.msayeh.domain.usecase.address.GetAddressesUseCase
+-import com.msayeh.domain.usecase.address.SetDefaultAddressUseCase
+-import com.msayeh.domain.usecase.address.UpdateAddressUseCase
++import com.dukkan.domain.model.Address
++import com.dukkan.domain.usecase.GetCurrentUserUseCase
++import com.dukkan.domain.usecase.address.AddAddressUseCase
++import com.dukkan.domain.usecase.address.DeleteAddressUseCase
++import com.dukkan.domain.usecase.address.GetAddressesUseCase
++import com.dukkan.domain.usecase.address.SetDefaultAddressUseCase
++import com.dukkan.domain.usecase.address.UpdateAddressUseCase
+ import dagger.hilt.android.lifecycle.HiltViewModel
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.StateFlow
+diff --git a/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt b/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
+index c4a466e..70667a0 100644
+--- a/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
++++ b/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/ads/src/androidTest/java/com/dukkan/ads/ExampleInstrumentedTest.kt b/feature/ads/src/androidTest/java/com/dukkan/ads/ExampleInstrumentedTest.kt
+index dcb8643..829b7fd 100644
+--- a/feature/ads/src/androidTest/java/com/dukkan/ads/ExampleInstrumentedTest.kt
++++ b/feature/ads/src/androidTest/java/com/dukkan/ads/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.ads.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/ads/src/main/java/com/dukkan/ads/components/CouponBannerCard.kt b/feature/ads/src/main/java/com/dukkan/ads/components/CouponBannerCard.kt
+index da9153e..b50eaca 100644
+--- a/feature/ads/src/main/java/com/dukkan/ads/components/CouponBannerCard.kt
++++ b/feature/ads/src/main/java/com/dukkan/ads/components/CouponBannerCard.kt
+@@ -147,4 +147,4 @@ fun CouponBannerCard(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/ads/src/main/java/com/dukkan/ads/mapper/CouponImageMapper.kt b/feature/ads/src/main/java/com/dukkan/ads/mapper/CouponImageMapper.kt
+index 148ad99..80d3dd3 100644
+--- a/feature/ads/src/main/java/com/dukkan/ads/mapper/CouponImageMapper.kt
++++ b/feature/ads/src/main/java/com/dukkan/ads/mapper/CouponImageMapper.kt
+@@ -8,4 +8,4 @@ fun Coupon.toImageResId(): Int = when (code) {
+     "DU-40"  -> R.drawable.banner2
+     "DU-404" -> R.drawable.banner3
+     else     -> R.drawable.banner1
+-}
+\ No newline at end of file
++}
+diff --git a/feature/ads/src/main/java/com/dukkan/ads/viewmodel/CouponBannerViewModel.kt b/feature/ads/src/main/java/com/dukkan/ads/viewmodel/CouponBannerViewModel.kt
+index 18b7527..83a6a54 100644
+--- a/feature/ads/src/main/java/com/dukkan/ads/viewmodel/CouponBannerViewModel.kt
++++ b/feature/ads/src/main/java/com/dukkan/ads/viewmodel/CouponBannerViewModel.kt
+@@ -34,4 +34,4 @@ class CouponBannerViewModel @Inject constructor(
+             _state.update { it.copy(savedSuccess = false) }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/ads/src/test/java/com/dukkan/ads/ExampleUnitTest.kt b/feature/ads/src/test/java/com/dukkan/ads/ExampleUnitTest.kt
+index 94c756b..0b41717 100644
+--- a/feature/ads/src/test/java/com/dukkan/ads/ExampleUnitTest.kt
++++ b/feature/ads/src/test/java/com/dukkan/ads/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthError.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthError.kt
+index e53d4a2..89e34d0 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthError.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthError.kt
+@@ -181,4 +181,4 @@ private fun AuthErrorScreenDarkPreview() {
+             onBack = {},
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthGuestLink.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthGuestLink.kt
+index c5fe3bd..b0ae5e6 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthGuestLink.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthGuestLink.kt
+@@ -47,4 +47,4 @@ private fun AuthGuestLinkPreview() {
+     AppTheme {
+         AuthGuestLink(onClick = {}, modifier = Modifier.padding(16.dp))
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthLoading.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthLoading.kt
+index bf6399e..e9c1a88 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthLoading.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthLoading.kt
+@@ -130,4 +130,4 @@ private fun AuthLoadingScreenDarkPreview() {
+     AppTheme(darkTheme = true) {
+         AuthLoadingScreen(label = "Signing in…")
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthPrimaryButton.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthPrimaryButton.kt
+index 5fe73a9..f27e8f7 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthPrimaryButton.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthPrimaryButton.kt
+@@ -82,4 +82,4 @@ private fun AuthPrimaryButtonDisabledPreview() {
+             modifier = Modifier.padding(16.dp),
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthSocialButton.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthSocialButton.kt
+index f11befb..31f0b21 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthSocialButton.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthSocialButton.kt
+@@ -111,4 +111,4 @@ private fun AuthSocialRowLoadingPreview() {
+             isGoogleLoading = true,
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthTabRow.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthTabRow.kt
+index 67d6fd6..339b8e8 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthTabRow.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthTabRow.kt
+@@ -127,4 +127,4 @@ private fun AuthTabRowRegisterPreview() {
+             modifier = Modifier.padding(16.dp),
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/feature/auth/src/main/java/com/dukkan/auth/components/AuthTextField.kt b/feature/auth/src/main/java/com/dukkan/auth/components/AuthTextField.kt
+index ea70c79..5e628fb 100644
+--- a/feature/auth/src/main/java/com/dukkan/auth/components/AuthTextField.kt
++++ b/feature/auth/src/main/java/com/dukkan/auth/components/AuthTextField.kt
+@@ -203,4 +203,4 @@ private fun AuthTextFieldErrorDarkPreview() {
+             modifier = Modifier.padding(16.dp),
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/androidTest/java/com/dukkan/categories/ExampleInstrumentedTest.kt b/features/categories/src/androidTest/java/com/dukkan/categories/ExampleInstrumentedTest.kt
+index 7315c81..168b4c3 100644
+--- a/features/categories/src/androidTest/java/com/dukkan/categories/ExampleInstrumentedTest.kt
++++ b/features/categories/src/androidTest/java/com/dukkan/categories/ExampleInstrumentedTest.kt
+@@ -19,4 +19,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.categories.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/main/java/com/dukkan/categories/uiState/CategoryProductsUiState.kt b/features/categories/src/main/java/com/dukkan/categories/uiState/CategoryProductsUiState.kt
+index 149dc10..f06178e 100644
+--- a/features/categories/src/main/java/com/dukkan/categories/uiState/CategoryProductsUiState.kt
++++ b/features/categories/src/main/java/com/dukkan/categories/uiState/CategoryProductsUiState.kt
+@@ -9,4 +9,4 @@ sealed interface CategoryProductsUiState {
+         val products: List<Product>,
+         val favoriteIds: Set<String>
+     ) : CategoryProductsUiState
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/main/java/com/dukkan/categories/view/CategoriesScreen.kt b/features/categories/src/main/java/com/dukkan/categories/view/CategoriesScreen.kt
+index 03d9a7b..34caa22 100644
+--- a/features/categories/src/main/java/com/dukkan/categories/view/CategoriesScreen.kt
++++ b/features/categories/src/main/java/com/dukkan/categories/view/CategoriesScreen.kt
+@@ -77,4 +77,4 @@ fun CategoriesScreen(
+         onBackClick = onBackClick,
+         onCategoryClick = onCategoryClick
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoriesViewModel.kt b/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoriesViewModel.kt
+index 48ec181..9dfe077 100644
+--- a/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoriesViewModel.kt
++++ b/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoriesViewModel.kt
+@@ -30,4 +30,4 @@ class CategoriesViewModel @Inject constructor(
+                 }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoryProductsViewModel.kt b/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoryProductsViewModel.kt
+index e44fcd8..8aa0638 100644
+--- a/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoryProductsViewModel.kt
++++ b/features/categories/src/main/java/com/dukkan/categories/viewModel/CategoryProductsViewModel.kt
+@@ -76,4 +76,4 @@ class CategoryProductsViewModel @Inject constructor(
+             toggleFavoriteUseCase(favoriteProduct, isCurrentlyFavorite)
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/categories/src/test/java/com/dukkan/categories/ExampleUnitTest.kt b/features/categories/src/test/java/com/dukkan/categories/ExampleUnitTest.kt
+index 2091a39..4fda15d 100644
+--- a/features/categories/src/test/java/com/dukkan/categories/ExampleUnitTest.kt
++++ b/features/categories/src/test/java/com/dukkan/categories/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/androidTest/java/com/dukkan/favorites/ExampleInstrumentedTest.kt b/features/favorites/src/androidTest/java/com/dukkan/favorites/ExampleInstrumentedTest.kt
+index 8a1e590..f88a7e1 100644
+--- a/features/favorites/src/androidTest/java/com/dukkan/favorites/ExampleInstrumentedTest.kt
++++ b/features/favorites/src/androidTest/java/com/dukkan/favorites/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.favorites.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/main/java/com/dukkan/favorites/components/EmptyContent.kt b/features/favorites/src/main/java/com/dukkan/favorites/components/EmptyContent.kt
+index d58a944..17c1068 100644
+--- a/features/favorites/src/main/java/com/dukkan/favorites/components/EmptyContent.kt
++++ b/features/favorites/src/main/java/com/dukkan/favorites/components/EmptyContent.kt
+@@ -41,4 +41,4 @@ fun EmptyContent(modifier: Modifier = Modifier) {
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/main/java/com/dukkan/favorites/components/FavoriteItem.kt b/features/favorites/src/main/java/com/dukkan/favorites/components/FavoriteItem.kt
+index c3d6489..89dfd53 100644
+--- a/features/favorites/src/main/java/com/dukkan/favorites/components/FavoriteItem.kt
++++ b/features/favorites/src/main/java/com/dukkan/favorites/components/FavoriteItem.kt
+@@ -101,4 +101,4 @@ fun FavoriteItem(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/main/java/com/dukkan/favorites/uistate/FavoritesUiState.kt b/features/favorites/src/main/java/com/dukkan/favorites/uistate/FavoritesUiState.kt
+index 5880010..aa0b843 100644
+--- a/features/favorites/src/main/java/com/dukkan/favorites/uistate/FavoritesUiState.kt
++++ b/features/favorites/src/main/java/com/dukkan/favorites/uistate/FavoritesUiState.kt
+@@ -7,4 +7,4 @@ sealed interface FavoritesUiState {
+ 
+     data object Empty : FavoritesUiState
+     data class Success(val favorites: List<FavoriteProduct>) : FavoritesUiState
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/main/java/com/dukkan/favorites/view/FavoriteView.kt b/features/favorites/src/main/java/com/dukkan/favorites/view/FavoriteView.kt
+index 8de8ed5..fa56f1b 100644
+--- a/features/favorites/src/main/java/com/dukkan/favorites/view/FavoriteView.kt
++++ b/features/favorites/src/main/java/com/dukkan/favorites/view/FavoriteView.kt
+@@ -115,4 +115,4 @@ private fun FavoritesContent(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/main/java/com/dukkan/favorites/viewmodel/FavoritesViewModel.kt b/features/favorites/src/main/java/com/dukkan/favorites/viewmodel/FavoritesViewModel.kt
+index 47ffbda..c03bbda 100644
+--- a/features/favorites/src/main/java/com/dukkan/favorites/viewmodel/FavoritesViewModel.kt
++++ b/features/favorites/src/main/java/com/dukkan/favorites/viewmodel/FavoritesViewModel.kt
+@@ -69,4 +69,4 @@ class FavoritesViewModel @Inject constructor(
+             removeFavorite(id)
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/favorites/src/test/java/com/dukkan/favorites/ExampleUnitTest.kt b/features/favorites/src/test/java/com/dukkan/favorites/ExampleUnitTest.kt
+index 20b85de..44f9168 100644
+--- a/features/favorites/src/test/java/com/dukkan/favorites/ExampleUnitTest.kt
++++ b/features/favorites/src/test/java/com/dukkan/favorites/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/androidTest/java/com/dukkan/home/ExampleInstrumentedTest.kt b/features/home/src/androidTest/java/com/dukkan/home/ExampleInstrumentedTest.kt
+index 770a6e9..93af5b0 100644
+--- a/features/home/src/androidTest/java/com/dukkan/home/ExampleInstrumentedTest.kt
++++ b/features/home/src/androidTest/java/com/dukkan/home/ExampleInstrumentedTest.kt
+@@ -19,4 +19,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.home.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/components/HomeBanner.kt b/features/home/src/main/java/com/dukkan/home/components/HomeBanner.kt
+index 433ee9a..571ec14 100644
+--- a/features/home/src/main/java/com/dukkan/home/components/HomeBanner.kt
++++ b/features/home/src/main/java/com/dukkan/home/components/HomeBanner.kt
+@@ -129,4 +129,4 @@ fun HomeBannerPreview() {
+             modifier = Modifier.background(MaterialTheme.colorScheme.background)
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/components/HomeHeader.kt b/features/home/src/main/java/com/dukkan/home/components/HomeHeader.kt
+index 19146e5..f357e19 100644
+--- a/features/home/src/main/java/com/dukkan/home/components/HomeHeader.kt
++++ b/features/home/src/main/java/com/dukkan/home/components/HomeHeader.kt
+@@ -57,4 +57,4 @@ fun HomeHeaderPreview() {
+             modifier = Modifier.background(MaterialTheme.colorScheme.background)
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/components/HomeSearchBar.kt b/features/home/src/main/java/com/dukkan/home/components/HomeSearchBar.kt
+index f26767a..bd93c2f 100644
+--- a/features/home/src/main/java/com/dukkan/home/components/HomeSearchBar.kt
++++ b/features/home/src/main/java/com/dukkan/home/components/HomeSearchBar.kt
+@@ -61,4 +61,4 @@ fun HomeSearchPreview() {
+             modifier = Modifier.background(MaterialTheme.colorScheme.background)
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/uiState/HomeUiState.kt b/features/home/src/main/java/com/dukkan/home/uiState/HomeUiState.kt
+index 7dc7566..130a0f8 100644
+--- a/features/home/src/main/java/com/dukkan/home/uiState/HomeUiState.kt
++++ b/features/home/src/main/java/com/dukkan/home/uiState/HomeUiState.kt
+@@ -12,4 +12,4 @@ sealed interface HomeUiState {
+         val categories: List<Category> = emptyList(),
+     ) : HomeUiState
+     data class Error(val message: String) : HomeUiState
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/view/HomeScreen.kt b/features/home/src/main/java/com/dukkan/home/view/HomeScreen.kt
+index 54a2a7b..39a20c0 100644
+--- a/features/home/src/main/java/com/dukkan/home/view/HomeScreen.kt
++++ b/features/home/src/main/java/com/dukkan/home/view/HomeScreen.kt
+@@ -157,4 +157,4 @@ fun HomeScreenContent(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/main/java/com/dukkan/home/viewModel/HomeViewModel.kt b/features/home/src/main/java/com/dukkan/home/viewModel/HomeViewModel.kt
+index 82ae0be..8188d6e 100644
+--- a/features/home/src/main/java/com/dukkan/home/viewModel/HomeViewModel.kt
++++ b/features/home/src/main/java/com/dukkan/home/viewModel/HomeViewModel.kt
+@@ -129,4 +129,4 @@ class HomeViewModel @Inject constructor(
+             toggleFavoriteUseCase(favoriteProduct, isCurrentlyFavorite)
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/home/src/test/java/com/dukkan/home/ExampleUnitTest.kt b/features/home/src/test/java/com/dukkan/home/ExampleUnitTest.kt
+index fdb2f2a..c5da3e1 100644
+--- a/features/home/src/test/java/com/dukkan/home/ExampleUnitTest.kt
++++ b/features/home/src/test/java/com/dukkan/home/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/androidTest/java/com/dukkan/onboarding/ExampleInstrumentedTest.kt b/features/onboarding/src/androidTest/java/com/dukkan/onboarding/ExampleInstrumentedTest.kt
+index 84dc17e..209a7e3 100644
+--- a/features/onboarding/src/androidTest/java/com/dukkan/onboarding/ExampleInstrumentedTest.kt
++++ b/features/onboarding/src/androidTest/java/com/dukkan/onboarding/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.onboarding.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomLoginSection.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomLoginSection.kt
+index 1394b0d..124250c 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomLoginSection.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomLoginSection.kt
+@@ -43,4 +43,4 @@ fun BottomLoginSection(
+ 
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomSection.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomSection.kt
+index f44c175..6b45a96 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomSection.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/BottomSection.kt
+@@ -40,4 +40,4 @@ fun BottomSection(
+             onSignInClick = onSignInClick
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/ContinueButton.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/ContinueButton.kt
+index 92ffd11..a904c08 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/ContinueButton.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/ContinueButton.kt
+@@ -46,4 +46,4 @@ fun ContinueButton(
+ 
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/GradientOverlay.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/GradientOverlay.kt
+index 489ee87..40c3339 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/GradientOverlay.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/GradientOverlay.kt
+@@ -25,4 +25,4 @@ fun GradientOverlay(){
+                 )
+             )
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingBackground.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingBackground.kt
+index 1be7ad9..e4308b9 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingBackground.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingBackground.kt
+@@ -15,4 +15,4 @@ fun OnboardingBackground(image:Int){
+         modifier = Modifier.fillMaxSize(),
+         contentScale = ContentScale.Crop
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingIndicators.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingIndicators.kt
+index 5374a75..aca7b4e 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingIndicators.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingIndicators.kt
+@@ -43,4 +43,4 @@ fun OnboardingIndicators(
+ 
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingPageContent.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingPageContent.kt
+index 450feb5..3a5324c 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingPageContent.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/OnboardingPageContent.kt
+@@ -64,4 +64,4 @@ fun OnboardingPageContent(
+         Spacer(modifier = Modifier.height(160.dp))
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/SkipButton.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/SkipButton.kt
+index a05a0f5..6f756de 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/SkipButton.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/SkipButton.kt
+@@ -31,4 +31,4 @@ fun SkipButton(
+         }
+     )
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/components/TopBar.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/components/TopBar.kt
+index 7a73ebd..cd1db18 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/components/TopBar.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/components/TopBar.kt
+@@ -40,4 +40,4 @@ fun TopBar(
+ 
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/uistate/OnboardingUiState.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/uistate/OnboardingUiState.kt
+index 1a407a6..d7d3652 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/uistate/OnboardingUiState.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/uistate/OnboardingUiState.kt
+@@ -4,4 +4,4 @@ import com.dukkan.onboarding.model.OnboardingModel
+ 
+ data class OnboardingUiState(
+     val pages: List<OnboardingModel> = emptyList()
+-)
+\ No newline at end of file
++)
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/view/OnboardingView.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/view/OnboardingView.kt
+index 545c390..9ce0293 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/view/OnboardingView.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/view/OnboardingView.kt
+@@ -100,4 +100,4 @@ fun OnboardingContent(
+             onSignInClick = onNavigateToLogin
+         )
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/main/java/com/dukkan/onboarding/viewmodel/OnboardingViewModel.kt b/features/onboarding/src/main/java/com/dukkan/onboarding/viewmodel/OnboardingViewModel.kt
+index 08f0e52..091fd34 100644
+--- a/features/onboarding/src/main/java/com/dukkan/onboarding/viewmodel/OnboardingViewModel.kt
++++ b/features/onboarding/src/main/java/com/dukkan/onboarding/viewmodel/OnboardingViewModel.kt
+@@ -47,4 +47,4 @@ class OnboardingViewModel @Inject constructor(
+             onComplete()
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/onboarding/src/test/java/com/dukkan/onboarding/ExampleUnitTest.kt b/features/onboarding/src/test/java/com/dukkan/onboarding/ExampleUnitTest.kt
+index 47bee1c..7105cef 100644
+--- a/features/onboarding/src/test/java/com/dukkan/onboarding/ExampleUnitTest.kt
++++ b/features/onboarding/src/test/java/com/dukkan/onboarding/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/product_details/src/androidTest/java/com/dukkan/product_details/ExampleInstrumentedTest.kt b/features/product_details/src/androidTest/java/com/dukkan/product_details/ExampleInstrumentedTest.kt
+index 5c337f1..ee38d46 100644
+--- a/features/product_details/src/androidTest/java/com/dukkan/product_details/ExampleInstrumentedTest.kt
++++ b/features/product_details/src/androidTest/java/com/dukkan/product_details/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.product_details.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/product_details/src/main/java/com/dukkan/product_details/components/AddToCartBar.kt b/features/product_details/src/main/java/com/dukkan/product_details/components/AddToCartBar.kt
+index 9cc005d..a2b075a 100644
+--- a/features/product_details/src/main/java/com/dukkan/product_details/components/AddToCartBar.kt
++++ b/features/product_details/src/main/java/com/dukkan/product_details/components/AddToCartBar.kt
+@@ -85,4 +85,4 @@ private fun AddToCartBarPreview() {
+         price = Money(amount = 19.99.toBigDecimal(), currencyCode = "USD"),
+         onAddToCart = {}
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/features/product_details/src/main/java/com/dukkan/product_details/view/ProductDetailsScreen.kt b/features/product_details/src/main/java/com/dukkan/product_details/view/ProductDetailsScreen.kt
+index 340b05d..a65e89a 100644
+--- a/features/product_details/src/main/java/com/dukkan/product_details/view/ProductDetailsScreen.kt
++++ b/features/product_details/src/main/java/com/dukkan/product_details/view/ProductDetailsScreen.kt
+@@ -191,4 +191,4 @@ private fun LoadedProductDetails(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/product_details/src/main/java/com/dukkan/product_details/viewmodel/ProductDetailsViewModel.kt b/features/product_details/src/main/java/com/dukkan/product_details/viewmodel/ProductDetailsViewModel.kt
+index d17aa3b..311aca5 100644
+--- a/features/product_details/src/main/java/com/dukkan/product_details/viewmodel/ProductDetailsViewModel.kt
++++ b/features/product_details/src/main/java/com/dukkan/product_details/viewmodel/ProductDetailsViewModel.kt
+@@ -91,4 +91,4 @@ class ProductDetailsViewModel @Inject constructor(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/product_details/src/test/java/com/dukkan/product_details/ExampleUnitTest.kt b/features/product_details/src/test/java/com/dukkan/product_details/ExampleUnitTest.kt
+index 3dd33f5..ff1cc91 100644
+--- a/features/product_details/src/test/java/com/dukkan/product_details/ExampleUnitTest.kt
++++ b/features/product_details/src/test/java/com/dukkan/product_details/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/settings/src/androidTest/java/com/dukkan/settings/ExampleInstrumentedTest.kt b/features/settings/src/androidTest/java/com/dukkan/settings/ExampleInstrumentedTest.kt
+index 0f17ddf..1bfd8bd 100644
+--- a/features/settings/src/androidTest/java/com/dukkan/settings/ExampleInstrumentedTest.kt
++++ b/features/settings/src/androidTest/java/com/dukkan/settings/ExampleInstrumentedTest.kt
+@@ -19,4 +19,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.mylibrary.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/settings/src/test/java/com/dukkan/settings/ExampleUnitTest.kt b/features/settings/src/test/java/com/dukkan/settings/ExampleUnitTest.kt
+index f1f3e4c..44fbf83 100644
+--- a/features/settings/src/test/java/com/dukkan/settings/ExampleUnitTest.kt
++++ b/features/settings/src/test/java/com/dukkan/settings/ExampleUnitTest.kt
+@@ -13,4 +13,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/androidTest/java/com/dukkan/shopping_cart/ExampleInstrumentedTest.kt b/features/shopping_cart/src/androidTest/java/com/dukkan/shopping_cart/ExampleInstrumentedTest.kt
+index ae97b3f..ee15ec6 100644
+--- a/features/shopping_cart/src/androidTest/java/com/dukkan/shopping_cart/ExampleInstrumentedTest.kt
++++ b/features/shopping_cart/src/androidTest/java/com/dukkan/shopping_cart/ExampleInstrumentedTest.kt
+@@ -21,4 +21,4 @@ class ExampleInstrumentedTest {
+         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+         assertEquals("com.dukkan.shopping_cart.test", appContext.packageName)
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/CartItemRow.kt b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/CartItemRow.kt
+index 533f823..986a383 100644
+--- a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/CartItemRow.kt
++++ b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/CartItemRow.kt
+@@ -185,4 +185,4 @@ fun CartItemRow(
+     }
+     }
+     )
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/PromoCodeSection.kt b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/PromoCodeSection.kt
+index b663d2d..e518fc7 100644
+--- a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/PromoCodeSection.kt
++++ b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/PromoCodeSection.kt
+@@ -150,4 +150,4 @@ fun PromoCodeSection(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/SummarySection.kt b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/SummarySection.kt
+index adce72e..f936085 100644
+--- a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/SummarySection.kt
++++ b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/components/SummarySection.kt
+@@ -123,4 +123,4 @@ fun SummarySection(state: ShoppingCartState) {
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/view/ShoppingCartView.kt b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/view/ShoppingCartView.kt
+index 3afe168..33962dd 100644
+--- a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/view/ShoppingCartView.kt
++++ b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/view/ShoppingCartView.kt
+@@ -190,4 +190,4 @@ private fun ShoppingCartContent(
+             )
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/viewmodel/ShoppingCartViewModel.kt b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/viewmodel/ShoppingCartViewModel.kt
+index 3f86845..24537d1 100644
+--- a/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/viewmodel/ShoppingCartViewModel.kt
++++ b/features/shopping_cart/src/main/java/com/dukkan/shopping_cart/viewmodel/ShoppingCartViewModel.kt
+@@ -153,4 +153,4 @@ class ShoppingCartViewModel @Inject constructor(
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/features/shopping_cart/src/test/java/com/dukkan/shopping_cart/ExampleUnitTest.kt b/features/shopping_cart/src/test/java/com/dukkan/shopping_cart/ExampleUnitTest.kt
+index 70a4d35..61379d7 100644
+--- a/features/shopping_cart/src/test/java/com/dukkan/shopping_cart/ExampleUnitTest.kt
++++ b/features/shopping_cart/src/test/java/com/dukkan/shopping_cart/ExampleUnitTest.kt
+@@ -14,4 +14,4 @@ class ExampleUnitTest {
+     fun addition_isCorrect() {
+         assertEquals(4, 2 + 2)
+     }
+-}
+\ No newline at end of file
++}
+-- 
+2.45.1.windows.1
+

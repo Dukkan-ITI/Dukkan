@@ -1,0 +1,170 @@
+From eaf33f502f95c7cb172c22763405f17a9cce04b8 Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 15:23:56 +0300
+Subject: [PATCH 13/24] fix(payment): handle Paymob SDK cancellation and
+ failure states
+
+- Map PaymobSdkListener status to CheckoutViewModel state
+
+- Prevent success receipt from showing on cancelled or failed transactions
+
+- Expose Cancelled state via PaymentResult back to calling module
+
+- Intercept system back button to trigger Cancelled state
+---
+ .../java/com/dukkan/payment/PaymentResult.kt   |  6 ++++++
+ .../payment/presentation/CheckoutEvent.kt      |  7 ++++++-
+ .../payment/presentation/CheckoutScreen.kt     | 10 ++++++++--
+ .../payment/presentation/CheckoutViewModel.kt  | 18 +++++++++++++++++-
+ .../components/PaymobSdkLauncher.kt            | 12 ++++++++----
+ 5 files changed, 45 insertions(+), 8 deletions(-)
+
+diff --git a/core/payment/src/main/java/com/dukkan/payment/PaymentResult.kt b/core/payment/src/main/java/com/dukkan/payment/PaymentResult.kt
+index aa2774a..b7149e7 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/PaymentResult.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/PaymentResult.kt
+@@ -15,4 +15,10 @@ sealed interface PaymentResult {
+     data class Pending(
+         val orderId: String,
+     ) : PaymentResult
++
++    data class Failed(
++        val error: String,
++    ) : PaymentResult
++
++    object Cancelled : PaymentResult
+ }
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutEvent.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutEvent.kt
+index 68763ce..5a28883 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutEvent.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutEvent.kt
+@@ -9,7 +9,12 @@ internal sealed interface CheckoutEvent {
+     data class SetEditingAddress(val isEditing: Boolean) : CheckoutEvent
+     
+     object SubmitOrder : CheckoutEvent
+-    object PaymobSdkFinished : CheckoutEvent
++    data class PaymobSdkFinished(
++        val status: com.dukkan.payment.presentation.components.PaymobSdkStatus,
++        val message: String?
++    ) : CheckoutEvent
++    
++    object CancelPaymentFlow : CheckoutEvent
+     object AppResumedDuringPayment : CheckoutEvent
+     object Retry : CheckoutEvent
+     object DismissResult : CheckoutEvent
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+index 7f31c05..99cc733 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+@@ -100,6 +100,10 @@ internal fun CheckoutScreen(
+         // We now rely entirely on the receipt's Done button to trigger onPaymentResult
+     }
+ 
++    androidx.activity.compose.BackHandler {
++        onPaymentResult(PaymentResult.Cancelled)
++    }
++
+     DisposableEffect(lifecycleOwner) {
+         val observer = LifecycleEventObserver { _, event ->
+             if (event == Lifecycle.Event.ON_RESUME) {
+@@ -150,7 +154,9 @@ internal fun CheckoutScreen(
+                     outline   = colorScheme.outline.toArgb(),
+                     error     = colorScheme.error.toArgb(),
+                 ),
+-                onFinished = { onEvent(CheckoutEvent.PaymobSdkFinished) },
++                onFinished = { status, msg -> 
++                    onEvent(CheckoutEvent.PaymobSdkFinished(status, msg)) 
++                },
+             )
+         }
+         LaunchedEffect(credentials) {
+@@ -166,7 +172,7 @@ internal fun CheckoutScreen(
+             TopAppBar(
+                 title = { Text(stringResource(R.string.payment_title)) },
+                 navigationIcon = {
+-                    IconButton(onClick = onNavigateUp) {
++                    IconButton(onClick = { onPaymentResult(PaymentResult.Cancelled) }) {
+                         Icon(
+                             imageVector = Icons.Default.LocalShipping,
+                             contentDescription = stringResource(R.string.payment_navigate_up),
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+index 4191f57..e6bbd2f 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+@@ -154,7 +154,10 @@ internal class CheckoutViewModel @Inject constructor(
+             }
+ 
+             CheckoutEvent.SubmitOrder             -> submitOrder()
+-            CheckoutEvent.PaymobSdkFinished       -> verifyStatus()
++            is CheckoutEvent.PaymobSdkFinished    -> handlePaymobSdkFinished(event.status, event.message)
++            CheckoutEvent.CancelPaymentFlow       -> {
++                // If we want to handle internal state when flow is cancelled
++            }
+             CheckoutEvent.AppResumedDuringPayment -> onAppResumedDuringPayment()
+             
+             CheckoutEvent.Retry -> {
+@@ -228,6 +231,19 @@ internal class CheckoutViewModel @Inject constructor(
+         }
+     }
+ 
++    private fun handlePaymobSdkFinished(status: com.dukkan.payment.presentation.components.PaymobSdkStatus, message: String?) {
++        when (status) {
++            com.dukkan.payment.presentation.components.PaymobSdkStatus.SUCCESS -> verifyStatus()
++            com.dukkan.payment.presentation.components.PaymobSdkStatus.PENDING -> {
++                _uiState.update { it.copy(error = "Payment is pending") }
++            }
++            com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
++                val errorMsg = message ?: "Payment was cancelled or failed."
++                _uiState.update { it.copy(result = OrderResult.Failure(errorMsg, canRetry = true)) }
++            }
++        }
++    }
++
+     private fun onAppResumedDuringPayment() {
+         if (orderId != null && _uiState.value.result == null) {
+             verifyStatus()
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/components/PaymobSdkLauncher.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/components/PaymobSdkLauncher.kt
+index 752f1b2..a06d27b 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/components/PaymobSdkLauncher.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/components/PaymobSdkLauncher.kt
+@@ -2,6 +2,10 @@ package com.dukkan.payment.presentation.components
+ 
+ import androidx.appcompat.app.AppCompatActivity
+ 
++internal enum class PaymobSdkStatus {
++    SUCCESS, PENDING, FAILED
++}
++
+ internal data class PaymobThemeColors(
+     val primary: Int,
+     val onPrimary: Int,
+@@ -14,7 +18,7 @@ internal data class PaymobThemeColors(
+ internal class PaymobSdkLauncher(
+     private val activity: AppCompatActivity,
+     private val colors: PaymobThemeColors,
+-    private val onFinished: () -> Unit,
++    private val onFinished: (PaymobSdkStatus, String?) -> Unit,
+ ) : com.paymob.paymob_sdk.ui.PaymobSdkListener {
+ 
+     fun launch(clientSecret: String, publicKey: String) {
+@@ -32,14 +36,14 @@ internal class PaymobSdkLauncher(
+     }
+ 
+     override fun onSuccess(payResponse: java.util.HashMap<String, String?>) {
+-        onFinished()
++        onFinished(PaymobSdkStatus.SUCCESS, null)
+     }
+ 
+     override fun onFailure(msg: String?) {
+-        onFinished()
++        onFinished(PaymobSdkStatus.FAILED, msg)
+     }
+ 
+     override fun onPending() {
+-        onFinished()
++        onFinished(PaymobSdkStatus.PENDING, null)
+     }
+ }
+-- 
+2.45.1.windows.1
+

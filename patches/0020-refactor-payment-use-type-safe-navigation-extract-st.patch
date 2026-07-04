@@ -1,0 +1,366 @@
+From 81da689cd5331c82ec793f11fa9e8a5265f2406d Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 19:34:11 +0300
+Subject: [PATCH 20/24] refactor(payment): use type-safe navigation, extract
+ strings to resources, and centralize checkout constants
+
+---
+ .../main/java/com/dukkan/app/AppNavGraph.kt   |  2 +-
+ .../main/java/com/dukkan/navigation/Screen.kt |  3 ++
+ .../com/dukkan/payment/PaymentFeatureEntry.kt |  3 +-
+ .../payment/presentation/AddressEditSheet.kt  | 16 +++++----
+ .../payment/presentation/CheckoutConstants.kt | 12 +++++++
+ .../payment/presentation/CheckoutScreen.kt    |  2 +-
+ .../payment/presentation/CheckoutUiState.kt   |  4 +--
+ .../payment/presentation/CheckoutViewModel.kt | 34 +++++++++----------
+ .../com/dukkan/payment/presentation/UiText.kt | 26 ++++++++++++++
+ .../src/main/res/values-ar/strings.xml        | 16 +++++++++
+ core/payment/src/main/res/values/strings.xml  | 16 +++++++++
+ 11 files changed, 105 insertions(+), 29 deletions(-)
+ create mode 100644 core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutConstants.kt
+ create mode 100644 core/payment/src/main/java/com/dukkan/payment/presentation/UiText.kt
+
+diff --git a/app/src/main/java/com/dukkan/app/AppNavGraph.kt b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+index b571713..30bef73 100644
+--- a/app/src/main/java/com/dukkan/app/AppNavGraph.kt
++++ b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+@@ -95,7 +95,7 @@ fun AppNavGraph(
+         composable<Screen.ShoppingCart> {
+             ShoppingCartView(
+                 onStartShoppingClick = { navController.navigate(Screen.Home) },
+-                onCheckoutClick = { navController.navigate("payment") },
++                onCheckoutClick = { navController.navigate(Screen.Payment) },
+                 onSignInClick = {
+                     navController.navigate(Screen.Auth) {
+                         popUpTo<Screen.Home> { inclusive = true }
+diff --git a/core/navigation/src/main/java/com/dukkan/navigation/Screen.kt b/core/navigation/src/main/java/com/dukkan/navigation/Screen.kt
+index 89e1ff3..e53c875 100644
+--- a/core/navigation/src/main/java/com/dukkan/navigation/Screen.kt
++++ b/core/navigation/src/main/java/com/dukkan/navigation/Screen.kt
+@@ -43,4 +43,7 @@ sealed class Screen {
+ 
+     @Serializable
+     object SavedAddresses
++
++    @Serializable
++    object Payment
+ }
+diff --git a/core/payment/src/main/java/com/dukkan/payment/PaymentFeatureEntry.kt b/core/payment/src/main/java/com/dukkan/payment/PaymentFeatureEntry.kt
+index 4597be0..372b0c9 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/PaymentFeatureEntry.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/PaymentFeatureEntry.kt
+@@ -6,12 +6,13 @@ import androidx.navigation.NavGraphBuilder
+ import androidx.navigation.compose.composable
+ import com.dukkan.payment.presentation.CheckoutScreen
+ import com.dukkan.payment.presentation.CheckoutViewModel
++import com.dukkan.navigation.Screen
+ 
+ fun NavGraphBuilder.paymentNavGraph(
+     navController: NavController,
+     onPaymentResult: (PaymentResult) -> Unit,
+ ) {
+-    composable(route = "payment") {
++    composable<Screen.Payment> {
+         val viewModel: CheckoutViewModel = hiltViewModel()
+ 
+         CheckoutScreen(
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
+index 7735f81..4af1e58 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/AddressEditSheet.kt
+@@ -35,6 +35,8 @@ import androidx.compose.material.icons.filled.Phone
+ import androidx.compose.material.icons.filled.Home
+ import androidx.compose.material3.Icon
+ import androidx.compose.ui.Alignment
++import androidx.compose.ui.res.stringResource
++import com.dukkan.payment.R
+ 
+ @OptIn(ExperimentalMaterial3Api::class)
+ @Composable
+@@ -75,7 +77,7 @@ internal fun AddressEditSheet(
+                 )
+                 Spacer(modifier = Modifier.size(8.dp))
+                 Text(
+-                    text = "Delivery Address",
++                    text = stringResource(R.string.payment_address_delivery),
+                     style = MaterialTheme.typography.titleLarge,
+                     fontWeight = FontWeight.Bold,
+                     color = MaterialTheme.colorScheme.onSurface
+@@ -91,7 +93,7 @@ internal fun AddressEditSheet(
+                 OutlinedTextField(
+                     value = firstName,
+                     onValueChange = { firstName = it },
+-                    label = { Text("First Name") },
++                    label = { Text(stringResource(R.string.payment_address_first_name)) },
+                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                     shape = RoundedCornerShape(12.dp),
+                     modifier = Modifier.weight(1f),
+@@ -101,7 +103,7 @@ internal fun AddressEditSheet(
+                 OutlinedTextField(
+                     value = lastName,
+                     onValueChange = { lastName = it },
+-                    label = { Text("Last Name") },
++                    label = { Text(stringResource(R.string.payment_address_last_name)) },
+                     shape = RoundedCornerShape(12.dp),
+                     modifier = Modifier.weight(1f),
+                     singleLine = true
+@@ -111,7 +113,7 @@ internal fun AddressEditSheet(
+             OutlinedTextField(
+                 value = address1,
+                 onValueChange = { address1 = it },
+-                label = { Text("Street Address") },
++                label = { Text(stringResource(R.string.payment_address_street)) },
+                 leadingIcon = { Icon(Icons.Default.Home, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                 shape = RoundedCornerShape(12.dp),
+                 modifier = Modifier.fillMaxWidth(),
+@@ -121,7 +123,7 @@ internal fun AddressEditSheet(
+             OutlinedTextField(
+                 value = city,
+                 onValueChange = { city = it },
+-                label = { Text("City") },
++                label = { Text(stringResource(R.string.payment_address_city)) },
+                 shape = RoundedCornerShape(12.dp),
+                 modifier = Modifier.fillMaxWidth(),
+                 singleLine = true
+@@ -130,7 +132,7 @@ internal fun AddressEditSheet(
+             OutlinedTextField(
+                 value = phone,
+                 onValueChange = { phone = it },
+-                label = { Text("Phone Number") },
++                label = { Text(stringResource(R.string.payment_address_phone)) },
+                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, modifier = Modifier.size(20.dp)) },
+                 shape = RoundedCornerShape(12.dp),
+                 modifier = Modifier.fillMaxWidth(),
+@@ -162,7 +164,7 @@ internal fun AddressEditSheet(
+                     .height(56.dp)
+             ) {
+                 Text(
+-                    text = "Confirm Address",
++                    text = stringResource(R.string.payment_address_confirm),
+                     style = MaterialTheme.typography.titleMedium,
+                     fontWeight = FontWeight.Bold
+                 )
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutConstants.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutConstants.kt
+new file mode 100644
+index 0000000..a2dfb0f
+--- /dev/null
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutConstants.kt
+@@ -0,0 +1,12 @@
++package com.dukkan.payment.presentation
++
++object CheckoutConstants {
++    const val KEY_ORDER_ID               = "checkout_order_id"
++    const val KEY_IDEMPOTENCY_KEY        = "checkout_idempotency_key"
++    const val KEY_SAVED_ADDRESS_ID       = "checkout_saved_address_id"
++    const val KEY_ONE_OFF_ADDRESS_JSON   = "checkout_one_off_address_json"
++    const val KEY_SELECTED_METHOD        = "checkout_selected_method"
++    
++    const val MAX_POLL_ATTEMPTS          = 13
++    const val POLL_DELAY_MS              = 1_500L
++}
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+index a7b49a2..ae22ca4 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutScreen.kt
+@@ -416,7 +416,7 @@ private fun PaymentResultOverlay(
+                             color = MaterialTheme.colorScheme.error
+                         )
+                         Text(
+-                            text = result.reason,
++                            text = result.reason.asString(),
+                             style = MaterialTheme.typography.bodyMedium,
+                             textAlign = TextAlign.Center
+                         )
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
+index 10fd736..01ca05c 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutUiState.kt
+@@ -20,11 +20,11 @@ internal data class CheckoutUiState(
+     val paymobCredentials: PaymobCredentials? = null,
+     val result: OrderResult? = null,
+     val cashSuccessConfirmation: OrderConfirmation? = null,
+-    val error: String? = null,
++    val error: UiText? = null,
+ )
+ 
+ internal sealed interface OrderResult {
+     data class Success(val confirmation: OrderConfirmation) : OrderResult
+-    data class Failure(val reason: String, val canRetry: Boolean) : OrderResult
++    data class Failure(val reason: UiText, val canRetry: Boolean) : OrderResult
+     data class Pending(val confirmation: OrderConfirmation?) : OrderResult
+ }
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+index dbcf105..c1c84e4 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/CheckoutViewModel.kt
+@@ -24,6 +24,14 @@ import kotlinx.coroutines.flow.update
+ import kotlinx.coroutines.launch
+ import java.util.UUID
+ import javax.inject.Inject
++import com.dukkan.payment.R
++import com.dukkan.payment.presentation.CheckoutConstants.KEY_IDEMPOTENCY_KEY
++import com.dukkan.payment.presentation.CheckoutConstants.KEY_ONE_OFF_ADDRESS_JSON
++import com.dukkan.payment.presentation.CheckoutConstants.KEY_ORDER_ID
++import com.dukkan.payment.presentation.CheckoutConstants.KEY_SAVED_ADDRESS_ID
++import com.dukkan.payment.presentation.CheckoutConstants.KEY_SELECTED_METHOD
++import com.dukkan.payment.presentation.CheckoutConstants.MAX_POLL_ATTEMPTS
++import com.dukkan.payment.presentation.CheckoutConstants.POLL_DELAY_MS
+ 
+ @HiltViewModel
+ internal class CheckoutViewModel @Inject constructor(
+@@ -35,17 +43,6 @@ internal class CheckoutViewModel @Inject constructor(
+     private val getAddressesUseCase: GetAddressesUseCase,
+ ) : ViewModel() {
+ 
+-    private companion object {
+-        const val KEY_ORDER_ID               = "checkout_order_id"
+-        const val KEY_IDEMPOTENCY_KEY        = "checkout_idempotency_key"
+-        const val KEY_SAVED_ADDRESS_ID       = "checkout_saved_address_id"
+-        const val KEY_ONE_OFF_ADDRESS_JSON   = "checkout_one_off_address_json"
+-        const val KEY_SELECTED_METHOD        = "checkout_selected_method"
+-        
+-        const val MAX_POLL_ATTEMPTS          = 13
+-        const val POLL_DELAY_MS              = 1_500L
+-    }
+-
+     private val gson = Gson()
+ 
+     private var orderId: String?
+@@ -200,7 +197,8 @@ internal class CheckoutViewModel @Inject constructor(
+                 },
+                 onFailure = { e ->
+                     
+-                    _uiState.update { it.copy(result = OrderResult.Failure(e.message ?: "Unknown error", canRetry = true)) }
++                    val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_unknown)
++                    _uiState.update { it.copy(result = OrderResult.Failure(errorMessage, canRetry = true)) }
+                 }
+             )
+         }
+@@ -229,10 +227,11 @@ internal class CheckoutViewModel @Inject constructor(
+                     }
+                 },
+                 onFailure = { e ->
++                    val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_initialize)
+                     _uiState.update { 
+                         it.copy(
+                             isCreatingIntention = false, 
+-                            result = OrderResult.Failure(e.message ?: "Failed to initialize payment", canRetry = true)
++                            result = OrderResult.Failure(errorMessage, canRetry = true)
+                         ) 
+                     }
+                 },
+@@ -244,10 +243,10 @@ internal class CheckoutViewModel @Inject constructor(
+         when (status) {
+             com.dukkan.payment.presentation.components.PaymobSdkStatus.SUCCESS -> verifyStatus()
+             com.dukkan.payment.presentation.components.PaymobSdkStatus.PENDING -> {
+-                _uiState.update { it.copy(error = "Payment is pending") }
++                _uiState.update { it.copy(error = UiText.StringResource(R.string.payment_error_pending)) }
+             }
+             com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
+-                val errorMsg = message ?: "Payment was cancelled or failed."
++                val errorMsg = message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_cancelled)
+                 _uiState.update { it.copy(result = OrderResult.Failure(errorMsg, canRetry = true)) }
+             }
+         }
+@@ -306,13 +305,14 @@ internal class CheckoutViewModel @Inject constructor(
+                     }
+                 } else {
+                     _uiState.update {
+-                        it.copy(result = OrderResult.Failure("Payment status: ${confirmation.status}", canRetry = true))
++                        it.copy(result = OrderResult.Failure(UiText.StringResource(R.string.payment_error_status, confirmation.status), canRetry = true))
+                     }
+                 }
+             },
+             onFailure = { e ->
++                val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_failed)
+                 _uiState.update { 
+-                    it.copy(result = OrderResult.Failure(e.message ?: "Payment failed", canRetry = true)) 
++                    it.copy(result = OrderResult.Failure(errorMessage, canRetry = true)) 
+                 }
+             },
+         )
+diff --git a/core/payment/src/main/java/com/dukkan/payment/presentation/UiText.kt b/core/payment/src/main/java/com/dukkan/payment/presentation/UiText.kt
+new file mode 100644
+index 0000000..2308982
+--- /dev/null
++++ b/core/payment/src/main/java/com/dukkan/payment/presentation/UiText.kt
+@@ -0,0 +1,26 @@
++package com.dukkan.payment.presentation
++
++import android.content.Context
++import androidx.annotation.StringRes
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.res.stringResource
++
++internal sealed class UiText {
++    data class DynamicString(val value: String) : UiText()
++    class StringResource(@StringRes val resId: Int, vararg val args: Any) : UiText()
++
++    @Composable
++    fun asString(): String {
++        return when (this) {
++            is DynamicString -> value
++            is StringResource -> stringResource(resId, *args)
++        }
++    }
++
++    fun asString(context: Context): String {
++        return when (this) {
++            is DynamicString -> value
++            is StringResource -> context.getString(resId, *args)
++        }
++    }
++}
+diff --git a/core/payment/src/main/res/values-ar/strings.xml b/core/payment/src/main/res/values-ar/strings.xml
+index 5ca37f1..8573c7f 100644
+--- a/core/payment/src/main/res/values-ar/strings.xml
++++ b/core/payment/src/main/res/values-ar/strings.xml
+@@ -39,4 +39,20 @@
+     <!-- Still pending -->
+     <string name="payment_still_pending_title">الدفع قيد المعالجة</string>
+     <string name="payment_still_pending_body">دفعتك قيد المعالجة. سنُعلمك فور التأكيد. يمكنك تتبع طلبك أدناه.</string>
++    <!-- Address Edit Sheet -->
++    <string name="payment_address_delivery">عنوان التوصيل</string>
++    <string name="payment_address_first_name">الاسم الأول</string>
++    <string name="payment_address_last_name">اسم العائلة</string>
++    <string name="payment_address_street">عنوان الشارع</string>
++    <string name="payment_address_city">المدينة</string>
++    <string name="payment_address_phone">رقم الهاتف</string>
++    <string name="payment_address_confirm">تأكيد العنوان</string>
++
++    <!-- Error messages -->
++    <string name="payment_error_unknown">خطأ غير معروف</string>
++    <string name="payment_error_initialize">فشل في بدء عملية الدفع</string>
++    <string name="payment_error_pending">الدفع قيد الانتظار</string>
++    <string name="payment_error_cancelled">تم إلغاء الدفع أو فشل.</string>
++    <string name="payment_error_status">حالة الدفع: %1$s</string>
++    <string name="payment_error_failed">فشلت عملية الدفع</string>
+ </resources>
+diff --git a/core/payment/src/main/res/values/strings.xml b/core/payment/src/main/res/values/strings.xml
+index 0ed17ec..4e1fa35 100644
+--- a/core/payment/src/main/res/values/strings.xml
++++ b/core/payment/src/main/res/values/strings.xml
+@@ -39,4 +39,20 @@
+     <string name="payment_subtotal">Subtotal</string>
+     <string name="payment_total">Total</string>
+     <string name="payment_done">Done</string>
++    <!-- Address Edit Sheet -->
++    <string name="payment_address_delivery">Delivery Address</string>
++    <string name="payment_address_first_name">First Name</string>
++    <string name="payment_address_last_name">Last Name</string>
++    <string name="payment_address_street">Street Address</string>
++    <string name="payment_address_city">City</string>
++    <string name="payment_address_phone">Phone Number</string>
++    <string name="payment_address_confirm">Confirm Address</string>
++
++    <!-- Error messages -->
++    <string name="payment_error_unknown">Unknown error</string>
++    <string name="payment_error_initialize">Failed to initialize payment</string>
++    <string name="payment_error_pending">Payment is pending</string>
++    <string name="payment_error_cancelled">Payment was cancelled or failed.</string>
++    <string name="payment_error_status">Payment status: %1$s</string>
++    <string name="payment_error_failed">Payment failed</string>
+ </resources>
+-- 
+2.45.1.windows.1
+

@@ -12,7 +12,7 @@ internal class CreatePaymentIntentionUseCase @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.msayeh.domain.model.Money,
+        cartTotal: com.dukkan.domain.model.Money,
     ): Result<PaymentIntentionResult> = repository.createPaymentIntention(
         idempotencyKey = idempotencyKey,
         address        = address,

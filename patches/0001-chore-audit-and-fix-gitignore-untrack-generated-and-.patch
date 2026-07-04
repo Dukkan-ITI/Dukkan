@@ -1,0 +1,2096 @@
+From bd16c064e1bafb573ef864c02d135af0a8906d17 Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 19:40:38 +0300
+Subject: [PATCH 01/24] =?UTF-8?q?chore:=20audit=20and=20fix=20gitignore=20?=
+ =?UTF-8?q?=E2=80=94=20untrack=20generated=20and=20sensitive=20files?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ Conflicts:
+	app/src/main/java/com/dukkan/app/AppNavGraph.kt
+	core/data/src/main/java/com/dukkan/data/di/DataModule.kt
+	core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+	core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+---
+ .gitattributes                                |   1 +
+ .gitignore                                    |  31 +++
+ app/libs/paymob-sdk.aar                       |   3 +
+ .../main/java/com/dukkan/app/AppNavGraph.kt   |  13 +-
+ .../com/dukkan/CustomerAddressCreate.graphql  |  22 ++
+ .../com/dukkan/CustomerAddressDelete.graphql  |  10 +
+ .../com/dukkan/CustomerAddressUpdate.graphql  |  22 ++
+ .../com/dukkan/CustomerAddresses.graphql      |  24 ++
+ .../CustomerDefaultAddressUpdate.graphql      |  15 ++
+ .../java/com/dukkan/data/di/DataModule.kt     |  17 +-
+ .../com/dukkan/data/mapper/AddressMappers.kt  |  66 ++++++
+ .../data/repository/AddressRepositoryImpl.kt  |  88 +++++++
+ .../source/remote/apollo/AddressDataSource.kt |  33 +++
+ .../remote/apollo/AddressDataSourceImpl.kt    |  78 +++++++
+ .../java/com/dukkan/domain/model/Address.kt   |  16 ++
+ .../domain/repository/AddressRepository.kt    |  11 +
+ .../usecase/address/AddAddressUseCase.kt      |  11 +
+ .../usecase/address/DeleteAddressUseCase.kt   |  10 +
+ .../usecase/address/GetAddressesUseCase.kt    |  11 +
+ .../address/SetDefaultAddressUseCase.kt       |  10 +
+ .../usecase/address/UpdateAddressUseCase.kt   |  11 +
+ feature/address/.gitignore                    |   1 +
+ feature/address/build.gradle.kts              |  14 ++
+ feature/address/consumer-rules.keep           |   0
+ .../dukkan/address/ExampleInstrumentedTest.kt |  24 ++
+ feature/address/src/main/AndroidManifest.xml  |   4 +
+ .../dukkan/address/components/AddressCard.kt  | 124 ++++++++++
+ .../address/components/AddressFormSheet.kt    | 207 +++++++++++++++++
+ .../address/components/AddressTextField.kt    | 136 +++++++++++
+ .../components/CountryDropdownField.kt        |  99 ++++++++
+ .../address/components/DeleteAddressDialog.kt | 102 ++++++++
+ .../address/view/SavedAddressesScreen.kt      | 219 ++++++++++++++++++
+ .../address/viewmodel/SavedAddressesState.kt  |  16 ++
+ .../viewmodel/SavedAddressesViewModel.kt      | 116 ++++++++++
+ feature/address/src/main/keepRules/rules.keep |  12 +
+ .../src/main/res/values-ar/strings.xml        |  32 +++
+ .../address/src/main/res/values/strings.xml   |  32 +++
+ .../com/dukkan/address/ExampleUnitTest.kt     |  17 ++
+ .../dukkan/settings/components/ProfileRows.kt |   5 +-
+ .../com/dukkan/settings/view/ProfileScreen.kt |   5 +-
+ 40 files changed, 1655 insertions(+), 13 deletions(-)
+ create mode 100644 app/libs/paymob-sdk.aar
+ create mode 100644 core/data/src/main/graphql/com/dukkan/CustomerAddressCreate.graphql
+ create mode 100644 core/data/src/main/graphql/com/dukkan/CustomerAddressDelete.graphql
+ create mode 100644 core/data/src/main/graphql/com/dukkan/CustomerAddressUpdate.graphql
+ create mode 100644 core/data/src/main/graphql/com/dukkan/CustomerAddresses.graphql
+ create mode 100644 core/data/src/main/graphql/com/dukkan/CustomerDefaultAddressUpdate.graphql
+ create mode 100644 core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
+ create mode 100644 core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
+ create mode 100644 core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSource.kt
+ create mode 100644 core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSourceImpl.kt
+ create mode 100644 core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+ create mode 100644 core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+ create mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
+ create mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
+ create mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
+ create mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
+ create mode 100644 core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
+ create mode 100644 feature/address/.gitignore
+ create mode 100644 feature/address/build.gradle.kts
+ create mode 100644 feature/address/consumer-rules.keep
+ create mode 100644 feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
+ create mode 100644 feature/address/src/main/AndroidManifest.xml
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/components/DeleteAddressDialog.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesState.kt
+ create mode 100644 feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
+ create mode 100644 feature/address/src/main/keepRules/rules.keep
+ create mode 100644 feature/address/src/main/res/values-ar/strings.xml
+ create mode 100644 feature/address/src/main/res/values/strings.xml
+ create mode 100644 feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
+
+diff --git a/.gitattributes b/.gitattributes
+index 1b87959..56f9faa 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -1 +1,2 @@
++*.aar filter=lfs diff=lfs merge=lfs -text
+ app/libs/*.aar filter=lfs diff=lfs merge=lfs -text
+diff --git a/.gitignore b/.gitignore
+index e9f9eeb..3d0884a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -37,3 +37,34 @@ skills-lock.json
+ # JVM Crash Logs
+ hs_err_pid*.log
+ replay_pid*.log
++
++# Secrets — never commit
++secrets.properties
++
++# --- REQUIRED AUDIT ENTRIES ---
++# Local configuration — never commit
++local.properties
++secrets.properties
++
++# Gradle caches and build output
++.gradle/
++build/
++**/build/
++**/.gradle/
++
++# Android keystore files
++*.keystore
++*.jks
++
++# IDE
++.idea/
++*.iml
++.DS_Store
++
++# Environment files
++.env
++.env.*
++
++# Paymob / payment credentials (belt-and-suspenders)
++paymob*.properties
++payment-secrets.*
+diff --git a/app/libs/paymob-sdk.aar b/app/libs/paymob-sdk.aar
+new file mode 100644
+index 0000000..90d4181
+--- /dev/null
++++ b/app/libs/paymob-sdk.aar
+@@ -0,0 +1,3 @@
++version https://git-lfs.github.com/spec/v1
++oid sha256:3a3ba1063f1b7bfd56ef0b6eaf5a7245f19d9a5f8148c29817d5755b393201ea
++size 4208261
+diff --git a/app/src/main/java/com/dukkan/app/AppNavGraph.kt b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+index 53cda4f..db49a90 100644
+--- a/app/src/main/java/com/dukkan/app/AppNavGraph.kt
++++ b/app/src/main/java/com/dukkan/app/AppNavGraph.kt
+@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
+ import androidx.navigation.compose.NavHost
+ import androidx.navigation.compose.composable
+ import androidx.navigation.toRoute
++import com.dukkan.address.view.SavedAddressesScreen
+ import com.dukkan.auth.view.AuthScreen
+ import com.dukkan.categories.view.CategoriesScreen
+ import com.dukkan.categories.view.CategoryProductsScreen
+@@ -14,9 +15,9 @@ import com.dukkan.favorites.view.FavoritesView
+ import com.dukkan.home.view.HomeScreen
+ import com.dukkan.navigation.Screen
+ import com.dukkan.onboarding.view.OnboardingView
++import com.dukkan.search.view.SearchScreen
+ import com.dukkan.settings.view.ProfileScreen
+ import com.dukkan.shopping_cart.view.ShoppingCartView
+-import com.dukkan.search.view.SearchScreen
+ import com.dukkan.product_details.view.ProductDetailsScreen
+ 
+ @Composable
+@@ -112,7 +113,8 @@ fun AppNavGraph(
+                 },
+                 onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
+                 onNavigateToOrderList = {
+-                }
++                },
++                onNavigateToSavedAddresses = { navController.navigate(Screen.SavedAddresses) }
+             )
+         }
+ 
+@@ -138,5 +140,12 @@ fun AppNavGraph(
+                 }
+             )
+         }
++
++        composable<Screen.SavedAddresses> {
++            SavedAddressesScreen(
++                onBackClick = { navController.popBackStack() },
++                onSignInClick = { navController.navigate(Screen.Auth) },
++            )
++        }
+     }
+ }
+\ No newline at end of file
+diff --git a/core/data/src/main/graphql/com/dukkan/CustomerAddressCreate.graphql b/core/data/src/main/graphql/com/dukkan/CustomerAddressCreate.graphql
+new file mode 100644
+index 0000000..105f486
+--- /dev/null
++++ b/core/data/src/main/graphql/com/dukkan/CustomerAddressCreate.graphql
+@@ -0,0 +1,22 @@
++mutation CustomerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
++  customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
++    customerAddress {
++      id
++      firstName
++      lastName
++      company
++      address1
++      address2
++      city
++      province
++      country
++      zip
++      phone
++    }
++    customerUserErrors {
++      code
++      field
++      message
++    }
++  }
++}
+diff --git a/core/data/src/main/graphql/com/dukkan/CustomerAddressDelete.graphql b/core/data/src/main/graphql/com/dukkan/CustomerAddressDelete.graphql
+new file mode 100644
+index 0000000..ed57fc0
+--- /dev/null
++++ b/core/data/src/main/graphql/com/dukkan/CustomerAddressDelete.graphql
+@@ -0,0 +1,10 @@
++mutation CustomerAddressDelete($customerAccessToken: String!, $id: ID!) {
++  customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
++    deletedCustomerAddressId
++    customerUserErrors {
++      code
++      field
++      message
++    }
++  }
++}
+diff --git a/core/data/src/main/graphql/com/dukkan/CustomerAddressUpdate.graphql b/core/data/src/main/graphql/com/dukkan/CustomerAddressUpdate.graphql
+new file mode 100644
+index 0000000..7815296
+--- /dev/null
++++ b/core/data/src/main/graphql/com/dukkan/CustomerAddressUpdate.graphql
+@@ -0,0 +1,22 @@
++mutation CustomerAddressUpdate($customerAccessToken: String!, $id: ID!, $address: MailingAddressInput!) {
++  customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $id, address: $address) {
++    customerAddress {
++      id
++      firstName
++      lastName
++      company
++      address1
++      address2
++      city
++      province
++      country
++      zip
++      phone
++    }
++    customerUserErrors {
++      code
++      field
++      message
++    }
++  }
++}
+diff --git a/core/data/src/main/graphql/com/dukkan/CustomerAddresses.graphql b/core/data/src/main/graphql/com/dukkan/CustomerAddresses.graphql
+new file mode 100644
+index 0000000..1728c51
+--- /dev/null
++++ b/core/data/src/main/graphql/com/dukkan/CustomerAddresses.graphql
+@@ -0,0 +1,24 @@
++query CustomerAddresses($customerAccessToken: String!) {
++  customer(customerAccessToken: $customerAccessToken) {
++    defaultAddress {
++      id
++    }
++    addresses(first: 20) {
++      edges {
++        node {
++          id
++          firstName
++          lastName
++          company
++          address1
++          address2
++          city
++          province
++          country
++          zip
++          phone
++        }
++      }
++    }
++  }
++}
+diff --git a/core/data/src/main/graphql/com/dukkan/CustomerDefaultAddressUpdate.graphql b/core/data/src/main/graphql/com/dukkan/CustomerDefaultAddressUpdate.graphql
+new file mode 100644
+index 0000000..e8c5228
+--- /dev/null
++++ b/core/data/src/main/graphql/com/dukkan/CustomerDefaultAddressUpdate.graphql
+@@ -0,0 +1,15 @@
++mutation CustomerDefaultAddressUpdate($customerAccessToken: String!, $addressId: ID!) {
++  customerDefaultAddressUpdate(customerAccessToken: $customerAccessToken, addressId: $addressId) {
++    customer {
++      id
++      defaultAddress {
++        id
++      }
++    }
++    customerUserErrors {
++      code
++      field
++      message
++    }
++  }
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/di/DataModule.kt b/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
+index c3ff13c..089efe0 100644
+--- a/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
++++ b/core/data/src/main/java/com/dukkan/data/di/DataModule.kt
+@@ -3,12 +3,10 @@ package com.dukkan.data.di
+ import android.content.Context
+ import com.apollographql.apollo.ApolloClient
+ import com.dukkan.data.BuildConfig
++import com.dukkan.data.repository.AddressRepositoryImpl
+ import com.dukkan.data.repository.AuthRepositoryImpl
+-import com.dukkan.data.repository.CouponRepositoryImpl
+ import com.dukkan.data.repository.ProductsRepositoryImpl
+ import com.dukkan.data.repository.SettingsRepositoryImpl
+-import com.dukkan.data.source.local.CouponStore
+-import com.dukkan.data.source.local.CouponStoreImpl
+ import com.dukkan.data.source.local.SettingsStore
+ import com.dukkan.data.source.local.SettingsStoreImpl
+ import com.dukkan.data.source.local.ShopifyTokenStore
+@@ -19,8 +17,11 @@ import com.dukkan.data.source.remote.FirebaseStoreDataSourceImp
+ import com.dukkan.data.source.remote.IFirebaseStoreDataSource
+ import com.dukkan.data.source.remote.ShopifyAuthDataSource
+ import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
++import com.dukkan.data.source.remote.apollo.AddressDataSource
++import com.dukkan.data.source.remote.apollo.AddressDataSourceImpl
+ import com.dukkan.data.source.remote.apollo.ProductsDataSource
+ import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
++import com.dukkan.domain.repository.AddressRepository
+ import com.dukkan.domain.repository.AuthRepository
+ import com.dukkan.domain.repository.CouponRepository
+ import com.dukkan.domain.repository.ProductsRepository
+@@ -99,11 +100,13 @@ object DataModule {
+ 
+     @Singleton
+     @Provides
+-    fun provideCouponStore(@ApplicationContext context: Context): CouponStore =
+-        CouponStoreImpl(context)
++    fun provideAddressDataSource(apolloClient: ApolloClient): AddressDataSource =
++        AddressDataSourceImpl(apolloClient)
+ 
+     @Singleton
+     @Provides
+-    fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
+-        CouponRepositoryImpl(couponStore)
++    fun provideAddressRepository(
++        addressDataSource: AddressDataSource,
++        authRepository: AuthRepository,
++    ): AddressRepository = AddressRepositoryImpl(addressDataSource, authRepository)
+ }
+\ No newline at end of file
+diff --git a/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt b/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
+new file mode 100644
+index 0000000..a18bf27
+--- /dev/null
++++ b/core/data/src/main/java/com/dukkan/data/mapper/AddressMappers.kt
+@@ -0,0 +1,66 @@
++package com.dukkan.data.mapper
++
++import com.apollographql.apollo.api.Optional
++import com.dukkan.CustomerAddressCreateMutation
++import com.dukkan.CustomerAddressUpdateMutation
++import com.dukkan.CustomerAddressesQuery
++import com.dukkan.type.MailingAddressInput
++import com.msayeh.domain.model.Address
++
++fun CustomerAddressesQuery.Node.toDomainModel(defaultAddressId: String?): Address = Address(
++    id = id,
++    firstName = firstName,
++    lastName = lastName,
++    company = company,
++    address1 = address1,
++    address2 = address2,
++    city = city,
++    province = province,
++    country = country,
++    zip = zip,
++    phone = phone,
++    isDefault = id == defaultAddressId,
++)
++
++fun CustomerAddressCreateMutation.CustomerAddress.toDomainModel(): Address = Address(
++    id = id,
++    firstName = firstName,
++    lastName = lastName,
++    company = company,
++    address1 = address1,
++    address2 = address2,
++    city = city,
++    province = province,
++    country = country,
++    zip = zip,
++    phone = phone,
++    isDefault = false,
++)
++
++fun CustomerAddressUpdateMutation.CustomerAddress.toDomainModel(): Address = Address(
++    id = id,
++    firstName = firstName,
++    lastName = lastName,
++    company = company,
++    address1 = address1,
++    address2 = address2,
++    city = city,
++    province = province,
++    country = country,
++    zip = zip,
++    phone = phone,
++    isDefault = false,
++)
++
++fun Address.toMailingAddressInput(): MailingAddressInput = MailingAddressInput(
++    address1 = Optional.present(address1),
++    address2 = Optional.present(address2),
++    city = Optional.present(city),
++    company = Optional.present(company),
++    country = Optional.present(country),
++    firstName = Optional.present(firstName),
++    lastName = Optional.present(lastName),
++    phone = Optional.present(phone),
++    province = Optional.present(province),
++    zip = Optional.present(zip),
++)
+diff --git a/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt b/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
+new file mode 100644
+index 0000000..a8c1e3d
+--- /dev/null
++++ b/core/data/src/main/java/com/dukkan/data/repository/AddressRepositoryImpl.kt
+@@ -0,0 +1,88 @@
++package com.dukkan.data.repository
++
++import com.dukkan.data.mapper.toDomainModel
++import com.dukkan.data.mapper.toMailingAddressInput
++import com.dukkan.data.source.remote.apollo.AddressDataSource
++import com.msayeh.domain.model.Address
++import com.msayeh.domain.repository.AddressRepository
++import com.msayeh.domain.repository.AuthRepository
++import javax.inject.Inject
++
++class AddressRepositoryImpl @Inject constructor(
++    private val addressDataSource: AddressDataSource,
++    private val authRepository: AuthRepository,
++) : AddressRepository {
++
++    private suspend fun requireToken(): Result<String> {
++        val token = authRepository.getShopifyToken()?.accessToken
++        return if (token != null) Result.success(token) else Result.failure(Exception("Not authenticated"))
++    }
++
++    override suspend fun getAddresses(): Result<List<Address>> {
++        val token = requireToken().getOrElse { return Result.failure(it) }
++        return try {
++            val customer = addressDataSource.getAddresses(token)
++                ?: return Result.failure(Exception("Unable to load addresses"))
++            val defaultId = customer.defaultAddress?.id
++            val addresses = customer.addresses.edges.map { it.node.toDomainModel(defaultId) }
++            Result.success(addresses)
++        } catch (e: Exception) {
++            Result.failure(e)
++        }
++    }
++
++    override suspend fun addAddress(address: Address): Result<Address> {
++        val token = requireToken().getOrElse { return Result.failure(it) }
++        return try {
++            val payload = addressDataSource.createAddress(token, address.toMailingAddressInput())
++                ?: return Result.failure(Exception("Unable to add address"))
++            payload.customerUserErrors.firstOrNull()?.let { return Result.failure(Exception(it.message)) }
++            val created = payload.customerAddress?.toDomainModel()
++                ?: return Result.failure(Exception("Unable to add address"))
++            Result.success(created)
++        } catch (e: Exception) {
++            Result.failure(e)
++        }
++    }
++
++    override suspend fun updateAddress(address: Address): Result<Address> {
++        val id = address.id ?: return Result.failure(IllegalArgumentException("Address id is required"))
++        val token = requireToken().getOrElse { return Result.failure(it) }
++        return try {
++            val payload = addressDataSource.updateAddress(token, id, address.toMailingAddressInput())
++                ?: return Result.failure(Exception("Unable to update address"))
++            payload.customerUserErrors.firstOrNull()?.let { return Result.failure(Exception(it.message)) }
++            val updated = payload.customerAddress?.toDomainModel()
++                ?: return Result.failure(Exception("Unable to update address"))
++            Result.success(updated)
++        } catch (e: Exception) {
++            Result.failure(e)
++        }
++    }
++
++    override suspend fun deleteAddress(addressId: String): Result<String> {
++        val token = requireToken().getOrElse { return Result.failure(it) }
++        return try {
++            val payload = addressDataSource.deleteAddress(token, addressId)
++                ?: return Result.failure(Exception("Unable to delete address"))
++            payload.customerUserErrors.firstOrNull()?.let { return Result.failure(Exception(it.message)) }
++            val deletedId = payload.deletedCustomerAddressId
++                ?: return Result.failure(Exception("Unable to delete address"))
++            Result.success(deletedId)
++        } catch (e: Exception) {
++            Result.failure(e)
++        }
++    }
++
++    override suspend fun setDefaultAddress(addressId: String): Result<Unit> {
++        val token = requireToken().getOrElse { return Result.failure(it) }
++        return try {
++            val payload = addressDataSource.setDefaultAddress(token, addressId)
++                ?: return Result.failure(Exception("Unable to set default address"))
++            payload.customerUserErrors.firstOrNull()?.let { return Result.failure(Exception(it.message)) }
++            Result.success(Unit)
++        } catch (e: Exception) {
++            Result.failure(e)
++        }
++    }
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSource.kt b/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSource.kt
+new file mode 100644
+index 0000000..778d0de
+--- /dev/null
++++ b/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSource.kt
+@@ -0,0 +1,33 @@
++package com.dukkan.data.source.remote.apollo
++
++import com.dukkan.CustomerAddressCreateMutation
++import com.dukkan.CustomerAddressDeleteMutation
++import com.dukkan.CustomerAddressUpdateMutation
++import com.dukkan.CustomerAddressesQuery
++import com.dukkan.CustomerDefaultAddressUpdateMutation
++import com.dukkan.type.MailingAddressInput
++
++interface AddressDataSource {
++    suspend fun getAddresses(customerAccessToken: String): CustomerAddressesQuery.Customer?
++
++    suspend fun createAddress(
++        customerAccessToken: String,
++        address: MailingAddressInput,
++    ): CustomerAddressCreateMutation.CustomerAddressCreate?
++
++    suspend fun updateAddress(
++        customerAccessToken: String,
++        id: String,
++        address: MailingAddressInput,
++    ): CustomerAddressUpdateMutation.CustomerAddressUpdate?
++
++    suspend fun deleteAddress(
++        customerAccessToken: String,
++        id: String,
++    ): CustomerAddressDeleteMutation.CustomerAddressDelete?
++
++    suspend fun setDefaultAddress(
++        customerAccessToken: String,
++        addressId: String,
++    ): CustomerDefaultAddressUpdateMutation.CustomerDefaultAddressUpdate?
++}
+diff --git a/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSourceImpl.kt b/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSourceImpl.kt
+new file mode 100644
+index 0000000..0b85d8c
+--- /dev/null
++++ b/core/data/src/main/java/com/dukkan/data/source/remote/apollo/AddressDataSourceImpl.kt
+@@ -0,0 +1,78 @@
++package com.dukkan.data.source.remote.apollo
++
++import com.apollographql.apollo.ApolloClient
++import com.dukkan.CustomerAddressCreateMutation
++import com.dukkan.CustomerAddressDeleteMutation
++import com.dukkan.CustomerAddressUpdateMutation
++import com.dukkan.CustomerAddressesQuery
++import com.dukkan.CustomerDefaultAddressUpdateMutation
++import com.dukkan.type.MailingAddressInput
++import javax.inject.Inject
++import javax.inject.Singleton
++
++@Singleton
++class AddressDataSourceImpl @Inject constructor(
++    private val apolloClient: ApolloClient,
++) : AddressDataSource {
++
++    override suspend fun getAddresses(customerAccessToken: String): CustomerAddressesQuery.Customer? {
++        val response = apolloClient.query(CustomerAddressesQuery(customerAccessToken)).execute()
++        if (response.hasErrors()) {
++            throw Exception(response.errors?.first()?.message ?: "Unknown GraphQL Error")
++        }
++        return response.data?.customer
++    }
++
++    override suspend fun createAddress(
++        customerAccessToken: String,
++        address: MailingAddressInput,
++    ): CustomerAddressCreateMutation.CustomerAddressCreate? {
++        val response = apolloClient.mutation(
++            CustomerAddressCreateMutation(customerAccessToken, address)
++        ).execute()
++        if (response.hasErrors()) {
++            throw Exception(response.errors?.first()?.message ?: "Unknown GraphQL Error")
++        }
++        return response.data?.customerAddressCreate
++    }
++
++    override suspend fun updateAddress(
++        customerAccessToken: String,
++        id: String,
++        address: MailingAddressInput,
++    ): CustomerAddressUpdateMutation.CustomerAddressUpdate? {
++        val response = apolloClient.mutation(
++            CustomerAddressUpdateMutation(customerAccessToken, id, address)
++        ).execute()
++        if (response.hasErrors()) {
++            throw Exception(response.errors?.first()?.message ?: "Unknown GraphQL Error")
++        }
++        return response.data?.customerAddressUpdate
++    }
++
++    override suspend fun deleteAddress(
++        customerAccessToken: String,
++        id: String,
++    ): CustomerAddressDeleteMutation.CustomerAddressDelete? {
++        val response = apolloClient.mutation(
++            CustomerAddressDeleteMutation(customerAccessToken, id)
++        ).execute()
++        if (response.hasErrors()) {
++            throw Exception(response.errors?.first()?.message ?: "Unknown GraphQL Error")
++        }
++        return response.data?.customerAddressDelete
++    }
++
++    override suspend fun setDefaultAddress(
++        customerAccessToken: String,
++        addressId: String,
++    ): CustomerDefaultAddressUpdateMutation.CustomerDefaultAddressUpdate? {
++        val response = apolloClient.mutation(
++            CustomerDefaultAddressUpdateMutation(customerAccessToken, addressId)
++        ).execute()
++        if (response.hasErrors()) {
++            throw Exception(response.errors?.first()?.message ?: "Unknown GraphQL Error")
++        }
++        return response.data?.customerDefaultAddressUpdate
++    }
++}
+diff --git a/core/domain/src/main/java/com/dukkan/domain/model/Address.kt b/core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+new file mode 100644
+index 0000000..2d018f2
+--- /dev/null
++++ b/core/domain/src/main/java/com/dukkan/domain/model/Address.kt
+@@ -0,0 +1,16 @@
++package com.msayeh.domain.model
++
++data class Address(
++    val id: String? = null,
++    val firstName: String? = null,
++    val lastName: String? = null,
++    val company: String? = null,
++    val address1: String? = null,
++    val address2: String? = null,
++    val city: String? = null,
++    val province: String? = null,
++    val country: String? = null,
++    val zip: String? = null,
++    val phone: String? = null,
++    val isDefault: Boolean = false,
++)
+diff --git a/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt b/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+new file mode 100644
+index 0000000..f5b6412
+--- /dev/null
++++ b/core/domain/src/main/java/com/dukkan/domain/repository/AddressRepository.kt
+@@ -0,0 +1,11 @@
++package com.msayeh.domain.repository
++
++import com.msayeh.domain.model.Address
++
++interface AddressRepository {
++    suspend fun getAddresses(): Result<List<Address>>
++    suspend fun addAddress(address: Address): Result<Address>
++    suspend fun updateAddress(address: Address): Result<Address>
++    suspend fun deleteAddress(addressId: String): Result<String>
++    suspend fun setDefaultAddress(addressId: String): Result<Unit>
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
+new file mode 100644
+index 0000000..2562c2e
+--- /dev/null
++++ b/core/domain/src/main/java/com/msayeh/domain/usecase/address/AddAddressUseCase.kt
+@@ -0,0 +1,11 @@
++package com.msayeh.domain.usecase.address
++
++import com.msayeh.domain.model.Address
++import com.msayeh.domain.repository.AddressRepository
++import javax.inject.Inject
++
++class AddAddressUseCase @Inject constructor(
++    private val addressRepository: AddressRepository,
++) {
++    suspend operator fun invoke(address: Address): Result<Address> = addressRepository.addAddress(address)
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
+new file mode 100644
+index 0000000..00502e4
+--- /dev/null
++++ b/core/domain/src/main/java/com/msayeh/domain/usecase/address/DeleteAddressUseCase.kt
+@@ -0,0 +1,10 @@
++package com.msayeh.domain.usecase.address
++
++import com.msayeh.domain.repository.AddressRepository
++import javax.inject.Inject
++
++class DeleteAddressUseCase @Inject constructor(
++    private val addressRepository: AddressRepository,
++) {
++    suspend operator fun invoke(addressId: String): Result<String> = addressRepository.deleteAddress(addressId)
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
+new file mode 100644
+index 0000000..f5a4c47
+--- /dev/null
++++ b/core/domain/src/main/java/com/msayeh/domain/usecase/address/GetAddressesUseCase.kt
+@@ -0,0 +1,11 @@
++package com.msayeh.domain.usecase.address
++
++import com.msayeh.domain.model.Address
++import com.msayeh.domain.repository.AddressRepository
++import javax.inject.Inject
++
++class GetAddressesUseCase @Inject constructor(
++    private val addressRepository: AddressRepository,
++) {
++    suspend operator fun invoke(): Result<List<Address>> = addressRepository.getAddresses()
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
+new file mode 100644
+index 0000000..2538ea8
+--- /dev/null
++++ b/core/domain/src/main/java/com/msayeh/domain/usecase/address/SetDefaultAddressUseCase.kt
+@@ -0,0 +1,10 @@
++package com.msayeh.domain.usecase.address
++
++import com.msayeh.domain.repository.AddressRepository
++import javax.inject.Inject
++
++class SetDefaultAddressUseCase @Inject constructor(
++    private val addressRepository: AddressRepository,
++) {
++    suspend operator fun invoke(addressId: String): Result<Unit> = addressRepository.setDefaultAddress(addressId)
++}
+diff --git a/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt b/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
+new file mode 100644
+index 0000000..ca2202f
+--- /dev/null
++++ b/core/domain/src/main/java/com/msayeh/domain/usecase/address/UpdateAddressUseCase.kt
+@@ -0,0 +1,11 @@
++package com.msayeh.domain.usecase.address
++
++import com.msayeh.domain.model.Address
++import com.msayeh.domain.repository.AddressRepository
++import javax.inject.Inject
++
++class UpdateAddressUseCase @Inject constructor(
++    private val addressRepository: AddressRepository,
++) {
++    suspend operator fun invoke(address: Address): Result<Address> = addressRepository.updateAddress(address)
++}
+diff --git a/feature/address/.gitignore b/feature/address/.gitignore
+new file mode 100644
+index 0000000..42afabf
+--- /dev/null
++++ b/feature/address/.gitignore
+@@ -0,0 +1 @@
++/build
+\ No newline at end of file
+diff --git a/feature/address/build.gradle.kts b/feature/address/build.gradle.kts
+new file mode 100644
+index 0000000..22a250b
+--- /dev/null
++++ b/feature/address/build.gradle.kts
+@@ -0,0 +1,14 @@
++plugins {
++    id("dukkan.feature")
++}
++
++android {
++    namespace = "com.dukkan.address"
++}
++
++dependencies {
++    implementation(project(":core:design_system"))
++    implementation(project(":core:domain"))
++
++    implementation(libs.androidx.compose.material.icons.core)
++}
+\ No newline at end of file
+diff --git a/feature/address/consumer-rules.keep b/feature/address/consumer-rules.keep
+new file mode 100644
+index 0000000..e69de29
+diff --git a/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt b/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
+new file mode 100644
+index 0000000..03d8d81
+--- /dev/null
++++ b/feature/address/src/androidTest/java/com/dukkan/address/ExampleInstrumentedTest.kt
+@@ -0,0 +1,24 @@
++package com.dukkan.address
++
++import androidx.test.platform.app.InstrumentationRegistry
++import androidx.test.ext.junit.runners.AndroidJUnit4
++
++import org.junit.Test
++import org.junit.runner.RunWith
++
++import org.junit.Assert.*
++
++/**
++ * Instrumented test, which will execute on an Android device.
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++@RunWith(AndroidJUnit4::class)
++class ExampleInstrumentedTest {
++    @Test
++    fun useAppContext() {
++        // Context of the app under test.
++        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
++        assertEquals("com.dukkan.address.test", appContext.packageName)
++    }
++}
+\ No newline at end of file
+diff --git a/feature/address/src/main/AndroidManifest.xml b/feature/address/src/main/AndroidManifest.xml
+new file mode 100644
+index 0000000..a5918e6
+--- /dev/null
++++ b/feature/address/src/main/AndroidManifest.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
++
++</manifest>
+\ No newline at end of file
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
+new file mode 100644
+index 0000000..f1d8505
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressCard.kt
+@@ -0,0 +1,124 @@
++package com.dukkan.address.components
++
++import androidx.compose.foundation.BorderStroke
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Surface
++import androidx.compose.material3.Text
++import androidx.compose.material3.TextButton
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.stringResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.unit.dp
++import com.dukkan.address.R
++import com.msayeh.domain.model.Address
++
++@Composable
++fun AddressCard(
++    address: Address,
++    isUpdatingDefault: Boolean,
++    onEditClick: () -> Unit,
++    onDeleteClick: () -> Unit,
++    onSetDefaultClick: () -> Unit,
++    modifier: Modifier = Modifier,
++) {
++    Surface(
++        modifier = modifier.fillMaxWidth(),
++        shape = RoundedCornerShape(16.dp),
++        color = MaterialTheme.colorScheme.surface,
++        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
++    ) {
++        Column(
++            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
++            verticalArrangement = Arrangement.spacedBy(4.dp),
++        ) {
++            Row(
++                modifier = Modifier.fillMaxWidth(),
++                horizontalArrangement = Arrangement.SpaceBetween,
++                verticalAlignment = Alignment.CenterVertically,
++            ) {
++                val name = listOfNotNull(address.firstName, address.lastName)
++                    .filter { it.isNotBlank() }
++                    .joinToString(" ")
++                if (name.isNotBlank()) {
++                    Text(
++                        text = name,
++                        style = MaterialTheme.typography.titleMedium,
++                        fontWeight = FontWeight.Bold,
++                        color = MaterialTheme.colorScheme.onBackground,
++                    )
++                }
++                if (address.isDefault) {
++                    Text(
++                        text = stringResource(R.string.saved_addresses_default_badge),
++                        style = MaterialTheme.typography.labelLarge,
++                        fontWeight = FontWeight.SemiBold,
++                        color = MaterialTheme.colorScheme.primary,
++                    )
++                }
++            }
++
++            address.address1?.takeIf { it.isNotBlank() }?.let {
++                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            }
++            address.address2?.takeIf { it.isNotBlank() }?.let {
++                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            }
++
++            val cityLine = listOfNotNull(address.city, address.province, address.zip)
++                .filter { it.isNotBlank() }
++                .joinToString(", ")
++            if (cityLine.isNotBlank()) {
++                Text(text = cityLine, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            }
++            address.country?.takeIf { it.isNotBlank() }?.let {
++                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            }
++            address.phone?.takeIf { it.isNotBlank() }?.let {
++                Text(text = it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            }
++
++            Row(
++                modifier = Modifier
++                    .fillMaxWidth()
++                    .padding(top = 8.dp),
++                horizontalArrangement = Arrangement.spacedBy(8.dp),
++                verticalAlignment = Alignment.CenterVertically,
++            ) {
++                TextButton(onClick = onEditClick) {
++                    Text(stringResource(R.string.saved_addresses_edit))
++                }
++                TextButton(onClick = onDeleteClick) {
++                    Text(
++                        text = stringResource(R.string.saved_addresses_delete),
++                        color = MaterialTheme.colorScheme.error,
++                    )
++                }
++                if (!address.isDefault) {
++                    if (isUpdatingDefault) {
++                        CircularProgressIndicator(
++                            modifier = Modifier
++                                .padding(start = 8.dp)
++                                .size(18.dp),
++                            strokeWidth = 2.dp,
++                            color = MaterialTheme.colorScheme.primary,
++                        )
++                    } else {
++                        TextButton(onClick = onSetDefaultClick) {
++                            Text(stringResource(R.string.saved_addresses_set_default))
++                        }
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
+new file mode 100644
+index 0000000..4cbf087
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressFormSheet.kt
+@@ -0,0 +1,207 @@
++package com.dukkan.address.components
++
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.WindowInsets
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.imePadding
++import androidx.compose.foundation.layout.navigationBarsPadding
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.rememberScrollState
++import androidx.compose.foundation.text.KeyboardActions
++import androidx.compose.foundation.verticalScroll
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.ExperimentalMaterial3Api
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.ModalBottomSheet
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.stringResource
++import androidx.compose.ui.text.input.ImeAction
++import androidx.compose.ui.text.input.KeyboardType
++import androidx.compose.ui.unit.dp
++import com.dukkan.address.R
++import com.example.design_system.components.PrimaryButton
++import com.msayeh.domain.model.Address
++
++@OptIn(ExperimentalMaterial3Api::class)
++@Composable
++fun AddressFormSheet(
++    initialAddress: Address?,
++    isSaving: Boolean,
++    formError: String?,
++    onDismissRequest: () -> Unit,
++    onSave: (Address) -> Unit,
++) {
++    var firstName by remember(initialAddress) { mutableStateOf(initialAddress?.firstName.orEmpty()) }
++    var lastName by remember(initialAddress) { mutableStateOf(initialAddress?.lastName.orEmpty()) }
++    var company by remember(initialAddress) { mutableStateOf(initialAddress?.company.orEmpty()) }
++    var address1 by remember(initialAddress) { mutableStateOf(initialAddress?.address1.orEmpty()) }
++    var address2 by remember(initialAddress) { mutableStateOf(initialAddress?.address2.orEmpty()) }
++    var city by remember(initialAddress) { mutableStateOf(initialAddress?.city.orEmpty()) }
++    var province by remember(initialAddress) { mutableStateOf(initialAddress?.province.orEmpty()) }
++    var country by remember(initialAddress) { mutableStateOf(initialAddress?.country.orEmpty()) }
++    var zip by remember(initialAddress) { mutableStateOf(initialAddress?.zip.orEmpty()) }
++    var phone by remember(initialAddress) { mutableStateOf(initialAddress?.phone.orEmpty()) }
++
++    val isPhoneValid = isValidPhoneNumber(phone)
++    val isValid =
++        address1.isNotBlank() && city.isNotBlank() && country.isNotBlank() && phone.isNotBlank() && isPhoneValid
++
++    ModalBottomSheet(
++        onDismissRequest = onDismissRequest,
++        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
++    ) {
++        Column(
++            modifier = Modifier
++                .fillMaxWidth()
++                .verticalScroll(rememberScrollState())
++                .imePadding()
++                .navigationBarsPadding()
++                .padding(horizontal = 16.dp, vertical = 16.dp),
++            verticalArrangement = Arrangement.spacedBy(12.dp),
++        ) {
++            Text(
++                text = if (initialAddress == null) {
++                    stringResource(R.string.saved_addresses_form_title_add)
++                } else {
++                    stringResource(R.string.saved_addresses_form_title_edit)
++                },
++                style = MaterialTheme.typography.titleLarge,
++            )
++
++            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
++                AddressTextField(
++                    value = firstName,
++                    onValueChange = { firstName = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_first_name),
++                    imeAction = ImeAction.Next,
++                    modifier = Modifier.weight(1f),
++                )
++                AddressTextField(
++                    value = lastName,
++                    onValueChange = { lastName = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_last_name),
++                    imeAction = ImeAction.Next,
++                    modifier = Modifier.weight(1f),
++                )
++            }
++            AddressTextField(
++                value = company,
++                onValueChange = { company = it },
++                placeholder = stringResource(R.string.saved_addresses_field_company),
++                imeAction = ImeAction.Next,
++            )
++            AddressTextField(
++                value = address1,
++                onValueChange = { address1 = it },
++                placeholder = stringResource(R.string.saved_addresses_field_address1),
++                imeAction = ImeAction.Next,
++            )
++            AddressTextField(
++                value = address2,
++                onValueChange = { address2 = it },
++                placeholder = stringResource(R.string.saved_addresses_field_address2),
++                imeAction = ImeAction.Next,
++            )
++            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
++                AddressTextField(
++                    value = city,
++                    onValueChange = { city = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_city),
++                    imeAction = ImeAction.Next,
++                    modifier = Modifier.weight(1f),
++                )
++                AddressTextField(
++                    value = province,
++                    onValueChange = { province = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_province),
++                    imeAction = ImeAction.Next,
++                    modifier = Modifier.weight(1f),
++                )
++            }
++            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
++                CountryDropdownField(
++                    value = country,
++                    onValueChange = { country = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_country),
++                    modifier = Modifier.weight(1f),
++                )
++                AddressTextField(
++                    value = zip,
++                    onValueChange = { zip = it },
++                    placeholder = stringResource(R.string.saved_addresses_field_zip),
++                    imeAction = ImeAction.Next,
++                    modifier = Modifier.weight(1f),
++                )
++            }
++            AddressTextField(
++                value = phone,
++                onValueChange = { phone = it },
++                placeholder = stringResource(R.string.saved_addresses_field_phone),
++                keyboardType = KeyboardType.Phone,
++                imeAction = ImeAction.Done,
++                keyboardActions = KeyboardActions.Default,
++                errorMessage = if (phone.isNotBlank() && !isPhoneValid) {
++                    stringResource(R.string.saved_addresses_error_invalid_phone)
++                } else {
++                    null
++                },
++            )
++
++            if (formError != null) {
++                Text(
++                    text = formError,
++                    style = MaterialTheme.typography.bodyMedium,
++                    color = MaterialTheme.colorScheme.error,
++                )
++            }
++
++            if (isSaving) {
++                CircularProgressIndicator(
++                    modifier = Modifier.fillMaxWidth(),
++                    color = MaterialTheme.colorScheme.primary,
++                )
++            } else {
++                PrimaryButton(
++                    text = stringResource(R.string.saved_addresses_save),
++                    onClick = {
++                        onSave(
++                            Address(
++                                id = initialAddress?.id,
++                                firstName = firstName.trim().ifBlank { null },
++                                lastName = lastName.trim().ifBlank { null },
++                                company = company.trim().ifBlank { null },
++                                address1 = address1.trim().ifBlank { null },
++                                address2 = address2.trim().ifBlank { null },
++                                city = city.trim().ifBlank { null },
++                                province = province.trim().ifBlank { null },
++                                country = country.trim().ifBlank { null },
++                                zip = zip.trim().ifBlank { null },
++                                phone = phone.trim().ifBlank { null },
++                                isDefault = initialAddress?.isDefault ?: false,
++                            )
++                        )
++                    },
++                    enabled = isValid,
++                    modifier = Modifier.fillMaxWidth(),
++                )
++            }
++        }
++    }
++}
++
++private val phoneRegex = Regex("^[+]?[0-9\\s-]{7,20}$")
++
++private fun isValidPhoneNumber(phone: String): Boolean {
++    val trimmed = phone.trim()
++    if (!phoneRegex.matches(trimmed)) return false
++    val digitCount = trimmed.count { it.isDigit() }
++    return digitCount in 7..15
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt b/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
+new file mode 100644
+index 0000000..f37e157
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/components/AddressTextField.kt
+@@ -0,0 +1,136 @@
++package com.dukkan.address.components
++
++import androidx.compose.animation.AnimatedVisibility
++import androidx.compose.animation.expandVertically
++import androidx.compose.animation.fadeIn
++import androidx.compose.animation.fadeOut
++import androidx.compose.animation.shrinkVertically
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.interaction.MutableInteractionSource
++import androidx.compose.foundation.interaction.collectIsFocusedAsState
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.foundation.text.BasicTextField
++import androidx.compose.foundation.text.KeyboardActions
++import androidx.compose.foundation.text.KeyboardOptions
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.remember
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.SolidColor
++import androidx.compose.ui.text.input.ImeAction
++import androidx.compose.ui.text.input.KeyboardType
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import com.example.design_system.theme.AppTheme
++
++@Composable
++fun AddressTextField(
++    value: String,
++    onValueChange: (String) -> Unit,
++    placeholder: String,
++    modifier: Modifier = Modifier,
++    keyboardType: KeyboardType = KeyboardType.Text,
++    imeAction: ImeAction = ImeAction.Default,
++    keyboardActions: KeyboardActions = KeyboardActions.Default,
++    errorMessage: String? = null,
++) {
++    val interactionSource = remember { MutableInteractionSource() }
++    val isFocused by interactionSource.collectIsFocusedAsState()
++
++    val hasError = errorMessage != null
++    val borderColor = when {
++        hasError -> MaterialTheme.colorScheme.error
++        isFocused -> MaterialTheme.colorScheme.primary
++        else -> MaterialTheme.colorScheme.outlineVariant
++    }
++
++    val borderWidth = if (isFocused || hasError) 2.dp else 1.dp
++
++    val shape = RoundedCornerShape(14.dp)
++
++    Column(modifier = modifier.fillMaxWidth()) {
++        BasicTextField(
++            value = value,
++            onValueChange = onValueChange,
++            modifier = Modifier.fillMaxWidth(),
++            singleLine = true,
++            textStyle = MaterialTheme.typography.bodyMedium.copy(
++                fontSize = 14.5.sp,
++                color = MaterialTheme.colorScheme.onSurface,
++            ),
++            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
++            interactionSource = interactionSource,
++            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
++            keyboardActions = keyboardActions,
++            decorationBox = { innerTextField ->
++                Row(
++                    modifier = Modifier
++                        .fillMaxWidth()
++                        .background(MaterialTheme.colorScheme.surface, shape)
++                        .border(borderWidth, borderColor, shape),
++                    verticalAlignment = Alignment.CenterVertically
++                ) {
++                    Box(
++                        modifier = Modifier
++                            .weight(1f)
++                            .padding(horizontal = 17.dp, vertical = 15.dp),
++                        contentAlignment = Alignment.CenterStart
++                    ) {
++                        if (value.isEmpty()) {
++                            Text(
++                                text = placeholder,
++                                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.5.sp),
++                                color = MaterialTheme.colorScheme.onSurfaceVariant,
++                                maxLines = 1,
++                                overflow = TextOverflow.Ellipsis,
++                            )
++                        }
++                        innerTextField()
++                    }
++                }
++            },
++        )
++
++        AnimatedVisibility(
++            visible = hasError,
++            enter = fadeIn() + expandVertically(),
++            exit = fadeOut() + shrinkVertically(),
++        ) {
++            Column {
++                Spacer(Modifier.height(6.dp))
++                Text(
++                    text = errorMessage.orEmpty(),
++                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.5.sp),
++                    color = MaterialTheme.colorScheme.error,
++                    modifier = Modifier.padding(horizontal = 4.dp),
++                )
++            }
++        }
++    }
++}
++
++@Preview(showBackground = true)
++@Composable
++private fun AddressTextFieldPreview() {
++    AppTheme {
++        AddressTextField(
++            value = "",
++            onValueChange = {},
++            placeholder = "Address line 1",
++            modifier = Modifier.padding(16.dp),
++        )
++    }
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt b/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
+new file mode 100644
+index 0000000..f1e39ba
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/components/CountryDropdownField.kt
+@@ -0,0 +1,99 @@
++package com.dukkan.address.components
++
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.heightIn
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.filled.ArrowDropDown
++import androidx.compose.material3.DropdownMenu
++import androidx.compose.material3.DropdownMenuItem
++import androidx.compose.material3.Icon
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import java.util.Locale
++
++@Composable
++fun CountryDropdownField(
++    value: String,
++    onValueChange: (String) -> Unit,
++    placeholder: String,
++    modifier: Modifier = Modifier,
++) {
++    var expanded by remember { mutableStateOf(false) }
++    val countries = remember {
++        Locale.getISOCountries()
++            .map { Locale.Builder().setRegion(it).build().displayCountry }
++            .filter { it.isNotBlank() }
++            .distinct()
++            .sorted()
++    }
++    val shape = RoundedCornerShape(14.dp)
++
++    Box(modifier = modifier.fillMaxWidth()) {
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .background(MaterialTheme.colorScheme.surface, shape)
++                .border(
++                    width = if (expanded) 2.dp else 1.dp,
++                    color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
++                    shape = shape,
++                )
++                .clip(shape)
++                .clickable { expanded = true }
++                .padding(horizontal = 17.dp, vertical = 15.dp),
++            verticalAlignment = Alignment.CenterVertically,
++        ) {
++            Text(
++                text = value.ifBlank { placeholder },
++                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.5.sp),
++                color = if (value.isBlank()) {
++                    MaterialTheme.colorScheme.onSurfaceVariant
++                } else {
++                    MaterialTheme.colorScheme.onSurface
++                },
++                modifier = Modifier.weight(1f),
++            )
++            Icon(
++                imageVector = Icons.Filled.ArrowDropDown,
++                contentDescription = null,
++                tint = MaterialTheme.colorScheme.onSurfaceVariant,
++            )
++        }
++
++        DropdownMenu(
++            expanded = expanded,
++            onDismissRequest = { expanded = false },
++            shape = shape,
++            modifier = Modifier
++                .fillMaxWidth(0.85f)
++                .heightIn(max = 320.dp),
++        ) {
++            countries.forEach { country ->
++                DropdownMenuItem(
++                    text = { Text(country) },
++                    onClick = {
++                        onValueChange(country)
++                        expanded = false
++                    },
++                )
++            }
++        }
++    }
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/components/DeleteAddressDialog.kt b/feature/address/src/main/java/com/dukkan/address/components/DeleteAddressDialog.kt
+new file mode 100644
+index 0000000..12dff7a
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/components/DeleteAddressDialog.kt
+@@ -0,0 +1,102 @@
++package com.dukkan.address.components
++
++import androidx.compose.foundation.BorderStroke
++import androidx.compose.foundation.background
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material3.Button
++import androidx.compose.material3.ButtonDefaults
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.OutlinedButton
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.stringResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import androidx.compose.ui.window.Dialog
++import androidx.compose.ui.window.DialogProperties
++import com.dukkan.address.R
++
++@Composable
++fun DeleteAddressDialog(
++    isDeleting: Boolean,
++    onDismiss: () -> Unit,
++    onConfirm: () -> Unit,
++) {
++    Dialog(
++        onDismissRequest = onDismiss,
++        properties = DialogProperties(usePlatformDefaultWidth = false)
++    ) {
++        Column(
++            modifier = Modifier
++                .padding(horizontal = 24.dp)
++                .fillMaxWidth()
++                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(24.dp))
++                .padding(24.dp)
++        ) {
++            Text(
++                text = stringResource(R.string.saved_addresses_delete_title),
++                color = MaterialTheme.colorScheme.onSurface,
++                fontSize = 22.sp,
++                fontWeight = FontWeight.Bold
++            )
++            Spacer(modifier = Modifier.height(12.dp))
++            Text(
++                text = stringResource(R.string.saved_addresses_delete_message),
++                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
++                fontSize = 16.sp
++            )
++            Spacer(modifier = Modifier.height(32.dp))
++            Row(
++                modifier = Modifier.fillMaxWidth(),
++                horizontalArrangement = Arrangement.spacedBy(16.dp)
++            ) {
++                OutlinedButton(
++                    onClick = onDismiss,
++                    shape = RoundedCornerShape(100.dp),
++                    colors = ButtonDefaults.outlinedButtonColors(
++                        contentColor = MaterialTheme.colorScheme.onSurface
++                    ),
++                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
++                    modifier = Modifier
++                        .weight(1f)
++                        .height(56.dp)
++                ) {
++                    Text(stringResource(R.string.cancel), fontWeight = FontWeight.Bold)
++                }
++                Button(
++                    onClick = onConfirm,
++                    enabled = !isDeleting,
++                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
++                    shape = RoundedCornerShape(100.dp),
++                    modifier = Modifier
++                        .weight(1f)
++                        .height(56.dp)
++                ) {
++                    if (isDeleting) {
++                        CircularProgressIndicator(
++                            modifier = Modifier.height(20.dp),
++                            color = MaterialTheme.colorScheme.onError,
++                            strokeWidth = 2.dp,
++                        )
++                    } else {
++                        Text(
++                            stringResource(R.string.saved_addresses_delete_confirm),
++                            color = MaterialTheme.colorScheme.onError,
++                            fontWeight = FontWeight.Bold
++                        )
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt b/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
+new file mode 100644
+index 0000000..6f33ab9
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/view/SavedAddressesScreen.kt
+@@ -0,0 +1,219 @@
++package com.dukkan.address.view
++
++import androidx.compose.foundation.background
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.PaddingValues
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.statusBarsPadding
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.automirrored.filled.ArrowBack
++import androidx.compose.material3.Icon
++import androidx.compose.material3.IconButton
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.stringResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import androidx.hilt.navigation.compose.hiltViewModel
++import androidx.lifecycle.compose.collectAsStateWithLifecycle
++import com.dukkan.address.R
++import com.dukkan.address.components.AddressCard
++import com.dukkan.address.components.AddressFormSheet
++import com.dukkan.address.components.DeleteAddressDialog
++import com.dukkan.address.viewmodel.SavedAddressesState
++import com.dukkan.address.viewmodel.SavedAddressesViewModel
++import com.example.design_system.components.ErrorScreen
++import com.example.design_system.components.GuestPlaceholderScreen
++import com.example.design_system.components.LoadingScreen
++import com.example.design_system.components.PrimaryButton
++import com.example.design_system.theme.AppTheme
++import com.msayeh.domain.model.Address
++
++@Composable
++fun SavedAddressesScreen(
++    onBackClick: () -> Unit = {},
++    onSignInClick: () -> Unit = onBackClick,
++    viewModel: SavedAddressesViewModel = hiltViewModel(),
++) {
++    val state by viewModel.state.collectAsStateWithLifecycle()
++    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
++
++    if (!isLoggedIn) {
++        GuestPlaceholderScreen(
++            title = stringResource(R.string.saved_addresses_title),
++            onSignInClick = onSignInClick,
++        )
++        return
++    }
++
++    SavedAddressesContent(
++        state = state,
++        onBackClick = onBackClick,
++        onAddClick = viewModel::onAddClick,
++        onEditClick = viewModel::onEditClick,
++        onDeleteClick = viewModel::onDeleteClick,
++        onSetDefaultClick = viewModel::onSetDefaultClick,
++        onRetry = viewModel::loadAddresses,
++        onDismissFormSheet = viewModel::dismissFormSheet,
++        onSaveAddress = viewModel::saveAddress,
++        onDismissDeleteDialog = viewModel::dismissDeleteDialog,
++        onConfirmDelete = viewModel::confirmDelete,
++    )
++}
++
++@Composable
++private fun SavedAddressesContent(
++    state: SavedAddressesState,
++    onBackClick: () -> Unit,
++    onAddClick: () -> Unit,
++    onEditClick: (Address) -> Unit,
++    onDeleteClick: (Address) -> Unit,
++    onSetDefaultClick: (Address) -> Unit,
++    onRetry: () -> Unit,
++    onDismissFormSheet: () -> Unit,
++    onSaveAddress: (Address) -> Unit,
++    onDismissDeleteDialog: () -> Unit,
++    onConfirmDelete: () -> Unit,
++    modifier: Modifier = Modifier,
++) {
++    Column(
++        modifier = modifier
++            .fillMaxSize()
++            .background(MaterialTheme.colorScheme.background),
++    ) {
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .statusBarsPadding()
++                .padding(horizontal = 8.dp, vertical = 8.dp),
++            verticalAlignment = Alignment.CenterVertically,
++        ) {
++            IconButton(onClick = onBackClick) {
++                Icon(
++                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
++                    contentDescription = stringResource(R.string.saved_addresses_back),
++                    tint = MaterialTheme.colorScheme.onBackground,
++                )
++            }
++            Text(
++                text = stringResource(R.string.saved_addresses_title),
++                style = MaterialTheme.typography.titleLarge,
++                fontWeight = FontWeight.Bold,
++                color = MaterialTheme.colorScheme.onBackground,
++            )
++        }
++
++        Box(modifier = Modifier.weight(1f)) {
++            when {
++                state.isLoading && state.addresses.isEmpty() -> LoadingScreen()
++                state.error != null && state.addresses.isEmpty() -> ErrorScreen(message = state.error, onRetry = onRetry)
++                state.addresses.isEmpty() -> Box(
++                    modifier = Modifier.fillMaxSize().padding(24.dp),
++                    contentAlignment = Alignment.Center,
++                ) {
++                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
++                        Text(
++                            text = stringResource(R.string.saved_addresses_empty_title),
++                            style = MaterialTheme.typography.titleMedium,
++                            color = MaterialTheme.colorScheme.onBackground,
++                        )
++                        Text(
++                            text = stringResource(R.string.saved_addresses_empty_message),
++                            style = MaterialTheme.typography.bodyMedium,
++                            color = MaterialTheme.colorScheme.onSurfaceVariant,
++                            modifier = Modifier.padding(top = 8.dp),
++                        )
++                    }
++                }
++
++                else -> LazyColumn(
++                    modifier = Modifier.fillMaxSize(),
++                    contentPadding = PaddingValues(16.dp),
++                    verticalArrangement = Arrangement.spacedBy(12.dp),
++                ) {
++                    items(state.addresses, key = { it.id ?: it.hashCode() }) { address ->
++                        AddressCard(
++                            address = address,
++                            isUpdatingDefault = state.updatingDefaultId == address.id,
++                            onEditClick = { onEditClick(address) },
++                            onDeleteClick = { onDeleteClick(address) },
++                            onSetDefaultClick = { onSetDefaultClick(address) },
++                        )
++                    }
++                }
++            }
++        }
++
++        PrimaryButton(
++            text = stringResource(R.string.saved_addresses_add_new),
++            onClick = onAddClick,
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(16.dp),
++        )
++    }
++
++    if (state.isFormSheetVisible) {
++        AddressFormSheet(
++            initialAddress = state.editingAddress,
++            isSaving = state.isSaving,
++            formError = state.formError,
++            onDismissRequest = onDismissFormSheet,
++            onSave = onSaveAddress,
++        )
++    }
++
++    state.deleteCandidate?.let { candidate ->
++        DeleteAddressDialog(
++            address = candidate,
++            isDeleting = state.isDeleting,
++            onDismiss = onDismissDeleteDialog,
++            onConfirm = onConfirmDelete,
++        )
++    }
++}
++
++@Preview
++@Composable
++private fun SavedAddressesPreview() {
++    AppTheme {
++        SavedAddressesContent(
++            state = SavedAddressesState(
++                addresses = listOf(
++                    Address(
++                        id = "1",
++                        firstName = "Ahmed",
++                        lastName = "Hassan",
++                        address1 = "15 El Nasr Road",
++                        city = "Port Said",
++                        country = "Egypt",
++                        phone = "+201001234567",
++                        isDefault = true,
++                    )
++                )
++            ),
++            onBackClick = {},
++            onAddClick = {},
++            onEditClick = {},
++            onDeleteClick = {},
++            onSetDefaultClick = {},
++            onRetry = {},
++            onDismissFormSheet = {},
++            onSaveAddress = {},
++            onDismissDeleteDialog = {},
++            onConfirmDelete = {},
++        )
++    }
++}
+diff --git a/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesState.kt b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesState.kt
+new file mode 100644
+index 0000000..95b0635
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesState.kt
+@@ -0,0 +1,16 @@
++package com.dukkan.address.viewmodel
++
++import com.msayeh.domain.model.Address
++
++data class SavedAddressesState(
++    val isLoading: Boolean = false,
++    val addresses: List<Address> = emptyList(),
++    val error: String? = null,
++    val isFormSheetVisible: Boolean = false,
++    val editingAddress: Address? = null,
++    val isSaving: Boolean = false,
++    val formError: String? = null,
++    val deleteCandidate: Address? = null,
++    val isDeleting: Boolean = false,
++    val updatingDefaultId: String? = null,
++)
+diff --git a/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
+new file mode 100644
+index 0000000..702f7ca
+--- /dev/null
++++ b/feature/address/src/main/java/com/dukkan/address/viewmodel/SavedAddressesViewModel.kt
+@@ -0,0 +1,116 @@
++package com.dukkan.address.viewmodel
++
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++import com.msayeh.domain.model.Address
++import com.msayeh.domain.usecase.GetCurrentUserUseCase
++import com.msayeh.domain.usecase.address.AddAddressUseCase
++import com.msayeh.domain.usecase.address.DeleteAddressUseCase
++import com.msayeh.domain.usecase.address.GetAddressesUseCase
++import com.msayeh.domain.usecase.address.SetDefaultAddressUseCase
++import com.msayeh.domain.usecase.address.UpdateAddressUseCase
++import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.StateFlow
++import kotlinx.coroutines.flow.asStateFlow
++import kotlinx.coroutines.launch
++import javax.inject.Inject
++
++@HiltViewModel
++class SavedAddressesViewModel @Inject constructor(
++    private val getAddresses: GetAddressesUseCase,
++    private val addAddress: AddAddressUseCase,
++    private val updateAddress: UpdateAddressUseCase,
++    private val deleteAddress: DeleteAddressUseCase,
++    private val setDefaultAddress: SetDefaultAddressUseCase,
++    private val getCurrentUser: GetCurrentUserUseCase,
++) : ViewModel() {
++
++    private val _state = MutableStateFlow(SavedAddressesState())
++    val state: StateFlow<SavedAddressesState> = _state.asStateFlow()
++
++    private val _isLoggedIn = MutableStateFlow(true)
++    val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
++
++    init {
++        viewModelScope.launch {
++            _isLoggedIn.value = getCurrentUser() != null
++            if (_isLoggedIn.value) loadAddresses()
++        }
++    }
++
++    fun loadAddresses() {
++        viewModelScope.launch {
++            _state.value = _state.value.copy(isLoading = true, error = null)
++            getAddresses()
++                .onSuccess { list -> _state.value = _state.value.copy(isLoading = false, addresses = list) }
++                .onFailure { e -> _state.value = _state.value.copy(isLoading = false, error = e.message) }
++        }
++    }
++
++    fun onAddClick() {
++        _state.value = _state.value.copy(isFormSheetVisible = true, editingAddress = null, formError = null)
++    }
++
++    fun onEditClick(address: Address) {
++        _state.value = _state.value.copy(isFormSheetVisible = true, editingAddress = address, formError = null)
++    }
++
++    fun dismissFormSheet() {
++        _state.value = _state.value.copy(isFormSheetVisible = false, editingAddress = null, formError = null)
++    }
++
++    fun saveAddress(address: Address) {
++        viewModelScope.launch {
++            _state.value = _state.value.copy(isSaving = true, formError = null)
++            val result = if (address.id == null) addAddress(address) else updateAddress(address)
++            result
++                .onSuccess {
++                    _state.value = _state.value.copy(isSaving = false, isFormSheetVisible = false, editingAddress = null)
++                    loadAddresses()
++                }
++                .onFailure { e ->
++                    _state.value = _state.value.copy(isSaving = false, formError = e.message)
++                }
++        }
++    }
++
++    fun onDeleteClick(address: Address) {
++        _state.value = _state.value.copy(deleteCandidate = address)
++    }
++
++    fun dismissDeleteDialog() {
++        _state.value = _state.value.copy(deleteCandidate = null)
++    }
++
++    fun confirmDelete() {
++        val target = _state.value.deleteCandidate ?: return
++        val targetId = target.id ?: return
++        viewModelScope.launch {
++            _state.value = _state.value.copy(isDeleting = true)
++            deleteAddress(targetId)
++                .onSuccess {
++                    _state.value = _state.value.copy(isDeleting = false, deleteCandidate = null)
++                    loadAddresses()
++                }
++                .onFailure { e ->
++                    _state.value = _state.value.copy(isDeleting = false, deleteCandidate = null, error = e.message)
++                }
++        }
++    }
++
++    fun onSetDefaultClick(address: Address) {
++        val id = address.id ?: return
++        viewModelScope.launch {
++            _state.value = _state.value.copy(updatingDefaultId = id)
++            setDefaultAddress(id)
++                .onSuccess {
++                    _state.value = _state.value.copy(updatingDefaultId = null)
++                    loadAddresses()
++                }
++                .onFailure { e ->
++                    _state.value = _state.value.copy(updatingDefaultId = null, error = e.message)
++                }
++        }
++    }
++}
+diff --git a/feature/address/src/main/keepRules/rules.keep b/feature/address/src/main/keepRules/rules.keep
+new file mode 100644
+index 0000000..d7e081a
+--- /dev/null
++++ b/feature/address/src/main/keepRules/rules.keep
+@@ -0,0 +1,12 @@
++# Add project specific R8 rules here.
++# AGP will combine all keep rule files in src/main/keepRules to pass to R8
++#
++# For more details, see
++#   https://d.android.com/r/tools/r8/keep-rules
++
++# If your project uses WebView with JS, uncomment the following
++# and specify the fully qualified class name to the JavaScript interface
++# class:
++#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
++#   public *;
++#}
+\ No newline at end of file
+diff --git a/feature/address/src/main/res/values-ar/strings.xml b/feature/address/src/main/res/values-ar/strings.xml
+new file mode 100644
+index 0000000..88b8c92
+--- /dev/null
++++ b/feature/address/src/main/res/values-ar/strings.xml
+@@ -0,0 +1,32 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="saved_addresses_title">العناوين المحفوظة</string>
++    <string name="saved_addresses_back">رجوع</string>
++    <string name="saved_addresses_add_new">إضافة عنوان جديد</string>
++    <string name="saved_addresses_empty_title">لا توجد عناوين محفوظة بعد</string>
++    <string name="saved_addresses_empty_message">أضف عنوانًا لتسريع عملية الدفع.</string>
++    <string name="saved_addresses_default_badge">افتراضي</string>
++    <string name="saved_addresses_edit">تعديل</string>
++    <string name="saved_addresses_delete">حذف</string>
++    <string name="saved_addresses_set_default">تعيين كافتراضي</string>
++
++    <string name="saved_addresses_form_title_add">إضافة عنوان</string>
++    <string name="saved_addresses_form_title_edit">تعديل العنوان</string>
++    <string name="saved_addresses_field_first_name">الاسم الأول</string>
++    <string name="saved_addresses_field_last_name">اسم العائلة</string>
++    <string name="saved_addresses_field_company">الشركة</string>
++    <string name="saved_addresses_field_address1">العنوان*</string>
++    <string name="saved_addresses_field_address2">شقة، جناح، إلخ</string>
++    <string name="saved_addresses_field_city">المدينة*</string>
++    <string name="saved_addresses_field_province">المحافظة</string>
++    <string name="saved_addresses_field_country">الدولة*</string>
++    <string name="saved_addresses_field_zip">الرمز البريدي</string>
++    <string name="saved_addresses_field_phone">رقم الهاتف*</string>
++    <string name="saved_addresses_error_invalid_phone">أدخل رقم هاتف صحيح</string>
++    <string name="saved_addresses_save">حفظ العنوان</string>
++
++    <string name="saved_addresses_delete_title">حذف العنوان؟</string>
++    <string name="saved_addresses_delete_message">هل أنت متأكد أنك تريد حذف هذا العنوان؟ لا يمكن التراجع عن هذا الإجراء.</string>
++    <string name="saved_addresses_delete_confirm">حذف</string>
++    <string name="cancel">إلغاء</string>
++</resources>
+diff --git a/feature/address/src/main/res/values/strings.xml b/feature/address/src/main/res/values/strings.xml
+new file mode 100644
+index 0000000..a78cfc0
+--- /dev/null
++++ b/feature/address/src/main/res/values/strings.xml
+@@ -0,0 +1,32 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="saved_addresses_title">Saved Addresses</string>
++    <string name="saved_addresses_back">Back</string>
++    <string name="saved_addresses_add_new">Add New Address</string>
++    <string name="saved_addresses_empty_title">No saved addresses yet</string>
++    <string name="saved_addresses_empty_message">Add an address to speed up checkout.</string>
++    <string name="saved_addresses_default_badge">Default</string>
++    <string name="saved_addresses_edit">Edit</string>
++    <string name="saved_addresses_delete">Delete</string>
++    <string name="saved_addresses_set_default">Set as default</string>
++
++    <string name="saved_addresses_form_title_add">Add Address</string>
++    <string name="saved_addresses_form_title_edit">Edit Address</string>
++    <string name="saved_addresses_field_first_name">First name</string>
++    <string name="saved_addresses_field_last_name">Last name</string>
++    <string name="saved_addresses_field_company">Company</string>
++    <string name="saved_addresses_field_address1">Address*</string>
++    <string name="saved_addresses_field_address2">Apartment, suite, etc.</string>
++    <string name="saved_addresses_field_city">City*</string>
++    <string name="saved_addresses_field_province">Province</string>
++    <string name="saved_addresses_field_country">Country*</string>
++    <string name="saved_addresses_field_zip">ZIP code</string>
++    <string name="saved_addresses_field_phone">Phone*</string>
++    <string name="saved_addresses_error_invalid_phone">Enter a valid phone number</string>
++    <string name="saved_addresses_save">Save Address</string>
++
++    <string name="saved_addresses_delete_title">Delete address?</string>
++    <string name="saved_addresses_delete_message">Are you sure you want to delete this address? This action cannot be undone.</string>
++    <string name="saved_addresses_delete_confirm">Delete</string>
++    <string name="cancel">Cancel</string>
++</resources>
+diff --git a/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt b/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
+new file mode 100644
+index 0000000..c4a466e
+--- /dev/null
++++ b/feature/address/src/test/java/com/dukkan/address/ExampleUnitTest.kt
+@@ -0,0 +1,17 @@
++package com.dukkan.address
++
++import org.junit.Test
++
++import org.junit.Assert.*
++
++/**
++ * Example local unit test, which will execute on the development machine (host).
++ *
++ * See [testing documentation](http://d.android.com/tools/testing).
++ */
++class ExampleUnitTest {
++    @Test
++    fun addition_isCorrect() {
++        assertEquals(4, 2 + 2)
++    }
++}
+\ No newline at end of file
+diff --git a/features/settings/src/main/java/com/dukkan/settings/components/ProfileRows.kt b/features/settings/src/main/java/com/dukkan/settings/components/ProfileRows.kt
+index 30a61be..3fc1d17 100644
+--- a/features/settings/src/main/java/com/dukkan/settings/components/ProfileRows.kt
++++ b/features/settings/src/main/java/com/dukkan/settings/components/ProfileRows.kt
+@@ -84,13 +84,12 @@ fun WishlistRow(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier)
+ }
+ 
+ @Composable
+-fun SavedAddressesRow(modifier: Modifier = Modifier) {
+-    // Click behaviour intentionally not wired yet.
++fun SavedAddressesRow(onClick: () -> Unit, modifier: Modifier = Modifier) {
+     ProfileRow(
+         icon = Icons.Filled.LocationOn,
+         label = stringResource(R.string.profile_saved_addresses),
+         trailing = stringResource(R.string.profile_edit),
+-        onClick = null,
++        onClick = onClick,
+         modifier = modifier,
+     )
+ }
+diff --git a/features/settings/src/main/java/com/dukkan/settings/view/ProfileScreen.kt b/features/settings/src/main/java/com/dukkan/settings/view/ProfileScreen.kt
+index bdcf08f..ead4116 100644
+--- a/features/settings/src/main/java/com/dukkan/settings/view/ProfileScreen.kt
++++ b/features/settings/src/main/java/com/dukkan/settings/view/ProfileScreen.kt
+@@ -33,6 +33,7 @@ fun ProfileScreen(
+     onNavigateToAuth: () -> Unit,
+     onNavigateToFavorites: () -> Unit,
+     onNavigateToOrderList: () -> Unit,
++    onNavigateToSavedAddresses: () -> Unit,
+     modifier: Modifier = Modifier,
+     viewModel: ProfileViewModel = hiltViewModel(),
+ ) {
+@@ -44,6 +45,7 @@ fun ProfileScreen(
+         onCurrencySelected = viewModel::onCurrencySelected,
+         onLanguageSelected = viewModel::onLanguageSelected,
+         onWishlistClick = onNavigateToFavorites,
++        onSavedAddressesClick = onNavigateToSavedAddresses,
+         onSignInClick = onNavigateToAuth,
+         onLogoutClick = { viewModel.onLogout(onComplete = onNavigateToAuth) },
+         onSeeAllClick = onNavigateToOrderList,
+@@ -58,6 +60,7 @@ private fun ProfileContent(
+     onCurrencySelected: (AppCurrency) -> Unit,
+     onLanguageSelected: (AppLanguage) -> Unit,
+     onWishlistClick: () -> Unit,
++    onSavedAddressesClick: () -> Unit,
+     onSignInClick: () -> Unit,
+     onLogoutClick: () -> Unit,
+     onSeeAllClick: () -> Unit,
+@@ -93,7 +96,7 @@ private fun ProfileContent(
+                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                 WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
+                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+-                SavedAddressesRow()
++                SavedAddressesRow(onClick = onSavedAddressesClick)
+                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                 LogoutRow(onClick = onLogoutClick)
+             }
+-- 
+2.45.1.windows.1
+

@@ -9,8 +9,8 @@ import com.dukkan.payment.data.remote.dto.IntentionRequest
 import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentIntentionResult
 import com.dukkan.payment.domain.repository.PaymentRepository
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.model.OrderConfirmation
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.OrderConfirmation
 import javax.inject.Inject
 
 internal class PaymentRepositoryImpl @Inject constructor(
@@ -24,7 +24,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.msayeh.domain.model.Money,
+        cartTotal: com.dukkan.domain.model.Money,
     ): Result<OrderConfirmation> = runCatching {
         
         OrderConfirmation(
@@ -38,7 +38,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.msayeh.domain.model.Money,
+        cartTotal: com.dukkan.domain.model.Money,
     ): Result<PaymentIntentionResult> = runCatching {
         
         val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
@@ -104,13 +104,13 @@ internal class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun verifyPaymentStatus(
         orderId: String,
-        cartTotal: com.msayeh.domain.model.Money?,
+        cartTotal: com.dukkan.domain.model.Money?,
     ): Result<OrderConfirmation> = runCatching {
         
         OrderConfirmation(
             orderId = orderId,
             status = "Success",
-            total = cartTotal ?: com.msayeh.domain.model.Money(java.math.BigDecimal("0.00"), "EGP")
+            total = cartTotal ?: com.dukkan.domain.model.Money(java.math.BigDecimal("0.00"), "EGP")
         )
     }
 

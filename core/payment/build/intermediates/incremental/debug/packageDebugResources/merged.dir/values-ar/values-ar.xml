@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_address_city">المدينة</string>
+    <string name="payment_address_city_country">%1$s، %2$s</string>
+    <string name="payment_address_confirm">تأكيد العنوان</string>
+    <string name="payment_address_delivery">عنوان التوصيل</string>
+    <string name="payment_address_first_name">الاسم الأول</string>
+    <string name="payment_address_last_name">اسم العائلة</string>
+    <string name="payment_address_phone">رقم الهاتف</string>
+    <string name="payment_address_street">عنوان الشارع</string>
+    <string name="payment_confirm">تأكيد الطلب</string>
+    <string name="payment_continue">متابعة</string>
+    <string name="payment_error_cancelled">تم إلغاء الدفع أو فشل.</string>
+    <string name="payment_error_failed">فشلت عملية الدفع</string>
+    <string name="payment_error_initialize">فشل في بدء عملية الدفع</string>
+    <string name="payment_error_pending">الدفع قيد الانتظار</string>
+    <string name="payment_error_status">حالة الدفع: %1$s</string>
+    <string name="payment_error_unknown">خطأ غير معروف</string>
+    <string name="payment_failed_title">فشلت عملية الدفع</string>
+    <string name="payment_method_cash_subtitle">ادفع عند وصول طلبك</string>
+    <string name="payment_method_cash_title">الدفع عند الاستلام</string>
+    <string name="payment_method_online_subtitle">بطاقة، محفظة، Google Pay والمزيد</string>
+    <string name="payment_method_online_title">الدفع الإلكتروني</string>
+    <string name="payment_navigate_up">رجوع</string>
+    <string name="payment_retry">إعادة المحاولة</string>
+    <string name="payment_step_address_title">اختر عنوان التوصيل</string>
+    <string name="payment_step_method_title">اختر طريقة الدفع</string>
+    <string name="payment_still_pending_body">دفعتك قيد المعالجة. سنُعلمك فور التأكيد. يمكنك تتبع طلبك أدناه.</string>
+    <string name="payment_still_pending_title">الدفع قيد المعالجة</string>
+    <string name="payment_success_order_id">طلب رقم #%1$s</string>
+    <string name="payment_success_title">تم تأكيد الطلب 🎉</string>
+    <string name="payment_summary_items">%1$d منتجات</string>
+    <string name="payment_title">الدفع</string>
+    <string name="payment_track_order">تتبع طلبي</string>
+    <string name="payment_verifying">جارٍ التحقق من الدفع…</string>
+</resources>

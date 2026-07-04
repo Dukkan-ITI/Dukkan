@@ -1,0 +1,37 @@
+From 585acd95ada5a892835fad5ac948d93ac196543f Mon Sep 17 00:00:00 2001
+From: "hazemkora660@gmail.com" <hazemkora660@gmail.com>
+Date: Sat, 4 Jul 2026 16:04:28 +0300
+Subject: [PATCH 18/24] feat(payment): add real-time USD to EGP currency
+ conversion
+
+- Use Frankfurter API to convert USD cart totals to EGP before Paymob intention creation
+---
+ .../payment/data/repository/PaymentRepositoryImpl.kt | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt b/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
+index c060d3a..1d0f884 100644
+--- a/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
++++ b/core/payment/src/main/java/com/dukkan/payment/data/repository/PaymentRepositoryImpl.kt
+@@ -44,7 +44,17 @@ internal class PaymentRepositoryImpl @Inject constructor(
+         val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
+         val publicKey = com.dukkan.payment.BuildConfig.PAYMOB_PUBLIC_KEY
+         
+-        val amountInCents = (cartTotal.amount * java.math.BigDecimal("100")).toInt()
++        val finalAmountInEgp = if (cartTotal.currencyCode.equals("USD", ignoreCase = true)) {
++            val exchangeRate = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
++                // Frankfurter API doesn't support EGP. Using free ExchangeRate-API which supports EGP and needs no key.
++                val response = java.net.URL("https://open.er-api.com/v6/latest/USD").readText()
++                org.json.JSONObject(response).getJSONObject("rates").getDouble("EGP")
++            }
++            cartTotal.amount.toDouble() * exchangeRate
++        } else {
++            cartTotal.amount.toDouble()
++        }
++        val amountInCents = (finalAmountInEgp * 100).toInt()
+         val json = org.json.JSONObject().apply {
+             put("amount", amountInCents) 
+             put("currency", "EGP")
+-- 
+2.45.1.windows.1
+
