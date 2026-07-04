@@ -109,4 +109,14 @@ object DataModule {
         addressDataSource: AddressDataSource,
         authRepository: AuthRepository,
     ): AddressRepository = AddressRepositoryImpl(addressDataSource, authRepository)
+
+    @Singleton
+    @Provides
+    fun provideCouponStore(@ApplicationContext context: Context): com.dukkan.data.source.local.CouponStore =
+        com.dukkan.data.source.local.CouponStoreImpl(context)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(couponStore: com.dukkan.data.source.local.CouponStore): com.msayeh.domain.repository.CouponRepository =
+        com.dukkan.data.repository.CouponRepositoryImpl(couponStore)
 }
