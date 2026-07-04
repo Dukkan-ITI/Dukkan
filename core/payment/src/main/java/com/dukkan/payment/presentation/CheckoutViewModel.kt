@@ -117,7 +117,7 @@ internal class CheckoutViewModel @Inject constructor(
 
             val addresses = getAddressesUseCase().getOrElse { emptyList() }
             
-            // If no address is persisted yet, default to the user's default address or first address
+            
             if (persistedAddress == null && addresses.isNotEmpty()) {
                 val defaultAddress = addresses.firstOrNull { it.isDefault } ?: addresses.first()
                 defaultAddress.id?.let { id ->
@@ -156,7 +156,7 @@ internal class CheckoutViewModel @Inject constructor(
             CheckoutEvent.SubmitOrder             -> submitOrder()
             is CheckoutEvent.PaymobSdkFinished    -> handlePaymobSdkFinished(event.status, event.message)
             CheckoutEvent.CancelPaymentFlow       -> {
-                // If we want to handle internal state when flow is cancelled
+                
             }
             CheckoutEvent.AppResumedDuringPayment -> onAppResumedDuringPayment()
             
@@ -199,7 +199,7 @@ internal class CheckoutViewModel @Inject constructor(
                     _uiState.update { it.copy(cashSuccessConfirmation = conf) }
                 },
                 onFailure = { e ->
-                    // Still show failure if the cash checkout failed for some reason
+                    
                     _uiState.update { it.copy(result = OrderResult.Failure(e.message ?: "Unknown error", canRetry = true)) }
                 }
             )

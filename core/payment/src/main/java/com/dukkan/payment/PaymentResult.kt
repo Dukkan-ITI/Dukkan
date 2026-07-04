@@ -9,7 +9,7 @@ sealed interface PaymentResult {
         val orderId: String,
         val total: Double,
         val currency: String,
-        val paymentMethod: String, // "CASH" or "CARD"
+        val paymentMethod: String
     ) : PaymentResult
 
     data class Pending(

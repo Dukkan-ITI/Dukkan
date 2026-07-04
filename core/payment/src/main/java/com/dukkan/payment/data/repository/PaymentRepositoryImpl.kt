@@ -26,7 +26,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartId: String,
         cartTotal: com.msayeh.domain.model.Money,
     ): Result<OrderConfirmation> = runCatching {
-        // Option B: Bypass local backend
+        
         OrderConfirmation(
             orderId = "CASH-" + java.util.UUID.randomUUID().toString().take(8),
             status = "Success",
@@ -40,20 +40,18 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartId: String,
         cartTotal: com.msayeh.domain.model.Money,
     ): Result<PaymentIntentionResult> = runCatching {
-        // Option B: Bypass local backend and create intention directly with Paymob API
+        
         val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
         val publicKey = com.dukkan.payment.BuildConfig.PAYMOB_PUBLIC_KEY
         
         val amountInCents = (cartTotal.amount * java.math.BigDecimal("100")).toInt()
         val json = org.json.JSONObject().apply {
             put("amount", amountInCents) 
-            // For testing: Force EGP since our integration IDs (5766356, 5766720) are strictly EGP
             put("currency", "EGP")
             
-            // Add the integration IDs here!
             val paymentMethods = org.json.JSONArray().apply {
-                put(5766356) // VPC (Card) Integration ID
-                put(5766720) // Cash Integration ID
+                put(5766356)
+                put(5766720)
             }
             put("payment_methods", paymentMethods)
             
@@ -98,7 +96,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
         orderId: String,
         cartTotal: com.msayeh.domain.model.Money?,
     ): Result<OrderConfirmation> = runCatching {
-        // Option B: Bypass local backend and assume success since SDK finished
+        
         OrderConfirmation(
             orderId = orderId,
             status = "Success",

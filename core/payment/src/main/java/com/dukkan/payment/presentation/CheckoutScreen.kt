@@ -100,7 +100,7 @@ internal fun CheckoutScreen(
     val onEvent = remember(viewModel) { viewModel::onEvent }
 
     LaunchedEffect(uiState.result) {
-        // We now rely entirely on the receipt's Done button to trigger onPaymentResult for online payments
+        
     }
 
     LaunchedEffect(uiState.cashSuccessConfirmation) {
@@ -129,7 +129,7 @@ internal fun CheckoutScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    // Address Edit Sheet Overlay
+    
     if (uiState.isEditingAddress) {
         AddressEditSheet(
             currentAddress = (uiState.selectedAddress as? CheckoutAddress.Saved)?.let { saved ->
@@ -142,7 +142,7 @@ internal fun CheckoutScreen(
         )
     }
 
-    // Payment Result Overlay
+    
     uiState.result?.let { result ->
         PaymentResultOverlay(
             result = result,
@@ -154,7 +154,7 @@ internal fun CheckoutScreen(
         )
     }
 
-    // Paymob SDK Launcher side-effect
+    
     uiState.paymobCredentials?.let { credentials ->
         val activity = context.findActivity() as? AppCompatActivity ?: return@let
         val colorScheme = MaterialTheme.colorScheme
@@ -244,12 +244,12 @@ internal fun CheckoutScreen(
                 .verticalScroll(rememberScrollState()),
         ) {
             if (uiState.isLoadingCartOrAddresses) {
-                // Skeleton loading state
+                
                 Box(
                     modifier = Modifier.fillMaxWidth().height(100.dp).padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator() // Simplification for shimmer
+                    CircularProgressIndicator() 
                 }
             } else {
                 AddressSection(
@@ -464,7 +464,7 @@ private fun PaymentResultOverlay(
     val am = LocalAccessibilityManager.current
     val isReducedMotion = am?.calculateRecommendedTimeoutMillis(1000, true) == 1000L
 
-    // Animations
+    
     val slideAnim = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 0f else 300f) }
     val badgeScale = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
     val badgeAlpha = remember { androidx.compose.animation.core.Animatable(if (isReducedMotion) 1f else 0f) }
@@ -533,13 +533,13 @@ private fun PaymentResultOverlay(
                             .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Badge
+                        
                         Box(
                             modifier = Modifier.size(96.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             if (!isPending) {
-                                // Creative Pulse background
+                                
                                 Box(
                                     modifier = Modifier
                                         .size(64.dp)
@@ -559,7 +559,7 @@ private fun PaymentResultOverlay(
                                         scaleX = badgeScale.value
                                         scaleY = badgeScale.value
                                         alpha = badgeAlpha.value
-                                        // Bounce rotation effect
+                                        
                                         rotationZ = (1f - badgeScale.value) * -45f
                                     }
                                     .background(
@@ -590,7 +590,7 @@ private fun PaymentResultOverlay(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Column(modifier = Modifier.alpha(contentAlpha.value)) {
-                            // Method
+                            
                             val methodText = when (paymentMethod) {
                                 PaymentMethod.CASH -> stringResource(R.string.payment_paid_by_cash)
                                 PaymentMethod.ONLINE -> stringResource(R.string.payment_paid_by_card)
@@ -604,7 +604,7 @@ private fun PaymentResultOverlay(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Reference
+                            
                             Text(
                                 text = stringResource(R.string.payment_reference, orderId),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -615,7 +615,7 @@ private fun PaymentResultOverlay(
                             HorizontalDivider()
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Items (Staggered or simple fade)
+                            
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
