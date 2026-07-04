@@ -86,4 +86,5 @@ dependencies {
     implementation(project(":features:search"))
     implementation(project(":features:categories"))
     implementation(project(":feature:ads"))
+    implementation(project(":features:brands"))
 }

@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.design_system.components.FilterChip
 import com.dukkan.domain.model.Brand
+import com.dukkan.brands.R
+import com.dukkan.brands.viewModel.BrandsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

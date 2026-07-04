@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.dukkan.auth.view.AuthScreen
+import com.dukkan.brands.view.BrandProductsScreen
+import com.dukkan.brands.view.BrandsScreen
 import com.dukkan.categories.view.CategoriesScreen
 import com.dukkan.categories.view.CategoryProductsScreen
 import com.dukkan.favorites.view.FavoritesView
@@ -67,6 +69,10 @@ fun AppNavGraph(
                 onNavigateToCategories = { navController.navigate(Screen.Categories) },
                 onCategoryClick = { category ->
                     navController.navigate(Screen.CategoryProducts(category.handle))
+                },
+                onNavigateToBrands = { navController.navigate(Screen.Brands) },
+                onBrandClick = { brand ->
+                    navController.navigate(Screen.BrandProducts(brand.name))
                 }
             )
         }
@@ -133,6 +139,25 @@ fun AppNavGraph(
             val args = backStackEntry.toRoute<Screen.CategoryProducts>()
             CategoryProductsScreen(
                 categoryHandle = args.categoryHandle,
+                onProductClick = { product ->
+                    navController.navigate(Screen.ProductDetail(productId = product.id))
+                }
+            )
+        }
+
+        composable<Screen.Brands> {
+            BrandsScreen(
+                onBackClick = { navController.popBackStack() },
+                onBrandClick = { brand ->
+                    navController.navigate(Screen.BrandProducts(brand.name))
+                }
+            )
+        }
+
+        composable<Screen.BrandProducts> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.BrandProducts>()
+            BrandProductsScreen(
+                vendor = args.vendor,
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 }

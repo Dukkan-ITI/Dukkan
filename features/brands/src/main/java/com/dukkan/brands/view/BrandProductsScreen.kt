@@ -25,7 +25,7 @@ import com.dukkan.domain.model.asString
 import androidx.compose.ui.res.stringResource
 import com.dukkan.brands.uiState.BrandProductsUiState
 import com.dukkan.brands.viewModel.BrandProductsViewModel
-import com.dukkan.categories.R
+import com.dukkan.brands.R
 
 @Composable
 fun BrandProductsScreen(
