@@ -11,16 +11,6 @@ android {
             "PAYMENT_BACKEND_URL",
             "\"${providers.gradleProperty("paymentBackendUrl").getOrElse("http://10.0.2.2:8080/api/v1/")}\""
         )
-        buildConfigField(
-            "String",
-            "PAYMOB_PUBLIC_KEY",
-            "\"${providers.gradleProperty("paymobPublicKey").getOrElse("missing_key")}\""
-        )
-        buildConfigField(
-            "String",
-            "PAYMOB_CLIENT_SECRET",
-            "\"${providers.gradleProperty("paymobClientSecret").getOrElse("missing_secret")}\""
-        )
     }
 
     buildFeatures {

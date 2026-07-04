@@ -77,3 +77,10 @@ build/
 *.diff
 patches/
 domain-compile.log
+
+# APK / AAB
+*.apk
+*.aab
+
+# Paymob SDK
+app/libs/*.aar

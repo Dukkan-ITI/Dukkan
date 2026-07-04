@@ -40,66 +40,13 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartId: String,
         cartTotal: com.dukkan.domain.model.Money,
     ): Result<PaymentIntentionResult> = runCatching {
-        
-        val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
-        val publicKey = com.dukkan.payment.BuildConfig.PAYMOB_PUBLIC_KEY
-        
-        val finalAmountInEgp = if (cartTotal.currencyCode.equals("USD", ignoreCase = true)) {
-            val exchangeRate = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                // Frankfurter API doesn't support EGP. Using free ExchangeRate-API which supports EGP and needs no key.
-                val response = java.net.URL("https://open.er-api.com/v6/latest/USD").readText()
-                org.json.JSONObject(response).getJSONObject("rates").getDouble("EGP")
-            }
-            cartTotal.amount.toDouble() * exchangeRate
-        } else {
-            cartTotal.amount.toDouble()
-        }
-        val amountInCents = (finalAmountInEgp * 100).toInt()
-        val json = org.json.JSONObject().apply {
-            put("amount", amountInCents) 
-            put("currency", "EGP")
-            
-            val paymentMethods = org.json.JSONArray().apply {
-                put(5766356)
-                put(5766720)
-            }
-            put("payment_methods", paymentMethods)
-            
-            val billing = org.json.JSONObject().apply {
-                put("first_name", "Test")
-                put("last_name", "User")
-                put("email", "test@dukkan.com")
-                put("phone_number", "01000000000")
-            }
-            put("billing_data", billing)
-        }
-        
-        val client = okhttp3.OkHttpClient()
-        val request = okhttp3.Request.Builder()
-            .url("https://accept.paymob.com/v1/intention/")
-            .post(okhttp3.RequestBody.create("application/json".toMediaType(), json.toString()))
-            .addHeader("Authorization", "Token $secretKey")
-            .build()
-            
-        val response = kotlinx.coroutines.Dispatchers.IO.let {
-            kotlinx.coroutines.withContext(it) {
-                client.newCall(request).execute()
-            }
-        }
-        
-        if (!response.isSuccessful) {
-            error("Paymob API error: ${response.code} ${response.body?.string()}")
-        }
-        
-        val responseBody = response.body?.string() ?: ""
-        val jsonResponse = org.json.JSONObject(responseBody)
-        val clientSecret = jsonResponse.getString("client_secret")
-        
-        PaymentIntentionResult(
-            orderId = "ONLINE-${java.util.UUID.randomUUID().toString().take(8)}",
-            clientSecret = clientSecret,
-            publicKey = publicKey
+        val request = IntentionRequest(
+            addressId = if (address is CheckoutAddress.Saved) sanitizeAddressId(address.addressId) else null,
+            oneOffAddress = if (address is CheckoutAddress.OneOff) address.address.toDto() else null,
+            cartId = cartId,
         )
+        val response = api.createPaymentIntention(idempotencyKey, request)
+        response.toDomainModel()
     }
 
     override suspend fun verifyPaymentStatus(
