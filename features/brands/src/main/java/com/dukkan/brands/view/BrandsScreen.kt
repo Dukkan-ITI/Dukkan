@@ -8,12 +8,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.design_system.components.FilterChip
 import com.dukkan.domain.model.Brand
 import com.dukkan.brands.R
@@ -70,7 +70,7 @@ fun BrandsScreen(
     onBrandClick: (Brand) -> Unit,
     viewModel: BrandsViewModel = hiltViewModel()
 ) {
-    val brands by viewModel.brandsState.collectAsState()
+    val brands by viewModel.brandsState.collectAsStateWithLifecycle()
 
     BrandsScreenContent(
         brands = brands,
