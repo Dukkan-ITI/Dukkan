@@ -71,3 +71,9 @@ secrets.properties
 .gradle/
 build/
 **/build/
+
+# Patch and log files
+*.patch
+*.diff
+patches/
+domain-compile.log
