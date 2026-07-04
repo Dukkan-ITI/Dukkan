@@ -43,4 +43,7 @@ sealed class Screen {
 
     @Serializable
     object SavedAddresses
+
+    @Serializable
+    object Payment
 }

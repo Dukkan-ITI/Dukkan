@@ -39,4 +39,20 @@
     <!-- Still pending -->
     <string name="payment_still_pending_title">الدفع قيد المعالجة</string>
     <string name="payment_still_pending_body">دفعتك قيد المعالجة. سنُعلمك فور التأكيد. يمكنك تتبع طلبك أدناه.</string>
+    <!-- Address Edit Sheet -->
+    <string name="payment_address_delivery">عنوان التوصيل</string>
+    <string name="payment_address_first_name">الاسم الأول</string>
+    <string name="payment_address_last_name">اسم العائلة</string>
+    <string name="payment_address_street">عنوان الشارع</string>
+    <string name="payment_address_city">المدينة</string>
+    <string name="payment_address_phone">رقم الهاتف</string>
+    <string name="payment_address_confirm">تأكيد العنوان</string>
+
+    <!-- Error messages -->
+    <string name="payment_error_unknown">خطأ غير معروف</string>
+    <string name="payment_error_initialize">فشل في بدء عملية الدفع</string>
+    <string name="payment_error_pending">الدفع قيد الانتظار</string>
+    <string name="payment_error_cancelled">تم إلغاء الدفع أو فشل.</string>
+    <string name="payment_error_status">حالة الدفع: %1$s</string>
+    <string name="payment_error_failed">فشلت عملية الدفع</string>
 </resources>

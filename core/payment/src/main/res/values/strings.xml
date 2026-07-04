@@ -39,4 +39,20 @@
     <string name="payment_subtotal">Subtotal</string>
     <string name="payment_total">Total</string>
     <string name="payment_done">Done</string>
+    <!-- Address Edit Sheet -->
+    <string name="payment_address_delivery">Delivery Address</string>
+    <string name="payment_address_first_name">First Name</string>
+    <string name="payment_address_last_name">Last Name</string>
+    <string name="payment_address_street">Street Address</string>
+    <string name="payment_address_city">City</string>
+    <string name="payment_address_phone">Phone Number</string>
+    <string name="payment_address_confirm">Confirm Address</string>
+
+    <!-- Error messages -->
+    <string name="payment_error_unknown">Unknown error</string>
+    <string name="payment_error_initialize">Failed to initialize payment</string>
+    <string name="payment_error_pending">Payment is pending</string>
+    <string name="payment_error_cancelled">Payment was cancelled or failed.</string>
+    <string name="payment_error_status">Payment status: %1$s</string>
+    <string name="payment_error_failed">Payment failed</string>
 </resources>

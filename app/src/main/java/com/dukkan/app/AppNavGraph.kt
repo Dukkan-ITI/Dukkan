@@ -95,7 +95,7 @@ fun AppNavGraph(
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { navController.navigate("payment") },
+                onCheckoutClick = { navController.navigate(Screen.Payment) },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
