@@ -118,9 +118,15 @@ private fun SavedAddressesContent(
         Box(modifier = Modifier.weight(1f)) {
             when {
                 state.isLoading && state.addresses.isEmpty() -> LoadingScreen()
-                state.error != null && state.addresses.isEmpty() -> ErrorScreen(message = state.error, onRetry = onRetry)
+                state.error != null && state.addresses.isEmpty() -> ErrorScreen(
+                    message = state.error,
+                    onRetry = onRetry
+                )
+
                 state.addresses.isEmpty() -> Box(
-                    modifier = Modifier.fillMaxSize().padding(24.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -175,9 +181,8 @@ private fun SavedAddressesContent(
         )
     }
 
-    state.deleteCandidate?.let { candidate ->
+    state.deleteCandidate?.let {
         DeleteAddressDialog(
-            address = candidate,
             isDeleting = state.isDeleting,
             onDismiss = onDismissDeleteDialog,
             onConfirm = onConfirmDelete,
