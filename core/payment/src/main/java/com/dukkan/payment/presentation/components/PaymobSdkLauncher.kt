@@ -2,6 +2,10 @@ package com.dukkan.payment.presentation.components
 
 import androidx.appcompat.app.AppCompatActivity
 
+internal enum class PaymobSdkStatus {
+    SUCCESS, PENDING, FAILED
+}
+
 internal data class PaymobThemeColors(
     val primary: Int,
     val onPrimary: Int,
@@ -14,7 +18,7 @@ internal data class PaymobThemeColors(
 internal class PaymobSdkLauncher(
     private val activity: AppCompatActivity,
     private val colors: PaymobThemeColors,
-    private val onFinished: () -> Unit,
+    private val onFinished: (PaymobSdkStatus, String?) -> Unit,
 ) : com.paymob.paymob_sdk.ui.PaymobSdkListener {
 
     fun launch(clientSecret: String, publicKey: String) {
@@ -32,14 +36,14 @@ internal class PaymobSdkLauncher(
     }
 
     override fun onSuccess(payResponse: java.util.HashMap<String, String?>) {
-        onFinished()
+        onFinished(PaymobSdkStatus.SUCCESS, null)
     }
 
     override fun onFailure(msg: String?) {
-        onFinished()
+        onFinished(PaymobSdkStatus.FAILED, msg)
     }
 
     override fun onPending() {
-        onFinished()
+        onFinished(PaymobSdkStatus.PENDING, null)
     }
 }

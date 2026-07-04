@@ -15,4 +15,10 @@ sealed interface PaymentResult {
     data class Pending(
         val orderId: String,
     ) : PaymentResult
+
+    data class Failed(
+        val error: String,
+    ) : PaymentResult
+
+    object Cancelled : PaymentResult
 }

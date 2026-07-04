@@ -154,7 +154,10 @@ internal class CheckoutViewModel @Inject constructor(
             }
 
             CheckoutEvent.SubmitOrder             -> submitOrder()
-            CheckoutEvent.PaymobSdkFinished       -> verifyStatus()
+            is CheckoutEvent.PaymobSdkFinished    -> handlePaymobSdkFinished(event.status, event.message)
+            CheckoutEvent.CancelPaymentFlow       -> {
+                // If we want to handle internal state when flow is cancelled
+            }
             CheckoutEvent.AppResumedDuringPayment -> onAppResumedDuringPayment()
             
             CheckoutEvent.Retry -> {
@@ -225,6 +228,19 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 },
             )
+        }
+    }
+
+    private fun handlePaymobSdkFinished(status: com.dukkan.payment.presentation.components.PaymobSdkStatus, message: String?) {
+        when (status) {
+            com.dukkan.payment.presentation.components.PaymobSdkStatus.SUCCESS -> verifyStatus()
+            com.dukkan.payment.presentation.components.PaymobSdkStatus.PENDING -> {
+                _uiState.update { it.copy(error = "Payment is pending") }
+            }
+            com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
+                val errorMsg = message ?: "Payment was cancelled or failed."
+                _uiState.update { it.copy(result = OrderResult.Failure(errorMsg, canRetry = true)) }
+            }
         }
     }
 
