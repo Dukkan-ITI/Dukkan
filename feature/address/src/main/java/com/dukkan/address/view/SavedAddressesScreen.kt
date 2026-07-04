@@ -34,12 +34,12 @@ import com.dukkan.address.components.AddressFormSheet
 import com.dukkan.address.components.DeleteAddressDialog
 import com.dukkan.address.viewmodel.SavedAddressesState
 import com.dukkan.address.viewmodel.SavedAddressesViewModel
-import com.example.design_system.components.ErrorScreen
-import com.example.design_system.components.GuestPlaceholderScreen
-import com.example.design_system.components.LoadingScreen
-import com.example.design_system.components.PrimaryButton
-import com.example.design_system.theme.AppTheme
-import com.msayeh.domain.model.Address
+import com.dukkan.design_system.components.ErrorScreen
+import com.dukkan.design_system.components.GuestPlaceholderScreen
+import com.dukkan.design_system.components.LoadingScreen
+import com.dukkan.design_system.components.PrimaryButton
+import com.dukkan.design_system.theme.AppTheme
+import com.dukkan.domain.model.Address
 
 @Composable
 fun SavedAddressesScreen(

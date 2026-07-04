@@ -1,7 +1,7 @@
-package com.msayeh.domain.usecase.address
+package com.dukkan.domain.usecase.address
 
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.repository.AddressRepository
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.repository.AddressRepository
 import javax.inject.Inject
 
 class GetAddressesUseCase @Inject constructor(

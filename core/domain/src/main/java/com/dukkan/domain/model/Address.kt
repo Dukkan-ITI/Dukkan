@@ -1,4 +1,4 @@
-package com.msayeh.domain.model
+package com.dukkan.domain.model
 
 data class Address(
     val id: String? = null,

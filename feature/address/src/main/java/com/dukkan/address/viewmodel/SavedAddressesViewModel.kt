@@ -2,13 +2,13 @@ package com.dukkan.address.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.usecase.GetCurrentUserUseCase
-import com.msayeh.domain.usecase.address.AddAddressUseCase
-import com.msayeh.domain.usecase.address.DeleteAddressUseCase
-import com.msayeh.domain.usecase.address.GetAddressesUseCase
-import com.msayeh.domain.usecase.address.SetDefaultAddressUseCase
-import com.msayeh.domain.usecase.address.UpdateAddressUseCase
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.address.AddAddressUseCase
+import com.dukkan.domain.usecase.address.DeleteAddressUseCase
+import com.dukkan.domain.usecase.address.GetAddressesUseCase
+import com.dukkan.domain.usecase.address.SetDefaultAddressUseCase
+import com.dukkan.domain.usecase.address.UpdateAddressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,21 +43,28 @@ class SavedAddressesViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
             getAddresses()
-                .onSuccess { list -> _state.value = _state.value.copy(isLoading = false, addresses = list) }
-                .onFailure { e -> _state.value = _state.value.copy(isLoading = false, error = e.message) }
+                .onSuccess { list ->
+                    _state.value = _state.value.copy(isLoading = false, addresses = list)
+                }
+                .onFailure { e ->
+                    _state.value = _state.value.copy(isLoading = false, error = e.message)
+                }
         }
     }
 
     fun onAddClick() {
-        _state.value = _state.value.copy(isFormSheetVisible = true, editingAddress = null, formError = null)
+        _state.value =
+            _state.value.copy(isFormSheetVisible = true, editingAddress = null, formError = null)
     }
 
     fun onEditClick(address: Address) {
-        _state.value = _state.value.copy(isFormSheetVisible = true, editingAddress = address, formError = null)
+        _state.value =
+            _state.value.copy(isFormSheetVisible = true, editingAddress = address, formError = null)
     }
 
     fun dismissFormSheet() {
-        _state.value = _state.value.copy(isFormSheetVisible = false, editingAddress = null, formError = null)
+        _state.value =
+            _state.value.copy(isFormSheetVisible = false, editingAddress = null, formError = null)
     }
 
     fun saveAddress(address: Address) {
@@ -66,7 +73,11 @@ class SavedAddressesViewModel @Inject constructor(
             val result = if (address.id == null) addAddress(address) else updateAddress(address)
             result
                 .onSuccess {
-                    _state.value = _state.value.copy(isSaving = false, isFormSheetVisible = false, editingAddress = null)
+                    _state.value = _state.value.copy(
+                        isSaving = false,
+                        isFormSheetVisible = false,
+                        editingAddress = null
+                    )
                     loadAddresses()
                 }
                 .onFailure { e ->
@@ -94,7 +105,11 @@ class SavedAddressesViewModel @Inject constructor(
                     loadAddresses()
                 }
                 .onFailure { e ->
-                    _state.value = _state.value.copy(isDeleting = false, deleteCandidate = null, error = e.message)
+                    _state.value = _state.value.copy(
+                        isDeleting = false,
+                        deleteCandidate = null,
+                        error = e.message
+                    )
                 }
         }
     }

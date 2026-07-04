@@ -27,8 +27,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dukkan.address.R
-import com.example.design_system.components.PrimaryButton
-import com.msayeh.domain.model.Address
+import com.dukkan.design_system.components.PrimaryButton
+import com.dukkan.domain.model.Address
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

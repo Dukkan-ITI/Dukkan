@@ -1,6 +1,6 @@
 package com.dukkan.address.viewmodel
 
-import com.msayeh.domain.model.Address
+import com.dukkan.domain.model.Address
 
 data class SavedAddressesState(
     val isLoading: Boolean = false,
