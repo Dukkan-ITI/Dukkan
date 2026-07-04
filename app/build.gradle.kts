@@ -44,6 +44,7 @@ android {
     buildFeatures {
         compose = true
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -93,4 +94,10 @@ dependencies {
     implementation(libs.ssp)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+
+    // Required by Paymob SDK at runtime (SDK uses Timber internally)
+    implementation(libs.timber)
+
+    // Required by Paymob SDK at runtime (SDK uses Koin internally for DI)
+    implementation(libs.koin.android)
 }
