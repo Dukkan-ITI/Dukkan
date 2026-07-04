@@ -1,7 +1,7 @@
 package com.dukkan.domain.repository
 
-import com.msayeh.domain.model.orders.Order
-import com.msayeh.domain.model.orders.OrdersPage
+import com.dukkan.domain.model.orders.Order
+import com.dukkan.domain.model.orders.OrdersPage
 
 
 interface OrderRepository {

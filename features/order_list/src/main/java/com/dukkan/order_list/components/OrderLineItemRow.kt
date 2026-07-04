@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.dukkan.domain.model.asString
 import com.dukkan.order_list.R
-import com.msayeh.domain.model.asString
-import com.msayeh.domain.model.orders.OrderLineItem
+import com.dukkan.domain.model.orders.OrderLineItem
 
 @Composable
 fun OrderLineItemRow(item: OrderLineItem) {

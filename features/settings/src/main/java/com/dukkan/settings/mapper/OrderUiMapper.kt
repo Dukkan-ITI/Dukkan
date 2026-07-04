@@ -1,10 +1,10 @@
 package com.dukkan.settings.mapper
 
-import com.example.design_system.components.OrderStatus
-import com.example.design_system.components.OrderUi
-import com.msayeh.domain.model.asString
-import com.msayeh.domain.model.orders.Order
-import com.msayeh.domain.model.orders.OrderDisplayStatus
+import com.dukkan.design_system.components.OrderStatus
+import com.dukkan.design_system.components.OrderUi
+import com.dukkan.domain.model.asString
+import com.dukkan.domain.model.orders.Order
+import com.dukkan.domain.model.orders.OrderDisplayStatus
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone

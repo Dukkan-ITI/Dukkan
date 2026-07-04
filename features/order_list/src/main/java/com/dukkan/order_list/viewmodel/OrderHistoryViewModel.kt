@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import android.content.Context
 import com.dukkan.order_list.R
 import com.dukkan.order_list.uistate.OrderHistoryUIState
-import com.msayeh.domain.usecase.order.GetAllOrdersUseCase
+import com.dukkan.domain.usecase.order.GetAllOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.msayeh.domain.model.orders
+package com.dukkan.domain.model.orders
 
 enum class OrderDisplayStatus {
     DELIVERED,

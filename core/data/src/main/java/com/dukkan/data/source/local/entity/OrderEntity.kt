@@ -2,10 +2,10 @@ package com.dukkan.data.source.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.orders.Order
-import com.msayeh.domain.model.orders.OrderLineItem
-import com.msayeh.domain.model.orders.ShippingAddress
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.orders.Order
+import com.dukkan.domain.model.orders.OrderLineItem
+import com.dukkan.domain.model.orders.ShippingAddress
 import java.math.BigDecimal
 
 @Entity(tableName = "orders")

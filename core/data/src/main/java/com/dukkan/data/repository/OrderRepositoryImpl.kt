@@ -5,8 +5,8 @@ import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.dao.OrderDao
 import com.dukkan.data.source.local.entity.OrderEntity
 import com.dukkan.data.source.remote.data_source.order.OrderRemoteDataSource
-import com.msayeh.domain.model.orders.Order
-import com.msayeh.domain.model.orders.OrdersPage
+import com.dukkan.domain.model.orders.Order
+import com.dukkan.domain.model.orders.OrdersPage
 import com.dukkan.domain.repository.OrderRepository
 import javax.inject.Inject
 

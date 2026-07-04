@@ -1,4 +1,4 @@
-package com.msayeh.domain.model.orders
+package com.dukkan.domain.model.orders
 
 import com.dukkan.domain.model.Money
 

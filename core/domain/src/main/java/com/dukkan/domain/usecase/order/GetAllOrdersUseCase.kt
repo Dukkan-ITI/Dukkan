@@ -1,7 +1,7 @@
-package com.msayeh.domain.usecase.order
+package com.dukkan.domain.usecase.order
 
 
-import com.msayeh.domain.model.orders.OrdersPage
+import com.dukkan.domain.model.orders.OrdersPage
 import com.dukkan.domain.repository.OrderRepository
 import javax.inject.Inject
 

@@ -1,6 +1,6 @@
 package com.dukkan.order_list.uistate
 
-import com.msayeh.domain.model.orders.Order
+import com.dukkan.domain.model.orders.Order
 
 data class OrderHistoryUIState(
     val orders: List<Order> = emptyList(),

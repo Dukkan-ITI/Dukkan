@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,10 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.design_system.R as DesignSystemR
-import com.example.design_system.components.ThemedCard
-import com.msayeh.domain.model.asString
-import com.msayeh.domain.model.orders.Order
+import com.dukkan.design_system.R as DesignSystemR
+import com.dukkan.domain.model.asString
+import com.dukkan.domain.model.orders.Order
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -54,10 +52,7 @@ fun OrderCard(
         }
     }
 
-    ThemedCard(
-        modifier = modifier
-            .clickable(enabled = expandable) { isExpanded = !isExpanded },
-    ) {
+
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -116,5 +111,3 @@ fun OrderCard(
             }
         }
     }
-}
-

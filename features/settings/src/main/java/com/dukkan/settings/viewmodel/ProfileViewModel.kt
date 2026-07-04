@@ -2,7 +2,6 @@ package com.dukkan.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dukkan.design_system.components.OrderStatus
 import com.dukkan.design_system.components.OrderUi
 import com.dukkan.domain.model.AppCurrency
 import com.dukkan.domain.model.AppLanguage
@@ -18,7 +17,7 @@ import com.dukkan.domain.usecase.settings.SetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.SetLanguageUseCase
 import com.dukkan.domain.usecase.settings.SetThemeUseCase
 import com.dukkan.settings.mapper.toOrderUi
-import com.msayeh.domain.usecase.order.GetRecentOrdersUseCase
+import com.dukkan.domain.usecase.order.GetRecentOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

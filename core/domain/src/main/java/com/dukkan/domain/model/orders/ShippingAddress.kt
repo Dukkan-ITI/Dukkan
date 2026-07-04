@@ -1,4 +1,4 @@
-package com.msayeh.domain.model.orders
+package com.dukkan.domain.model.orders
 
 data class ShippingAddress(
     val firstName: String?,

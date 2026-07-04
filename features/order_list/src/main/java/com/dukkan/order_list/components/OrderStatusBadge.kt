@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.dukkan.design_system.theme.DukkanTheme
 import com.dukkan.order_list.R
-import com.example.design_system.theme.DukkanTheme
-import com.msayeh.domain.model.orders.OrderDisplayStatus
+import com.dukkan.domain.model.orders.OrderDisplayStatus
 
 @Composable
 fun OrderStatusBadge(

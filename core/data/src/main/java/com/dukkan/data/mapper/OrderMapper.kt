@@ -1,10 +1,10 @@
 package com.dukkan.data.mapper
 
 import com.dukkan.GetCustomerOrdersQuery
-import com.msayeh.domain.model.Money
-import com.msayeh.domain.model.orders.Order
-import com.msayeh.domain.model.orders.OrderLineItem
-import com.msayeh.domain.model.orders.ShippingAddress
+import com.dukkan.domain.model.Money
+import com.dukkan.domain.model.orders.Order
+import com.dukkan.domain.model.orders.OrderLineItem
+import com.dukkan.domain.model.orders.ShippingAddress
 import java.math.BigDecimal
 
 object OrderMapper {
@@ -21,7 +21,8 @@ object OrderMapper {
                 currencyCode = node.currentTotalPrice.currencyCode.name
             ),
             subtotalPrice = Money(
-                amount = (node.currentSubtotalPrice.amount as? String)?.let { BigDecimal(it) } ?: BigDecimal.ZERO,
+                amount = (node.currentSubtotalPrice.amount as? String)?.let { BigDecimal(it) }
+                    ?: BigDecimal.ZERO,
                 currencyCode = node.currentSubtotalPrice.currencyCode.name
             ),
             lineItems = node.lineItems.edges.map { edge ->
