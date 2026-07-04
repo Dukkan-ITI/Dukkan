@@ -32,6 +32,7 @@ android {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:navigation"))
     implementation(project(":core:design_system"))
 
     // SETUP: Download the Paymob Android SDK .aar from https://docs.paymob.com/docs/android-sdk

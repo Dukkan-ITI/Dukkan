@@ -30,6 +30,10 @@
     <string name="payment_verifying">Verifying payment…</string>
 
     <!-- Receipt UI -->
+    <string name="payment_success_title">Order Confirmed 🎉</string>
+    <string name="payment_success_order_id">Order #%1$s</string>
+    <string name="payment_still_pending_title">Payment Processing</string>
+    <string name="payment_still_pending_body">Your payment is being processed. We will notify you once confirmed. You can track your order below.</string>
     <string name="payment_failed_title">Payment Failed</string>
     <string name="payment_receipt_successful">Payment Successful</string>
     <string name="payment_receipt_pending">Payment Pending</string>
