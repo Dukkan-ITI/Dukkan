@@ -44,7 +44,17 @@ internal class PaymentRepositoryImpl @Inject constructor(
         val secretKey = com.dukkan.payment.BuildConfig.PAYMOB_CLIENT_SECRET
         val publicKey = com.dukkan.payment.BuildConfig.PAYMOB_PUBLIC_KEY
         
-        val amountInCents = (cartTotal.amount * java.math.BigDecimal("100")).toInt()
+        val finalAmountInEgp = if (cartTotal.currencyCode.equals("USD", ignoreCase = true)) {
+            val exchangeRate = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                // Frankfurter API doesn't support EGP. Using free ExchangeRate-API which supports EGP and needs no key.
+                val response = java.net.URL("https://open.er-api.com/v6/latest/USD").readText()
+                org.json.JSONObject(response).getJSONObject("rates").getDouble("EGP")
+            }
+            cartTotal.amount.toDouble() * exchangeRate
+        } else {
+            cartTotal.amount.toDouble()
+        }
+        val amountInCents = (finalAmountInEgp * 100).toInt()
         val json = org.json.JSONObject().apply {
             put("amount", amountInCents) 
             put("currency", "EGP")
