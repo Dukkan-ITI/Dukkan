@@ -16,14 +16,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.Brand
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
@@ -31,6 +32,7 @@ import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
+import com.dukkan.home.components.HomeBrandsSection
 
 @Composable
 fun HomeScreen(
@@ -41,8 +43,10 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
-) {
-    val uiState by viewModel.uiState.collectAsState()
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
+    ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreenContent(
         modifier = modifier,
@@ -72,7 +76,10 @@ fun HomeScreenContent(
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
-) {
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
+
+    ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background

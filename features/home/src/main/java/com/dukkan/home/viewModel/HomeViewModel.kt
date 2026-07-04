@@ -3,11 +3,9 @@ package com.dukkan.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.model.Brand
-import com.dukkan.domain.model.Category.Category
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.GetBrandsUseCase
-import com.dukkan.domain.usecase.category.GetCategoriesUseCase
 import com.dukkan.domain.usecase.category.GetProductTypesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
@@ -32,6 +30,7 @@ class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getProductTypesUseCase: GetProductTypesUseCase,
+    private val getBrandsUseCase: GetBrandsUseCase,
     getFavorites: GetFavoritesUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
@@ -39,8 +38,9 @@ class HomeViewModel @Inject constructor(
 
     private data class HomeContent(
         val products: List<Product>,
-        val categories: List<String>
-    )
+        val categories: List<String>,
+        val brands: List<Brand>,
+        )
 
     private val _homeContent = MutableStateFlow(HomeContent(emptyList(), emptyList(), emptyList()))
     private val _isLoading = MutableStateFlow(true)
@@ -96,6 +96,7 @@ class HomeViewModel @Inject constructor(
                 // If it returns List<Product>, we would need to adjust the UseCase or Repository
                 val products = result
                 val categories = getProductTypesUseCase()
+                val brands = getBrandsUseCase().firstOrNull() ?: emptyList()
 
                 _homeContent.value = HomeContent(products, categories, brands)
                 _isLoading.value = false

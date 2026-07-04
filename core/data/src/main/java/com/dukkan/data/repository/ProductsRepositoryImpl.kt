@@ -53,15 +53,15 @@ class ProductsRepositoryImpl(
         )
     }
 
-    override suspend fun getProductsByVendor(
-        vendor: String,
+    override suspend fun getProductsByType(
+        type: String,
         limit: Int,
         after: String?,
     ): List<Product> {
         val country = settingsRepository.currency.first().countryCode
         val language = settingsRepository.language.first().languageCode
         return productsDataSource.getProductsByVendor(
-            vendor = vendor,
+            vendor = type,
             first = limit,
             after = after,
             country = country,
