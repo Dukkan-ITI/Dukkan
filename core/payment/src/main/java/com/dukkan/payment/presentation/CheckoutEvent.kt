@@ -9,7 +9,12 @@ internal sealed interface CheckoutEvent {
     data class SetEditingAddress(val isEditing: Boolean) : CheckoutEvent
     
     object SubmitOrder : CheckoutEvent
-    object PaymobSdkFinished : CheckoutEvent
+    data class PaymobSdkFinished(
+        val status: com.dukkan.payment.presentation.components.PaymobSdkStatus,
+        val message: String?
+    ) : CheckoutEvent
+    
+    object CancelPaymentFlow : CheckoutEvent
     object AppResumedDuringPayment : CheckoutEvent
     object Retry : CheckoutEvent
     object DismissResult : CheckoutEvent

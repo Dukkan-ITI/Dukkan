@@ -100,6 +100,10 @@ internal fun CheckoutScreen(
         // We now rely entirely on the receipt's Done button to trigger onPaymentResult
     }
 
+    androidx.activity.compose.BackHandler {
+        onPaymentResult(PaymentResult.Cancelled)
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -150,7 +154,9 @@ internal fun CheckoutScreen(
                     outline   = colorScheme.outline.toArgb(),
                     error     = colorScheme.error.toArgb(),
                 ),
-                onFinished = { onEvent(CheckoutEvent.PaymobSdkFinished) },
+                onFinished = { status, msg -> 
+                    onEvent(CheckoutEvent.PaymobSdkFinished(status, msg)) 
+                },
             )
         }
         LaunchedEffect(credentials) {
@@ -166,7 +172,7 @@ internal fun CheckoutScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.payment_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
+                    IconButton(onClick = { onPaymentResult(PaymentResult.Cancelled) }) {
                         Icon(
                             imageVector = Icons.Default.LocalShipping,
                             contentDescription = stringResource(R.string.payment_navigate_up),
