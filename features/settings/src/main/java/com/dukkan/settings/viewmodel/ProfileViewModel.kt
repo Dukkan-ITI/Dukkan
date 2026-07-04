@@ -1,5 +1,6 @@
 package com.dukkan.settings.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.design_system.components.OrderUi
@@ -9,6 +10,8 @@ import com.dukkan.domain.model.AuthUser
 import com.dukkan.domain.model.ThemeMode
 import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.SignOutUseCase
+import com.dukkan.domain.usecase.cart.ClearCartOnLogoutUseCase
+import com.dukkan.domain.usecase.favorite.ClearFavoritesOnLogoutUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
@@ -40,7 +43,11 @@ class ProfileViewModel @Inject constructor(
     private val setCurrencyUseCase: SetCurrencyUseCase,
     private val setLanguageUseCase: SetLanguageUseCase,
     private val signOutUseCase: SignOutUseCase,
-) : ViewModel() {
+    private val clearFavoritesOnLogoutUseCase: ClearFavoritesOnLogoutUseCase,
+    private val clearCartOnLogoutUseCase: ClearCartOnLogoutUseCase,
+
+
+    ) : ViewModel() {
 
     private val _user = MutableStateFlow<AuthUser?>(null)
     private val _isLoading = MutableStateFlow(true)
@@ -119,7 +126,24 @@ class ProfileViewModel @Inject constructor(
 
     fun onLogout(onComplete: () -> Unit) {
         viewModelScope.launch {
+            val userId = _user.value?.uid
+
             signOutUseCase()
+
+            if (userId != null) {
+                try {
+                    clearFavoritesOnLogoutUseCase(userId)
+                } catch (e: Exception) {
+                    Log.e("ProfileViewModel", "Failed to clear favorites on logout", e)
+                }
+            }
+
+            try {
+                clearCartOnLogoutUseCase()
+            } catch (e: Exception) {
+                Log.e("ProfileViewModel", "Failed to clear cart on logout", e)
+            }
+
             _user.value = null
             _orders.value = emptyList()
             onComplete()

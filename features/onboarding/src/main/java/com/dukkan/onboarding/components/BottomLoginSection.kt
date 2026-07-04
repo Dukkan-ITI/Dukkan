@@ -38,6 +38,7 @@ fun BottomLoginSection(
             fontSize = 14.sp,
             modifier = Modifier.clickable {
                 onSignInClick()
+
             }
         )
 

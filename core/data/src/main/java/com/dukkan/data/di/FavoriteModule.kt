@@ -4,6 +4,8 @@ package com.dukkan.data.di
 import com.dukkan.data.repository.FavoriteRepositoryImpl
 import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSource
 import com.dukkan.data.source.local.data_source.favorites.FavoriteLocalDataSourceImpl
+import com.dukkan.data.source.remote.data_source.favorite.FavoriteFirestoreDataSource
+import com.dukkan.data.source.remote.data_source.favorite.FavoriteFirestoreDataSourceImpl
 
 import com.dukkan.domain.repository.FavoriteRepository
 import dagger.Binds
@@ -27,4 +29,10 @@ abstract class FavoriteModule {
     abstract fun bindFavoriteLocalDataSource(
         impl: FavoriteLocalDataSourceImpl
     ): FavoriteLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteFirestoreDataSource(
+        impl: FavoriteFirestoreDataSourceImpl
+    ): FavoriteFirestoreDataSource
 }
