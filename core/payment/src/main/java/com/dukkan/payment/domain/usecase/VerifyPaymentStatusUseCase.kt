@@ -1,6 +1,6 @@
 package com.dukkan.payment.domain.usecase
 
-import com.msayeh.domain.model.OrderConfirmation
+import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.payment.domain.repository.PaymentRepository
 import javax.inject.Inject
 

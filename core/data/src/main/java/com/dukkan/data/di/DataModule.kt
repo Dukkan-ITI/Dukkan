@@ -103,17 +103,6 @@ object DataModule {
         shopifyTokenStore
     )
 
-    @Singleton
-    @Provides
-    fun provideAddressDataSource(apolloClient: ApolloClient): AddressDataSource =
-        AddressDataSourceImpl(apolloClient)
-
-    @Singleton
-    @Provides
-    fun provideAddressRepository(
-        addressDataSource: AddressDataSource,
-        tokenStore: ShopifyTokenStore,
-    ): AddressRepository = AddressRepositoryImpl(addressDataSource, tokenStore)
 
     @Singleton
     @Provides
@@ -134,6 +123,6 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideCouponRepository(couponStore: com.dukkan.data.source.local.CouponStore): com.msayeh.domain.repository.CouponRepository =
+    fun provideCouponRepository(couponStore: com.dukkan.data.source.local.CouponStore): com.dukkan.domain.repository.CouponRepository =
         com.dukkan.data.repository.CouponRepositoryImpl(couponStore)
 }

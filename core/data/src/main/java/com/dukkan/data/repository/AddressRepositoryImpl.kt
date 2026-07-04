@@ -3,9 +3,9 @@ package com.dukkan.data.repository
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.mapper.toMailingAddressInput
 import com.dukkan.data.source.remote.apollo.AddressDataSource
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.repository.AddressRepository
-import com.msayeh.domain.repository.AuthRepository
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.repository.AddressRepository
+import com.dukkan.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class AddressRepositoryImpl @Inject constructor(

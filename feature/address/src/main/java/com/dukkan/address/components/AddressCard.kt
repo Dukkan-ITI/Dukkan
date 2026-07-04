@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.address.R
-import com.msayeh.domain.model.Address
+import com.dukkan.domain.model.Address
 
 @Composable
 fun AddressCard(

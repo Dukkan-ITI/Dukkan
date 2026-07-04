@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
 import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentMethod
 import com.dukkan.payment.domain.model.PaymobCredentials
-import com.msayeh.domain.model.Address
-import com.msayeh.domain.model.cart.CartSummary
-import com.msayeh.domain.model.OrderConfirmation
+import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.cart.CartSummary
+import com.dukkan.domain.model.OrderConfirmation
 
 @Immutable
 internal data class CheckoutUiState(

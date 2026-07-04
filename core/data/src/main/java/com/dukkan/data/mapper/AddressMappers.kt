@@ -5,7 +5,7 @@ import com.dukkan.CustomerAddressCreateMutation
 import com.dukkan.CustomerAddressUpdateMutation
 import com.dukkan.CustomerAddressesQuery
 import com.dukkan.type.MailingAddressInput
-import com.msayeh.domain.model.Address
+import com.dukkan.domain.model.Address
 
 fun CustomerAddressesQuery.Node.toDomainModel(defaultAddressId: String?): Address = Address(
     id = id,

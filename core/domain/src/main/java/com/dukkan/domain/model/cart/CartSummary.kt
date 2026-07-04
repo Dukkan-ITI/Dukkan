@@ -1,6 +1,6 @@
-package com.msayeh.domain.model.cart
+package com.dukkan.domain.model.cart
 
-import com.msayeh.domain.model.Money
+import com.dukkan.domain.model.Money
 
 /**
  * Lightweight read-only view of a cart passed to the payment feature.

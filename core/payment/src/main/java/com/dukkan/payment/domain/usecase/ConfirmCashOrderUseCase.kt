@@ -1,6 +1,6 @@
 package com.dukkan.payment.domain.usecase
 
-import com.msayeh.domain.model.OrderConfirmation
+import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.payment.domain.repository.PaymentRepository
 import com.dukkan.payment.domain.model.CheckoutAddress
 import javax.inject.Inject
@@ -12,7 +12,7 @@ internal class ConfirmCashOrderUseCase @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.msayeh.domain.model.Money,
+        cartTotal: com.dukkan.domain.model.Money,
     ): Result<OrderConfirmation> = repository.confirmCashOrder(
         idempotencyKey = idempotencyKey,
         address        = address,

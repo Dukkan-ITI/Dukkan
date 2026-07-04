@@ -1,6 +1,6 @@
-package com.msayeh.domain.model
+package com.dukkan.domain.model
 
-import com.msayeh.domain.model.Money
+import com.dukkan.domain.model.Money
 
 /**
  * Terminal result emitted by the payment feature when an order is finalised.

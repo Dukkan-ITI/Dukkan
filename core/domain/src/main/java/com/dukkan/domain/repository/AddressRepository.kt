@@ -1,6 +1,6 @@
-package com.msayeh.domain.repository
+package com.dukkan.domain.repository
 
-import com.msayeh.domain.model.Address
+import com.dukkan.domain.model.Address
 
 interface AddressRepository {
     suspend fun getAddresses(): Result<List<Address>>
