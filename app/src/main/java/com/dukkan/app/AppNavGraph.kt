@@ -107,7 +107,9 @@ fun AppNavGraph(
 
         paymentNavGraph(
             navController    = navController,
-            onOrderConfirmed = {
+            onPaymentResult = { result ->
+                // The caller decides what to do with the payment result.
+                // For now, we just navigate back to Home.
                 navController.navigate(Screen.Home) {
                     popUpTo<Screen.Home> { inclusive = true }
                 }
