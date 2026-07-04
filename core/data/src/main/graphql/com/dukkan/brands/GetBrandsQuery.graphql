@@ -1,0 +1,9 @@
+query GetBrands($first: Int!) {
+    products(first: $first) {
+        edges {
+            node {
+                vendor
+            }
+        }
+    }
+}
