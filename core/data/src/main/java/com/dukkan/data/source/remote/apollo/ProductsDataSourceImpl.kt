@@ -59,11 +59,11 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
             android.util.Log.e("CategoriesDebug", "GraphQL Errors: ${response.errors}")
         }
 
-        val excludedHandles = setOf("frontpage", "automated-collection", "hydrogen")
+//        val excludedHandles = setOf("frontpage", "automated-collection", "hydrogen")
 
         return response.data?.collections?.edges
             ?.mapNotNull { it.node }
-            ?.filter { it.handle !in excludedHandles }
+//            ?.filter { it.handle !in excludedHandles }
             ?: emptyList()
     }
 
