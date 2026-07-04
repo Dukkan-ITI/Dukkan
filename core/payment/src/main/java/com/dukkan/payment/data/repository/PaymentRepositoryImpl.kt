@@ -47,7 +47,8 @@ internal class PaymentRepositoryImpl @Inject constructor(
         val amountInCents = (cartTotal.amount * java.math.BigDecimal("100")).toInt()
         val json = org.json.JSONObject().apply {
             put("amount", amountInCents) 
-            put("currency", cartTotal.currencyCode)
+            // For testing: Force EGP since our integration IDs (5766356, 5766720) are strictly EGP
+            put("currency", "EGP")
             
             // Add the integration IDs here!
             val paymentMethods = org.json.JSONArray().apply {
