@@ -58,8 +58,15 @@ jobs:
       - name: Validate google-services.json
         run: jq empty app/google-services.json
 
+      - name: Download Paymob SDK
+        env:
+          PAYMOB_SDK_URL: ${{ secrets.PAYMOB_SDK_DOWNLOAD_URL }}
+        run: |
+          curl -L "$PAYMOB_SDK_URL" -o app/libs/paymob-sdk.aar
+          unzip -t app/libs/paymob-sdk.aar
+
       - name: Build Android App
-        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
+        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon --no-build-cache
 
       - name: Run Android Lint
         run: ./gradlew :app:lintDebug --stacktrace --no-daemon

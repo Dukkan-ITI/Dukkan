@@ -68,3 +68,11 @@ If you don't do this, the project will use placeholder strings and the Paymob in
 - **PaymentResultOverlay**: A fullscreen animated receipt that handles the Paymob visual callbacks. 
 
 If you ever need to add a new Payment Method (like PayPal), simply add a new `MethodTile` in the UI and wire its click to a new intention use-case!
+
+## ?? 5. Paymob SDK Integration
+The Paymob SDK is distributed as an .aar file. Because committing binary files directly to the repository bloats the git history, paymob-sdk.aar is added to .gitignore.
+
+During Continuous Integration (CI), the AAR is automatically downloaded via a curl step in .github/workflows/android-pr-check.yml.
+
+**For Local Development**: You must download the paymob-sdk.aar from the Paymob developer portal (https://docs.paymob.com/docs/android-sdk) and manually place it in the pp/libs/ directory. If it is missing, your local build will fail!
+
