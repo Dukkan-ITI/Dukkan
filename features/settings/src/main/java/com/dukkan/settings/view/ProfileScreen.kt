@@ -23,10 +23,10 @@ import com.dukkan.settings.components.SettingsCard
 import com.dukkan.settings.components.WishlistRow
 import com.dukkan.settings.viewmodel.ProfileState
 import com.dukkan.settings.viewmodel.ProfileViewModel
-import com.example.design_system.components.bottomBarSpace
-import com.msayeh.domain.model.AppCurrency
-import com.msayeh.domain.model.AppLanguage
-import com.msayeh.domain.model.ThemeMode
+import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.AppCurrency
+import com.dukkan.domain.model.AppLanguage
+import com.dukkan.domain.model.ThemeMode
 
 @Composable
 fun ProfileScreen(

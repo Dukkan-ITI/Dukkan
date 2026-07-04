@@ -1,10 +1,10 @@
 package com.dukkan.settings.viewmodel
 
-import com.example.design_system.components.OrderUi
-import com.msayeh.domain.model.AppCurrency
-import com.msayeh.domain.model.AppLanguage
-import com.msayeh.domain.model.AuthUser
-import com.msayeh.domain.model.ThemeMode
+import com.dukkan.design_system.components.OrderUi
+import com.dukkan.domain.model.AppCurrency
+import com.dukkan.domain.model.AppLanguage
+import com.dukkan.domain.model.AuthUser
+import com.dukkan.domain.model.ThemeMode
 
 data class ProfileState(
     val isLoading: Boolean = true,

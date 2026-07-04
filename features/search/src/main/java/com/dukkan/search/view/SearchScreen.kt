@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.CircularProgressIndicator
@@ -76,11 +75,11 @@ fun SearchScreenContent(
     onQueryChange: (String) -> Unit,
     onSearchSubmit: (String) -> Unit,
     onLoadMore: () -> Unit,
-    onProductClick: (com.msayeh.domain.model.SearchProduct) -> Unit,
-    onCollectionClick: (com.msayeh.domain.model.SearchCollection) -> Unit,
+    onProductClick: (com.dukkan.domain.model.SearchProduct) -> Unit,
+    onCollectionClick: (com.dukkan.domain.model.SearchCollection) -> Unit,
     onOpenFilters: () -> Unit,
     onDismissFilters: () -> Unit,
-    onApplyFilters: (com.msayeh.domain.model.SearchFilter) -> Unit,
+    onApplyFilters: (com.dukkan.domain.model.SearchFilter) -> Unit,
     onClearFilters: () -> Unit
 ) {
     val listState = rememberLazyListState()

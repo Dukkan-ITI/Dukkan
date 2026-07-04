@@ -7,7 +7,7 @@ import com.dukkan.data.source.local.entity.OrderEntity
 import com.dukkan.data.source.remote.data_source.order.OrderRemoteDataSource
 import com.msayeh.domain.model.orders.Order
 import com.msayeh.domain.model.orders.OrdersPage
-import com.msayeh.domain.repository.OrderRepository
+import com.dukkan.domain.repository.OrderRepository
 import javax.inject.Inject
 
 class OrderRepositoryImpl @Inject constructor(

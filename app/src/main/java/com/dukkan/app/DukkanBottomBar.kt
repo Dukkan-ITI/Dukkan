@@ -32,8 +32,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dukkan.navigation.Screen
-import com.example.design_system.components.FloatingBottomBarHeight
-import com.example.design_system.components.FloatingBottomBarMargin
+import com.dukkan.design_system.components.FloatingBottomBarHeight
+import com.dukkan.design_system.components.FloatingBottomBarMargin
 import kotlinx.serialization.ExperimentalSerializationApi
 
 /**

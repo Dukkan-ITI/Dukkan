@@ -1,6 +1,5 @@
 package com.dukkan.shopping_cart.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,8 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.dukkan.shopping_cart.components.CartItemRow
-import com.msayeh.domain.model.cart.CartLine
-import com.msayeh.domain.model.asString
+import com.dukkan.domain.model.cart.CartLine
+import com.dukkan.domain.model.asString
 import com.dukkan.shopping_cart.components.EmptyCartState
 import com.dukkan.shopping_cart.components.PromoCodeSection
 import com.dukkan.shopping_cart.components.RemoveItemDialog
@@ -19,9 +18,10 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import com.dukkan.shopping_cart.R
+
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.res.stringResource
-import com.example.design_system.components.GuestPlaceholderScreen
+import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun ShoppingCartView(

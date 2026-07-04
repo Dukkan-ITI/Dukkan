@@ -2,7 +2,7 @@ package com.msayeh.domain.usecase.order
 
 
 import com.msayeh.domain.model.orders.OrdersPage
-import com.msayeh.domain.repository.OrderRepository
+import com.dukkan.domain.repository.OrderRepository
 import javax.inject.Inject
 
 class GetAllOrdersUseCase @Inject constructor(

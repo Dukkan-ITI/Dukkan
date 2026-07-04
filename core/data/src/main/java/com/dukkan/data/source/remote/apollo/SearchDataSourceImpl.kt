@@ -6,7 +6,7 @@ import com.dukkan.PredictiveSearchQuery
 import com.dukkan.SearchProductsQuery
 import com.dukkan.type.ProductFilter
 import com.dukkan.type.PriceRangeFilter
-import com.msayeh.domain.model.SearchFilter
+import com.dukkan.domain.model.SearchFilter
 import javax.inject.Inject
 import javax.inject.Singleton
 

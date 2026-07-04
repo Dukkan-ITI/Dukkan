@@ -1,7 +1,7 @@
 package com.dukkan.ads.mapper
 
 import com.dukkan.ads.R
-import com.msayeh.domain.model.Coupon
+import com.dukkan.domain.model.Coupon
 
 fun Coupon.toImageResId(): Int = when (code) {
     "DU-4"   -> R.drawable.banner1

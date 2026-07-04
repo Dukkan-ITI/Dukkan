@@ -1,7 +1,7 @@
 package com.dukkan.shopping_cart.uistate
 
-import com.msayeh.domain.model.cart.CartLine
-import com.msayeh.domain.model.cart.StoreCart
+import com.dukkan.domain.model.cart.CartLine
+import com.dukkan.domain.model.cart.StoreCart
 
 data class ShoppingCartState(
     val cart: StoreCart? = null,

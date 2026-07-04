@@ -3,8 +3,8 @@ package com.dukkan.ads.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.ads.uistate.CouponBannerUIState
-import com.msayeh.domain.model.Coupon
-import com.msayeh.domain.usecase.coupon.CouponUseCases
+import com.dukkan.domain.model.Coupon
+import com.dukkan.domain.usecase.coupon.CouponUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

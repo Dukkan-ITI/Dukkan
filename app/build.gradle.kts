@@ -87,6 +87,7 @@ dependencies {
     implementation(project(":features:settings"))
     implementation(project(":feature:auth"))
     implementation(project(":features:search"))
+    implementation(project(":features:categories"))
     implementation(project(":features:order_list"))
     implementation(project(":feature:ads"))
 }

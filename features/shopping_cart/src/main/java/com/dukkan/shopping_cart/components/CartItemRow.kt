@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dukkan.shopping_cart.R
-import com.msayeh.domain.model.cart.CartLine
+import com.dukkan.domain.model.cart.CartLine
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SwipeToDismissBox

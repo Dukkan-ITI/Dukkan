@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.dukkan.shopping_cart.R
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import dagger.hilt.android.qualifiers.ApplicationContext
-import com.msayeh.domain.model.cart.CartLine
-import com.msayeh.domain.usecase.GetCurrentUserUseCase
-import com.msayeh.domain.usecase.cart.CartUseCases
-import com.msayeh.domain.usecase.coupon.CouponUseCases
+import com.dukkan.domain.model.cart.CartLine
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.cart.CartUseCases
+import com.dukkan.domain.usecase.coupon.CouponUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -28,8 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.msayeh.domain.model.SearchCollection
-import com.msayeh.domain.model.SearchProduct
+import com.dukkan.domain.model.SearchCollection
+import com.dukkan.domain.model.SearchProduct
 import com.dukkan.search.R
 
 @Composable
