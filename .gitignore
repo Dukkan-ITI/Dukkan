@@ -37,3 +37,34 @@ skills-lock.json
 # JVM Crash Logs
 hs_err_pid*.log
 replay_pid*.log
+
+# Secrets — never commit
+secrets.properties
+
+# --- REQUIRED AUDIT ENTRIES ---
+# Local configuration — never commit
+local.properties
+secrets.properties
+
+# Gradle caches and build output
+.gradle/
+build/
+**/build/
+**/.gradle/
+
+# Android keystore files
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Environment files
+.env
+.env.*
+
+# Paymob / payment credentials (belt-and-suspenders)
+paymob*.properties
+payment-secrets.*

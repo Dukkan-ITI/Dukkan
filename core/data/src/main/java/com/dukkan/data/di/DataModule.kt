@@ -3,12 +3,10 @@ package com.dukkan.data.di
 import android.content.Context
 import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
+import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
-import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
-import com.dukkan.data.source.local.CouponStore
-import com.dukkan.data.source.local.CouponStoreImpl
 import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
@@ -19,8 +17,11 @@ import com.dukkan.data.source.remote.FirebaseStoreDataSourceImp
 import com.dukkan.data.source.remote.IFirebaseStoreDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSource
 import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
+import com.dukkan.data.source.remote.apollo.AddressDataSource
+import com.dukkan.data.source.remote.apollo.AddressDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
+import com.dukkan.domain.repository.AddressRepository
 import com.dukkan.domain.repository.AuthRepository
 import com.dukkan.domain.repository.CouponRepository
 import com.dukkan.domain.repository.ProductsRepository
@@ -99,11 +100,13 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideCouponStore(@ApplicationContext context: Context): CouponStore =
-        CouponStoreImpl(context)
+    fun provideAddressDataSource(apolloClient: ApolloClient): AddressDataSource =
+        AddressDataSourceImpl(apolloClient)
 
     @Singleton
     @Provides
-    fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
-        CouponRepositoryImpl(couponStore)
+    fun provideAddressRepository(
+        addressDataSource: AddressDataSource,
+        authRepository: AuthRepository,
+    ): AddressRepository = AddressRepositoryImpl(addressDataSource, authRepository)
 }
