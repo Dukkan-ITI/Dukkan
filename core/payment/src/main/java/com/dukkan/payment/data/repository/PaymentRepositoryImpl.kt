@@ -49,9 +49,10 @@ internal class PaymentRepositoryImpl @Inject constructor(
             put("amount", amountInCents) 
             put("currency", cartTotal.currencyCode)
             
-            // Add the integration ID here!
+            // Add the integration IDs here!
             val paymentMethods = org.json.JSONArray().apply {
-                put(5766356) // Integration ID from the user's dashboard
+                put(5766356) // VPC (Card) Integration ID
+                put(5766720) // Cash Integration ID
             }
             put("payment_methods", paymentMethods)
             
