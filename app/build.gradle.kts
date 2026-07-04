@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.dukkan.app"
-    compileSdk = 35
+    compileSdk = 36
 
     lint {
         abortOnError = true
