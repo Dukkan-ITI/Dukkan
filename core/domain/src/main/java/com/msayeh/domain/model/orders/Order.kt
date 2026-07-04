@@ -1,6 +1,6 @@
 package com.msayeh.domain.model.orders
 
-import com.msayeh.domain.model.Money
+import com.dukkan.domain.model.Money
 
 
 data class Order(
