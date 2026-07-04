@@ -1,8 +1,9 @@
 package com.dukkan.categories.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dukkan.categories.uiState.CategoryProductsUiState
+import com.dukkan.categories.uistate.CategoryProductsUiState
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
@@ -57,7 +58,7 @@ class CategoryProductsViewModel @Inject constructor(
                 _products.value = getProductsByCategoryUseCase(handle)
                 _isLoading.value = false
             } catch (e: Exception) {
-                android.util.Log.e("CategoryProductsDebug", "Error loading products: ${e.message}", e)
+                Log.e("CategoryProductsDebug", "Error loading products: ${e.message}", e)
                 _error.value = e.localizedMessage ?: "Error loading products"
                 _isLoading.value = false
             }

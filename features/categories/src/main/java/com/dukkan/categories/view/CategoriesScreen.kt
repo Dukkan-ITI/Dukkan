@@ -17,14 +17,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.categories.R
 import com.dukkan.categories.viewmodel.CategoriesViewModel
 import com.dukkan.design_system.components.FilterChip
-import com.dukkan.domain.model.Category.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreenContent(
-    categories: List<Category>,
+    categories: List<String>,
     onBackClick: () -> Unit,
-    onCategoryClick: (Category) -> Unit
+    onCategoryClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -55,7 +54,7 @@ fun CategoriesScreenContent(
         ) {
             items(categories) { category ->
                 FilterChip(
-                    label = category.name,
+                    label = category,
                     isSelected = false,
                     onClick = { onCategoryClick(category) }
                 )
@@ -67,7 +66,7 @@ fun CategoriesScreenContent(
 @Composable
 fun CategoriesScreen(
     onBackClick: () -> Unit,
-    onCategoryClick: (Category) -> Unit,
+    onCategoryClick: (String) -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categories by viewModel.categoriesState.collectAsState()

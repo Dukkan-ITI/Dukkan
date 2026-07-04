@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.categories.uiState.CategoryProductsUiState
+import com.dukkan.categories.uistate.CategoryProductsUiState
 import com.dukkan.categories.viewmodel.CategoryProductsViewModel
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.Product

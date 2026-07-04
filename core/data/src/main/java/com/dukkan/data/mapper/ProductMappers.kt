@@ -57,7 +57,7 @@ fun ProductsQuery.Node.toDomainModel(): Product {
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
         description = description,
-        productType = null,
+        productType = productType,
         images = null,
         variants = null,
     )
@@ -80,7 +80,7 @@ fun CollectionProductsQuery.Node.toDomainModel(): Product {
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
         description = description,
-        productType = null,
+        productType = productType,
         images = null,
         variants = null,
     )

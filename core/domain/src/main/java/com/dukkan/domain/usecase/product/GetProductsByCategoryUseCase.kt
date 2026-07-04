@@ -5,13 +5,12 @@ import com.dukkan.domain.repository.ProductsRepository
 import javax.inject.Inject
 
 class GetProductsByCategoryUseCase @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val getProductsUseCase: GetProductsUseCase
 ) {
-    suspend operator fun invoke(categoryHandle: String, limit: Int = 20, after: String? = null): List<Product> {
-        return productsRepository.getProductsByCollectionHandle(
-            handle = categoryHandle,
-            limit = limit,
-            after = after,
-        )
+    suspend operator fun invoke(type: String): List<Product> {
+        return getProductsUseCase(limit = 250)
+            .filter {
+                it.productType.equals(type, ignoreCase = true)
+            }
     }
 }

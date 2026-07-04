@@ -24,13 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
-import com.dukkan.domain.model.Category.Category
-import com.dukkan.home.components.HomeBanner
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
-import com.dukkan.home.uiState.HomeUiState
+import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
 
@@ -42,7 +40,7 @@ fun HomeScreen(
     onSeeAllClicked: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (Category) -> Unit = {},
+    onCategoryClick: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -71,7 +69,7 @@ fun HomeScreenContent(
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (Category) -> Unit = {},
+    onCategoryClick: (String) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),

@@ -6,13 +6,14 @@ import com.dukkan.domain.model.Category.Category
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.category.GetCategoriesUseCase
+import com.dukkan.domain.usecase.category.GetProductTypesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.dukkan.home.uiState.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +29,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getProductTypesUseCase: GetProductTypesUseCase,
     getFavorites: GetFavoritesUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
@@ -36,7 +37,7 @@ class HomeViewModel @Inject constructor(
 
     private data class ProductsAndCategories(
         val products: List<Product>,
-        val categories: List<Category>
+        val categories: List<String>
     )
 
     private val _productsAndCategories = MutableStateFlow(ProductsAndCategories(emptyList(), emptyList()))
@@ -91,7 +92,7 @@ class HomeViewModel @Inject constructor(
                 // Assuming GetProductsUseCase returns a wrapper containing products and pagination info
                 // If it returns List<Product>, we would need to adjust the UseCase or Repository
                 val products = result
-                val categories = getCategoriesUseCase().firstOrNull() ?: emptyList()
+                val categories = getProductTypesUseCase()
 
                 _productsAndCategories.value = ProductsAndCategories(products, categories)
                 _isLoading.value = false
