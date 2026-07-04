@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Pull LFS files
+        run: git lfs pull
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -57,13 +62,6 @@ jobs:
 
       - name: Validate google-services.json
         run: jq empty app/google-services.json
-
-      - name: Download Paymob SDK
-        env:
-          PAYMOB_SDK_URL: ${{ secrets.PAYMOB_SDK_DOWNLOAD_URL }}
-        run: |
-          curl -L "$PAYMOB_SDK_URL" -o app/libs/paymob-sdk.aar
-          unzip -t app/libs/paymob-sdk.aar
 
       - name: Build Android App
         run: ./gradlew :app:assembleDebug --stacktrace --no-daemon --no-build-cache
