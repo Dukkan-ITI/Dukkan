@@ -10,13 +10,15 @@ internal interface PaymentRepository {
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
+        cartTotal: com.msayeh.domain.model.Money,
     ): Result<OrderConfirmation>
 
     suspend fun createPaymentIntention(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
+        cartTotal: com.msayeh.domain.model.Money,
     ): Result<PaymentIntentionResult>
 
-    suspend fun verifyPaymentStatus(orderId: String): Result<OrderConfirmation>
+    suspend fun verifyPaymentStatus(orderId: String, cartTotal: com.msayeh.domain.model.Money? = null): Result<OrderConfirmation>
 }

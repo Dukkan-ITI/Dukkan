@@ -12,9 +12,11 @@ internal class ConfirmCashOrderUseCase @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
+        cartTotal: com.msayeh.domain.model.Money,
     ): Result<OrderConfirmation> = repository.confirmCashOrder(
         idempotencyKey = idempotencyKey,
         address        = address,
         cartId         = cartId,
+        cartTotal      = cartTotal,
     )
 }

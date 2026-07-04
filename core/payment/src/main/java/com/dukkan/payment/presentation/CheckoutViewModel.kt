@@ -170,34 +170,38 @@ internal class CheckoutViewModel @Inject constructor(
     private fun submitOrder() {
         val address = _uiState.value.selectedAddress ?: return
         val method  = _uiState.value.selectedMethod ?: return
-        val cartId  = _uiState.value.cartSummary?.cartId ?: return
+        val cartSummary = _uiState.value.cartSummary ?: return
+        val cartId  = cartSummary.cartId
+        val cartTotal = cartSummary.total
 
         when (method) {
-            PaymentMethod.CASH -> confirmCash(address, cartId)
-            PaymentMethod.ONLINE -> startOnlinePayment(address, cartId)
+            PaymentMethod.CASH -> confirmCash(address, cartId, cartTotal)
+            PaymentMethod.ONLINE -> startOnlinePayment(address, cartId, cartTotal)
         }
     }
 
-    private fun confirmCash(address: CheckoutAddress, cartId: String) {
+    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val result = confirmCashOrderUseCase(
                 idempotencyKey = idempotencyKey,
                 address        = address,
                 cartId         = cartId,
+                cartTotal      = cartTotal,
             )
             _uiState.update { it.copy(isCreatingIntention = false) }
             handleResult(result)
         }
     }
 
-    private fun startOnlinePayment(address: CheckoutAddress, cartId: String) {
+    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.msayeh.domain.model.Money) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val result = createPaymentIntentionUseCase(
                 idempotencyKey = idempotencyKey,
                 address        = address,
                 cartId         = cartId,
+                cartTotal      = cartTotal,
             )
             result.fold(
                 onSuccess = { intention ->
