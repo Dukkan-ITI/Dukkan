@@ -172,24 +172,25 @@ fun AddressFormSheet(
                 PrimaryButton(
                     text = stringResource(R.string.saved_addresses_save),
                     onClick = {
-                        onSave(
-                            Address(
-                                id = initialAddress?.id,
-                                firstName = firstName.trim().ifBlank { null },
-                                lastName = lastName.trim().ifBlank { null },
-                                company = company.trim().ifBlank { null },
-                                address1 = address1.trim().ifBlank { null },
-                                address2 = address2.trim().ifBlank { null },
-                                city = city.trim().ifBlank { null },
-                                province = province.trim().ifBlank { null },
-                                country = country.trim().ifBlank { null },
-                                zip = zip.trim().ifBlank { null },
-                                phone = phone.trim().ifBlank { null },
-                                isDefault = initialAddress?.isDefault ?: false,
+                        if (isValid) {
+                            onSave(
+                                Address(
+                                    id = initialAddress?.id,
+                                    firstName = firstName.trim().ifBlank { null },
+                                    lastName = lastName.trim().ifBlank { null },
+                                    company = company.trim().ifBlank { null },
+                                    address1 = address1.trim().ifBlank { null },
+                                    address2 = address2.trim().ifBlank { null },
+                                    city = city.trim().ifBlank { null },
+                                    province = province.trim().ifBlank { null },
+                                    country = country.trim().ifBlank { null },
+                                    zip = zip.trim().ifBlank { null },
+                                    phone = phone.trim().ifBlank { null },
+                                    isDefault = initialAddress?.isDefault ?: false,
+                                )
                             )
-                        )
+                        }
                     },
-                    enabled = isValid,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
