@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
@@ -46,6 +47,7 @@ val LocalExtendedColors = staticCompositionLocalOf {
         orderStatusProcessing = Color.Unspecified,
     )
 }
+
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -76,9 +78,9 @@ fun AppTheme(
     }
 }
 
-// A handy object to make accessing it look just like MaterialTheme
-object DukkanTheme {
+object AppThemeDefaults {
     val extendedColors: DukkanExtendedColors
         @Composable
+        @ReadOnlyComposable
         get() = LocalExtendedColors.current
 }
