@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.dukkan.design_system.theme.DukkanTheme
+import com.dukkan.design_system.theme.AppThemeDefaults
 import com.dukkan.order_list.R
 import com.dukkan.domain.model.orders.OrderDisplayStatus
 
@@ -19,8 +19,8 @@ fun OrderStatusBadge(
 ) {
     val color = when (status) {
         OrderDisplayStatus.DELIVERED -> MaterialTheme.colorScheme.primary
-        OrderDisplayStatus.IN_TRANSIT -> DukkanTheme.extendedColors.orderStatusInTransit
-        OrderDisplayStatus.PROCESSING -> DukkanTheme.extendedColors.orderStatusProcessing
+        OrderDisplayStatus.IN_TRANSIT -> AppThemeDefaults.extendedColors.orderStatusInTransit
+        OrderDisplayStatus.PROCESSING -> AppThemeDefaults.extendedColors.orderStatusProcessing
         OrderDisplayStatus.CANCELLED -> MaterialTheme.colorScheme.error
         OrderDisplayStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant
     }

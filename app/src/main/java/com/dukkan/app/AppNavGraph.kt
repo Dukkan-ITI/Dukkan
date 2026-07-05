@@ -21,9 +21,7 @@ import com.dukkan.order_list.view.OrderHistoryScreen
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
-import com.dukkan.search.view.SearchScreen
 import com.dukkan.product_details.view.ProductDetailsScreen
-import com.dukkan.order_list.view.OrderHistoryScreen
 
 @Composable
 fun AppNavGraph(
