@@ -9,4 +9,6 @@ interface FavoriteRepository {
     suspend fun addFavorite(product: FavoriteProduct)
     suspend fun removeFavorite(id: String)
     fun isFavorite(id: String): Flow<Boolean>
+    suspend fun syncFavoritesOnLogin(userId: String)
+    suspend fun clearFavoritesOnLogout(userId: String)
 }

@@ -9,7 +9,7 @@ espressoCore = "3.5.1"
 koinAndroid = "4.0.0"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
-kotlin = "2.2.10"
+kotlin = "2.0.21"
 kotlinxSerialization = "1.6.3"
 composeBom = "2026.02.01"
 appcompat = "1.7.1"
@@ -49,6 +49,7 @@ uiTooling = "1.11.3"
 runtime = "1.11.3"
 foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
+firebaseAuthKtx = "24.1.0"
 
 # Networking (feature-payment)
 retrofit = "2.11.0"
@@ -128,6 +129,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 
 # Networking (feature-payment)
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }

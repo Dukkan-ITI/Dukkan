@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="order_history_title">سجل الطلبات</string>
+    <string name="navigate_back">رجوع</string>
+    <string name="no_order_history_yet">لا يوجد سجل طلبات بعد.</string>
+    <string name="order_history_empty_subtitle">ستظهر طلباتك المكتملة هنا.</string>
+    <string name="order_status_delivered">تم التوصيل</string>
+    <string name="order_status_in_transit">قيد الشحن</string>
+    <string name="order_status_processing">قيد المعالجة</string>
+    <string name="order_status_cancelled">ملغى</string>
+    <string name="order_status_pending">قيد الانتظار</string>
+    <string name="order_quantity_format">الكمية: %1$d</string>
+    <string name="loading_orders">جاري تحميل الطلبات…</string>
+    <string name="no_recent_orders">لا توجد طلبات حديثة.</string>
+    <string name="see_all">عرض الكل</string>
+    <string name="error_failed_to_load_orders">فشل تحميل الطلبات</string>
+    <string name="error_failed_to_load_orders_with_message">فشل تحميل الطلبات: %1$s</string>
+    <string name="error_unexpected">حدث خطأ غير متوقع</string>
+</resources>

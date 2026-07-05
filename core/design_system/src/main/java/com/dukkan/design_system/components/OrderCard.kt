@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.design_system.R
+import com.dukkan.design_system.theme.AppThemeDefaults
 
 data class OrderUi(
     val id: String,
@@ -82,12 +83,11 @@ fun OrderCard(order: OrderUi) {
                     fontWeight = FontWeight.SemiBold,
                     color = when (order.status) {
                         OrderStatus.DELIVERED -> MaterialTheme.colorScheme.primary
-                        OrderStatus.IN_TRANSIT -> InTransitColor
+                        OrderStatus.IN_TRANSIT -> AppThemeDefaults.extendedColors.orderStatusInTransit
+
                     },
                 )
             }
         }
     }
 }
-
-private val InTransitColor = Color(0xFFF59E0B)

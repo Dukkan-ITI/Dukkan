@@ -1,4 +1,4 @@
-package com.dukkan.categories.uiState
+package com.dukkan.categories.uistate
 
 import com.dukkan.domain.model.Product
 
