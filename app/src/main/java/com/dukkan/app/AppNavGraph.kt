@@ -22,8 +22,6 @@ import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.paymentNavGraph
 import com.dukkan.order_list.view.OrderHistoryScreen
-import com.dukkan.payment.PaymentResult
-import com.dukkan.payment.paymentNavGraph
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView

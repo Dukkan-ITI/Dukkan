@@ -20,7 +20,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
+import com.dukkan.payment.PaymentResult
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
@@ -32,6 +35,10 @@ import com.dukkan.payment.presentation.CheckoutConstants.KEY_SAVED_ADDRESS_ID
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_SELECTED_METHOD
 import com.dukkan.payment.presentation.CheckoutConstants.MAX_POLL_ATTEMPTS
 import com.dukkan.payment.presentation.CheckoutConstants.POLL_DELAY_MS
+
+internal sealed interface CheckoutEffect {
+    data class Finish(val result: PaymentResult) : CheckoutEffect
+}
 
 @HiltViewModel
 internal class CheckoutViewModel @Inject constructor(
@@ -94,6 +101,9 @@ internal class CheckoutViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<CheckoutUiState> = _uiState.asStateFlow()
+
+    private val _effect = MutableSharedFlow<CheckoutEffect>()
+    val effect = _effect.asSharedFlow()
 
     init {
         loadCartAndAddresses()
@@ -164,6 +174,29 @@ internal class CheckoutViewModel @Inject constructor(
             CheckoutEvent.DismissResult -> {
                 _uiState.update { it.copy(result = null) }
             }
+            
+            is CheckoutEvent.AcknowledgeResult -> {
+                val methodStr = if (_uiState.value.selectedMethod == PaymentMethod.CASH) "CASH" else "CARD"
+                val resultState = _uiState.value.result
+                val ordId = when (resultState) {
+                    is OrderResult.Success -> resultState.confirmation.orderId
+                    is OrderResult.Pending -> resultState.confirmation?.orderId ?: "---"
+                    else -> "---"
+                }
+                val finalMoney = when (resultState) {
+                    is OrderResult.Success -> resultState.confirmation.total
+                    is OrderResult.Pending -> resultState.confirmation?.total ?: _uiState.value.cartSummary?.total
+                    else -> _uiState.value.cartSummary?.total
+                } ?: com.dukkan.domain.model.Money(java.math.BigDecimal.ZERO, "EGP")
+                
+                viewModelScope.launch {
+                    if (event.isPending) {
+                        _effect.emit(CheckoutEffect.Finish(PaymentResult.Pending(ordId)))
+                    } else {
+                        _effect.emit(CheckoutEffect.Finish(PaymentResult.Success(ordId, finalMoney, methodStr)))
+                    }
+                }
+            }
         }
     }
 
@@ -193,7 +226,17 @@ internal class CheckoutViewModel @Inject constructor(
             
             result.fold(
                 onSuccess = { conf ->
-                    _uiState.update { it.copy(cashSuccessConfirmation = conf) }
+                    viewModelScope.launch {
+                        _effect.emit(
+                            CheckoutEffect.Finish(
+                                PaymentResult.Success(
+                                    orderId = conf.orderId,
+                                    total = conf.total,
+                                    paymentMethod = "CASH"
+                                )
+                            )
+                        )
+                    }
                 },
                 onFailure = { e ->
                     

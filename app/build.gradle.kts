@@ -67,6 +67,8 @@ dependencies {
     implementation(project(":feature:ads"))
     implementation(project(":features:brands"))
     implementation(project(":feature:payment"))
+    implementation(project(":features:order_list"))
+
 
 
     implementation(platform(libs.androidx.compose.bom))
@@ -110,9 +112,5 @@ dependencies {
     implementation(libs.koin.android)
 }
 
-    // Required by Paymob SDK at runtime (SDK uses Timber internally)
-    implementation(libs.timber)
 
-    // Required by Paymob SDK at runtime (SDK uses Koin internally for DI)
-    implementation(libs.koin.android)
-}
+
