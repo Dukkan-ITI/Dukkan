@@ -49,6 +49,7 @@ jobs:
         run: |
           cat <<EOF > gradle.properties
           shopifyStorefrontToken=${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}
+          shopifyAdminToken=${{ secrets.SHOPIFY_ADMIN_TOKEN }}
           android.disallowKotlinSourceSets=false
           org.gradle.jvmargs=-Xmx3072m -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8
           org.gradle.daemon=false
