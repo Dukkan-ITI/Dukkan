@@ -24,8 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.Brand
 import com.dukkan.domain.model.Category.Category
 import com.dukkan.home.components.HomeBanner
+import com.dukkan.home.components.HomeBrandsSection
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
@@ -43,6 +45,8 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -59,6 +63,8 @@ fun HomeScreen(
         },
         onNavigateToCategories = onNavigateToCategories,
         onCategoryClick = onCategoryClick,
+        onNavigateToBrands = onNavigateToBrands,
+        onBrandClick = onBrandClick,
     )
 }
 
@@ -72,6 +78,8 @@ fun HomeScreenContent(
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
     onCategoryClick: (Category) -> Unit = {},
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -140,6 +148,16 @@ fun HomeScreenContent(
                             categories = uiState.categories,
                             onSeeAllClick = onNavigateToCategories,
                             onCategoryClick = onCategoryClick
+                        )
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeBrandsSection(
+                            brands = uiState.brands,
+                            onSeeAllClick = onNavigateToBrands,
+                            onBrandClick = onBrandClick
                         )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {

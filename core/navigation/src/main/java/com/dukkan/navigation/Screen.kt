@@ -8,6 +8,7 @@ sealed class Screen {
 
     @Serializable
     object Auth
+
     @Serializable
     object Login
 
@@ -43,4 +44,12 @@ sealed class Screen {
 
     @Serializable
     data class CategoryProducts(val categoryHandle: String)
+
+    @Serializable
+    object Brands
+
+    @Serializable
+    data class BrandProducts(val vendor: String)
+
+    object SavedAddresses
 }
