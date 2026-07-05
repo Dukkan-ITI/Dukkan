@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uistate.HomeUiState
+import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
 import com.dukkan.home.components.HomeBrandsSection
@@ -49,12 +51,23 @@ fun HomeScreen(
     onCategoryClick: (String) -> Unit = {},
     onNavigateToBrands: () -> Unit = {},
     onBrandClick: (Brand) -> Unit = {},
-    ) {
+    onNavigateToFavorites: () -> Unit = {},
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val firstName by viewModel.firstName.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                HomeEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+            }
+        }
+    }
 
     HomeScreenContent(
         modifier = modifier,
         uiState = uiState,
+        firstName = firstName,
         onSeeAllClicked = onSeeAllClicked,
         onSearchClick = onSearchClick,
         onFavoriteClick = { product, isFavorite ->
@@ -74,6 +87,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
+    firstName: String? = null,
     onSeeAllClicked: () -> Unit,
     onSearchClick: () -> Unit = {},
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
@@ -128,7 +142,7 @@ fun HomeScreenContent(
 
                 is HomeUiState.Success -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeHeader()
+                        HomeHeader(firstName = firstName)
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         HomeSearchBar(onSearchClick = onSearchClick)

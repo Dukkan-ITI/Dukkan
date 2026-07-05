@@ -19,7 +19,7 @@ class CouponBannerViewModel @Inject constructor(
     private val couponUseCases: CouponUseCases
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(( CouponBannerUIState()))
+    private val _state = MutableStateFlow((CouponBannerUIState()))
     val state: StateFlow<CouponBannerUIState> = _state.asStateFlow()
 
     init {

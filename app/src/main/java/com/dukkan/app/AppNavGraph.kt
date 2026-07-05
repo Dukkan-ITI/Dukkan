@@ -75,6 +75,9 @@ fun AppNavGraph(
                 onNavigateToBrands = { navController.navigate(Screen.Brands) },
                 onBrandClick = { brand ->
                     navController.navigate(Screen.BrandProducts(brand.name))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }

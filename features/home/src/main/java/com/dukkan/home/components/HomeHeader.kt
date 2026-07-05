@@ -19,15 +19,21 @@ import com.dukkan.design_system.theme.AppTheme
 
 @Composable
 fun HomeHeader(
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+   firstName: String? = null,
+
+    ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 14.dp)
     ) {
         Text(
-            text = stringResource(R.string.hey_there),
+            text = if (firstName.isNullOrBlank()) {
+                stringResource(R.string.hey_there)
+            } else {
+                stringResource(R.string.hey_name, firstName)
+            },
             style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp

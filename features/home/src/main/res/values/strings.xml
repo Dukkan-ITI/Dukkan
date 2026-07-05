@@ -8,7 +8,6 @@
     <string name="new_in">New In</string>
     <string name="clothing">Clothing</string>
     <string name="shoes">Shoes</string>
-    <string name="hey_there">Hey there! 👋</string>
     <string name="what_are_we_wearing">"What are we\nwearing "</string>
     <string name="today">today?</string>
     <string name="add_to_favorites">Add to Favorites</string>
@@ -20,4 +19,6 @@
     <string name="search_products">Search products...</string>
     <string name="categories">Categories (%1$d)</string>
     <string name="brands">Brands</string>
+    <string name="hey_there">Hey there</string>
+    <string name="hey_name">Hey %1$s 👋 </string>
 </resources>
