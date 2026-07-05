@@ -132,8 +132,7 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideBrandsRepository(
-        productsDataSource: ProductsDataSource,
-    ): BrandsRepository =
+    fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
         BrandsRepositoryImpl(productsDataSource)
 }
+

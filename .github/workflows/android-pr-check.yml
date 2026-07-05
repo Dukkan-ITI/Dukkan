@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Pull LFS files
+        run: git lfs pull
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -59,7 +64,7 @@ jobs:
         run: jq empty app/google-services.json
 
       - name: Build Android App
-        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
+        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon --no-build-cache
 
       - name: Run Android Lint
         run: ./gradlew :app:lintDebug --stacktrace --no-daemon

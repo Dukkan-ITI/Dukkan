@@ -51,5 +51,10 @@ sealed class Screen {
     @Serializable
     data class BrandProducts(val vendor: String)
 
+    @Serializable
     object SavedAddresses
+
+
+    @Serializable
+    object Payment
 }
