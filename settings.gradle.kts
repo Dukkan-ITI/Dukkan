@@ -45,6 +45,7 @@ include(":features:search")
 include(":features:settings")
 include(":features:categories")
 include(":feature:ads")
+include(":features:brands")
 include(":feature:address")
 include(":core:payment")
 

@@ -5,6 +5,7 @@ import com.apollographql.apollo.ApolloClient
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
+import com.dukkan.data.repository.BrandsRepositoryImpl
 import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
@@ -26,6 +27,7 @@ import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
 import com.dukkan.domain.repository.AddressRepository
 import com.dukkan.domain.repository.AuthRepository
+import com.dukkan.domain.repository.BrandsRepository
 import com.dukkan.domain.repository.CouponRepository
 import com.dukkan.domain.repository.ProductsRepository
 import com.dukkan.domain.repository.SettingsRepository
