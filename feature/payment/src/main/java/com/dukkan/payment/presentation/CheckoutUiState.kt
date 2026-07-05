@@ -6,12 +6,14 @@ import com.dukkan.payment.domain.model.PaymentMethod
 import com.dukkan.payment.domain.model.PaymobCredentials
 import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.cart.CartSummary
+import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.model.OrderConfirmation
 
 @Immutable
 internal data class CheckoutUiState(
     val isLoadingCartOrAddresses: Boolean = false,
     val cartSummary: CartSummary? = null,
+    val storeCart: StoreCart? = null,
     val addresses: List<Address> = emptyList(),
     val selectedAddress: CheckoutAddress? = null,
     val isEditingAddress: Boolean = false,

@@ -25,7 +25,6 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartId: String,
         cartTotal: Money,
     ): Result<OrderConfirmation> = runCatching {
-        // Cash orders don't need a payment gateway — mark as success immediately.
         OrderConfirmation(
             orderId = "CASH-" + UUID.randomUUID().toString().take(8),
             status  = "Success",
@@ -39,7 +38,6 @@ internal class PaymentRepositoryImpl @Inject constructor(
         cartId: String,
         cartTotal: Money,
     ): Result<PaymentIntentionResult> = runCatching {
-        // Paymob requires the amount in the smallest currency unit (piasters for EGP = ×100).
         val amountInPiasters = cartTotal.amount
             .multiply(BigDecimal("100"))
             .toLong()
