@@ -8,6 +8,6 @@ class ClearCartOnLogoutUseCase @Inject constructor(
     private val cartRepository: CartRepository
 ) {
     suspend operator fun invoke() {
-        cartRepository.clearCartOnLogout()
+        cartRepository.clearLocalCart()
     }
 }

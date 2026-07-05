@@ -20,6 +20,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") } // Paymob SDK transitive deps
+        flatDir {
+            dirs("app/libs")
+        }
     }
 }
 
@@ -44,3 +48,4 @@ include(":features:categories")
 include(":feature:ads")
 include(":features:brands")
 include(":feature:address")
+include(":feature:payment")

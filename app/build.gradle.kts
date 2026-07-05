@@ -14,7 +14,6 @@ android {
         }
     }
 
-
     lint {
         abortOnError = true
     }
@@ -22,7 +21,7 @@ android {
     defaultConfig {
         applicationId = "com.dukkan.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -31,9 +30,11 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -42,10 +43,31 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
+        buildConfig = true
     }
 }
 
+// Modules
 dependencies {
+    implementation(project(":core:design_system"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
+    implementation(project(":features:onboarding"))
+    implementation(project(":features:home"))
+    implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
+    implementation(project(":features:product_details"))
+    implementation(project(":features:settings"))
+    implementation(project(":feature:auth"))
+    implementation(project(":features:search"))
+    implementation(project(":feature:address"))
+    implementation(project(":features:categories"))
+    implementation(project(":feature:ads"))
+    implementation(project(":features:brands"))
+    implementation(project(":feature:payment"))
+    implementation(project(":features:order_list"))
 
 
 
@@ -71,23 +93,24 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
 
-    // Modules
-    implementation(project(":core:design_system"))
-    implementation(project(":core:navigation"))
-    implementation(project(":core:data"))
-    implementation(project(":core:domain"))
-    implementation(project(":features:onboarding"))
-    implementation(project(":features:home"))
-    implementation(project(":features:favorites"))
-    implementation(project(":features:shopping_cart"))
-    implementation(project(":features:product_details"))
-    implementation(project(":features:settings"))
-    implementation(project(":feature:auth"))
-    implementation(project(":features:search"))
-    implementation(project(":features:categories"))
-    implementation(project(":features:order_list"))
-    implementation(project(":feature:ads"))
-    implementation(project(":features:brands"))
-    implementation(project(":feature:address"))
+
+    // Required for Paymob SDK resource linking
+    implementation(libs.sdp)
+    implementation(libs.ssp)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    // Required for Paymob SDK resource linking
+    implementation(libs.sdp)
+    implementation(libs.ssp)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Required by Paymob SDK at runtime (SDK uses Timber internally)
+    implementation(libs.timber)
+
+    // Required by Paymob SDK at runtime (SDK uses Koin internally for DI)
+    implementation(libs.koin.android)
 }
+
+
 

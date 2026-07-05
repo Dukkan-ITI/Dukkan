@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    id("com.apollographql.apollo").version("5.0.1")
+    alias(libs.plugins.apollo)
     id("dukkan.hilt")
 }
 

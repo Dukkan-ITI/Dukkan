@@ -6,6 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.navigation.toRoute
 import com.dukkan.address.view.SavedAddressesScreen
 import com.dukkan.auth.view.AuthScreen
@@ -17,6 +19,8 @@ import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.payment.PaymentResult
+import com.dukkan.payment.paymentNavGraph
 import com.dukkan.order_list.view.OrderHistoryScreen
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
@@ -29,6 +33,8 @@ fun AppNavGraph(
     startDestination: Any,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -104,7 +110,7 @@ fun AppNavGraph(
         composable<Screen.ShoppingCart> {
             ShoppingCartView(
                 onStartShoppingClick = { navController.navigate(Screen.Home) },
-                onCheckoutClick = { },
+                onCheckoutClick = { navController.navigate(Screen.Payment) },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
@@ -112,6 +118,37 @@ fun AppNavGraph(
                 }
             )
         }
+
+        paymentNavGraph(
+            navController    = navController,
+            onPaymentResult = { result ->
+                // Here is where other modules are informed of the payment outcome
+                when (result) {
+                    is PaymentResult.Success -> {
+                        if (result.paymentMethod == "CASH") {
+                            Toast.makeText(context, "Order placed! You will pay with cash upon delivery.", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(context, "Payment successful! Order confirmed.", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    is PaymentResult.Failed -> {
+                        // Payment failed! You can show an error or log it.
+                        // val reason = result.error
+                    }
+                    is PaymentResult.Pending -> {
+                        // Payment is pending (e.g. waiting for cash at Kiosk).
+                    }
+                    PaymentResult.Cancelled -> {
+                        // The user manually backed out of the payment flow.
+                    }
+                }
+
+                // After handling the result, navigate the user to the appropriate screen
+                navController.navigate(Screen.Home) {
+                    popUpTo<Screen.Home> { inclusive = true }
+                }
+            },
+        )
 
         composable<Screen.Profile> {
             ProfileScreen(

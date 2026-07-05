@@ -9,7 +9,6 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
-build/
 /captures
 .externalNativeBuild
 .cxx
@@ -21,19 +20,68 @@ local.properties
 /.idea/deploymentTargetSelector.xml
 
 # Kotlin compiler local state / error logs
-.kotlin/
+.kotlin
 
-.idea/
-*.iml
 # Firebase config (distributed out-of-band)
 google-services.json
 
 # Agents and Binaries
-.idea/planningMode.xml
+/.idea/planningMode.xml
 bin/
 **/bin/
-.agents/
-skills-lock.json
+.agents
+
 # JVM Crash Logs
 hs_err_pid*.log
 replay_pid*.log
+
+# Secrets — never commit
+secrets.properties
+local.properties
+
+# Gradle caches and build output
+.gradle
+build
+**/build/
+**/.gradle/
+
+# Android keystores
+*.keystore
+*.jks
+
+# IDE
+.idea
+*.iml
+.DSStore
+
+# Environment files
+.env
+.env.*
+
+# Paymob / payment credentials (belt-and-suspenders)
+paymob*.properties
+payment-secrets.properties
+
+# ——— REQUIRED AUDIT ENTRIES ———
+# Local configuration — never commit
+local.properties
+gradle.properties
+secrets.properties
+
+# Gradle caches ← only built artefacts, not source
+.gradle/
+build/
+**/build/
+
+# Patch and log files
+*.patch
+*.diff
+patches/
+domain-compile.log
+
+# APK / AAB
+*.apk
+*.aab
+
+# Paymob SDK
+*.hprof

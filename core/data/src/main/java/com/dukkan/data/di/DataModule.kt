@@ -101,11 +101,13 @@ object DataModule {
         firebaseStoreDataSource: IFirebaseStoreDataSource,
         shopifyAuthDataSource: ShopifyAuthDataSource,
         shopifyTokenStore: ShopifyTokenStore,
+        apolloClient: ApolloClient,
     ): AuthRepository = AuthRepositoryImpl(
         authDataSource,
         firebaseStoreDataSource,
         shopifyAuthDataSource,
-        shopifyTokenStore
+        shopifyTokenStore,
+        apolloClient
     )
 
     @Singleton
@@ -132,8 +134,6 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideBrandsRepository(
-        productsDataSource: ProductsDataSource,
-    ): BrandsRepository =
+    fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
         BrandsRepositoryImpl(productsDataSource)
 }

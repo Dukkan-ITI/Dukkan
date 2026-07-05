@@ -23,6 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Pull LFS files
+        run: git lfs pull
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -44,6 +49,7 @@ jobs:
         run: |
           cat <<EOF > gradle.properties
           shopifyStorefrontToken=${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}
+          shopifyAdminToken=${{ secrets.SHOPIFY_ADMIN_TOKEN }}
           android.disallowKotlinSourceSets=false
           org.gradle.jvmargs=-Xmx3072m -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8
           org.gradle.daemon=false
@@ -59,7 +65,7 @@ jobs:
         run: jq empty app/google-services.json
 
       - name: Build Android App
-        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon
+        run: ./gradlew :app:assembleDebug --stacktrace --no-daemon --no-build-cache
 
       - name: Run Android Lint
         run: ./gradlew :app:lintDebug --stacktrace --no-daemon

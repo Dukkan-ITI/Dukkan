@@ -3,6 +3,9 @@ package com.dukkan.data.repository
 import android.util.Log
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
+import com.dukkan.GetCustomerOrdersQuery
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.remote.FirebaseAuthDataSource
@@ -19,6 +22,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val firebaseStoreDataSource: IFirebaseStoreDataSource,
     private val shopifyAuthDataSource: ShopifyAuthDataSource,
     private val shopifyTokenStore: ShopifyTokenStore,
+    private val apolloClient: ApolloClient,
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<AuthUser> {
@@ -125,6 +129,25 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             stored.toDomainModel()
         }
+    }
+
+    override suspend fun getCustomerId(): Result<String> = runCatching {
+        val token = shopifyTokenStore.getToken()?.accessToken
+            ?: throw IllegalStateException("User not logged in: customer access token is missing.")
+
+        val response = apolloClient.query(
+            GetCustomerOrdersQuery(
+                customerAccessToken = token,
+                first = 1,
+                after = Optional.presentIfNotNull(null),
+            )
+        ).execute()
+
+        if (response.hasErrors()) {
+            throw Exception(response.errors?.firstOrNull()?.message ?: "Unknown GraphQL Error")
+        }
+
+        response.data?.customer?.id ?: throw Exception("Customer not found or invalid token")
     }
 
     private suspend fun fetchAndStoreShopifyToken(email: String, password: String) {
