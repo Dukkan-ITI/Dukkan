@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.onboarding.components.BottomSection
-
 import com.dukkan.onboarding.components.GradientOverlay
 import com.dukkan.onboarding.components.OnboardingBackground
 import com.dukkan.onboarding.components.OnboardingPageContent
@@ -28,7 +27,7 @@ fun OnboardingView(
     onNavigateToLogin: () -> Unit
 ) {
 
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     OnboardingContent(
         pages = state.pages,
@@ -40,7 +39,7 @@ fun OnboardingView(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun OnboardingContent(
+private fun OnboardingContent(
     pages: List<OnboardingModel>,
     onNavigateToLogin: () -> Unit
 ) {

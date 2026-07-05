@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,28 +37,25 @@ fun OnboardingPageContent(
 
         Text(
             text = stringResource(id = R.string.feature_page, pageIndex + 1),
-            color = Color(0xFFD8FF3E),
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             letterSpacing = 2.sp
         )
-
         Spacer(modifier = Modifier.height(12.dp))
-
         Text(
+            style = MaterialTheme.typography.headlineLarge,
             text = stringResource(id = page.titleRes),
-            color = Color.White,
-            fontSize = 36.sp,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontWeight = FontWeight.ExtraBold,
             lineHeight = 40.sp
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
+            style = MaterialTheme.typography.bodyLarge,
             text = stringResource(id = page.descriptionRes),
             color = Color.White.copy(alpha = .8f),
-            fontSize = 16.sp,
             lineHeight = 24.sp
         )
 

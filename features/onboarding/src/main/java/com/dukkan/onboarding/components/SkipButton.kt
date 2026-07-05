@@ -2,6 +2,7 @@ package com.dukkan.onboarding.components
 
 
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,11 +19,10 @@ fun SkipButton(
 ) {
 
     Text(
+
+        style = MaterialTheme.typography.bodyMedium,
         text = stringResource(id = R.string.skip),
-        color = Color.White.copy(
-            alpha = if (visible) .8f else 0f
-        ),
-        fontSize = 14.sp,
+        color = MaterialTheme.colorScheme.onPrimary ,
         fontWeight = FontWeight.Medium,
         modifier = Modifier.clickable(
             enabled = visible

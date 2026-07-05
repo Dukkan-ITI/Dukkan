@@ -12,4 +12,6 @@
     <string name="onboarding_desc_3">احصل على منتجاتك المفضلة على باب منزلك في وقت قياسي.</string>
     <string name="get_started">ابدأ الآن</string>
     <string name="continue_arrow">متابعة ←</string>
+    <string name="continue_arrow_description">الانتقال للخطوة التالية</string>
+    <string name="onboarding_image_description">صورة توضيحية لشاشة التعريف بالتطبيق</string>
 </resources>
