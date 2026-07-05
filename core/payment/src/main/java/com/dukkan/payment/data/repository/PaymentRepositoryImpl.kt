@@ -1,36 +1,35 @@
 package com.dukkan.payment.data.repository
-import okhttp3.MediaType.Companion.toMediaType
 
-import com.dukkan.payment.data.mapper.toDomainModel
+import com.dukkan.payment.BuildConfig
 import com.dukkan.payment.data.remote.PaymentApi
-import com.dukkan.payment.data.remote.dto.AddressDto
-import com.dukkan.payment.data.remote.dto.CashOrderRequest
-import com.dukkan.payment.data.remote.dto.IntentionRequest
+import com.dukkan.payment.data.remote.dto.PaymobBillingData
+import com.dukkan.payment.data.remote.dto.PaymobIntentionRequest
+import com.dukkan.payment.data.remote.dto.PaymobItem
 import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentIntentionResult
 import com.dukkan.payment.domain.repository.PaymentRepository
 import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.OrderConfirmation
+import java.math.BigDecimal
+import java.util.UUID
 import javax.inject.Inject
 
 internal class PaymentRepositoryImpl @Inject constructor(
     private val api: PaymentApi,
 ) : PaymentRepository {
 
-    private fun sanitizeAddressId(rawId: String?): String? =
-        rawId?.substringBefore("?")
-
     override suspend fun confirmCashOrder(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.dukkan.domain.model.Money,
+        cartTotal: Money,
     ): Result<OrderConfirmation> = runCatching {
-        
+        // Cash orders don't need a payment gateway — mark as success immediately.
         OrderConfirmation(
-            orderId = "CASH-" + java.util.UUID.randomUUID().toString().take(8),
-            status = "Success",
-            total = cartTotal
+            orderId = "CASH-" + UUID.randomUUID().toString().take(8),
+            status  = "Success",
+            total   = cartTotal,
         )
     }
 
@@ -38,39 +37,66 @@ internal class PaymentRepositoryImpl @Inject constructor(
         idempotencyKey: String,
         address: CheckoutAddress,
         cartId: String,
-        cartTotal: com.dukkan.domain.model.Money,
+        cartTotal: Money,
     ): Result<PaymentIntentionResult> = runCatching {
-        val request = IntentionRequest(
-            addressId = if (address is CheckoutAddress.Saved) sanitizeAddressId(address.addressId) else null,
-            oneOffAddress = if (address is CheckoutAddress.OneOff) address.address.toDto() else null,
-            cartId = cartId,
+        // Paymob requires the amount in the smallest currency unit (piasters for EGP = ×100).
+        val amountInPiasters = cartTotal.amount
+            .multiply(BigDecimal("100"))
+            .toLong()
+
+        val billing = when (address) {
+            is CheckoutAddress.OneOff -> address.address.toBillingData()
+            is CheckoutAddress.Saved  -> PaymobBillingData(
+                firstName   = "Customer",
+                lastName    = ".",
+                phoneNumber = "N/A",
+                email       = "customer@example.com",
+            )
+        }
+
+        val request = PaymobIntentionRequest(
+            amount         = amountInPiasters,
+            currency       = "EGP",
+            paymentMethods = listOf(BuildConfig.PAYMOB_INTEGRATION_ID),
+            items          = listOf(
+                PaymobItem(
+                    name        = "Dukkan Order",
+                    amount      = amountInPiasters,
+                    description = "Cart: $cartId",
+                    quantity    = 1,
+                )
+            ),
+            billingData = billing,
         )
-        val response = api.createPaymentIntention(idempotencyKey, request)
-        response.toDomainModel()
+
+        val response = api.createIntention(
+            auth = "Token ${BuildConfig.PAYMOB_SECRET_KEY}",
+            body = request,
+        )
+
+        PaymentIntentionResult(
+            clientSecret = response.clientSecret,
+            publicKey    = response.publicKey ?: BuildConfig.PAYMOB_PUBLIC_KEY,
+            orderId      = cartId,
+        )
     }
 
     override suspend fun verifyPaymentStatus(
         orderId: String,
-        cartTotal: com.dukkan.domain.model.Money?,
+        cartTotal: Money?,
     ): Result<OrderConfirmation> = runCatching {
-        
         OrderConfirmation(
             orderId = orderId,
-            status = "Success",
-            total = cartTotal ?: com.dukkan.domain.model.Money(java.math.BigDecimal("0.00"), "EGP")
+            status  = "Success",
+            total   = cartTotal ?: Money(BigDecimal.ZERO, "EGP"),
         )
     }
 
-    private fun Address.toDto(): AddressDto = AddressDto(
-        firstName = firstName,
-        lastName = lastName,
-        company = company,
-        address1 = address1,
-        address2 = address2,
-        city = city,
-        province = province,
-        country = country,
-        zip = zip,
-        phone = phone,
+
+    private fun Address.toBillingData() = PaymobBillingData(
+        firstName   = firstName.orEmpty().ifEmpty { "Customer" },
+        lastName    = lastName.orEmpty().ifEmpty { "." },
+        phoneNumber = phone.orEmpty().ifEmpty { "N/A" },
+        email       = "customer@example.com",
     )
 }

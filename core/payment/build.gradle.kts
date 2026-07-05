@@ -8,10 +8,21 @@ android {
     defaultConfig {
         buildConfigField(
             "String",
-            "PAYMENT_BACKEND_URL",
-            "\"${providers.gradleProperty("paymentBackendUrl").getOrElse("http://10.0.2.2:8080/api/v1/")}\""
+            "PAYMOB_SECRET_KEY",
+            "\"${providers.gradleProperty("paymobClientSecret").getOrElse("")}\""
+        )
+        buildConfigField(
+            "String",
+            "PAYMOB_PUBLIC_KEY",
+            "\"${providers.gradleProperty("paymobPublicKey").getOrElse("")}\""
+        )
+        buildConfigField(
+            "int",
+            "PAYMOB_INTEGRATION_ID",
+            "${providers.gradleProperty("paymobIntegrationId").getOrElse("0")}"
         )
     }
+
 
     buildFeatures {
         // Required by Paymob native SDK

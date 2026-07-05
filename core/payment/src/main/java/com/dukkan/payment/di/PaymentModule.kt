@@ -47,10 +47,11 @@ internal abstract class PaymentModule {
         fun providePaymentApi(
             @Named("paymentOkHttp") okHttpClient: OkHttpClient,
         ): PaymentApi = Retrofit.Builder()
-            .baseUrl(BuildConfig.PAYMENT_BACKEND_URL)
+            .baseUrl("https://accept.paymob.com/")   // Direct Paymob API — no backend needed
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(PaymentApi::class.java)
+
     }
 }

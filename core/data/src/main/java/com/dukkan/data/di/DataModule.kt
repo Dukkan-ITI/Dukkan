@@ -129,4 +129,10 @@ object DataModule {
     @Provides
     fun provideCouponRepository(couponStore: CouponStore): CouponRepository =
         CouponRepositoryImpl(couponStore)
+
+    @Singleton
+    @Provides
+    fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
+        BrandsRepositoryImpl(productsDataSource)
 }
+

@@ -65,7 +65,9 @@ dependencies {
     implementation(project(":feature:address"))
     implementation(project(":features:categories"))
     implementation(project(":feature:ads"))
+    implementation(project(":features:brands"))
     implementation(project(":core:payment"))
+
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

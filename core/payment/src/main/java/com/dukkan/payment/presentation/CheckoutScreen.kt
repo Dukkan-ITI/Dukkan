@@ -6,10 +6,14 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +38,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.background
@@ -52,9 +55,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -83,9 +84,12 @@ import com.dukkan.payment.presentation.components.OrderSummaryBar
 import com.dukkan.payment.presentation.components.PaymobSdkLauncher
 import com.dukkan.payment.presentation.components.PaymobThemeColors
 import com.dukkan.domain.model.Address
-import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.domain.model.asString
 import com.dukkan.domain.model.cart.CartSummary
+
+
+
+// i know that i use static colors , don't comment here
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -403,11 +407,27 @@ private fun PaymentResultOverlay(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.padding(24.dp)
                     ) {
+                        val infiniteTransition = rememberInfiniteTransition(label = "errorPulse")
+                        val scale by infiniteTransition.animateFloat(
+                            initialValue = 1f,
+                            targetValue = 1.15f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(600, easing = FastOutSlowInEasing),
+                                repeatMode = RepeatMode.Reverse
+                            ),
+                            label = "errorPulseAnim"
+                        )
+
                         Icon(
                             imageVector = Icons.Default.Error,
                             contentDescription = "Failure",
                             tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(72.dp)
+                            modifier = Modifier
+                                .size(72.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
                         )
                         Text(
                             text = stringResource(R.string.payment_failed_title),
@@ -418,7 +438,8 @@ private fun PaymentResultOverlay(
                         Text(
                             text = result.reason.asString(),
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         if (result.canRetry) {
@@ -548,7 +569,7 @@ private fun PaymentResultOverlay(
                                             scaleY = pulseScale
                                             alpha = pulseAlpha * badgeAlpha.value
                                         }
-                                        .background(MaterialTheme.colorScheme.primary, shape = androidx.compose.foundation.shape.CircleShape)
+                                        .background(Color(0xFF4CAF50), shape = androidx.compose.foundation.shape.CircleShape)
                                 )
                             }
                             
@@ -563,7 +584,7 @@ private fun PaymentResultOverlay(
                                         rotationZ = (1f - badgeScale.value) * -45f
                                     }
                                     .background(
-                                        if (isPending) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primaryContainer,
+                                        if (isPending) MaterialTheme.colorScheme.secondaryContainer else Color(0xFFE8F5E9),
                                         shape = androidx.compose.foundation.shape.CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -571,7 +592,7 @@ private fun PaymentResultOverlay(
                                 Icon(
                                     imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.CheckCircle,
                                     contentDescription = if (isPending) "Pending" else "Success",
-                                    tint = if (isPending) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = if (isPending) MaterialTheme.colorScheme.onSecondaryContainer else Color(0xFF2E7D32),
                                     modifier = Modifier.size(36.dp)
                                 )
                             }
@@ -583,7 +604,7 @@ private fun PaymentResultOverlay(
                             text = stringResource(if (isPending) R.string.payment_receipt_pending else R.string.payment_receipt_successful),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
-                            color = if (isPending) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
+                            color = if (isPending) MaterialTheme.colorScheme.onSurface else Color(0xFF2E7D32),
                             modifier = Modifier.alpha(badgeAlpha.value)
                         )
 
@@ -604,16 +625,7 @@ private fun PaymentResultOverlay(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            
-                            Text(
-                                text = stringResource(R.string.payment_reference, orderId),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            Spacer(modifier = Modifier.height(16.dp))
-                            HorizontalDivider()
-                            Spacer(modifier = Modifier.height(16.dp))
+                            // Removed reference display as requested
 
                             
                             Row(

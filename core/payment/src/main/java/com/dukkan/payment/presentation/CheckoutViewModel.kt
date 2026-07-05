@@ -269,7 +269,7 @@ internal class CheckoutViewModel @Inject constructor(
 
             do {
                 delay(POLL_DELAY_MS)
-                lastResult = verifyPaymentStatusUseCase(id)
+                lastResult = verifyPaymentStatusUseCase(id, _uiState.value.cartSummary?.total)
                 attempts++
             } while (
                 lastResult.getOrNull()?.status?.equals("pending", ignoreCase = true) == true
