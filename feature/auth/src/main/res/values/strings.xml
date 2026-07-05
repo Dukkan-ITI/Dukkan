@@ -46,4 +46,23 @@
     <string name="auth_content_description_hide_password">Hide password</string>
     <string name="auth_content_description_show_password">Show password</string>
     <string name="auth_close">×</string>
+
+    <string name="auth_verification_title">Verify Your Email</string>
+    <string name="auth_verification_subtitle">We sent a verification link to %1$s. Check your inbox and tap the link to activate your account.</string>
+    <string name="auth_verification_check_button">I\'ve Verified, Continue</string>
+    <string name="auth_verification_resend_button">Resend Link</string>
+    <string name="auth_verification_resend_countdown">Resend in %1$ds</string>
+    <string name="auth_verification_back_button">Log Out</string>
+    <string name="auth_verification_email_resent">Verification link sent again</string>
+    <string name="auth_verification_still_pending">Not verified yet. Please check your inbox</string>
+    <string name="auth_verification_icon_description">Email verification icon</string>
+
+    <string name="auth_forgot_password_link">Forgot password?</string>
+    <string name="auth_forgot_password_title">Reset Password</string>
+    <string name="auth_forgot_password_subtitle">Enter your email and we\'ll send you a link to reset your password.</string>
+    <string name="auth_forgot_password_email_placeholder">Email address</string>
+    <string name="auth_forgot_password_send_button">Send Reset Link</string>
+    <string name="auth_forgot_password_back_button">Back to Login</string>
+    <string name="auth_forgot_password_sent_title">Check Your Email</string>
+    <string name="auth_forgot_password_sent_subtitle">We sent a password reset link to %1$s. Follow the link to set a new password, then come back and log in.</string>
 </resources>
