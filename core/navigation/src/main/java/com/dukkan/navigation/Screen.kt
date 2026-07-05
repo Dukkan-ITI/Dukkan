@@ -37,11 +37,19 @@ sealed class Screen {
     object AllProducts
 
     @Serializable
+    object OrderHistory
+
+    @Serializable
     object Categories
 
     @Serializable
     data class CategoryProducts(val categoryHandle: String)
 
     @Serializable
+    object Brands
+
+    @Serializable
+    data class BrandProducts(val vendor: String)
+
     object SavedAddresses
 }

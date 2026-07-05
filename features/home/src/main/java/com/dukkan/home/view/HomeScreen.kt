@@ -16,23 +16,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.domain.model.Brand
+
 import com.dukkan.domain.model.Category.Category
-import com.dukkan.home.components.HomeBanner
+import com.dukkan.home.components.HomeBrandsSection
+
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
-import com.dukkan.home.uiState.HomeUiState
+import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
+import com.dukkan.home.components.HomeBrandsSection
 
 @Composable
 fun HomeScreen(
@@ -42,9 +46,11 @@ fun HomeScreen(
     onSeeAllClicked: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (Category) -> Unit = {},
-) {
-    val uiState by viewModel.uiState.collectAsState()
+    onCategoryClick: (String) -> Unit = {},
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
+    ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     HomeScreenContent(
         modifier = modifier,
@@ -59,6 +65,8 @@ fun HomeScreen(
         },
         onNavigateToCategories = onNavigateToCategories,
         onCategoryClick = onCategoryClick,
+        onNavigateToBrands = onNavigateToBrands,
+        onBrandClick = onBrandClick,
     )
 }
 
@@ -71,8 +79,11 @@ fun HomeScreenContent(
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (Category) -> Unit = {},
-) {
+    onCategoryClick: (String) -> Unit = {},
+    onNavigateToBrands: () -> Unit = {},
+    onBrandClick: (Brand) -> Unit = {},
+
+    ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -140,6 +151,16 @@ fun HomeScreenContent(
                             categories = uiState.categories,
                             onSeeAllClick = onNavigateToCategories,
                             onCategoryClick = onCategoryClick
+                        )
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        HomeBrandsSection(
+                            brands = uiState.brands,
+                            onSeeAllClick = onNavigateToBrands,
+                            onBrandClick = onBrandClick
                         )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {

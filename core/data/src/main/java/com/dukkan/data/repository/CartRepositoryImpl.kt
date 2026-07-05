@@ -171,6 +171,32 @@ class CartRepositoryImpl @Inject constructor(
         val cart = remoteDataSource.getCart(cartId, country)
         return cart?.discountCodes?.map { it.code } ?: emptyList()
     }
+    override suspend fun syncCartOnLogin(userId: String) {
+        cachedCart = null
+        try {
+            localDataSource.deleteCartId()
+
+            val remoteCartId = firestoreDataSource.getCartId(userId)
+            if (remoteCartId != null) {
+                localDataSource.saveCartId(remoteCartId)
+                Log.d(TAG, "Cart synced from Firestore for user: $userId")
+            } else {
+                Log.d(TAG, "No existing cart found in Firestore for user: $userId")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to sync cart on login", e)
+        }
+    }
+
+    override suspend fun clearCartOnLogout() {
+        cachedCart = null
+        try {
+            localDataSource.deleteCartId()
+            Log.d(TAG, "Local cart cleared on logout")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to clear cart on logout", e)
+        }
+    }
 
     private companion object {
         const val TAG = "DukkanCart"
