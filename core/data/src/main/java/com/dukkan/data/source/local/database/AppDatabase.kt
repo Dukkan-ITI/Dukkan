@@ -11,6 +11,7 @@ import com.dukkan.data.source.local.entity.FavoriteEntity
 import com.dukkan.data.source.local.dao.OrderDao
 import com.dukkan.data.source.local.entity.OrderEntity
 
+
 @Database(
     entities = [FavoriteEntity::class, OrderEntity::class],
     version = 1

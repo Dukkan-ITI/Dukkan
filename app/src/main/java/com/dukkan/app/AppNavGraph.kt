@@ -19,6 +19,8 @@ import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.payment.PaymentResult
+import com.dukkan.payment.paymentNavGraph
 import com.dukkan.order_list.view.OrderHistoryScreen
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.paymentNavGraph
