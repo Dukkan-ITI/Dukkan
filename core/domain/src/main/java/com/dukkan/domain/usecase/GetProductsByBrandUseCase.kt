@@ -8,12 +8,12 @@ class GetProductsByBrandUseCase @Inject constructor(
     private val productsRepository: ProductsRepository
 ) {
     suspend operator fun invoke(
-        vendor: String,
+        type: String,
         limit: Int = 20,
         after: String? = null,
     ): List<Product> {
-        return productsRepository.getProductsByVendor(
-            vendor = vendor,
+        return productsRepository.getProductsByType(
+            type = type,
             limit = limit,
             after = after,
         )

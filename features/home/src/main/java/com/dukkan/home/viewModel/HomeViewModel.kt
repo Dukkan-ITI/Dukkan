@@ -3,18 +3,17 @@ package com.dukkan.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.model.Brand
-import com.dukkan.domain.model.Category.Category
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.GetBrandsUseCase
-import com.dukkan.domain.usecase.category.GetCategoriesUseCase
+import com.dukkan.domain.usecase.category.GetProductTypesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.dukkan.home.uiState.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +29,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getProductTypesUseCase: GetProductTypesUseCase,
     private val getBrandsUseCase: GetBrandsUseCase,
     getFavorites: GetFavoritesUseCase,
     getCurrency: GetCurrencyUseCase,
@@ -39,9 +38,9 @@ class HomeViewModel @Inject constructor(
 
     private data class HomeContent(
         val products: List<Product>,
-        val categories: List<Category>,
-        val brands: List<Brand>
-    )
+        val categories: List<String>,
+        val brands: List<Brand>,
+        )
 
     private val _homeContent = MutableStateFlow(HomeContent(emptyList(), emptyList(), emptyList()))
     private val _isLoading = MutableStateFlow(true)
@@ -96,7 +95,7 @@ class HomeViewModel @Inject constructor(
                 // Assuming GetProductsUseCase returns a wrapper containing products and pagination info
                 // If it returns List<Product>, we would need to adjust the UseCase or Repository
                 val products = result
-                val categories = getCategoriesUseCase().firstOrNull() ?: emptyList()
+                val categories = getProductTypesUseCase()
                 val brands = getBrandsUseCase().firstOrNull() ?: emptyList()
 
                 _homeContent.value = HomeContent(products, categories, brands)

@@ -13,15 +13,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dukkan.home.R
 import com.dukkan.design_system.components.FilterChip
-import com.dukkan.domain.model.Category.Category
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeCategoriesSection(
-    categories: List<Category>,
+    categories: List<String>,
     onSeeAllClick: () -> Unit,
-    onCategoryClick: (Category) -> Unit
+    onCategoryClick: (String) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -56,7 +55,7 @@ fun HomeCategoriesSection(
         ) {
             items(categories.take(10)) { category ->
                 FilterChip(
-                    label = category.name,
+                    label = category,
                     isSelected = false,
                     onClick = { onCategoryClick(category) }
                 )
