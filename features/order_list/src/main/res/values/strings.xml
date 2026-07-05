@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="order_history_title">Order history</string>
+    <string name="navigate_back">Back</string>
+    <string name="no_order_history_yet">No order history yet.</string>
+    <string name="order_history_empty_subtitle">Your completed orders will appear here.</string>
+    <string name="order_status_delivered">Delivered</string>
+    <string name="order_status_in_transit">In transit</string>
+    <string name="order_status_processing">Processing</string>
+    <string name="order_status_cancelled">Cancelled</string>
+    <string name="order_status_pending">Pending</string>
+    <string name="order_quantity_format">Qty: %1$d</string>
+    <string name="loading_orders">Loading orders…</string>
+    <string name="no_recent_orders">No recent orders.</string>
+    <string name="see_all">See all</string>
+    <string name="error_failed_to_load_orders">Failed to load orders</string>
+    <string name="error_failed_to_load_orders_with_message">Failed to load orders: %1$s</string>
+    <string name="error_unexpected">An unexpected error occurred</string>
+</resources>

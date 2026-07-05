@@ -16,6 +16,7 @@
     <string name="profile_language_arabic">العربية</string>
 
     <string name="profile_order_history">Order history</string>
+    <string name="profile_no_order_history_yet">No order history yet.</string>
 
     <string name="profile_my_wishlist">My wishlist</string>
     <string name="profile_saved_addresses">Saved addresses</string>

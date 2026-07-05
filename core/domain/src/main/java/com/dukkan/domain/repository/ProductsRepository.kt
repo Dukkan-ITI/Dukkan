@@ -12,9 +12,9 @@ interface ProductsRepository {
         after: String? = null,
     ): List<Product>
 
-    suspend fun getProductsByVendor(
-        vendor: String,
+    suspend fun getProductsByType(
+        type: String,
         limit: Int,
-        after: String? = null,
+        after: String? = null
     ): List<Product>
 }

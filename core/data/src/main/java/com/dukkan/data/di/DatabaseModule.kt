@@ -32,4 +32,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideFavoriteDao(db: AppDatabase): FavoriteDao = db.favoriteDao()
+
+    @Provides
+    @Singleton
+    fun provideOrderDao(db: AppDatabase): com.dukkan.data.source.local.dao.OrderDao = db.orderDao()
 }

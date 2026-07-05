@@ -11,5 +11,6 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
 
+
     implementation(libs.androidx.compose.material.icons.core)
 }

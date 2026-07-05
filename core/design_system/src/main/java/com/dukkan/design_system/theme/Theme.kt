@@ -6,6 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
@@ -35,11 +36,18 @@ private val DarkColorScheme = darkColorScheme(
 
 data class DukkanExtendedColors(
     val bannerTitle: Color,
+    val orderStatusInTransit: Color,
+    val orderStatusProcessing: Color,
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
-    DukkanExtendedColors(bannerTitle = Color.Unspecified)
+    DukkanExtendedColors(
+        bannerTitle = Color.Unspecified,
+        orderStatusInTransit = Color.Unspecified,
+        orderStatusProcessing = Color.Unspecified,
+    )
 }
+
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -47,9 +55,19 @@ fun AppTheme(
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
-    val extendedColors = DukkanExtendedColors(
-        bannerTitle = DukkanBannerTitle
-    )
+    val extendedColors = if (darkTheme) {
+        DukkanExtendedColors(
+            bannerTitle = DukkanBannerTitle,
+            orderStatusInTransit = DarkOrderInTransit,
+            orderStatusProcessing = DarkOrderProcessing,
+        )
+    } else {
+        DukkanExtendedColors(
+            bannerTitle = DukkanBannerTitle,
+            orderStatusInTransit = LightOrderInTransit,
+            orderStatusProcessing = LightOrderProcessing,
+        )
+    }
 
     CompositionLocalProvider(LocalExtendedColors provides extendedColors) {
         MaterialTheme(
@@ -60,9 +78,9 @@ fun AppTheme(
     }
 }
 
-// A handy object to make accessing it look just like MaterialTheme
-object DukkanTheme {
+object AppThemeDefaults {
     val extendedColors: DukkanExtendedColors
         @Composable
+        @ReadOnlyComposable
         get() = LocalExtendedColors.current
 }

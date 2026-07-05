@@ -21,10 +21,10 @@ import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.paymentNavGraph
+import com.dukkan.order_list.view.OrderHistoryScreen
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
-import com.dukkan.search.view.SearchScreen
 import com.dukkan.product_details.view.ProductDetailsScreen
 
 @Composable
@@ -76,7 +76,7 @@ fun AppNavGraph(
                 },
                 onNavigateToCategories = { navController.navigate(Screen.Categories) },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category.handle))
+                    navController.navigate(Screen.CategoryProducts(category))
                 },
                 onNavigateToBrands = { navController.navigate(Screen.Brands) },
                 onBrandClick = { brand ->
@@ -155,10 +155,21 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
-                onNavigateToOrderList = {
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 },
-                onNavigateToSavedAddresses = { navController.navigate(Screen.SavedAddresses) }
+                onNavigateToOrderList = {
+                    navController.navigate(Screen.OrderHistory)
+                },
+                onNavigateToSavedAddresses = {
+                    navController.navigate(Screen.SavedAddresses)
+                }
+            )
+        }
+
+        composable<Screen.OrderHistory> {
+            OrderHistoryScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 
@@ -177,7 +188,7 @@ fun AppNavGraph(
             CategoriesScreen(
                 onBackClick = { navController.popBackStack() },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category.handle))
+                    navController.navigate(Screen.CategoryProducts(category))
                 }
             )
         }

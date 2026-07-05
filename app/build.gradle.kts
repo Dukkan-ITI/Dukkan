@@ -50,6 +50,7 @@ android {
 
 // Modules
 dependencies {
+
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
     implementation(project(":core:data"))
@@ -67,6 +68,7 @@ dependencies {
     implementation(project(":feature:ads"))
     implementation(project(":features:brands"))
     implementation(project(":feature:payment"))
+
 
 
     implementation(platform(libs.androidx.compose.bom))
@@ -91,11 +93,31 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
 
+
     // Required for Paymob SDK resource linking
     implementation(libs.sdp)
     implementation(libs.ssp)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    // Modules
+    implementation(project(":core:design_system"))
+    implementation(project(":core:navigation"))
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
+    implementation(project(":features:onboarding"))
+    implementation(project(":features:home"))
+    implementation(project(":features:favorites"))
+    implementation(project(":features:shopping_cart"))
+    implementation(project(":features:product_details"))
+    implementation(project(":features:settings"))
+    implementation(project(":feature:auth"))
+    implementation(project(":features:search"))
+    implementation(project(":features:categories"))
+    implementation(project(":features:order_list"))
+    implementation(project(":feature:ads"))
+    implementation(project(":features:brands"))
+    implementation(project(":feature:address"))
+}
 
     // Required by Paymob SDK at runtime (SDK uses Timber internally)
     implementation(libs.timber)

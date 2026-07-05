@@ -13,7 +13,8 @@ data class ProfileState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val currency: AppCurrency = AppCurrency.USD,
     val language: AppLanguage = AppLanguage.ENGLISH,
-    val orders: List<OrderUi> = sampleOrders,
+    val orders: List<OrderUi> = emptyList(),
+    val ordersLoading: Boolean = false,
 ) {
     val isLoggedIn: Boolean get() = user != null
 }
