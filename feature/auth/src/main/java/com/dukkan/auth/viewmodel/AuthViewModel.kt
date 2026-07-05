@@ -1,5 +1,6 @@
 package com.dukkan.auth.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,9 @@ import com.dukkan.domain.usecase.GetShopifyTokenUseCase
 import com.dukkan.domain.usecase.LoginUseCase
 import com.dukkan.domain.usecase.LoginWithGoogleUseCase
 import com.dukkan.domain.usecase.RegisterUseCase
+import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
+import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,6 +78,8 @@ class AuthViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val loginWithGoogleUseCase: LoginWithGoogleUseCase,
     private val getShopifyTokenUseCase: GetShopifyTokenUseCase,
+    private val syncFavoritesOnLoginUseCase: SyncFavoritesOnLoginUseCase,
+    private val syncCartOnLoginUseCase: SyncCartOnLoginUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Form())
@@ -100,7 +106,7 @@ class AuthViewModel @Inject constructor(
     private fun onFirstNameChanged(firstName: String) {
         _uiState.updateForm { copy(firstName = firstName, firstNameError = null) }
     }
-    
+
     private fun onLastNameChanged(lastName: String) {
         _uiState.updateForm { copy(lastName = lastName, lastNameError = null) }
     }
@@ -112,7 +118,7 @@ class AuthViewModel @Inject constructor(
     private fun onPasswordChanged(password: String) {
         _uiState.updateForm { copy(password = password, passwordError = null) }
     }
-    
+
     private fun onConfirmPasswordChanged(password: String) {
         _uiState.updateForm { copy(confirmPassword = password, confirmPasswordError = null) }
     }
@@ -120,7 +126,7 @@ class AuthViewModel @Inject constructor(
     private fun togglePasswordVisibility() {
         _uiState.updateForm { copy(isPasswordVisible = !isPasswordVisible) }
     }
-    
+
     private fun toggleConfirmPasswordVisibility() {
         _uiState.updateForm { copy(isConfirmPasswordVisible = !isConfirmPasswordVisible) }
     }
@@ -132,7 +138,7 @@ class AuthViewModel @Inject constructor(
     private fun submit() {
         val form = _uiState.value as? AuthUiState.Form ?: return
         if (!form.isSubmitEnabled) return
-        
+
         if (!form.isLoginMode && form.password != form.confirmPassword) {
             _uiState.updateForm { copy(confirmPasswordError = context.getString(com.dukkan.auth.R.string.auth_error_passwords_do_not_match)) }
             return
@@ -148,6 +154,9 @@ class AuthViewModel @Inject constructor(
 
             if (result.isSuccess == true) {
                 getShopifyTokenUseCase()
+                syncFavoritesAfterAuth()
+                syncCartAfterAuth()
+
                 _uiState.value = AuthUiState.Success
             } else {
                 _uiState.value = form.copy(emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown))
@@ -167,13 +176,37 @@ class AuthViewModel @Inject constructor(
             _uiState.value = form.copy(isGoogleLoading = true)
             val result = loginWithGoogleUseCase(idToken)
             if (result.isSuccess == true) {
+                syncFavoritesAfterAuth()
+                syncCartAfterAuth()
+
+
                 _uiState.value = AuthUiState.Success
             } else {
                 _uiState.value = form.copy(isGoogleLoading = false, emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_google_sign_in_failed))
             }
         }
     }
-
+     suspend fun syncFavoritesAfterAuth() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        try {
+            syncFavoritesOnLoginUseCase(userId)
+        } catch (e: Exception) {
+           Log.e("AuthViewModel", "Failed to sync favorites", e)
+        }
+    }
+    suspend fun syncCartAfterAuth() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        try {
+            syncFavoritesOnLoginUseCase(userId)
+        } catch (e: Exception) {
+            Log.e("AuthViewModel", "Failed to sync favorites", e)
+        }
+        try {
+            syncCartOnLoginUseCase(userId)
+        } catch (e: Exception) {
+            Log.e("AuthViewModel", "Failed to sync cart", e)
+        }
+    }
     private fun onGoogleFailure(message: String) {
         val form = _uiState.value as? AuthUiState.Form ?: AuthUiState.Form()
         _uiState.value = form.copy(isGoogleLoading = false, emailError = message)

@@ -16,6 +16,7 @@
     <string name="profile_language_arabic">العربية</string>
 
     <string name="profile_order_history">سجل الطلبات</string>
+    <string name="profile_no_order_history_yet">لا يوجد سجل طلبات بعد.</string>
 
     <string name="profile_my_wishlist">قائمة أمنياتي</string>
     <string name="profile_saved_addresses">العناوين المحفوظة</string>

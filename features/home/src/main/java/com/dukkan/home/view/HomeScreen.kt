@@ -25,6 +25,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
+
+import com.dukkan.domain.model.Category.Category
+import com.dukkan.home.components.HomeBrandsSection
+
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.HomeSearchBar

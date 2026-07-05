@@ -17,10 +17,10 @@ import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
+import com.dukkan.order_list.view.OrderHistoryScreen
 import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
-import com.dukkan.search.view.SearchScreen
 import com.dukkan.product_details.view.ProductDetailsScreen
 
 @Composable
@@ -118,10 +118,21 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = { navController.navigate(Screen.Favorite) },
-                onNavigateToOrderList = {
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 },
-                onNavigateToSavedAddresses = { navController.navigate(Screen.SavedAddresses) }
+                onNavigateToOrderList = {
+                    navController.navigate(Screen.OrderHistory)
+                },
+                onNavigateToSavedAddresses = {
+                    navController.navigate(Screen.SavedAddresses)
+                }
+            )
+        }
+
+        composable<Screen.OrderHistory> {
+            OrderHistoryScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

@@ -46,6 +46,9 @@ android {
 }
 
 dependencies {
+
+
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -82,6 +85,7 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":features:search"))
     implementation(project(":features:categories"))
+    implementation(project(":features:order_list"))
     implementation(project(":feature:ads"))
     implementation(project(":features:brands"))
     implementation(project(":feature:address"))

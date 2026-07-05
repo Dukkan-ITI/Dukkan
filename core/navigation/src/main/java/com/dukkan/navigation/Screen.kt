@@ -37,6 +37,9 @@ sealed class Screen {
     object AllProducts
 
     @Serializable
+    object OrderHistory
+
+    @Serializable
     object Categories
 
     @Serializable

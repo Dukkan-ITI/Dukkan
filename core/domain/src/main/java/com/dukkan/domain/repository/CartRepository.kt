@@ -11,4 +11,6 @@ interface CartRepository {
     suspend fun saveCartId(cartId: String)
     suspend fun applyDiscountCode(discountCode: String): Result<Unit>
     suspend fun removeDiscountCode(discountCode: String): Result<Unit>
+    suspend fun syncCartOnLogin(userId: String)
+    suspend fun clearCartOnLogout()
 }
