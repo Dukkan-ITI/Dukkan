@@ -174,6 +174,21 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearCartFully() {
+        val cartId = localDataSource.getCartId()
+        if (cartId != null) {
+            try {
+                val cart = remoteDataSource.getCart(cartId)
+                cart?.lines?.edges?.forEach { edge ->
+                    remoteDataSource.removeCartItem(cartId, edge.node.id)
+                }
+                if (cart?.discountCodes?.isNotEmpty() == true) {
+                    remoteDataSource.applyDiscountCodes(cartId, emptyList())
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to clear Storefront cart items before abandoning", e)
+            }
+        }
+
         cachedCart = null
         try {
             localDataSource.deleteCartId()
