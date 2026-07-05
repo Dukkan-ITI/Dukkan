@@ -112,8 +112,7 @@ internal fun CheckoutScreen(
         onPaymentResult(
             PaymentResult.Success(
                 orderId = conf.orderId,
-                total = conf.total.amount.toDouble(),
-                currency = conf.total.currencyCode,
+                total = conf.total,
                 paymentMethod = "CASH"
             )
         )
@@ -470,17 +469,11 @@ private fun PaymentResultOverlay(
         else -> "---"
     }
 
-    val rawTotal = when (result) {
-        is OrderResult.Success -> result.confirmation.total.amount.toDouble()
-        is OrderResult.Pending -> result.confirmation?.total?.amount?.toDouble() ?: cartSummary?.total?.amount?.toDouble() ?: 0.0
-        else -> 0.0
-    }
-
-    val currency = when (result) {
-        is OrderResult.Success -> result.confirmation.total.currencyCode
-        is OrderResult.Pending -> result.confirmation?.total?.currencyCode ?: cartSummary?.total?.currencyCode ?: ""
-        else -> ""
-    }
+    val finalMoney = when (result) {
+        is OrderResult.Success -> result.confirmation.total
+        is OrderResult.Pending -> result.confirmation?.total ?: cartSummary?.total
+        else -> cartSummary?.total
+    } ?: com.dukkan.domain.model.Money(java.math.BigDecimal.ZERO, "EGP")
 
     val am = LocalAccessibilityManager.current
     val isReducedMotion = am?.calculateRecommendedTimeoutMillis(1000, true) == 1000L
@@ -683,7 +676,7 @@ private fun PaymentResultOverlay(
                                 if (isPending) {
                                     onResult(PaymentResult.Pending(orderId))
                                 } else {
-                                    onResult(PaymentResult.Success(orderId, rawTotal, currency, methodStr))
+                                    onResult(PaymentResult.Success(orderId, finalMoney, methodStr))
                                 }
                             },
                             modifier = Modifier

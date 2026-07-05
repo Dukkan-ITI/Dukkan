@@ -1,5 +1,7 @@
 package com.dukkan.payment
 
+import com.dukkan.domain.model.Money
+
 /**
  * Terminal result emitted by the payment feature when the payment flow finishes.
  * This is the public contract that crosses the feature-payment module boundary.
@@ -7,8 +9,7 @@ package com.dukkan.payment
 sealed interface PaymentResult {
     data class Success(
         val orderId: String,
-        val total: Double,
-        val currency: String,
+        val total: Money,
         val paymentMethod: String
     ) : PaymentResult
 

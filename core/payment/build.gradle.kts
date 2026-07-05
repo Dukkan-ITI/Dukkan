@@ -1,5 +1,6 @@
 plugins {
     id("dukkan.feature")
+    id("dukkan.hilt")
     alias(libs.plugins.kotlin.serialization)
 }
 
