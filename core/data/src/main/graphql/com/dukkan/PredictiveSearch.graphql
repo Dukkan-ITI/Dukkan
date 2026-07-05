@@ -4,6 +4,7 @@ query PredictiveSearch($query: String! = "sne") {
             id
             title
             vendor
+            productType
             availableForSale
             priceRange {
                 minVariantPrice {
