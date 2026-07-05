@@ -3,18 +3,32 @@ package com.dukkan.payment.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dukkan.payment.domain.model.CheckoutAddress
-import com.dukkan.payment.domain.model.PaymentMethod
-import com.dukkan.payment.domain.model.PaymobCredentials
-import com.dukkan.payment.domain.usecase.ConfirmCashOrderUseCase
-import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
-import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
-import com.google.gson.Gson
 import com.dukkan.domain.model.Address
+import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.domain.model.cart.CartSummary
+import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.usecase.address.GetAddressesUseCase
 import com.dukkan.domain.usecase.cart.GetCartUseCase
+import com.dukkan.domain.usecase.customer.GetCustomerIdUseCase
+import com.dukkan.payment.PaymentResult
+import com.dukkan.payment.R
+import com.dukkan.payment.domain.model.CheckoutAddress
+import com.dukkan.payment.domain.model.OrderCancelReason
+import com.dukkan.payment.domain.model.OrderDraft
+import com.dukkan.payment.domain.model.OrderFinancialStatus
+import com.dukkan.payment.domain.model.OrderLineItemDraft
+import com.dukkan.payment.domain.model.PaymentMethod
+import com.dukkan.payment.domain.model.PaymobCredentials
+import com.dukkan.payment.domain.model.ShippingLineDraft
+import com.dukkan.payment.domain.usecase.CancelOrderUseCase
+import com.dukkan.payment.domain.usecase.CreateOrderUseCase
+import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
+import com.dukkan.payment.domain.usecase.MarkOrderPaidUseCase
+import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
+import com.dukkan.payment.domain.usecase.DeleteOrderUseCase
+import com.dukkan.domain.usecase.cart.ClearCartFullyUseCase
+import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,11 +37,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
-import com.dukkan.payment.PaymentResult
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
-import com.dukkan.payment.R
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_IDEMPOTENCY_KEY
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_ONE_OFF_ADDRESS_JSON
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_ORDER_ID
@@ -35,6 +47,9 @@ import com.dukkan.payment.presentation.CheckoutConstants.KEY_SAVED_ADDRESS_ID
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_SELECTED_METHOD
 import com.dukkan.payment.presentation.CheckoutConstants.MAX_POLL_ATTEMPTS
 import com.dukkan.payment.presentation.CheckoutConstants.POLL_DELAY_MS
+import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_CODE
+import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_PRICE
+import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_TITLE
 
 internal sealed interface CheckoutEffect {
     data class Finish(val result: PaymentResult) : CheckoutEffect
@@ -43,9 +58,13 @@ internal sealed interface CheckoutEffect {
 @HiltViewModel
 internal class CheckoutViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val confirmCashOrderUseCase: ConfirmCashOrderUseCase,
     private val createPaymentIntentionUseCase: CreatePaymentIntentionUseCase,
     private val verifyPaymentStatusUseCase: VerifyPaymentStatusUseCase,
+    private val createOrderUseCase: CreateOrderUseCase,
+    private val markOrderPaidUseCase: MarkOrderPaidUseCase,
+    private val deleteOrderUseCase: DeleteOrderUseCase,
+    private val clearCartFullyUseCase: ClearCartFullyUseCase,
+    private val getCustomerIdUseCase: GetCustomerIdUseCase,
     private val getCartUseCase: GetCartUseCase,
     private val getAddressesUseCase: GetAddressesUseCase,
 ) : ViewModel() {
@@ -138,6 +157,7 @@ internal class CheckoutViewModel @Inject constructor(
                 it.copy(
                     isLoadingCartOrAddresses = false,
                     cartSummary = cartSummary,
+                    storeCart = cart,
                     addresses   = addresses,
                 )
             }
@@ -163,7 +183,7 @@ internal class CheckoutViewModel @Inject constructor(
             CheckoutEvent.SubmitOrder             -> submitOrder()
             is CheckoutEvent.PaymobSdkFinished    -> handlePaymobSdkFinished(event.status, event.message)
             CheckoutEvent.CancelPaymentFlow       -> {
-                
+                cancelPendingOrder()
             }
             CheckoutEvent.AppResumedDuringPayment -> onAppResumedDuringPayment()
             
@@ -203,35 +223,33 @@ internal class CheckoutViewModel @Inject constructor(
     private fun submitOrder() {
         val address = _uiState.value.selectedAddress ?: return
         val method  = _uiState.value.selectedMethod ?: return
-        val cartSummary = _uiState.value.cartSummary ?: return
-        val cartId  = cartSummary.cartId
-        val cartTotal = cartSummary.total
+        val cart = _uiState.value.storeCart ?: return
 
         when (method) {
-            PaymentMethod.CASH -> confirmCash(address, cartId, cartTotal)
-            PaymentMethod.ONLINE -> startOnlinePayment(address, cartId, cartTotal)
+            PaymentMethod.CASH -> confirmCash(address, cart)
+            PaymentMethod.ONLINE -> startOnlinePayment(address, cart)
         }
     }
 
-    private fun confirmCash(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
+    private fun confirmCash(address: CheckoutAddress, cart: StoreCart) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
-            val result = confirmCashOrderUseCase(
-                idempotencyKey = idempotencyKey,
-                address        = address,
-                cartId         = cartId,
-                cartTotal      = cartTotal,
-            )
+            val result = buildOrderDraft(address, cart)
+                .fold(
+                    onSuccess = { draft -> createOrderUseCase(draft, OrderFinancialStatus.PENDING) },
+                    onFailure = { Result.failure(it) },
+                )
             _uiState.update { it.copy(isCreatingIntention = false) }
             
             result.fold(
-                onSuccess = { conf ->
+                onSuccess = { createdOrder ->
                     viewModelScope.launch {
+                        clearCartFullyUseCase()
                         _effect.emit(
                             CheckoutEffect.Finish(
                                 PaymentResult.Success(
-                                    orderId = conf.orderId,
-                                    total = conf.total,
+                                    orderId = createdOrder.orderId,
+                                    total = createdOrder.total,
                                     paymentMethod = "CASH"
                                 )
                             )
@@ -247,18 +265,36 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun startOnlinePayment(address: CheckoutAddress, cartId: String, cartTotal: com.dukkan.domain.model.Money) {
+    private fun startOnlinePayment(address: CheckoutAddress, cart: StoreCart) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
+            val orderResult = buildOrderDraft(address, cart)
+                .fold(
+                    onSuccess = { draft -> createOrderUseCase(draft, OrderFinancialStatus.PENDING) },
+                    onFailure = { Result.failure(it) },
+                )
+
+            val createdOrder = orderResult.getOrElse { e ->
+                val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_initialize)
+                _uiState.update {
+                    it.copy(
+                        isCreatingIntention = false,
+                        result = OrderResult.Failure(errorMessage, canRetry = true)
+                    )
+                }
+                return@launch
+            }
+
+            orderId = createdOrder.orderId
+
             val result = createPaymentIntentionUseCase(
                 idempotencyKey = idempotencyKey,
                 address        = address,
-                cartId         = cartId,
-                cartTotal      = cartTotal,
+                cartId         = cart.id,
+                cartTotal      = cart.cost.totalAmount,
             )
             result.fold(
                 onSuccess = { intention ->
-                    orderId = intention.orderId
                     _uiState.update {
                         it.copy(
                             isCreatingIntention = false,
@@ -270,6 +306,7 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 },
                 onFailure = { e ->
+                    deleteOrderUseCase(createdOrder.orderId)
                     val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_initialize)
                     _uiState.update { 
                         it.copy(
@@ -290,7 +327,7 @@ internal class CheckoutViewModel @Inject constructor(
             }
             com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
                 val errorMsg = message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_cancelled)
-                _uiState.update { it.copy(result = OrderResult.Failure(errorMsg, canRetry = true)) }
+                cancelPendingOrder(errorMsg)
             }
         }
     }
@@ -343,23 +380,88 @@ internal class CheckoutViewModel @Inject constructor(
                                 confirmation.status.equals("successful", ignoreCase = true)
                 
                 if (isSuccess) {
-                    _uiState.update {
-                        it.copy(result = OrderResult.Success(confirmation))
-                    }
+                    markPendingOrderPaid()
                 } else {
-                    _uiState.update {
-                        it.copy(result = OrderResult.Failure(UiText.StringResource(R.string.payment_error_status, confirmation.status), canRetry = true))
-                    }
+                    cancelPendingOrder(UiText.StringResource(R.string.payment_error_status, confirmation.status))
                 }
             },
             onFailure = { e ->
                 val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_failed)
-                _uiState.update { 
-                    it.copy(result = OrderResult.Failure(errorMessage, canRetry = true)) 
-                }
+                cancelPendingOrder(errorMessage)
             },
         )
     }
+
+    private fun markPendingOrderPaid() {
+        val id = orderId ?: return
+        viewModelScope.launch {
+            val result = markOrderPaidUseCase(id)
+            result.fold(
+                onSuccess = { createdOrder ->
+                    clearCartFullyUseCase()
+                    _uiState.update {
+                        it.copy(
+                            result = OrderResult.Success(
+                                OrderConfirmation(
+                                    orderId = createdOrder.orderId,
+                                    status = createdOrder.financialStatus,
+                                    total = createdOrder.total,
+                                )
+                            )
+                        )
+                    }
+                },
+                onFailure = { e ->
+                    val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_failed)
+                    _uiState.update {
+                        it.copy(
+                            result = OrderResult.Failure(errorMessage, canRetry = true),
+                        )
+                    }
+                },
+            )
+        }
+    }
+
+    private fun cancelPendingOrder(
+        message: UiText = UiText.StringResource(R.string.payment_error_cancelled),
+    ) {
+        val id = orderId
+        viewModelScope.launch {
+            if (id != null) {
+                deleteOrderUseCase(id)
+            }
+            _uiState.update { it.copy(result = OrderResult.Failure(message, canRetry = true)) }
+        }
+    }
+
+    private suspend fun buildOrderDraft(address: CheckoutAddress, cart: StoreCart): Result<OrderDraft> =
+        getCustomerIdUseCase().mapCatching { customerId ->
+            val cartTotal = cart.cost.totalAmount
+            OrderDraft(
+                customerId = customerId,
+                lineItems = cart.lines.map {
+                    OrderLineItemDraft(
+                        variantId = it.merchandise.id,
+                        quantity = it.quantity,
+                    )
+                },
+                // ponytail: fixed shipping because the storefront cart has no shipping line in this flow.
+                shippingLine = ShippingLineDraft(
+                    title = STANDARD_SHIPPING_TITLE,
+                    code = STANDARD_SHIPPING_CODE,
+                    price = Money(STANDARD_SHIPPING_PRICE, cartTotal.currencyCode),
+                ),
+                currency = cartTotal.currencyCode,
+                shippingAddress = address.toAddress(),
+            )
+        }
+
+    private fun CheckoutAddress.toAddress(): Address? =
+        when (this) {
+            is CheckoutAddress.OneOff -> address
+            is CheckoutAddress.Saved -> _uiState.value.addresses.firstOrNull { it.id == addressId }
+        }
 
     private fun mintNewIdempotencyKey(): String {
         val key = UUID.randomUUID().toString()

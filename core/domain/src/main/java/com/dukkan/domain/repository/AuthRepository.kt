@@ -10,4 +10,5 @@ interface AuthRepository {
     suspend fun getCurrentUser(): AuthUser?
     suspend fun signOut()
     suspend fun getShopifyToken(): ShopifyToken?
+    suspend fun getCustomerId(): Result<String>
 }

@@ -2,6 +2,28 @@ plugins {
     id("dukkan.feature")
     id("dukkan.hilt")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.apollo)
+}
+
+apollo {
+    service("admin") {
+        packageName.set("com.dukkan.payment.admin")
+
+        introspection {
+            endpointUrl.set("https://mad46-and5.myshopify.com/admin/api/2024-10/graphql.json")
+            headers.put(
+                "X-Shopify-Access-Token",
+                providers.gradleProperty("shopifyAdminToken").get()
+            )
+            schemaFile.set(file("src/main/graphql/com/dukkan/payment/admin/schema.json"))
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 android {
@@ -22,11 +44,19 @@ android {
             "PAYMOB_INTEGRATION_ID",
             "${providers.gradleProperty("paymobIntegrationId").getOrElse("0")}"
         )
+        buildConfigField(
+            "String",
+            "SHOPIFY_ADMIN_TOKEN",
+            "\"${providers.gradleProperty("shopifyAdminToken").getOrElse("")}\""
+        )
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 
     buildFeatures {
-        // Required by Paymob native SDK
         dataBinding = true
         buildConfig = true
     }
@@ -37,15 +67,12 @@ dependencies {
     implementation(project(":core:navigation"))
     implementation(project(":core:design_system"))
 
-    // SETUP: Download the Paymob Android SDK .aar from https://docs.paymob.com/docs/android-sdk
     implementation(":paymob-sdk@aar")
 
-    // Networking — Retrofit + OkHttp for backend calls (NOT direct Paymob calls)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
 
-    // Paymob (required since AAR doesn't fetch them)
     api(libs.sdp)
     api(libs.ssp)
     api(libs.androidx.navigation.fragment.ktx)
@@ -53,11 +80,13 @@ dependencies {
     api(libs.koin.android)
     api(libs.timber)
 
-    // Serialization
     implementation(libs.kotlinx.serialization.json)
 
-    // Coroutines
+    implementation(libs.apollo.runtime)
+
     implementation(libs.kotlinx.coroutines.core)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 
 
 }
