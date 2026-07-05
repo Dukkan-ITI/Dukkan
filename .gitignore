@@ -65,6 +65,7 @@ payment-secrets.properties
 # ——— REQUIRED AUDIT ENTRIES ———
 # Local configuration — never commit
 local.properties
+gradle.properties
 secrets.properties
 
 # Gradle caches ← only built artefacts, not source
@@ -83,4 +84,3 @@ domain-compile.log
 *.aab
 
 # Paymob SDK
-app/libs/*.aar
