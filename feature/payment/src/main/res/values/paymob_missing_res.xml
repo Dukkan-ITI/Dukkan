@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PaymobMissingAttrs">
+        <attr name="width" format="dimension" />
+        <attr name="otp_text_size" format="dimension" />
+        <attr name="length" format="integer" />
+        
+        <attr name="spinner_arrow_gravity">
+            <enum name="end" value="0"/>
+            <enum name="start" value="1"/>
+            <enum name="top" value="2"/>
+            <enum name="bottom" value="3"/>
+            <enum name="center" value="4"/>
+        </attr>
+        <attr name="spinner_popup_animation">
+            <enum name="dropdown" value="0"/>
+            <enum name="fade" value="1"/>
+        </attr>
+        
+        <attr name="spinner_divider_size" format="dimension" />
+        <attr name="spinner_divider_show" format="boolean" />
+        <attr name="spinner_arrow_padding" format="dimension" />
+        <attr name="spinner_popup_elevation" format="dimension" />
+        <attr name="spinner_arrow_show" format="boolean" />
+        <attr name="spinner_item_height" format="dimension" />
+        <attr name="spinner_popup_background" format="reference|color" />
+        <attr name="spinner_arrow_tint" format="reference|color" />
+        <attr name="spinner_divider_color" format="reference|color" />
+        
+        <attr name="cpb_round_border" format="boolean" />
+        <attr name="ccpDialog_showCloseIcon" format="boolean" />
+        <attr name="ccp_autoFormatNumber" format="boolean" />
+        <attr name="ccp_showNameCode" format="boolean" />
+        <attr name="ccp_defaultNameCode" format="string" />
+        <attr name="ccp_clickable" format="boolean" />
+        <attr name="ccp_useFlagEmoji" format="boolean" />
+        
+        <attr name="ccpDialog_initialScrollToSelection" format="boolean" />
+        <attr name="ccp_defaultLanguage" format="string" />
+        <attr name="ccp_excludedCountries" format="string" />
+        <attr name="otp_box_background" format="reference|color" />
+        
+        <attr name="ccp_textSize" format="dimension" />
+        <attr name="buttonTheme" format="string" />
+        <attr name="otp_box_background_active" format="reference|color" />
+        <attr name="otp_box_background_success" format="reference|color" />
+        <attr name="ccp_padding" format="dimension" />
+        
+        <!-- Maybe these should be enums too? If they crash, I'll fix them. -->
+    </declare-styleable>
+    
+    <color name="grey">#808080</color>
+    <color name="red">#FF0000</color>
+    <color name="transparent">#00000000</color>
+</resources>
