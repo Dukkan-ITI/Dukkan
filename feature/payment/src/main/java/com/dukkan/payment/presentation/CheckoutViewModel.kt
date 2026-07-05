@@ -26,6 +26,8 @@ import com.dukkan.payment.domain.usecase.CreateOrderUseCase
 import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
 import com.dukkan.payment.domain.usecase.MarkOrderPaidUseCase
 import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
+import com.dukkan.payment.domain.usecase.DeleteOrderUseCase
+import com.dukkan.domain.usecase.cart.ClearCartFullyUseCase
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -60,7 +62,8 @@ internal class CheckoutViewModel @Inject constructor(
     private val verifyPaymentStatusUseCase: VerifyPaymentStatusUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
     private val markOrderPaidUseCase: MarkOrderPaidUseCase,
-    private val cancelOrderUseCase: CancelOrderUseCase,
+    private val deleteOrderUseCase: DeleteOrderUseCase,
+    private val clearCartFullyUseCase: ClearCartFullyUseCase,
     private val getCustomerIdUseCase: GetCustomerIdUseCase,
     private val getCartUseCase: GetCartUseCase,
     private val getAddressesUseCase: GetAddressesUseCase,
@@ -241,6 +244,7 @@ internal class CheckoutViewModel @Inject constructor(
             result.fold(
                 onSuccess = { createdOrder ->
                     viewModelScope.launch {
+                        clearCartFullyUseCase()
                         _effect.emit(
                             CheckoutEffect.Finish(
                                 PaymentResult.Success(
@@ -302,7 +306,7 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 },
                 onFailure = { e ->
-                    cancelOrderUseCase(createdOrder.orderId, OrderCancelReason.OTHER)
+                    deleteOrderUseCase(createdOrder.orderId)
                     val errorMessage = e.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_initialize)
                     _uiState.update { 
                         it.copy(
@@ -394,6 +398,7 @@ internal class CheckoutViewModel @Inject constructor(
             val result = markOrderPaidUseCase(id)
             result.fold(
                 onSuccess = { createdOrder ->
+                    clearCartFullyUseCase()
                     _uiState.update {
                         it.copy(
                             result = OrderResult.Success(
@@ -424,7 +429,7 @@ internal class CheckoutViewModel @Inject constructor(
         val id = orderId
         viewModelScope.launch {
             if (id != null) {
-                cancelOrderUseCase(id, OrderCancelReason.OTHER)
+                deleteOrderUseCase(id)
             }
             _uiState.update { it.copy(result = OrderResult.Failure(message, canRetry = true)) }
         }

@@ -9,4 +9,5 @@ internal interface OrderRepository {
     suspend fun createOrder(draft: OrderDraft, status: OrderFinancialStatus): Result<CreatedOrder>
     suspend fun markOrderAsPaid(orderId: String): Result<CreatedOrder>
     suspend fun cancelOrder(orderId: String, reason: OrderCancelReason): Result<Unit>
+    suspend fun deleteOrder(orderId: String): Result<Unit>
 }

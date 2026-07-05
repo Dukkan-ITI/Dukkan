@@ -21,4 +21,6 @@ internal interface AdminOrderDataSource {
         reason: OrderCancelReason,
         restock: Boolean,
     ): OrderCancelMutation.OrderCancel
+
+    suspend fun deleteOrder(orderId: String): com.dukkan.payment.admin.OrderDeleteMutation.OrderDelete
 }

@@ -64,4 +64,18 @@ internal class AdminOrderDataSourceImpl @Inject constructor(
 
         return response.data?.orderCancel ?: throw Exception("Order cancel returned no data")
     }
+
+    override suspend fun deleteOrder(orderId: String): com.dukkan.payment.admin.OrderDeleteMutation.OrderDelete {
+        val response = apolloClient.mutation(
+            com.dukkan.payment.admin.OrderDeleteMutation(
+                orderId = orderId
+            )
+        ).execute()
+
+        if (response.hasErrors()) {
+            throw Exception(response.errors?.firstOrNull()?.message ?: "Unknown GraphQL Error")
+        }
+
+        return response.data?.orderDelete ?: throw Exception("Order delete returned no data")
+    }
 }

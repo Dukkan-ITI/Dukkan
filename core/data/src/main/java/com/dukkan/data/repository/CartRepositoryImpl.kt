@@ -163,13 +163,29 @@ class CartRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun clearCartOnLogout() {
+    override suspend fun clearLocalCart() {
         cachedCart = null
         try {
             localDataSource.deleteCartId()
             Log.d(TAG, "Local cart cleared on logout")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to clear cart on logout", e)
+        }
+    }
+
+    override suspend fun clearCartFully() {
+        cachedCart = null
+        try {
+            localDataSource.deleteCartId()
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                firestoreDataSource.deleteCartId(userId)
+                Log.d(TAG, "Local cart and Firestore cart cleared")
+            } else {
+                Log.d(TAG, "Local cart cleared (guest user)")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to fully clear cart", e)
         }
     }
 

@@ -52,4 +52,12 @@ internal class OrderRepositoryImpl @Inject constructor(
             throw Exception(userErrors.joinToString("; ") { it.message })
         }
     }
+
+    override suspend fun deleteOrder(orderId: String): Result<Unit> = runCatching {
+        val result = dataSource.deleteOrder(orderId)
+        val userErrors = result.userErrors
+        if (userErrors.isNotEmpty()) {
+            throw Exception(userErrors.joinToString("; ") { it.message })
+        }
+    }
 }
