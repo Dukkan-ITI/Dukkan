@@ -71,10 +71,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.hilt.navigation.compose)
 
-}
-
-// Modules
-dependencies {
+    // Modules
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
     implementation(project(":core:data"))
@@ -90,4 +87,7 @@ dependencies {
     implementation(project(":features:categories"))
     implementation(project(":features:order_list"))
     implementation(project(":feature:ads"))
+    implementation(project(":features:brands"))
+    implementation(project(":feature:address"))
 }
+

@@ -33,6 +33,7 @@ fun ProfileScreen(
     onNavigateToAuth: () -> Unit,
     onNavigateToFavorites: () -> Unit,
     onNavigateToOrderList: () -> Unit,
+    onNavigateToSavedAddresses: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -44,6 +45,7 @@ fun ProfileScreen(
         onCurrencySelected = viewModel::onCurrencySelected,
         onLanguageSelected = viewModel::onLanguageSelected,
         onWishlistClick = onNavigateToFavorites,
+        onSavedAddressesClick = onNavigateToSavedAddresses,
         onSignInClick = onNavigateToAuth,
         onLogoutClick = { viewModel.onLogout(onComplete = onNavigateToAuth) },
         onSeeAllClick = onNavigateToOrderList,
@@ -58,6 +60,7 @@ private fun ProfileContent(
     onCurrencySelected: (AppCurrency) -> Unit,
     onLanguageSelected: (AppLanguage) -> Unit,
     onWishlistClick: () -> Unit,
+    onSavedAddressesClick: () -> Unit,
     onSignInClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onSeeAllClick: () -> Unit,
@@ -97,7 +100,7 @@ private fun ProfileContent(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
                 WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                SavedAddressesRow()
+                SavedAddressesRow(onClick = onSavedAddressesClick)
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
                 LogoutRow(onClick = onLogoutClick)
             }

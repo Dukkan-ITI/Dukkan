@@ -52,4 +52,20 @@ class ProductsRepositoryImpl(
             language = language,
         )
     }
+
+    override suspend fun getProductsByVendor(
+        vendor: String,
+        limit: Int,
+        after: String?,
+    ): List<Product> {
+        val country = settingsRepository.currency.first().countryCode
+        val language = settingsRepository.language.first().languageCode
+        return productsDataSource.getProductsByVendor(
+            vendor = vendor,
+            first = limit,
+            after = after,
+            country = country,
+            language = language,
+        )
+    }
 }
