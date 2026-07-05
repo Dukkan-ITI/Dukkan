@@ -219,9 +219,11 @@ class AuthViewModel @Inject constructor(
         val refreshedUser = FirebaseAuth.getInstance().currentUser
 
         if (refreshedUser?.isEmailVerified == true) {
-            getShopifyTokenUseCase()
-            syncFavoritesAfterAuth()
-            syncCartAfterAuth()
+            viewModelScope.launch {
+                getShopifyTokenUseCase()
+                syncFavoritesAfterAuth()
+                syncCartAfterAuth()
+            }
             _uiState.value = AuthUiState.Success
             return
         }
@@ -287,9 +289,11 @@ class AuthViewModel @Inject constructor(
 
             val refreshedUser = FirebaseAuth.getInstance().currentUser
             if (refreshedUser?.isEmailVerified == true) {
-                getShopifyTokenUseCase()
-                syncFavoritesAfterAuth()
-                syncCartAfterAuth()
+                viewModelScope.launch {
+                    getShopifyTokenUseCase()
+                    syncFavoritesAfterAuth()
+                    syncCartAfterAuth()
+                }
                 _uiState.value = AuthUiState.Success
             } else {
                 _uiState.value = state.copy(
@@ -377,11 +381,6 @@ class AuthViewModel @Inject constructor(
 
     suspend fun syncCartAfterAuth() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        try {
-            syncFavoritesOnLoginUseCase(userId)
-        } catch (e: Exception) {
-            Log.e("AuthViewModel", "Failed to sync favorites", e)
-        }
         try {
             syncCartOnLoginUseCase(userId)
         } catch (e: Exception) {

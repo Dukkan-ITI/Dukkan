@@ -6,4 +6,6 @@ data class FavoriteProduct(
     val imageUrl: String,
     val price: String,
     val currencyCode: String
-)
+) {
+    fun toMoney(): Money = Money.from(price, currencyCode)
+}

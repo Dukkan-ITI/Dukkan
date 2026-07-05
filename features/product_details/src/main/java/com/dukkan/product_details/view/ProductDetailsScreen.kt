@@ -54,9 +54,17 @@ import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
 @Composable
 fun ProductDetailsScreen(
     onBackClick: () -> Unit = {},
+    onNavigateToGuestPlaceholder: (String) -> Unit = {},
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    androidx.compose.runtime.LaunchedEffect(state.showGuestDialog) {
+        if (state.showGuestDialog) {
+            onNavigateToGuestPlaceholder("Product")
+            viewModel.dismissGuestDialog()
+        }
+    }
 
     ProductDetailsContent(
         state = state,

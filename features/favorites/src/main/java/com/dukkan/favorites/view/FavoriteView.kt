@@ -31,6 +31,7 @@ import com.dukkan.design_system.components.GuestPlaceholderScreen
 @Composable
 fun FavoritesView(
     onSignInClick: () -> Unit,
+    onProductClick: (String) -> Unit = {},
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -61,7 +62,8 @@ fun FavoritesView(
             is FavoritesUiState.Empty   -> EmptyContent()
             is FavoritesUiState.Success -> FavoritesContent(
                 favorites = state.favorites,
-                onUnfavClick = { viewModel.showRemoveDialog(it) }
+                onUnfavClick = { viewModel.showRemoveDialog(it) },
+                onProductClick = onProductClick
             )
         }
     }
@@ -78,7 +80,8 @@ fun FavoritesView(
 @Composable
 private fun FavoritesContent(
     favorites: List<FavoriteProduct>,
-    onUnfavClick: (FavoriteProduct) -> Unit
+    onUnfavClick: (FavoriteProduct) -> Unit,
+    onProductClick: (String) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -95,8 +98,8 @@ private fun FavoritesContent(
                 Text(
                     text = stringResource(id = R.string.wishlist_title),
                     fontSize = 26.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
@@ -111,7 +114,8 @@ private fun FavoritesContent(
         items(favorites, key = { it.id }) { product ->
             FavoriteItem(
                 product = product,
-                onUnfav = { onUnfavClick(product) }
+                onUnfav = { onUnfavClick(product) },
+                onProductClick = { onProductClick(product.id) }
             )
         }
     }

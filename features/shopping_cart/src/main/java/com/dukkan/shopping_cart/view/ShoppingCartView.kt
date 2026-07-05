@@ -1,5 +1,6 @@
 package com.dukkan.shopping_cart.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -7,7 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dukkan.shopping_cart.components.CartItemRow
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.domain.model.asString
@@ -76,6 +79,7 @@ private fun ShoppingCartContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         Column(
@@ -91,8 +95,9 @@ private fun ShoppingCartContent(
                 Row(verticalAlignment = androidx.compose.ui.Alignment.Bottom) {
                     Text(
                         text = stringResource(R.string.your_bag),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.headlineLarge
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.ExtraBold
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(

@@ -1,7 +1,6 @@
 package com.dukkan.order_list.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +15,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.dukkan.domain.model.asString
 import com.dukkan.order_list.R
 import com.dukkan.domain.model.orders.OrderLineItem
@@ -28,11 +31,17 @@ fun OrderLineItemRow(item: OrderLineItem) {
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        AsyncImage(
+            model = item.imageUrl,
+            contentDescription = item.title,
             modifier = Modifier
                 .size(50.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.outline)
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
+            error = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder),
+            fallback = painterResource(id = com.dukkan.design_system.R.drawable.banner_placeholder)
         )
 
         Spacer(modifier = Modifier.width(12.dp))
@@ -41,6 +50,7 @@ fun OrderLineItemRow(item: OrderLineItem) {
             Text(
                 text = item.title,
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
             )
@@ -54,8 +64,9 @@ fun OrderLineItemRow(item: OrderLineItem) {
 
         Text(
             text = item.totalPrice.asString(),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

@@ -20,4 +20,8 @@
     <string name="sign_in">تسجيل الدخول</string>
     <string name="coming_soon_title">%1$s — قريباً</string>
 
+    <string name="guest_dialog_title">يجب تسجيل الدخول</string>
+    <string name="guest_dialog_message">يجب أن تكون مسجلاً للقيام بهذا الإجراء. هل ترغب في تسجيل الدخول الآن أم الاستمرار كضيف؟</string>
+    <string name="guest_dialog_ok">الاستمرار كضيف</string>
+    <string name="guest_dialog_sign_in">تسجيل الدخول</string>
 </resources>

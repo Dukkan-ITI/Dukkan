@@ -19,4 +19,9 @@
     <string name="sign_in_interact_title">You need to be signed in to view and interact with your %1$s.</string>
     <string name="sign_in">Sign In</string>
     <string name="coming_soon_title">%1$s — coming soon</string>
+
+    <string name="guest_dialog_title">Sign in Required</string>
+    <string name="guest_dialog_message">You need to be signed in to perform this action. Would you like to sign in now or continue as a guest?</string>
+    <string name="guest_dialog_ok">Stay Guest</string>
+    <string name="guest_dialog_sign_in">Sign In</string>
 </resources>

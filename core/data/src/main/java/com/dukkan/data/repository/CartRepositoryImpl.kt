@@ -41,25 +41,33 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun getCart(): StoreCart? {
         val country = settingsRepository.currency.first().countryCode
 
-        Log.d("CartRepo", "Country = $country")
+        Log.d("CartRepo", "Fetching cart for country: $country")
 
         if (cachedCart != null && cachedCurrencyCountry == country) {
-            Log.d("CartRepo", "Returning cached cart")
+            Log.d("CartRepo", "Returning cached cart with subtotal: ${cachedCart?.cost?.subtotalAmount?.amount}")
             return cachedCart
         }
 
-        val cartId = localDataSource.getCartId() ?: return null
+        val cartId = localDataSource.getCartId() ?: run {
+            Log.d("CartRepo", "No cart ID found in local storage")
+            return null
+        }
 
-        Log.d("CartRepo", "Fetching cart from Shopify")
+        Log.d("CartRepo", "Fetching cart from Shopify for ID: $cartId")
 
         val cartResponse = remoteDataSource.getCart(cartId, country)
 
+        if (cartResponse == null) {
+            Log.w("CartRepo", "Shopify returned null for cart ID: $cartId")
+            return null
+        }
+
         Log.d(
             "CartRepo",
-            "Currency = ${cartResponse?.cost?.totalAmount?.moneyFields?.currencyCode}, Amount = ${cartResponse?.cost?.totalAmount?.moneyFields?.amount}"
+            "Shopify response cost: Subtotal=${cartResponse.cost.subtotalAmount.moneyFields.amount}, Total=${cartResponse.cost.totalAmount.moneyFields.amount}"
         )
 
-        cachedCart = cartResponse?.toDomainModel()
+        cachedCart = cartResponse.toDomainModel()
         cachedCurrencyCountry = country
 
         return cachedCart
@@ -171,6 +179,7 @@ class CartRepositoryImpl @Inject constructor(
         val cart = remoteDataSource.getCart(cartId, country)
         return cart?.discountCodes?.map { it.code } ?: emptyList()
     }
+
     override suspend fun syncCartOnLogin(userId: String) {
         cachedCart = null
         try {
@@ -190,6 +199,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun clearLocalCart() {
         cachedCart = null
+        cachedCurrencyCountry = null
         try {
             localDataSource.deleteCartId()
             Log.d(TAG, "Local cart cleared on logout")
@@ -199,33 +209,19 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearCartFully() {
-        val cartId = localDataSource.getCartId()
-        if (cartId != null) {
-            try {
-                val cart = remoteDataSource.getCart(cartId)
-                cart?.lines?.edges?.forEach { edge ->
-                    remoteDataSource.removeCartItem(cartId, edge.node.id)
-                }
-                if (cart?.discountCodes?.isNotEmpty() == true) {
-                    remoteDataSource.applyDiscountCodes(cartId, emptyList())
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Failed to clear Storefront cart items before abandoning", e)
-            }
-        }
-
         cachedCart = null
+        cachedCurrencyCountry = null
         try {
             localDataSource.deleteCartId()
             val userId = firebaseAuth.currentUser?.uid
             if (userId != null) {
                 firestoreDataSource.deleteCartId(userId)
-                Log.d(TAG, "Local cart and Firestore cart cleared")
+                Log.d(TAG, "Cart ID cleared from local and Firestore")
             } else {
-                Log.d(TAG, "Local cart cleared (guest user)")
+                Log.d(TAG, "Local cart ID cleared (guest user)")
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to fully clear cart", e)
+            Log.e(TAG, "Failed to fully clear cart ID", e)
         }
     }
 
