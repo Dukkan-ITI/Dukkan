@@ -30,7 +30,7 @@ interface ProductsDataSource {
         language: String,
     ): List<com.dukkan.domain.model.Product>
 
-    suspend fun fetchBrands(): List<GetBrandsQuery.Node>
+    suspend fun fetchBrands(): List<GetCollectionsQuery.Node>
 
     suspend fun getProductsByVendor(
         vendor: String,

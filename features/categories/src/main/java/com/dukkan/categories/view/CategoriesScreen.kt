@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -18,13 +17,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.categories.R
 import com.dukkan.categories.viewmodel.CategoriesViewModel
 import com.dukkan.design_system.components.FilterChip
+import com.dukkan.domain.model.Category.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoriesScreenContent(
-    categories: List<String>,
+    categories: List<Category>,
     onBackClick: () -> Unit,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (Category) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -55,7 +55,7 @@ fun CategoriesScreenContent(
         ) {
             items(categories) { category ->
                 FilterChip(
-                    label = category,
+                    label = category.name,
                     isSelected = false,
                     onClick = { onCategoryClick(category) }
                 )
@@ -67,7 +67,7 @@ fun CategoriesScreenContent(
 @Composable
 fun CategoriesScreen(
     onBackClick: () -> Unit,
-    onCategoryClick: (String) -> Unit,
+    onCategoryClick: (Category) -> Unit,
     viewModel: CategoriesViewModel = hiltViewModel()
 ) {
     val categories by viewModel.categoriesState.collectAsStateWithLifecycle()

@@ -212,7 +212,7 @@ fun AppNavGraph(
             CategoriesScreen(
                 onBackClick = { navController.popBackStack() },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category))
+                    navController.navigate(Screen.CategoryProducts(category.handle))
                 }
             )
         }
