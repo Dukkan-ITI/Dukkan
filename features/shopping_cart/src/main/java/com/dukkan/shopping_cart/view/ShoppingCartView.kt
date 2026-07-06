@@ -75,16 +75,18 @@ private fun ShoppingCartContent(
     onDismissRemoveDialog: () -> Unit,
     onConfirmRemoveItem: () -> Unit
 ) {
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -195,4 +197,5 @@ private fun ShoppingCartContent(
             )
         }
     }
+}
 }
