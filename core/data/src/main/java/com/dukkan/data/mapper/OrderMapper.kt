@@ -35,7 +35,7 @@ object OrderMapper {
                     ),
                     variantId = edge.node.variant?.id ?: "",
                     variantTitle = edge.node.variant?.title ?: "",
-                    imageUrl = edge.node.variant?.image?.url as? String
+                    imageUrl = edge.node.variant?.image?.url?.toString()
                 )
             },
             shippingAddress = node.shippingAddress?.let { address ->

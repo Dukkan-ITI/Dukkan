@@ -3,7 +3,6 @@ package com.dukkan.data.source.remote.apollo
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.dukkan.CollectionProductsQuery
-import com.dukkan.GetBrandsQuery
 import com.dukkan.GetCollectionsQuery
 import com.dukkan.GetProductsByVendorQuery
 import com.dukkan.ProductQuery

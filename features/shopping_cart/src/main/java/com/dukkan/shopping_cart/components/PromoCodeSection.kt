@@ -43,7 +43,7 @@ fun PromoCodeSection(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
