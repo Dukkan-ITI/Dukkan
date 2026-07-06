@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="summer_drop">تشكيلة الصيف</string>
-    <string name="summer_capsule">كبسولة الصيف</string>
+    <string name="summer_capsule">مجموعة الصيف</string>
     <string name="soft_easy_linen_set"><![CDATA[طقم كتان\nناعم ومريح]]></string>
-    <string name="shop">تسوق</string>
+    <string name="shop">تسوّق</string>
     <string name="all">الكل</string>
-    <string name="new_in">وصل حديثاً</string>
-    <string name="clothing">ملابس</string>
-    <string name="shoes">أحذية</string>
-    <string name="what_are_we_wearing">"ماذا سنرتدي\n"</string>
+    <string name="new_in">وصل حديثًا</string>
+    <string name="clothing">الملابس</string>
+    <string name="shoes">الأحذية</string>
+    <string name="what_are_we_wearing">ماذا سنرتدي</string>
     <string name="today">اليوم؟</string>
     <string name="add_to_favorites">أضف إلى المفضلة</string>
-    <string name="picked_for_you">اخترنا لك</string>
+    <string name="picked_for_you">مختارة لك</string>
     <string name="see_all">عرض الكل</string>
-    <string name="product">منتج %1$d</string>
-    <string name="price">$%1$d</string>
+    <string name="product">المنتج %1$d</string>
+    <string name="price">%1$d$</string>
     <string name="search">بحث</string>
     <string name="search_products">ابحث عن المنتجات...</string>
     <string name="categories">الفئات (%1$d)</string>
     <string name="brands">العلامات التجارية</string>
-    <string name="hey_there">أهلاً بك</string>
-    <string name="hey_name">أهلاً %1$s</string>
+    <string name="hey_there">مرحبًا</string>
+    <string name="hey_name">مرحبًا %1$s 👋</string>
+    <string name="all_products">جميع المنتجات</string>
+    <string name="no_products_found">لم يتم العثور على منتجات</string>
+    <string name="error_loading_products">تعذر تحميل المنتجات. يرجى المحاولة مرة أخرى.</string>
 </resources>

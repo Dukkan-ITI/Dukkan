@@ -7,7 +7,9 @@ import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
+import com.dukkan.home.R
 import com.dukkan.home.uistate.AllProductsUiState
+import com.dukkan.home.uistate.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +28,11 @@ class AllProductsViewModel @Inject constructor(
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     private val _isLoading = MutableStateFlow(true)
-    private val _error = MutableStateFlow<String?>(null)
+    private val _error = MutableStateFlow<UiText?>(null)
+
+    private companion object {
+        const val DEFAULT_PRODUCTS_LIMIT = 50
+    }
 
     val uiState: StateFlow<AllProductsUiState> = combine(
         _products,
@@ -57,12 +63,10 @@ class AllProductsViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // For "All Products", we might want a larger limit or pagination.
-                // For now, let's just get a decent amount.
-                _products.value = getProductsUseCase(limit = 50)
+                _products.value = getProductsUseCase(limit = DEFAULT_PRODUCTS_LIMIT)
                 _isLoading.value = false
             } catch (e: Exception) {
-                _error.value = e.localizedMessage ?: "Error loading products"
+                _error.value = UiText.StringResource(R.string.error_loading_products)
                 _isLoading.value = false
             }
         }
