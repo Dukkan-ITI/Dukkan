@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,13 +57,26 @@ fun OrderCard(
         }
     }
 
+    val backgroundColor = if (isExpanded) {
+        MaterialTheme.colorScheme.primary.copy(alpha = 0.07f)
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+
+    val border = if (isExpanded) {
+        null
+    } else {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
+    }
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .then(if (expandable) Modifier.clickable { isExpanded = !isExpanded } else Modifier),
         shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.07f),
+        color = backgroundColor,
+        border = border
     ) {
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
             Row(
