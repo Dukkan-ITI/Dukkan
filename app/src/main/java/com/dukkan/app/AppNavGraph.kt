@@ -17,6 +17,7 @@ import com.dukkan.categories.view.CategoriesScreen
 import com.dukkan.categories.view.CategoryProductsScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
+import com.dukkan.home.view.AllProductsScreen
 import com.dukkan.navigation.Screen
 import com.dukkan.onboarding.view.OnboardingView
 import com.dukkan.payment.PaymentResult
@@ -72,6 +73,9 @@ fun AppNavGraph(
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
                 },
+                onSeeAllClicked = {
+                    navController.navigate(Screen.AllProducts)
+                },
                 onSearchClick = {
                     navController.navigate(Screen.Search)
                 },
@@ -107,6 +111,15 @@ fun AppNavGraph(
                 },
                 onProductClick = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
+                }
+            )
+        }
+
+        composable<Screen.AllProducts> {
+            AllProductsScreen(
+                onBackClick = { navController.popBackStack() },
+                onProductClick = { product ->
+                    navController.navigate(Screen.ProductDetail(productId = product.id))
                 }
             )
         }
