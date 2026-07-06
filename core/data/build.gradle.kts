@@ -80,10 +80,12 @@ dependencies {
 //firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 }
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(libs.kotlinx.serialization.json)
 }

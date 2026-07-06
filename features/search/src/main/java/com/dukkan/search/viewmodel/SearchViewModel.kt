@@ -2,8 +2,14 @@ package com.dukkan.search.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dukkan.search.uiState.SearchUiState
+import com.dukkan.search.uistate.SearchUiState
+import com.dukkan.search.uistate.UiText
+import com.dukkan.domain.model.AgenticSearchResult
+import com.dukkan.domain.model.GeminiError
+import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.usecase.search.PredictiveSearchUseCase
+import com.dukkan.domain.usecase.search.AgenticSearchUseCase
+import com.dukkan.domain.usecase.search.ResumeSearchClarificationUseCase
 import com.dukkan.domain.usecase.search.SearchProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -18,9 +24,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import android.content.Context
 import com.dukkan.search.R
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -28,7 +32,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val predictiveSearchUseCase: PredictiveSearchUseCase,
-    @ApplicationContext private val context: Context
+    private val agenticSearchUseCase: AgenticSearchUseCase,
+    private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -36,6 +41,7 @@ class SearchViewModel @Inject constructor(
 
     private val _queryInputFlow = MutableStateFlow("")
     private var loadMoreJob: Job? = null
+    private var agenticSearchJob: Job? = null
 
     init {
         _queryInputFlow
@@ -69,6 +75,11 @@ class SearchViewModel @Inject constructor(
                 hasNextPage = false,
                 endCursor = null,
                 isSearchLoading = true,
+                isAiSearchLoading = false,
+                aiMessage = null,
+                clarificationQuestion = null,
+                clarificationSessionId = null,
+                clarificationAnswerInput = "",
                 error = null,
                 predictiveProducts = emptyList(),
                 predictiveCollections = emptyList(),
@@ -99,10 +110,168 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { s ->
                         s.copy(
                             isSearchLoading = false,
-                            error = e.localizedMessage ?: context.getString(R.string.search_failed)
+                            error = e.localizedMessage?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.search_failed)
                         )
                     }
                 }
+        }
+    }
+
+    fun onAiSearchTriggered(query: String) {
+        val trimmed = query.trim()
+        if (trimmed.isBlank()) return
+        agenticSearchJob?.cancel()
+        agenticSearchJob = viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    submittedQuery = trimmed,
+                    searchResults = emptyList(),
+                    totalCount = 0,
+                    hasNextPage = false,
+                    endCursor = null,
+                    isSearchLoading = false,
+                    isLoadingMore = false,
+                    isAiSearchLoading = true,
+                    isAiError = false,
+                    aiMessage = null,
+                    clarificationQuestion = null,
+                    clarificationSessionId = null,
+                    clarificationAnswerInput = "",
+                    error = null,
+                    predictiveProducts = emptyList(),
+                    predictiveCollections = emptyList(),
+                    isPredictiveLoading = false
+                )
+            }
+
+            val timeoutJob = launch {
+                kotlinx.coroutines.delay(8000)
+                _uiState.update { state ->
+                    if (state.isAiSearchLoading) {
+                        state.copy(aiMessage = UiText.StringResource(R.string.search_ai_still_searching))
+                    } else state
+                }
+            }
+
+            runCatching {
+                agenticSearchUseCase(trimmed).collect(::handleAgenticSearchResult)
+            }.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                timeoutJob.cancel()
+                _uiState.update { state ->
+                    state.copy(
+                        isAiSearchLoading = false,
+                        isAiError = true,
+                        aiMessage = error.localizedMessage?.let { msg -> UiText.DynamicString(msg) } ?: UiText.StringResource(R.string.search_failed),
+                        clarificationQuestion = null,
+                        clarificationSessionId = null
+                    )
+                }
+            }
+            timeoutJob.cancel()
+        }
+    }
+
+    fun onClarificationAnswerChanged(answer: String) {
+        _uiState.update { it.copy(clarificationAnswerInput = answer) }
+    }
+
+    fun onClarificationAnswered() {
+        val state = _uiState.value
+        val answer = state.clarificationAnswerInput.trim()
+        if (answer.isBlank()) return
+
+        val sessionId = state.clarificationSessionId
+        if (sessionId == null) {
+            onAiSearchTriggered(answer)
+            return
+        }
+
+        agenticSearchJob?.cancel()
+        agenticSearchJob = viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isAiSearchLoading = true,
+                    isAiError = false,
+                    clarificationQuestion = null,
+                    clarificationAnswerInput = "",
+                    error = null
+                )
+            }
+
+            runCatching {
+                resumeSearchClarificationUseCase(sessionId, answer).collect(::handleAgenticSearchResult)
+            }.onFailure { error ->
+                if (error is kotlinx.coroutines.CancellationException) throw error
+                _uiState.update {
+                    it.copy(
+                        isAiSearchLoading = false,
+                        isAiError = true,
+                        aiMessage = error.localizedMessage?.let { msg -> UiText.DynamicString(msg) } ?: UiText.StringResource(R.string.search_failed),
+                        clarificationQuestion = null,
+                        clarificationSessionId = null
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleAgenticSearchResult(result: AgenticSearchResult) {
+        when (result) {
+            is AgenticSearchResult.AwaitingClarification -> {
+                _uiState.update {
+                    it.copy(
+                        isAiSearchLoading = false,
+                        clarificationQuestion = UiText.DynamicString(result.request.question),
+                        clarificationSessionId = result.request.sessionId,
+                        aiMessage = UiText.DynamicString(result.request.question),
+                        error = null
+                    )
+                }
+            }
+
+            is AgenticSearchResult.Success -> {
+                _uiState.update {
+                    it.copy(
+                        submittedQuery = result.query,
+                        queryInput = result.query,
+                        searchResults = result.products,
+                        totalCount = result.totalCount,
+                        hasNextPage = false,
+                        endCursor = null,
+                        isAiSearchLoading = false,
+                        aiMessage = result.message?.let { UiText.DynamicString(it) },
+                        clarificationQuestion = null,
+                        clarificationSessionId = null,
+                        clarificationAnswerInput = "",
+                        error = null,
+                        availableVendors = result.products.map { product -> product.vendor }.filter { vendor -> vendor.isNotBlank() }.distinct(),
+                        availableProductTypes = result.products.map { product -> product.productType }.filter { type -> type.isNotBlank() }.distinct()
+                    )
+                }
+            }
+
+            is AgenticSearchResult.Error -> {
+                val messageResource = when (result.errorType) {
+                    GeminiError.RateLimited -> UiText.StringResource(R.string.error_ai_rate_limited)
+                    GeminiError.Timeout -> UiText.StringResource(R.string.error_ai_timeout)
+                    GeminiError.ClarificationLimitReached -> UiText.StringResource(R.string.error_ai_clarification_limit)
+                    GeminiError.MaxStepsReached -> UiText.StringResource(R.string.error_ai_max_steps)
+                    GeminiError.TimeoutExceeded -> UiText.StringResource(R.string.error_ai_timeout_exceeded)
+                    GeminiError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_search_failed)
+                    GeminiError.Unknown -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
+                }
+
+                _uiState.update {
+                    it.copy(
+                        isAiSearchLoading = false,
+                        isAiError = true,
+                        aiMessage = messageResource,
+                        clarificationQuestion = null,
+                        clarificationSessionId = null
+                    )
+                }
+            }
         }
     }
 
@@ -136,7 +305,7 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { s ->
                         s.copy(
                             isLoadingMore = false,
-                            error = e.localizedMessage ?: context.getString(R.string.search_load_more_failed)
+                            error = e.localizedMessage?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.search_load_more_failed)
                         )
                     }
                 }
@@ -178,7 +347,7 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(isFilterSheetOpen = false) }
     }
 
-    fun onApplyFilters(filters: com.dukkan.domain.model.SearchFilter) {
+    fun onApplyFilters(filters: SearchFilter) {
         _uiState.update {
             it.copy(
                 activeFilters = filters,
@@ -195,6 +364,33 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onClearFilters() {
-        onApplyFilters(com.dukkan.domain.model.SearchFilter())
+        onApplyFilters(SearchFilter())
+    }
+
+    fun onCancelAiSearch() {
+        agenticSearchJob?.cancel()
+        _uiState.update {
+            it.copy(
+                isAiSearchLoading = false,
+                isAiError = false,
+                aiMessage = null,
+                clarificationQuestion = null,
+                clarificationSessionId = null,
+                clarificationAnswerInput = ""
+            )
+        }
+    }
+
+    fun onRetryAiSearch() {
+        val state = _uiState.value
+        val sessionId = state.clarificationSessionId
+        val answer = state.clarificationAnswerInput.trim()
+        val query = state.submittedQuery
+
+        if (sessionId != null && answer.isNotBlank()) {
+            onClarificationAnswered()
+        } else if (query.isNotBlank()) {
+            onAiSearchTriggered(query)
+        }
     }
 }
