@@ -1,4 +1,4 @@
-package com.dukkan.payment.presentation
+package com.dukkan.payment.presentation.viewModel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,14 +14,12 @@ import com.dukkan.domain.usecase.customer.GetCustomerIdUseCase
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.R
 import com.dukkan.payment.domain.model.CheckoutAddress
-import com.dukkan.payment.domain.model.OrderCancelReason
 import com.dukkan.payment.domain.model.OrderDraft
 import com.dukkan.payment.domain.model.OrderFinancialStatus
 import com.dukkan.payment.domain.model.OrderLineItemDraft
 import com.dukkan.payment.domain.model.PaymentMethod
 import com.dukkan.payment.domain.model.PaymobCredentials
 import com.dukkan.payment.domain.model.ShippingLineDraft
-import com.dukkan.payment.domain.usecase.CancelOrderUseCase
 import com.dukkan.payment.domain.usecase.CreateOrderUseCase
 import com.dukkan.payment.domain.usecase.CreatePaymentIntentionUseCase
 import com.dukkan.payment.domain.usecase.MarkOrderPaidUseCase
@@ -50,6 +48,12 @@ import com.dukkan.payment.presentation.CheckoutConstants.POLL_DELAY_MS
 import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_CODE
 import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_PRICE
 import com.dukkan.payment.presentation.CheckoutConstants.STANDARD_SHIPPING_TITLE
+import com.dukkan.payment.presentation.UiText
+import com.dukkan.payment.presentation.components.PaymobSdkStatus
+import com.dukkan.payment.presentation.uiState.CheckoutEvent
+import com.dukkan.payment.presentation.uiState.CheckoutUiState
+import com.dukkan.payment.presentation.uiState.OrderResult
+import java.math.BigDecimal
 
 internal sealed interface CheckoutEffect {
     data class Finish(val result: PaymentResult) : CheckoutEffect
@@ -116,7 +120,7 @@ internal class CheckoutViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         CheckoutUiState(
             selectedAddress = persistedAddress,
-            selectedMethod  = persistedMethod,
+            selectedMethod = persistedMethod,
         )
     )
     val uiState: StateFlow<CheckoutUiState> = _uiState.asStateFlow()
@@ -207,7 +211,7 @@ internal class CheckoutViewModel @Inject constructor(
                     is OrderResult.Success -> resultState.confirmation.total
                     is OrderResult.Pending -> resultState.confirmation?.total ?: _uiState.value.cartSummary?.total
                     else -> _uiState.value.cartSummary?.total
-                } ?: com.dukkan.domain.model.Money(java.math.BigDecimal.ZERO, "EGP")
+                } ?: Money(BigDecimal.ZERO, "EGP")
                 
                 viewModelScope.launch {
                     if (event.isPending) {
@@ -319,13 +323,13 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun handlePaymobSdkFinished(status: com.dukkan.payment.presentation.components.PaymobSdkStatus, message: String?) {
+    private fun handlePaymobSdkFinished(status: PaymobSdkStatus, message: String?) {
         when (status) {
-            com.dukkan.payment.presentation.components.PaymobSdkStatus.SUCCESS -> verifyStatus()
-            com.dukkan.payment.presentation.components.PaymobSdkStatus.PENDING -> {
+            PaymobSdkStatus.SUCCESS -> verifyStatus()
+            PaymobSdkStatus.PENDING -> {
                 _uiState.update { it.copy(error = UiText.StringResource(R.string.payment_error_pending)) }
             }
-            com.dukkan.payment.presentation.components.PaymobSdkStatus.FAILED -> {
+            PaymobSdkStatus.FAILED -> {
                 val errorMsg = message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.payment_error_cancelled)
                 cancelPendingOrder(errorMsg)
             }

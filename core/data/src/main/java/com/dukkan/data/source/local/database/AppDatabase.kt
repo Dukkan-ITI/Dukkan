@@ -14,7 +14,7 @@ import com.dukkan.data.source.local.entity.OrderEntity
 
 @Database(
     entities = [FavoriteEntity::class, OrderEntity::class],
-    version = 1
+    version = 2
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao

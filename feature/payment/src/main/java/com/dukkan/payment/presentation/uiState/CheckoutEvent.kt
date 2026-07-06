@@ -1,7 +1,8 @@
-package com.dukkan.payment.presentation
+package com.dukkan.payment.presentation.uiState
 
 import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentMethod
+import com.dukkan.payment.presentation.components.PaymobSdkStatus
 
 internal sealed interface CheckoutEvent {
     data class SelectAddress(val address: CheckoutAddress) : CheckoutEvent
@@ -10,7 +11,7 @@ internal sealed interface CheckoutEvent {
     
     object SubmitOrder : CheckoutEvent
     data class PaymobSdkFinished(
-        val status: com.dukkan.payment.presentation.components.PaymobSdkStatus,
+        val status: PaymobSdkStatus,
         val message: String?
     ) : CheckoutEvent
     
