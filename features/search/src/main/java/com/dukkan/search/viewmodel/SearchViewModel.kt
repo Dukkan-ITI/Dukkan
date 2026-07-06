@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.uistate.UiText
 import com.dukkan.domain.model.AgenticSearchResult
+import com.dukkan.domain.model.GeminiError
+import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.usecase.search.PredictiveSearchUseCase
 import com.dukkan.domain.usecase.search.AgenticSearchUseCase
 import com.dukkan.domain.usecase.search.ResumeSearchClarificationUseCase
@@ -250,11 +252,21 @@ class SearchViewModel @Inject constructor(
             }
 
             is AgenticSearchResult.Error -> {
+                val messageResource = when (result.errorType) {
+                    GeminiError.RateLimited -> UiText.StringResource(R.string.error_ai_rate_limited)
+                    GeminiError.Timeout -> UiText.StringResource(R.string.error_ai_timeout)
+                    GeminiError.ClarificationLimitReached -> UiText.StringResource(R.string.error_ai_clarification_limit)
+                    GeminiError.MaxStepsReached -> UiText.StringResource(R.string.error_ai_max_steps)
+                    GeminiError.TimeoutExceeded -> UiText.StringResource(R.string.error_ai_timeout_exceeded)
+                    GeminiError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_search_failed)
+                    GeminiError.Unknown -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
+                }
+
                 _uiState.update {
                     it.copy(
                         isAiSearchLoading = false,
                         isAiError = true,
-                        aiMessage = UiText.DynamicString(result.message),
+                        aiMessage = messageResource,
                         clarificationQuestion = null,
                         clarificationSessionId = null
                     )
@@ -335,7 +347,7 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(isFilterSheetOpen = false) }
     }
 
-    fun onApplyFilters(filters: com.dukkan.domain.model.SearchFilter) {
+    fun onApplyFilters(filters: SearchFilter) {
         _uiState.update {
             it.copy(
                 activeFilters = filters,
@@ -352,7 +364,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onClearFilters() {
-        onApplyFilters(com.dukkan.domain.model.SearchFilter())
+        onApplyFilters(SearchFilter())
     }
 
     fun onCancelAiSearch() {

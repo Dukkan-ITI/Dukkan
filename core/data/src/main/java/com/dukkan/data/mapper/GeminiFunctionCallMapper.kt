@@ -58,9 +58,18 @@ fun List<SearchProduct>.toGeminiToolResponse(totalCount: Int): JsonObject =
     JsonObject(
         mapOf(
             "totalCount" to JsonPrimitive(totalCount),
-            "products" to JsonPrimitive(
-                take(8).joinToString(separator = "\n") { product ->
-                    "${product.title} | ${product.vendor} | ${product.productType} | ${product.price.amount} ${product.price.currencyCode} | available=${product.availableForSale}"
+            "products" to kotlinx.serialization.json.JsonArray(
+                take(8).map { product ->
+                    JsonObject(
+                        mapOf(
+                            "title" to JsonPrimitive(product.title),
+                            "vendor" to JsonPrimitive(product.vendor),
+                            "productType" to JsonPrimitive(product.productType),
+                            "priceAmount" to JsonPrimitive(product.price.amount),
+                            "currencyCode" to JsonPrimitive(product.price.currencyCode),
+                            "availableForSale" to JsonPrimitive(product.availableForSale)
+                        )
+                    )
                 }
             )
         )

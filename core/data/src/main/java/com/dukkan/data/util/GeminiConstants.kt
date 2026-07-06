@@ -9,6 +9,9 @@ object GeminiConstants {
     const val MAX_TURNS = 4
     const val MAX_SHOPIFY_CALLS = 2
     const val MAX_CLARIFICATIONS = 3
+    
+    const val CACHE_MAX_ENTRIES = 100
+    const val CACHE_TTL_MS = 10 * 60 * 1000L // 10 minutes
 
     const val SYSTEM_INSTRUCTION = """
 You are Dukkan's shopping search assistant.

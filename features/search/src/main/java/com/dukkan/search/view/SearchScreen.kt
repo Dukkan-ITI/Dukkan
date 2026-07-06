@@ -133,6 +133,7 @@ fun SearchScreenContent(
                             query = uiState.queryInput,
                             onQueryChange = onQueryChange,
                             onSearchSubmit = onSearchSubmit,
+                            isAiSearchLoading = uiState.isAiSearchLoading,
                             modifier = Modifier.weight(1f)
                         )
                         androidx.compose.material3.IconButton(

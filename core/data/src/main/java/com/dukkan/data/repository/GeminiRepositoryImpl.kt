@@ -6,6 +6,7 @@ import com.dukkan.data.mapper.toGeminiToolResponse
 import com.dukkan.data.mapper.toShopifySearchToolArgs
 import com.dukkan.data.source.GeminiRemoteSource
 import com.dukkan.domain.model.AgenticSearchResult
+import com.dukkan.domain.model.GeminiError
 import com.dukkan.domain.model.SearchIntent
 import com.dukkan.domain.repository.GeminiRepository
 import com.dukkan.domain.repository.SearchRepository
@@ -20,6 +21,8 @@ import com.dukkan.data.util.GeminiConstants.MAX_CLARIFICATIONS
 import com.dukkan.data.util.GeminiConstants.MAX_SHOPIFY_CALLS
 import com.dukkan.data.util.GeminiConstants.MAX_TURNS
 import com.dukkan.data.util.GeminiConstants.SEARCH_SHOPIFY_PRODUCTS
+import com.dukkan.data.util.GeminiConstants.CACHE_MAX_ENTRIES
+import com.dukkan.data.util.GeminiConstants.CACHE_TTL_MS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -30,13 +33,13 @@ class GeminiRepositoryImpl @Inject constructor(
 ) : GeminiRepository {
 
     private val sessions = ConcurrentHashMap<String, SearchSession>()
-    private val searchCache = ConcurrentHashMap<String, AgenticSearchResult.Success>()
+    private val searchCache = SearchCache(CACHE_MAX_ENTRIES, CACHE_TTL_MS)
 
     override fun startSearch(query: String): Flow<AgenticSearchResult> = flow {
         val trimmed = query.trim()
         if (trimmed.isBlank()) return@flow
 
-        val cached = searchCache[trimmed]
+        val cached = searchCache.get(trimmed)
         if (cached != null) {
             emit(cached)
             return@flow
@@ -56,7 +59,7 @@ class GeminiRepositoryImpl @Inject constructor(
             },
             onFailure = { error ->
                 Log.e("GeminiRepository", "startSearch API error", error)
-                emit(AgenticSearchResult.Error(mapToFriendlyError(error)))
+                emit(AgenticSearchResult.Error(mapToGeminiError(error)))
                 sessions.remove(sessionId)
             }
         )
@@ -65,7 +68,7 @@ class GeminiRepositoryImpl @Inject constructor(
     override fun resumeWithAnswer(sessionId: String, answer: String): Flow<AgenticSearchResult> = flow {
         val session = sessions[sessionId]
         if (session == null) {
-            emit(AgenticSearchResult.Error("This AI search session expired. Please search again."))
+            emit(AgenticSearchResult.Error(GeminiError.Unknown, "This AI search session expired. Please search again."))
             return@flow
         }
 
@@ -79,13 +82,10 @@ class GeminiRepositoryImpl @Inject constructor(
             },
             onFailure = { error ->
                 Log.e("GeminiRepository", "resumeWithAnswer API error", error)
-                emit(AgenticSearchResult.Error(mapToFriendlyError(error)))
+                emit(AgenticSearchResult.Error(mapToGeminiError(error)))
             }
         )
     }
-
-    override suspend fun interpretQueryOnce(query: String): SearchIntent =
-        SearchIntent(query = query.trim())
 
     private suspend fun kotlinx.coroutines.flow.FlowCollector<AgenticSearchResult>.emitAllResults(
         sessionId: String,
@@ -94,111 +94,112 @@ class GeminiRepositoryImpl @Inject constructor(
         fallbackQuery: String,
         initialQuery: String?
     ) {
-        var response = firstResponse
-        var turns = 0
+        var retainSession = false
+        try {
+            var response = firstResponse
+            var turns = 0
 
-        while (turns < MAX_TURNS) {
-            turns += 1
-            val functionCall = response.functionCalls.firstOrNull()
+            while (turns < MAX_TURNS) {
+                turns += 1
+                val functionCall = response.functionCalls.firstOrNull()
 
-            when (functionCall?.name) {
-                ASK_CLARIFYING_QUESTION -> {
-                    if (session.clarificationCount >= MAX_CLARIFICATIONS) {
-                        emit(AgenticSearchResult.Error("I need a little more detail. Please try a more specific search."))
-                    } else {
-                        session.clarificationCount += 1
-                        emit(AgenticSearchResult.AwaitingClarification(functionCall.args.toClarificationRequest(sessionId)))
-                    }
-                    return
-                }
-
-                SEARCH_SHOPIFY_PRODUCTS -> {
-                    if (session.shopifyCalls >= MAX_SHOPIFY_CALLS) {
-                        emit(AgenticSearchResult.Error("Search took too many steps. Please try a more specific request."))
+                when (functionCall?.name) {
+                    ASK_CLARIFYING_QUESTION -> {
+                        if (session.clarificationCount >= MAX_CLARIFICATIONS) {
+                            emit(AgenticSearchResult.Error(GeminiError.ClarificationLimitReached))
+                        } else {
+                            session.clarificationCount += 1
+                            emit(AgenticSearchResult.AwaitingClarification(functionCall.args.toClarificationRequest(sessionId)))
+                            retainSession = true
+                        }
                         return
                     }
 
-                    session.shopifyCalls += 1
-                    val args = functionCall.args.toShopifySearchToolArgs(fallbackQuery)
-                    session.lastQuery = args.query
+                    SEARCH_SHOPIFY_PRODUCTS -> {
+                        if (session.shopifyCalls >= MAX_SHOPIFY_CALLS) {
+                            emit(AgenticSearchResult.Error(GeminiError.MaxStepsReached))
+                            return
+                        }
 
-                    val shopifyResult = searchRepository.searchProducts(
-                        query = args.query,
-                        first = 20,
-                        after = null,
-                        filters = args.filters
-                    )
-                    
-                    shopifyResult.fold(
-                        onSuccess = { result ->
-                            val fnResponseResult = executeWithRetry {
-                                geminiRemoteSource.sendFunctionResponse(
-                                    chat = session.chat,
-                                    functionName = functionCall.name,
-                                    response = result.products.toGeminiToolResponse(result.totalCount)
+                        session.shopifyCalls += 1
+                        val args = functionCall.args.toShopifySearchToolArgs(fallbackQuery)
+                        session.lastQuery = args.query
+
+                        val shopifyResult = searchRepository.searchProducts(
+                            query = args.query,
+                            first = 20,
+                            after = null,
+                            filters = args.filters
+                        )
+                        
+                        shopifyResult.fold(
+                            onSuccess = { result ->
+                                val fnResponseResult = executeWithRetry {
+                                    geminiRemoteSource.sendFunctionResponse(
+                                        chat = session.chat,
+                                        functionName = functionCall.name,
+                                        response = result.products.toGeminiToolResponse(result.totalCount)
+                                    )
+                                }
+                                
+                                fnResponseResult.fold(
+                                    onSuccess = { geminiResp ->
+                                        val successResult = AgenticSearchResult.Success(
+                                            query = args.query,
+                                            products = result.products,
+                                            totalCount = result.totalCount,
+                                            message = geminiResp.text
+                                        )
+                                        if (initialQuery != null) {
+                                            searchCache.put(initialQuery, successResult)
+                                        }
+                                        emit(successResult)
+                                    },
+                                    onFailure = { error ->
+                                        Log.e("GeminiRepository", "sendFunctionResponse API error", error)
+                                        emit(AgenticSearchResult.Error(mapToGeminiError(error)))
+                                    }
                                 )
+                            },
+                            onFailure = { error ->
+                                emit(AgenticSearchResult.Error(GeminiError.SearchFailed, error.localizedMessage))
+                                return
                             }
-                            
-                            fnResponseResult.fold(
-                                onSuccess = { geminiResp ->
+                        )
+                        return
+                    }
+
+                    else -> {
+                        val fallback = fallbackQuery.ifBlank { session.lastQuery }
+                        searchRepository.searchProducts(query = fallback, first = 20, after = null)
+                            .fold(
+                                onSuccess = { result ->
                                     val successResult = AgenticSearchResult.Success(
-                                        query = args.query,
+                                        query = fallback,
                                         products = result.products,
                                         totalCount = result.totalCount,
-                                        message = geminiResp.text
+                                        message = response.text
                                     )
                                     if (initialQuery != null) {
-                                        searchCache[initialQuery] = successResult
+                                        searchCache.put(initialQuery, successResult)
                                     }
                                     emit(successResult)
                                 },
                                 onFailure = { error ->
-                                    Log.e("GeminiRepository", "sendFunctionResponse API error", error)
-                                    emit(AgenticSearchResult.Error(mapToFriendlyError(error)))
+                                    emit(AgenticSearchResult.Error(GeminiError.SearchFailed, error.localizedMessage))
                                 }
                             )
-                        },
-                        onFailure = { error ->
-                            emit(
-                                AgenticSearchResult.Error(
-                                    error.localizedMessage ?: "AI search could not reach Shopify search."
-                                )
-                            )
-                            return
-                        }
-                    )
-                    sessions.remove(sessionId)
-                    return
-                }
-
-                else -> {
-                    val fallback = fallbackQuery.ifBlank { session.lastQuery }
-                    searchRepository.searchProducts(query = fallback, first = 20, after = null)
-                        .fold(
-                            onSuccess = { result ->
-                                val successResult = AgenticSearchResult.Success(
-                                    query = fallback,
-                                    products = result.products,
-                                    totalCount = result.totalCount,
-                                    message = response.text
-                                )
-                                if (initialQuery != null) {
-                                    searchCache[initialQuery] = successResult
-                                }
-                                emit(successResult)
-                            },
-                            onFailure = { error ->
-                                emit(AgenticSearchResult.Error(error.localizedMessage ?: "AI search failed."))
-                            }
-                        )
-                    sessions.remove(sessionId)
-                    return
+                        return
+                    }
                 }
             }
-        }
 
-        emit(AgenticSearchResult.Error("AI search took too long. Please try again."))
-        sessions.remove(sessionId)
+            emit(AgenticSearchResult.Error(GeminiError.TimeoutExceeded))
+        } finally {
+            if (!retainSession) {
+                sessions.remove(sessionId)
+            }
+        }
     }
 
     private suspend fun <T> executeWithRetry(
@@ -213,9 +214,7 @@ class GeminiRepositoryImpl @Inject constructor(
                 throw e
             } catch (e: Exception) {
                 lastException = e
-                val msg = e.message ?: ""
-                val isTransient = msg.contains("429") || msg.contains("500") || msg.contains("503") || msg.contains("timeout", ignoreCase = true)
-                if (!isTransient || attempt == maxRetries) {
+                if (!isTransientError(e) || attempt == maxRetries) {
                     break
                 }
                 kotlinx.coroutines.delay(1000L * (attempt + 1))
@@ -224,15 +223,22 @@ class GeminiRepositoryImpl @Inject constructor(
         return Result.failure(lastException ?: Exception("Unknown error"))
     }
 
-    private fun mapToFriendlyError(e: Throwable): String {
+    private fun isTransientError(e: Throwable): Boolean {
+        val msg = e.message ?: return false
+        return msg.contains("429") || msg.contains("500") || msg.contains("503") ||
+               msg.contains("timeout", ignoreCase = true) || msg.contains("quota", ignoreCase = true) || 
+               msg.contains("rate limit", ignoreCase = true) || msg.contains("UnknownHostException")
+    }
+
+    private fun mapToGeminiError(e: Throwable): GeminiError {
         val msg = e.message ?: ""
         if (msg.contains("429") || msg.contains("quota", ignoreCase = true) || msg.contains("rate limit", ignoreCase = true)) {
-            return "Dukkan AI is taking a short break — please try again in a moment."
+            return GeminiError.RateLimited
         }
         if (msg.contains("timeout", ignoreCase = true) || msg.contains("503") || msg.contains("504") || msg.contains("UnknownHostException")) {
-            return "Looks like our servers are a bit slow right now. Give it another try!"
+            return GeminiError.Timeout
         }
-        return "Something went wrong on our end. Please try again."
+        return GeminiError.Unknown
     }
 
     private data class SearchSession(
@@ -241,4 +247,29 @@ class GeminiRepositoryImpl @Inject constructor(
         var clarificationCount: Int = 0,
         var shopifyCalls: Int = 0
     )
+
+    private class SearchCache(private val maxEntries: Int, private val ttlMs: Long) {
+        private val cache = object : java.util.LinkedHashMap<String, CacheEntry>(maxEntries, 0.75f, true) {
+            override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, CacheEntry>?): Boolean {
+                return size > maxEntries
+            }
+        }
+
+        @Synchronized
+        fun get(key: String): AgenticSearchResult.Success? {
+            val entry = cache[key] ?: return null
+            if (System.currentTimeMillis() - entry.timestamp > ttlMs) {
+                cache.remove(key)
+                return null
+            }
+            return entry.result
+        }
+
+        @Synchronized
+        fun put(key: String, value: AgenticSearchResult.Success) {
+            cache[key] = CacheEntry(value, System.currentTimeMillis())
+        }
+
+        private data class CacheEntry(val result: AgenticSearchResult.Success, val timestamp: Long)
+    }
 }

@@ -1,12 +1,6 @@
 package com.dukkan.search.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -23,36 +17,57 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.isActive
 
 @Composable
 fun AnimatedAiIcon(
     isLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "AiIconAnimation")
-    
-    val rotationDuration = if (isLoading) 1200 else 5000
-    val rotation by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = rotationDuration, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "AiIconRotation"
+    val targetPulse = if (isLoading) 1.1f else 1.03f
+    val pulseTarget by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = targetPulse,
+        label = "PulseTargetAnim"
+    )
+    val speedTarget = if (isLoading) 360f / 1200f else 360f / 5000f
+    val rotationSpeed by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = speedTarget,
+        label = "RotationSpeedAnim"
+    )
+    val pulseSpeedTarget = if (isLoading) 1f / 600f else 1f / 2000f
+    val pulseSpeed by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = pulseSpeedTarget,
+        label = "PulseSpeedAnim"
     )
 
-    val targetPulse = if (isLoading) 1.1f else 1.03f
-    val pulseDuration = if (isLoading) 600 else 2000
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = targetPulse,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = pulseDuration, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "AiIconPulse"
-    )
+    var rotation by androidx.compose.runtime.remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    var pulsePhase by androidx.compose.runtime.remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    var pulseDir by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(1) }
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        var lastTime = androidx.compose.runtime.withFrameMillis { it }
+        while (isActive) {
+            val currentTime = androidx.compose.runtime.withFrameMillis { it }
+            val delta = currentTime - lastTime
+            lastTime = currentTime
+
+            rotation = (rotation + rotationSpeed * delta) % 360f
+
+            pulsePhase += pulseDir * pulseSpeed * delta
+            if (pulsePhase >= 1f) {
+                pulsePhase = 1f
+                pulseDir = -1
+            } else if (pulsePhase <= 0f) {
+                pulsePhase = 0f
+                pulseDir = 1
+            }
+        }
+    }
+
+    val easedPhase = FastOutSlowInEasing.transform(pulsePhase)
+    val pulseScale = 1f + easedPhase * (pulseTarget - 1f)
 
     Box(
         modifier = modifier
