@@ -169,8 +169,8 @@ private fun ConfirmationScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = if (isPending) stringResource(R.string.payment_pending_message, orderId ?: "—")
-                    else stringResource(R.string.payment_success_message, orderId ?: "—"),
+                    text = if (isPending) stringResource(R.string.payment_pending_message, orderId?.extractShopifyOrderId() ?: "—")
+                    else stringResource(R.string.payment_success_message, orderId?.extractShopifyOrderId() ?: "—"),
                     fontSize = 14.5.sp, lineHeight = 21.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center, modifier = Modifier.alpha(contentAlpha.value)
                 )
@@ -194,19 +194,6 @@ private fun ConfirmationScreen(
                         Column {
                             Text(text = stringResource(R.string.payment_total_paid), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             Text(text = totalText, fontFamily = BricolageGrotesque, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
-                        }
-                        if (isPending) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.primary)
-                                Spacer(modifier = Modifier.size(6.dp))
-                                Text(text = stringResource(R.string.payment_verifying), fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                            }
-                        } else {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(imageVector = Icons.Default.MarkEmailRead, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(16.dp))
-                                Spacer(modifier = Modifier.size(6.dp))
-                                Text(text = stringResource(R.string.payment_email_sent), fontSize = 12.5.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                            }
                         }
                     }
                 }
@@ -330,3 +317,6 @@ private fun FailureScreen(
 @Composable
 private fun rememberInfiniteTransitionSafe() =
     androidx.compose.animation.core.rememberInfiniteTransition(label = "paymentResultPulse")
+
+fun String.extractShopifyOrderId(): String =
+    substringAfterLast("/")
