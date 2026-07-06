@@ -4,8 +4,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.dukkan.payment.presentation.CheckoutScreen
-import com.dukkan.payment.presentation.CheckoutViewModel
+import com.dukkan.payment.presentation.view.CheckoutScreen
+import com.dukkan.payment.presentation.viewModel.CheckoutViewModel
 import com.dukkan.navigation.Screen
 
 fun NavGraphBuilder.paymentNavGraph(
@@ -18,7 +18,6 @@ fun NavGraphBuilder.paymentNavGraph(
         CheckoutScreen(
             viewModel       = viewModel,
             onPaymentResult = onPaymentResult,
-            onNavigateUp    = { navController.navigateUp() },
         )
     }
 }

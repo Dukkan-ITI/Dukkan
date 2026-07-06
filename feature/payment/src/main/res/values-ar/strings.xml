@@ -1,45 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Screen title -->
+
+    <!-- ===== Screen title ===== -->
     <string name="payment_title">الدفع</string>
-    <string name="payment_navigate_up">رجوع</string>
 
-    <!-- Step titles -->
-    <string name="payment_step_address_title">اختر عنوان التوصيل</string>
-    <string name="payment_step_method_title">اختر طريقة الدفع</string>
-
-    <!-- Address card -->
-    <string name="payment_address_city_country">%1$s، %2$s</string>
-
-    <!-- Payment methods -->
-    <string name="payment_method_cash_title">الدفع عند الاستلام</string>
-    <string name="payment_method_cash_subtitle">ادفع عند وصول طلبك</string>
-    <string name="payment_method_online_title">الدفع الإلكتروني</string>
-    <string name="payment_method_online_subtitle">بطاقة، محفظة، Google Pay والمزيد</string>
-
-    <!-- Buttons -->
-    <string name="payment_continue">متابعة</string>
-    <string name="payment_confirm">تأكيد الطلب</string>
-    <string name="payment_retry">إعادة المحاولة</string>
-    <string name="payment_track_order">تتبع طلبي</string>
-
-    <!-- Order summary bar -->
-    <string name="payment_summary_items">%1$d منتجات</string>
-
-    <!-- Processing / verifying -->
-    <string name="payment_verifying">جارٍ التحقق من الدفع…</string>
-
-    <!-- Success -->
-    <string name="payment_success_title">تم تأكيد الطلب 🎉</string>
-    <string name="payment_success_order_id">طلب رقم #%1$s</string>
-
-    <!-- Failure -->
-    <string name="payment_failed_title">فشلت عملية الدفع</string>
-
-    <!-- Still pending -->
-    <string name="payment_still_pending_title">الدفع قيد المعالجة</string>
-    <string name="payment_still_pending_body">دفعتك قيد المعالجة. سنُعلمك فور التأكيد. يمكنك تتبع طلبك أدناه.</string>
-    <!-- Address Edit Sheet -->
+    <!-- ===== Address step ===== -->
+    <string name="payment_step_address_title">عنوان التوصيل</string>
     <string name="payment_address_delivery">عنوان التوصيل</string>
     <string name="payment_address_first_name">الاسم الأول</string>
     <string name="payment_address_last_name">اسم العائلة</string>
@@ -47,12 +13,53 @@
     <string name="payment_address_city">المدينة</string>
     <string name="payment_address_phone">رقم الهاتف</string>
     <string name="payment_address_confirm">تأكيد العنوان</string>
+    <string name="payment_address_city_country">%1$s، %2$s</string>
+    <string name="payment_address_edit">تعديل</string>
+    <string name="payment_address_none_selected">لم يتم اختيار عنوان بعد.</string>
+    <string name="payment_address_unknown">غير معروف</string>
 
-    <!-- Error messages -->
-    <string name="payment_error_unknown">خطأ غير معروف</string>
-    <string name="payment_error_initialize">فشل في بدء عملية الدفع</string>
-    <string name="payment_error_pending">الدفع قيد الانتظار</string>
-    <string name="payment_error_cancelled">تم إلغاء الدفع أو فشل.</string>
-    <string name="payment_error_status">حالة الدفع: %1$s</string>
-    <string name="payment_error_failed">فشلت عملية الدفع</string>
+    <!-- ===== Payment method step ===== -->
+    <string name="payment_step_method_title">طريقة الدفع</string>
+    <string name="payment_method_cash_title">الدفع عند الاستلام</string>
+    <string name="payment_method_cash_subtitle">ادفع عند وصول الطلب</string>
+    <string name="payment_method_online_title">بطاقة / دفع إلكتروني</string>
+    <string name="payment_method_online_subtitle">فيزا، ماستركارد، Apple Pay</string>
+
+    <!-- ===== Order totals ===== -->
+    <string name="payment_total">الإجمالي</string>
+    <string name="payment_confirm">إتمام الطلب</string>
+    <plurals name="payment_summary_items_count">
+        <item quantity="zero">الإجمالي الفرعي (لا توجد عناصر)</item>
+        <item quantity="one">الإجمالي الفرعي (عنصر واحد)</item>
+        <item quantity="two">الإجمالي الفرعي (عنصران)</item>
+        <item quantity="few">الإجمالي الفرعي (%d عناصر)</item>
+        <item quantity="many">الإجمالي الفرعي (%d عنصرًا)</item>
+        <item quantity="other">الإجمالي الفرعي (%d عنصر)</item>
+    </plurals>
+
+    <!-- ===== Errors (surfaced via UiText from the ViewModel) ===== -->
+    <string name="payment_error_unknown">حدث خطأ ما. حاول مرة أخرى.</string>
+    <string name="payment_error_initialize">تعذر بدء عملية الدفع. حاول مرة أخرى.</string>
+    <string name="payment_error_pending">لا تزال عملية الدفع قيد المعالجة.</string>
+    <string name="payment_error_cancelled">تم إلغاء عملية الدفع.</string>
+    <string name="payment_error_status">حالة الطلب: %1$s</string>
+    <string name="payment_error_failed">تعذر التحقق من عملية الدفع. حاول مرة أخرى.</string>
+
+    <!-- ===== Result / confirmation screen ===== -->
+    <string name="payment_receipt_pending">الدفع قيد الانتظار</string>
+    <string name="payment_receipt_successful">تم تقديم الطلب! ✨</string>
+    <string name="payment_paid_by_cash">تم الدفع عند الاستلام</string>
+    <string name="payment_paid_by_card">تم الدفع بالبطاقة</string>
+    <string name="payment_success_message">شكرًا لك! تم تأكيد طلبك %1$s. سيصلك ملخص الطلب على بريدك الإلكتروني قريبًا.</string>
+    <string name="payment_pending_message">نقوم بتأكيد عملية الدفع لطلبك %1$s. قد يستغرق هذا بعض الوقت — يمكنك المتابعة لاحقًا.</string>
+    <string name="payment_total_paid">المبلغ المدفوع</string>
+    <string name="payment_email_sent">تم إرسال البريد الإلكتروني</string>
+    <string name="payment_verifying">جارٍ التحقق…</string>
+    <string name="payment_continue_shopping">متابعة التسوق</string>
+
+    <!-- ===== Failure screen ===== -->
+    <string name="payment_failed_title">فشلت عملية الدفع</string>
+    <string name="payment_retry">إعادة المحاولة</string>
+    <string name="payment_cancel">إلغاء</string>
+
 </resources>
