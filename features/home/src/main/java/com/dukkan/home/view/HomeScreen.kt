@@ -142,7 +142,10 @@ fun HomeScreenContent(
 
                 is HomeUiState.Success -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeHeader(firstName = firstName)
+                        HomeHeader(
+                            firstName = firstName,
+                            onSeeAllClick = onSeeAllClicked
+                        )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         HomeSearchBar(onSearchClick = onSearchClick)
