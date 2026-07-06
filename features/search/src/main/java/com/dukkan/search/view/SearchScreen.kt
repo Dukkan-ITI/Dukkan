@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -32,12 +33,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dukkan.search.R
+import com.dukkan.search.components.ClarificationPrompt
 import com.dukkan.search.components.PredictiveSuggestionsDropdown
 import com.dukkan.search.components.ProductResultItem
 import com.dukkan.search.components.SearchBar
 import com.dukkan.search.components.SearchEmptyState
 import com.dukkan.search.components.SearchLoadingState
-import com.dukkan.search.uiState.SearchUiState
+import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.viewmodel.SearchViewModel
 
 @Composable
@@ -53,6 +55,7 @@ fun SearchScreen(
         uiState = uiState,
         onQueryChange = viewModel::onQueryInputChanged,
         onSearchSubmit = viewModel::onSearchSubmitted,
+        onAiSearchSubmit = viewModel::onAiSearchTriggered,
         onLoadMore = viewModel::onLoadMore,
         onProductClick = { product ->
             viewModel.onSearchSubmitted(product.title)
@@ -64,7 +67,11 @@ fun SearchScreen(
         onOpenFilters = viewModel::onOpenFilters,
         onDismissFilters = viewModel::onDismissFilters,
         onApplyFilters = viewModel::onApplyFilters,
-        onClearFilters = viewModel::onClearFilters
+        onClearFilters = viewModel::onClearFilters,
+        onClarificationAnswerChange = viewModel::onClarificationAnswerChanged,
+        onClarificationAnswerSubmit = viewModel::onClarificationAnswered,
+        onRetryAiSearch = viewModel::onRetryAiSearch,
+        onCancelAiSearch = viewModel::onCancelAiSearch
     )
 }
 
@@ -74,17 +81,21 @@ fun SearchScreenContent(
     uiState: SearchUiState,
     onQueryChange: (String) -> Unit,
     onSearchSubmit: (String) -> Unit,
+    onAiSearchSubmit: (String) -> Unit,
     onLoadMore: () -> Unit,
     onProductClick: (com.dukkan.domain.model.SearchProduct) -> Unit,
     onCollectionClick: (com.dukkan.domain.model.SearchCollection) -> Unit,
     onOpenFilters: () -> Unit,
     onDismissFilters: () -> Unit,
     onApplyFilters: (com.dukkan.domain.model.SearchFilter) -> Unit,
-    onClearFilters: () -> Unit
+    onClearFilters: () -> Unit,
+    onClarificationAnswerChange: (String) -> Unit,
+    onClarificationAnswerSubmit: () -> Unit,
+    onRetryAiSearch: () -> Unit,
+    onCancelAiSearch: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
-    // Trigger load-more when near end
     val shouldLoadMore by remember {
         derivedStateOf {
             val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -109,7 +120,6 @@ fun SearchScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            // Search bar + dropdown in a Box to allow overlay
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column {
                     androidx.compose.foundation.layout.Row(
@@ -125,6 +135,16 @@ fun SearchScreenContent(
                             onSearchSubmit = onSearchSubmit,
                             modifier = Modifier.weight(1f)
                         )
+                        androidx.compose.material3.IconButton(
+                            onClick = { onAiSearchSubmit(uiState.queryInput) },
+                            enabled = uiState.queryInput.isNotBlank() && !uiState.isAiSearchLoading
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = androidx.compose.material.icons.Icons.Default.AutoAwesome,
+                                contentDescription = stringResource(R.string.search_ai_assistant_title),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                         androidx.compose.material3.IconButton(
                             onClick = onOpenFilters,
                             colors = androidx.compose.material3.IconButtonDefaults.iconButtonColors(
@@ -195,12 +215,23 @@ fun SearchScreenContent(
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
+
+                    ClarificationPrompt(
+                        question = uiState.clarificationQuestion?.asString(),
+                        answer = uiState.clarificationAnswerInput,
+                        message = uiState.aiMessage?.asString(),
+                        isLoading = uiState.isAiSearchLoading,
+                        isError = uiState.isAiError,
+                        onAnswerChange = onClarificationAnswerChange,
+                        onSubmitAnswer = onClarificationAnswerSubmit,
+                        onRetry = onRetryAiSearch,
+                        onCancel = onCancelAiSearch
+                    )
                 }
             }
 
-            // Results area
             when {
-                uiState.isSearchLoading -> SearchLoadingState()
+                uiState.isSearchLoading || uiState.isAiSearchLoading -> SearchLoadingState()
 
                 uiState.error != null -> {
                     Box(
@@ -210,7 +241,7 @@ fun SearchScreenContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = uiState.error,
+                            text = uiState.error?.asString() ?: "",
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -230,7 +261,6 @@ fun SearchScreenContent(
                         state = listState,
                         contentPadding = PaddingValues(bottom = 16.dp)
                     ) {
-                        // Results header
                         if (uiState.submittedQuery.isNotBlank()) {
                             item {
                                 Text(
@@ -265,7 +295,6 @@ fun SearchScreenContent(
                             }
                         }
 
-                        // Load-more indicator
                         if (uiState.isLoadingMore) {
                             item {
                                 Box(

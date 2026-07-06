@@ -28,4 +28,11 @@
     <string name="search_clear">Clear</string>
     <string name="search_failed">Search failed</string>
     <string name="search_load_more_failed">Load more failed</string>
+    <string name="search_ai_assistant_title">Dukkan AI</string>
+    <string name="search_ai_answer_placeholder">E.g., for running, red, under $100...</string>
+    <string name="search_ai_send_answer">Send</string>
+    <string name="search_retry">Retry</string>
+    <string name="search_ai_fallback_message">I couldn\'t complete that search right now. Showing standard results instead.</string>
+    <string name="search_ai_clarify_fallback">I couldn\'t complete that search. Could you please rephrase or provide more details?</string>
+    <string name="search_ai_still_searching">Still searching... This is taking a bit longer than usual.</string>
 </resources>
