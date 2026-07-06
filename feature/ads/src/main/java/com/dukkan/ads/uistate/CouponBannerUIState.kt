@@ -2,5 +2,7 @@ package com.dukkan.ads.uistate
 import com.dukkan.domain.model.Coupon
 data class CouponBannerUIState(
     val coupons: List<Coupon> = emptyList(),
-    val savedSuccess: Boolean = false
+    val savedSuccess: Boolean = false,
+    val isLoggedIn: Boolean = false,
+    val showGuestDialog: Boolean = false
 )

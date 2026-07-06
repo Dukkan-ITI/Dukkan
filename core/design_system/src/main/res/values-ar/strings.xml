@@ -13,5 +13,15 @@
     <string name="profile_order_items">%1$d عناصر</string>
     <string name="profile_order_status_delivered">تم التوصيل</string>
     <string name="profile_order_status_in_transit">قيد الشحن</string>
+    <string name="retry_btn">إعادة المحاولة</string>
+    <string name="error_message_default">حدث خطأ ما أثناء تحميل هذه الصفحة.</string>
+    <string name="sign_in_access_title">سجّل الدخول للوصول إلى %1$s</string>
+    <string name="sign_in_interact_title">يجب تسجيل الدخول لعرض والتفاعل مع %1$s الخاصة بك.</string>
+    <string name="sign_in">تسجيل الدخول</string>
+    <string name="coming_soon_title">%1$s — قريباً</string>
 
+    <string name="guest_dialog_title">يجب تسجيل الدخول</string>
+    <string name="guest_dialog_message">يجب أن تكون مسجلاً للقيام بهذا الإجراء. هل ترغب في تسجيل الدخول الآن أم الاستمرار كضيف؟</string>
+    <string name="guest_dialog_ok">الاستمرار كضيف</string>
+    <string name="guest_dialog_sign_in">تسجيل الدخول</string>
 </resources>

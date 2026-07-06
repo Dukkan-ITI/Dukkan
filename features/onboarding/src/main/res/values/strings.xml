@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="already_shopping">Already shopping with us? </string>
-    <string name="sign_in">Sign in</string>
+    <string name="sign_in"> Sign in</string>
     <string name="feature_page">FEATURE %02d</string>
     <string name="skip">Skip</string>
     <string name="onboarding_title_1">Welcome to Dukkan</string>
@@ -11,5 +11,7 @@
     <string name="onboarding_title_3">Fast Delivery</string>
     <string name="onboarding_desc_3">Get your favorite items delivered right to your doorstep in no time.</string>
     <string name="get_started">Get started</string>
-    <string name="continue_arrow">Continue →</string>
+    <string name="continue_arrow">Continue </string>
+    <string name="continue_arrow_description">Continue to next step</string>
+    <string name="onboarding_image_description">Onboarding illustration image</string>
 </resources>

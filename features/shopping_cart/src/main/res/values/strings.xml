@@ -2,7 +2,8 @@
     <string name="cart_title">Shopping Cart</string>
     <string name="your_bag">Your bag</string>
     <string name="add_dummy">Add Dummy</string>
-    <string name="checkout_format">Checkout • $%s</string>
+    <string name="checkout_format">Checkout • %s</string>
+    <string name="price_format">%s</string>
     <string name="remove_item_title">Remove item?</string>
     <string name="remove_item_message">Remove \"%s\" from your bag?</string>
     <string name="cancel">Cancel</string>
@@ -10,7 +11,6 @@
     <string name="your_bag_is_empty">Your bag is empty</string>
     <string name="start_shopping">Start shopping -></string>
     <string name="size_format">Size %s</string>
-    <string name="price_format">$%s</string>
     <string name="promo_code_hint">Promo code (try JUNO20)</string>
     <string name="apply">Apply</string>
     <string name="subtotal">Subtotal</string>
@@ -26,6 +26,6 @@
     <string name="quantity_increase">+</string>
     <string name="amount_with_currency_format">%1$s %2$s</string>
     <string name="discount_amount_format">-%1$s %2$s</string>
-    <string name="promo_codes_applied">Applied Codes</string>
     <string name="default_amount">0.00</string>
+    <string name="promo_codes_applied">Applied Codes</string>
 </resources>

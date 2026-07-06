@@ -3,6 +3,7 @@ package com.dukkan.onboarding.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,11 +28,19 @@ fun BottomLoginSection(
     ) {
 
         Text(
+            style = MaterialTheme.typography.bodyMedium,
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = Color.White.copy(alpha = .8f))) {
                     append(stringResource(id = R.string.already_shopping))
                 }
-                withStyle(style = SpanStyle(color = Color.White, fontWeight = FontWeight.Bold, textDecoration = TextDecoration.Underline)) {
+                withStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colorScheme.primary,
+
+                        fontWeight = FontWeight.SemiBold,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ) {
                     append(stringResource(id = R.string.sign_in))
                 }
             },

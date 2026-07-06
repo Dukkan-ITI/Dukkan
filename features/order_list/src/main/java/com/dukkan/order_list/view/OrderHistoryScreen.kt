@@ -87,7 +87,8 @@ private fun OrderHistoryContent(
                     Text(
                         text = stringResource(R.string.order_history_title),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
                 },
                 navigationIcon = {
@@ -95,7 +96,7 @@ private fun OrderHistoryContent(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.navigate_back),
-                            tint = MaterialTheme.colorScheme.onSurface
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },

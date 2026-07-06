@@ -10,7 +10,7 @@ import com.dukkan.ApplyDiscountCodeMutation
 
 interface CartRemoteDataSource {
     suspend fun createCart(customerAccessToken: String? = null): CreateCartMutation.CartCreate?
-    suspend fun getCart(cartId: String): GetCartQuery.Cart?
+    suspend fun getCart(cartId: String, country: String): GetCartQuery.Cart?
     suspend fun addCartItem(cartId: String, variantId: String): AddCartLinesMutation.CartLinesAdd?
     suspend fun updateCartItem(cartId: String, lineId: String, quantity: Int): UpdateCartLinesMutation.CartLinesUpdate?
     suspend fun removeCartItem(cartId: String, lineId: String): RemoveCartLinesMutation.CartLinesRemove?

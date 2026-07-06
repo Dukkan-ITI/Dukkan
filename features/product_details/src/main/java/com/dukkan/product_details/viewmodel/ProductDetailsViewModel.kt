@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.dukkan.navigation.Screen
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
+import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
@@ -29,6 +30,7 @@ class ProductDetailsViewModel @Inject constructor(
     private val getFavorites: GetFavoritesUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val cartUseCases: CartUseCases,
+    private val getCurrentUser: GetCurrentUserUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
 ) : ViewModel() {
@@ -38,6 +40,11 @@ class ProductDetailsViewModel @Inject constructor(
     private val productId: String = savedStateHandle.toRoute<Screen.ProductDetail>().productId
 
     init {
+
+        viewModelScope.launch {
+            val user = getCurrentUser()
+            _state.update { it.copy(isLoggedIn = user != null) }
+        }
 
         viewModelScope.launch {
             combine(getCurrency(), getLanguage()) { currency, language -> currency to language }
@@ -65,6 +72,11 @@ class ProductDetailsViewModel @Inject constructor(
     }
 
     fun toggleFavorite(product: Product, isCurrentlyFavorite: Boolean) {
+        if (!_state.value.isLoggedIn) {
+            _state.update { it.copy(showGuestDialog = true) }
+            return
+        }
+
         viewModelScope.launch {
             val favoriteProduct = FavoriteProduct(
                 id = product.id,
@@ -78,6 +90,11 @@ class ProductDetailsViewModel @Inject constructor(
     }
 
     fun addToCart(variantId: String) {
+        if (!_state.value.isLoggedIn) {
+            _state.update { it.copy(showGuestDialog = true) }
+            return
+        }
+
         viewModelScope.launch {
             _state.update { it.copy(isAddingToCart = true) }
             try {
@@ -90,5 +107,9 @@ class ProductDetailsViewModel @Inject constructor(
                 _state.update { it.copy(isAddingToCart = false) }
             }
         }
+    }
+
+    fun dismissGuestDialog() {
+        _state.update { it.copy(showGuestDialog = false) }
     }
 }

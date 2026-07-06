@@ -12,6 +12,7 @@ import com.dukkan.type.CartInput
 import com.dukkan.type.CartBuyerIdentityInput
 import com.dukkan.type.CartLineInput
 import com.dukkan.type.CartLineUpdateInput
+import com.dukkan.type.CountryCode
 import javax.inject.Inject
 
 class CartRemoteDataSourceImpl @Inject constructor(
@@ -31,12 +32,20 @@ class CartRemoteDataSourceImpl @Inject constructor(
         return response.data?.cartCreate
     }
 
-    override suspend fun getCart(cartId: String): GetCartQuery.Cart? {
-        val response = apolloClient.query(GetCartQuery(cartId)).execute()
+    override suspend fun getCart(cartId: String, country: String): GetCartQuery.Cart? {
+        val response = apolloClient.query(
+            GetCartQuery(
+                cartId = cartId,
+                country = CountryCode.safeValueOf(country)
+            )
+        ).execute()
         return response.data?.cart
     }
 
-    override suspend fun addCartItem(cartId: String, variantId: String): AddCartLinesMutation.CartLinesAdd? {
+    override suspend fun addCartItem(
+        cartId: String,
+        variantId: String
+    ): AddCartLinesMutation.CartLinesAdd? {
         val line = CartLineInput(
             merchandiseId = variantId,
             quantity = Optional.present(1)
@@ -54,7 +63,8 @@ class CartRemoteDataSourceImpl @Inject constructor(
             id = lineId,
             quantity = Optional.present(quantity)
         )
-        val response = apolloClient.mutation(UpdateCartLinesMutation(cartId, listOf(line))).execute()
+        val response =
+            apolloClient.mutation(UpdateCartLinesMutation(cartId, listOf(line))).execute()
         return response.data?.cartLinesUpdate
     }
 
@@ -62,11 +72,12 @@ class CartRemoteDataSourceImpl @Inject constructor(
         cartId: String,
         lineId: String
     ): RemoveCartLinesMutation.CartLinesRemove? {
-        val response = apolloClient.mutation(RemoveCartLinesMutation(cartId, listOf(lineId))).execute()
+        val response =
+            apolloClient.mutation(RemoveCartLinesMutation(cartId, listOf(lineId))).execute()
         return response.data?.cartLinesRemove
     }
 
-   
+
     override suspend fun applyDiscountCodes(
         cartId: String,
         discountCodes: List<String>

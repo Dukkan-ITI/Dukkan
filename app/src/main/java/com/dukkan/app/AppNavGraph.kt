@@ -26,6 +26,7 @@ import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
 import com.dukkan.product_details.view.ProductDetailsScreen
+import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun AppNavGraph(
@@ -81,6 +82,9 @@ fun AppNavGraph(
                 onNavigateToBrands = { navController.navigate(Screen.Brands) },
                 onBrandClick = { brand ->
                     navController.navigate(Screen.BrandProducts(brand.name))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -100,6 +104,9 @@ fun AppNavGraph(
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
                     }
+                },
+                onProductClick = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
                 }
             )
         }
@@ -174,7 +181,24 @@ fun AppNavGraph(
         }
 
         composable<Screen.ProductDetail> {
-            ProductDetailsScreen(onBackClick = { navController.popBackStack() })
+            ProductDetailsScreen(
+                onBackClick = { navController.popBackStack() },
+                onNavigateToGuestPlaceholder = { title ->
+                    navController.navigate(Screen.GuestPlaceholder(title = title))
+                }
+            )
+        }
+
+        composable<Screen.GuestPlaceholder> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.GuestPlaceholder>()
+            GuestPlaceholderScreen(
+                title = args.title,
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable<Screen.SavedAddresses> {

@@ -57,4 +57,7 @@ sealed class Screen {
 
     @Serializable
     object Payment
+
+    @Serializable
+    data class GuestPlaceholder(val title: String)
 }

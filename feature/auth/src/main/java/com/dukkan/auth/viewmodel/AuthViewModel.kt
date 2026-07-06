@@ -12,13 +12,16 @@ import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 sealed interface AuthAction {
@@ -34,6 +37,13 @@ sealed interface AuthAction {
     data object GoogleClicked : AuthAction
     data class GoogleIdTokenReceived(val idToken: String) : AuthAction
     data class GoogleSignInFailed(val message: String) : AuthAction
+    data object ResendVerificationClicked : AuthAction
+    data object CheckVerificationClicked : AuthAction
+    data object BackToLoginClicked : AuthAction
+    data object ForgotPasswordClicked : AuthAction
+    data class ForgotPasswordEmailChanged(val email: String) : AuthAction
+    data object SendResetLinkClicked : AuthAction
+    data object BackToLoginFromForgotPasswordClicked : AuthAction
 }
 
 sealed interface AuthEvent {
@@ -68,6 +78,26 @@ sealed interface AuthUiState {
 
     data object Loading : AuthUiState
 
+    @Immutable
+    data class EmailVerificationPending(
+        val email: String,
+        val isResending: Boolean = false,
+        val isChecking: Boolean = false,
+        val resendCooldownSeconds: Int = 0,
+        val infoMessage: String? = null,
+    ) : AuthUiState
+
+    @Immutable
+    data class ForgotPassword(
+        val email: String = "",
+        val isLoading: Boolean = false,
+        val emailError: String? = null,
+        val isEmailSent: Boolean = false,
+    ) : AuthUiState {
+        val isSubmitEnabled: Boolean
+            get() = email.isNotBlank()
+    }
+
     data object Success : AuthUiState
 }
 
@@ -88,6 +118,8 @@ class AuthViewModel @Inject constructor(
     private val _events = Channel<AuthEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
+    private var cooldownJob: Job? = null
+
     fun onAction(action: AuthAction) = when (action) {
         is AuthAction.FirstNameChanged -> onFirstNameChanged(action.firstName)
         is AuthAction.LastNameChanged -> onLastNameChanged(action.lastName)
@@ -101,6 +133,13 @@ class AuthViewModel @Inject constructor(
         AuthAction.GoogleClicked -> triggerGoogleSignIn()
         is AuthAction.GoogleIdTokenReceived -> loginWithGoogle(action.idToken)
         is AuthAction.GoogleSignInFailed -> onGoogleFailure(action.message)
+        AuthAction.ResendVerificationClicked -> resendVerificationEmail()
+        AuthAction.CheckVerificationClicked -> checkEmailVerified()
+        AuthAction.BackToLoginClicked -> backToLogin()
+        AuthAction.ForgotPasswordClicked -> openForgotPassword()
+        is AuthAction.ForgotPasswordEmailChanged -> onForgotPasswordEmailChanged(action.email)
+        AuthAction.SendResetLinkClicked -> sendResetLink()
+        AuthAction.BackToLoginFromForgotPasswordClicked -> backToLoginFromForgotPassword()
     }
 
     private fun onFirstNameChanged(firstName: String) {
@@ -153,15 +192,156 @@ class AuthViewModel @Inject constructor(
             }
 
             if (result.isSuccess == true) {
+                handlePostEmailAuthSuccess(isNewRegistration = !form.isLoginMode)
+            } else {
+                _uiState.value = form.copy(
+                    emailError = result.exceptionOrNull()?.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown)
+                )
+            }
+        }
+    }
+
+    private suspend fun handlePostEmailAuthSuccess(isNewRegistration: Boolean) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user == null) {
+            _uiState.value = AuthUiState.Form()
+            return
+        }
+
+        try {
+            user.reload().await()
+        } catch (e: Exception) {
+            Log.e("AuthViewModel", "Failed to reload user", e)
+        }
+
+        val refreshedUser = FirebaseAuth.getInstance().currentUser
+
+        if (refreshedUser?.isEmailVerified == true) {
+            viewModelScope.launch {
                 getShopifyTokenUseCase()
                 syncFavoritesAfterAuth()
                 syncCartAfterAuth()
+            }
+            _uiState.value = AuthUiState.Success
+            return
+        }
 
-                _uiState.value = AuthUiState.Success
-            } else {
-                _uiState.value = form.copy(emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown))
+        if (isNewRegistration) {
+            try {
+                refreshedUser?.sendEmailVerification()?.await()
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Failed to send verification email", e)
+            }
+            _uiState.value =
+                AuthUiState.EmailVerificationPending(email = refreshedUser?.email.orEmpty())
+            startResendCooldown()
+        } else {
+            _uiState.value =
+                AuthUiState.EmailVerificationPending(email = refreshedUser?.email.orEmpty())
+        }
+    }
+
+    private fun startResendCooldown() {
+        cooldownJob?.cancel()
+        cooldownJob = viewModelScope.launch {
+            for (seconds in 60 downTo 0) {
+                val state = _uiState.value as? AuthUiState.EmailVerificationPending ?: return@launch
+                _uiState.value = state.copy(resendCooldownSeconds = seconds)
+                if (seconds > 0) delay(1000)
             }
         }
+    }
+
+    private fun resendVerificationEmail() {
+        val state = _uiState.value as? AuthUiState.EmailVerificationPending ?: return
+        if (state.resendCooldownSeconds > 0) return
+        viewModelScope.launch {
+            _uiState.value = state.copy(isResending = true, infoMessage = null)
+            try {
+                FirebaseAuth.getInstance().currentUser?.sendEmailVerification()?.await()
+                _uiState.value = state.copy(
+                    isResending = false,
+                    infoMessage = context.getString(com.dukkan.auth.R.string.auth_verification_email_resent)
+                )
+                startResendCooldown()
+            } catch (e: Exception) {
+                _uiState.value = state.copy(
+                    isResending = false,
+                    infoMessage = e.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown)
+                )
+            }
+        }
+    }
+
+    private fun checkEmailVerified() {
+        val state = _uiState.value as? AuthUiState.EmailVerificationPending ?: return
+        viewModelScope.launch {
+            _uiState.value = state.copy(isChecking = true, infoMessage = null)
+            val user = FirebaseAuth.getInstance().currentUser
+            try {
+                user?.reload()?.await()
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Failed to reload user", e)
+            }
+
+            val refreshedUser = FirebaseAuth.getInstance().currentUser
+            if (refreshedUser?.isEmailVerified == true) {
+                viewModelScope.launch {
+                    getShopifyTokenUseCase()
+                    syncFavoritesAfterAuth()
+                    syncCartAfterAuth()
+                }
+                _uiState.value = AuthUiState.Success
+            } else {
+                _uiState.value = state.copy(
+                    isChecking = false,
+                    infoMessage = context.getString(com.dukkan.auth.R.string.auth_verification_still_pending)
+                )
+            }
+        }
+    }
+
+    private fun backToLogin() {
+        cooldownJob?.cancel()
+        FirebaseAuth.getInstance().signOut()
+        _uiState.value = AuthUiState.Form(isLoginMode = true)
+    }
+
+    private fun openForgotPassword() {
+        val currentEmail = (_uiState.value as? AuthUiState.Form)?.email.orEmpty()
+        _uiState.value = AuthUiState.ForgotPassword(email = currentEmail)
+    }
+
+    private fun onForgotPasswordEmailChanged(email: String) {
+        val state = _uiState.value as? AuthUiState.ForgotPassword ?: return
+        _uiState.value = state.copy(email = email, emailError = null)
+    }
+
+    private fun sendResetLink() {
+        val state = _uiState.value as? AuthUiState.ForgotPassword ?: return
+        if (!state.isSubmitEnabled) return
+
+        viewModelScope.launch {
+            _uiState.value = state.copy(isLoading = true, emailError = null)
+            try {
+                FirebaseAuth.getInstance().sendPasswordResetEmail(state.email).await()
+                _uiState.value = state.copy(isLoading = false, isEmailSent = true)
+            } catch (e: Exception) {
+                _uiState.value = state.copy(
+                    isLoading = false,
+                    emailError = e.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_unknown)
+                )
+            }
+        }
+    }
+
+    private fun backToLoginFromForgotPassword() {
+        val previousEmail = (_uiState.value as? AuthUiState.ForgotPassword)?.email.orEmpty()
+        _uiState.value = AuthUiState.Form(isLoginMode = true, email = previousEmail)
     }
 
     private fun triggerGoogleSignIn() {
@@ -179,34 +359,35 @@ class AuthViewModel @Inject constructor(
                 syncFavoritesAfterAuth()
                 syncCartAfterAuth()
 
-
                 _uiState.value = AuthUiState.Success
             } else {
-                _uiState.value = form.copy(isGoogleLoading = false, emailError = result.exceptionOrNull()?.message ?: context.getString(com.dukkan.auth.R.string.auth_error_google_sign_in_failed))
+                _uiState.value = form.copy(
+                    isGoogleLoading = false,
+                    emailError = result.exceptionOrNull()?.message
+                        ?: context.getString(com.dukkan.auth.R.string.auth_error_google_sign_in_failed)
+                )
             }
         }
     }
-     suspend fun syncFavoritesAfterAuth() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        try {
-            syncFavoritesOnLoginUseCase(userId)
-        } catch (e: Exception) {
-           Log.e("AuthViewModel", "Failed to sync favorites", e)
-        }
-    }
-    suspend fun syncCartAfterAuth() {
+
+    suspend fun syncFavoritesAfterAuth() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         try {
             syncFavoritesOnLoginUseCase(userId)
         } catch (e: Exception) {
             Log.e("AuthViewModel", "Failed to sync favorites", e)
         }
+    }
+
+    suspend fun syncCartAfterAuth() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         try {
             syncCartOnLoginUseCase(userId)
         } catch (e: Exception) {
             Log.e("AuthViewModel", "Failed to sync cart", e)
         }
     }
+
     private fun onGoogleFailure(message: String) {
         val form = _uiState.value as? AuthUiState.Form ?: AuthUiState.Form()
         _uiState.value = form.copy(isGoogleLoading = false, emailError = message)

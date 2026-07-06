@@ -14,6 +14,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +27,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.auth.R
 import com.dukkan.auth.utils.GoogleSignInHelper
 
+import com.dukkan.auth.components.AuthEmailVerificationScreen
+import com.dukkan.auth.components.AuthForgotPasswordScreen
 import com.dukkan.auth.components.AuthGuestLink
 import com.dukkan.auth.components.AuthLoadingScreen
 import com.dukkan.auth.components.AuthPrimaryButton
@@ -65,7 +70,6 @@ fun AuthScreen(
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val currentState = authState
-
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val googleSignInHelper = remember { GoogleSignInHelper() }
@@ -94,7 +98,10 @@ fun AuthScreen(
                             // Ignored
                         } catch (e: Exception) {
                             authViewModel.onAction(
-                                AuthAction.GoogleSignInFailed(e.message ?: context.getString(R.string.auth_error_google_sign_in_failed))
+                                AuthAction.GoogleSignInFailed(
+                                    e.message
+                                        ?: context.getString(R.string.auth_error_google_sign_in_failed)
+                                )
                             )
                         }
                     }
@@ -118,12 +125,38 @@ fun AuthScreen(
             )
         }
 
-
         is AuthUiState.Form -> {
             AuthFormContent(
                 state = state,
                 onAction = onAction,
                 onNavigateToHome = onNavigateToHome,
+                modifier = modifier
+            )
+        }
+
+        is AuthUiState.EmailVerificationPending -> {
+            AuthEmailVerificationScreen(
+                email = state.email,
+                isResending = state.isResending,
+                isChecking = state.isChecking,
+                resendCooldownSeconds = state.resendCooldownSeconds,
+                infoMessage = state.infoMessage,
+                onResendClick = { onAction(AuthAction.ResendVerificationClicked) },
+                onCheckClick = { onAction(AuthAction.CheckVerificationClicked) },
+                onBackToLoginClick = { onAction(AuthAction.BackToLoginClicked) },
+                modifier = modifier
+            )
+        }
+
+        is AuthUiState.ForgotPassword -> {
+            AuthForgotPasswordScreen(
+                email = state.email,
+                isLoading = state.isLoading,
+                emailError = state.emailError,
+                isEmailSent = state.isEmailSent,
+                onEmailChanged = { onAction(AuthAction.ForgotPasswordEmailChanged(it)) },
+                onSendClick = { onAction(AuthAction.SendResetLinkClicked) },
+                onBackToLoginClick = { onAction(AuthAction.BackToLoginFromForgotPasswordClicked) },
                 modifier = modifier
             )
         }
@@ -149,17 +182,19 @@ private fun AuthFormContent(
         verticalArrangement = Arrangement.Top
     ) {
         Spacer(modifier = Modifier.height(80.dp))
-        
+
         AuthHeadline(
             title = if (state.isLoginMode) stringResource(R.string.auth_login_title) else stringResource(
-                R.string.auth_register_title),
+                R.string.auth_register_title
+            ),
             subtitle = if (state.isLoginMode) stringResource(R.string.auth_login_subtitle) else stringResource(
-                R.string.auth_register_subtitle),
+                R.string.auth_register_subtitle
+            ),
             modifier = Modifier.padding(horizontal = 28.dp)
         )
-        
+
         Spacer(modifier = Modifier.height(30.dp))
-        
+
         AuthTabRow(
             isSignInSelected = state.isLoginMode,
             onSignInClick = { if (!state.isLoginMode) onAction(AuthAction.ToggleMode) },
@@ -176,13 +211,23 @@ private fun AuthFormContent(
                 .padding(bottom = 40.dp)
         ) {
             val animationSpec = tween<Float>(durationMillis = 350, easing = FastOutSlowInEasing)
-            
+
             AnimatedVisibility(
                 visible = !state.isLoginMode,
-                enter = fadeIn(animationSpec = animationSpec) + 
-                        expandVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)),
-                exit = fadeOut(animationSpec = animationSpec) + 
-                       shrinkVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
+                enter = fadeIn(animationSpec = animationSpec) +
+                        expandVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        ),
+                exit = fadeOut(animationSpec = animationSpec) +
+                        shrinkVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
             ) {
                 Column {
                     AuthTextField(
@@ -228,12 +273,40 @@ private fun AuthFormContent(
                 ),
             )
 
+            AnimatedVisibility(visible = state.isLoginMode) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = { onAction(AuthAction.ForgotPasswordClicked) },
+                        contentPadding = PaddingValues(top = 6.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.auth_forgot_password_link),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
             AnimatedVisibility(
                 visible = !state.isLoginMode,
-                enter = fadeIn(animationSpec = animationSpec) + 
-                        expandVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)),
-                exit = fadeOut(animationSpec = animationSpec) + 
-                       shrinkVertically(animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing))
+                enter = fadeIn(animationSpec = animationSpec) +
+                        expandVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        ),
+                exit = fadeOut(animationSpec = animationSpec) +
+                        shrinkVertically(
+                            animationSpec = tween(
+                                durationMillis = 350,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
             ) {
                 Column {
                     Spacer(Modifier.height(12.dp))
@@ -258,7 +331,8 @@ private fun AuthFormContent(
 
             AuthPrimaryButton(
                 text = if (state.isLoginMode) stringResource(R.string.auth_login_button) else stringResource(
-                    R.string.auth_register_button),
+                    R.string.auth_register_button
+                ),
                 onClick = { onAction(AuthAction.SubmitClicked) },
                 enabled = state.isSubmitEnabled,
             )
@@ -283,7 +357,9 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         AnimatedContent(
             targetState = title,
             transitionSpec = {
-                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(
+                    clip = false
+                )
             },
             label = "TitleAnimation"
         ) { targetTitle ->
@@ -302,7 +378,9 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         AnimatedContent(
             targetState = subtitle,
             transitionSpec = {
-                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(clip = false)
+                fadeIn(animationSpec = tween(350)) togetherWith fadeOut(animationSpec = tween(350)) using SizeTransform(
+                    clip = false
+                )
             },
             label = "SubtitleAnimation"
         ) { targetSubtitle ->
@@ -315,4 +393,3 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         }
     }
 }
-

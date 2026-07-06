@@ -26,15 +26,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.ads.viewmodel.CouponBannerViewModel
-import com.dukkan.domain.model.Coupon
 import com.dukkan.ads.R
+import com.dukkan.ads.viewmodel.CouponBannerViewModel
+import com.dukkan.design_system.components.GuestAuthDialog
+import com.dukkan.domain.model.Coupon
 
 @Composable
 fun CouponBannerSection(
     modifier: Modifier = Modifier,
     viewModel: CouponBannerViewModel = hiltViewModel(),
-    onShopClick: (Coupon) -> Unit = {}
+    onShopClick: (Coupon) -> Unit = {},
+    onSignInClick: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -91,6 +93,13 @@ fun CouponBannerSection(
                     )
                 }
             }
+        }
+
+        if (state.showGuestDialog) {
+            GuestAuthDialog(
+                onDismiss = viewModel::dismissGuestDialog,
+                onSignInClick = onSignInClick
+            )
         }
 
         AnimatedVisibility(

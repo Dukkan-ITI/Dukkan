@@ -1,22 +1,27 @@
 package com.dukkan.shopping_cart.viewmodel
 
 import android.content.Context
+import android.icu.number.Precision.currency
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.shopping_cart.R
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.dukkan.domain.model.cart.CartLine
+import com.dukkan.domain.repository.SettingsRepository
 import com.dukkan.domain.usecase.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.coupon.CouponUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +29,7 @@ class ShoppingCartViewModel @Inject constructor(
     private val cartUseCases: CartUseCases,
     private val getCurrentUser: GetCurrentUserUseCase,
     private val couponUseCases: CouponUseCases,
+    private val settingsRepository: SettingsRepository,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -37,36 +43,44 @@ class ShoppingCartViewModel @Inject constructor(
         viewModelScope.launch {
             val user = getCurrentUser()
             _isLoggedIn.value = user != null
+
             if (user != null) {
                 loadCart()
             }
         }
+
+        viewModelScope.launch {
+            settingsRepository.currency
+                .drop(1)
+                .collectLatest {
+                    Log.d("Currency", "Changed to ${it.countryCode}, settingsRepository.currency}")
+                    if (_isLoggedIn.value) {
+                        refreshCart()
+                    }
+                }
+        }
+
     }
 
     private suspend fun loadCart() {
         if (_state.value.cart == null) {
             _state.update { it.copy(isLoading = true) }
         }
+
         val cart = cartUseCases.getCart()
-        _state.update { it.copy(cart = cart, isLoading = false) }
+
+        _state.update {
+            it.copy(
+                cart = cart,
+                isLoading = false
+            )
+        }
     }
 
-    fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
-        viewModelScope.launch {
-            _state.update { state ->
-                val cart = state.cart ?: return@update state
-                val updatedLines = cart.lines.map { line ->
-                    if (line.id == cartLine.id) line.copy(quantity = newQuantity) else line
-                }
-                state.copy(cart = cart.copy(lines = updatedLines))
-            }
-            try {
-                cartUseCases.updateCartQuantity(cartLine.id, newQuantity)
-                refreshCart()
-            } catch (e: Exception) {
-                refreshCart()
-            }
-        }
+    private suspend fun refreshCart() {
+        Log.d("Cart", "Refreshing cart")
+        val cart = cartUseCases.getCart()
+        _state.update { it.copy(cart = cart) }
     }
 
     fun onScreenEntered() {
@@ -76,23 +90,53 @@ class ShoppingCartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun refreshCart() {
-        val cart = cartUseCases.getCart()
-        _state.update { it.copy(cart = cart) }
+    fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
+        viewModelScope.launch {
+            _state.update { state ->
+                val cart = state.cart ?: return@update state
+
+                val updatedLines = cart.lines.map { line ->
+                    if (line.id == cartLine.id) {
+                        line.copy(quantity = newQuantity)
+                    } else {
+                        line
+                    }
+                }
+
+                state.copy(cart = cart.copy(lines = updatedLines))
+            }
+
+            try {
+                cartUseCases.updateCartQuantity(cartLine.id, newQuantity)
+                refreshCart()
+            } catch (_: Exception) {
+                refreshCart()
+            }
+        }
     }
 
     fun showRemoveDialog(cartLine: CartLine) {
-        _state.update { it.copy(showRemoveDialogForItem = cartLine) }
+        _state.update {
+            it.copy(showRemoveDialogForItem = cartLine)
+        }
     }
 
     fun dismissRemoveDialog() {
-        _state.update { it.copy(showRemoveDialogForItem = null) }
+        _state.update {
+            it.copy(showRemoveDialogForItem = null)
+        }
     }
 
     fun confirmRemoveItem() {
         _state.value.showRemoveDialogForItem?.let { item ->
             viewModelScope.launch {
-                _state.update { it.copy(isLoading = true, showRemoveDialogForItem = null) }
+                _state.update {
+                    it.copy(
+                        isLoading = true,
+                        showRemoveDialogForItem = null
+                    )
+                }
+
                 cartUseCases.removeFromCart(item.id)
                 loadCart()
             }
@@ -100,18 +144,32 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun onPromoCodeChange(code: String) {
-        _state.update { it.copy(promoCode = code, promoError = null) }
+        _state.update {
+            it.copy(
+                promoCode = code,
+                promoError = null
+            )
+        }
     }
 
     fun applyPromoCode() {
         val code = _state.value.promoCode
+
         if (code.isBlank()) return
 
-        _state.update { it.copy(isApplyingPromo = true, promoError = null) }
+        _state.update {
+            it.copy(
+                isApplyingPromo = true,
+                promoError = null
+            )
+        }
+
         viewModelScope.launch {
             val result = cartUseCases.applyDiscountCode(code)
+
             if (result.isSuccess) {
                 couponUseCases.clearCoupon()
+
                 _state.update {
                     it.copy(
                         isApplyingPromo = false,
@@ -119,8 +177,8 @@ class ShoppingCartViewModel @Inject constructor(
                         promoCode = ""
                     )
                 }
-                loadCart()
 
+                loadCart()
             } else {
                 _state.update {
                     it.copy(
@@ -134,11 +192,17 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun removePromoCode(codeToRemove: String) {
-        _state.update { it.copy(isApplyingPromo = true) }
+        _state.update {
+            it.copy(isApplyingPromo = true)
+        }
+
         viewModelScope.launch {
             cartUseCases.removeDiscountCode(codeToRemove)
             loadCart()
-            _state.update { it.copy(isApplyingPromo = false) }
+
+            _state.update {
+                it.copy(isApplyingPromo = false)
+            }
         }
     }
 

@@ -46,4 +46,23 @@
     <string name="auth_content_description_hide_password">إخفاء كلمة المرور</string>
     <string name="auth_content_description_show_password">إظهار كلمة المرور</string>
     <string name="auth_close">×</string>
+    <string name="auth_verification_title">تأكيد بريدك الإلكتروني</string>
+    <string name="auth_verification_subtitle">أرسلنا رابط تأكيد إلى %1$s. تحقق من بريدك واضغط على الرابط لتفعيل حسابك.</string>
+    <string name="auth_verification_check_button">لقد قمت بالتأكيد، متابعة</string>
+    <string name="auth_verification_resend_button">إعادة إرسال الرابط</string>
+    <string name="auth_verification_resend_countdown">إعادة الإرسال خلال %1$ds</string>
+    <string name="auth_verification_back_button">تسجيل الخروج</string>
+    <string name="auth_verification_email_resent">تم إرسال الرابط مرة أخرى</string>
+    <string name="auth_verification_still_pending">لم يتم التأكيد بعد، تحقق من بريدك</string>
+    <string name="auth_verification_icon_description">أيقونة تأكيد البريد الإلكتروني</string>
+
+    <string name="auth_forgot_password_link">نسيت كلمة المرور؟</string>
+    <string name="auth_forgot_password_title">إعادة تعيين كلمة المرور</string>
+    <string name="auth_forgot_password_subtitle">أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.</string>
+    <string name="auth_forgot_password_email_placeholder">البريد الإلكتروني</string>
+    <string name="auth_forgot_password_send_button">إرسال رابط إعادة التعيين</string>
+    <string name="auth_forgot_password_back_button">العودة لتسجيل الدخول</string>
+    <string name="auth_forgot_password_sent_title">تحقق من بريدك الإلكتروني</string>
+    <string name="auth_forgot_password_sent_subtitle">أرسلنا رابط إعادة تعيين كلمة المرور إلى %1$s. اتبع الرابط لتعيين كلمة مرور جديدة، ثم عد وسجل الدخول.</string>
+
 </resources>

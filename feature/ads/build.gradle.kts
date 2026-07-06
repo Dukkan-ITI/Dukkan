@@ -51,7 +51,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(project(":core:domain"))
-
-
-
+    implementation(project(":core:design_system"))
 }
