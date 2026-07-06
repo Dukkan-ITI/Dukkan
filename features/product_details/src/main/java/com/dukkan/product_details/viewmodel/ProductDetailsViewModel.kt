@@ -96,16 +96,30 @@ class ProductDetailsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            // Show loading spinner briefly
             _state.update { it.copy(isAddingToCart = true) }
-            try {
-                cartUseCases.addToCart(variantId)
-                _state.update { it.copy(cartAddedSuccess = true) }
-                kotlinx.coroutines.delay(3000)
-                _state.update { it.copy(cartAddedSuccess = false) }
-            } catch (e: Exception) {
-            } finally {
-                _state.update { it.copy(isAddingToCart = false) }
+            kotlinx.coroutines.delay(500) // Brief moment of loading
+
+            // Trigger success alert
+            _state.update {
+                it.copy(
+                    isAddingToCart = false,
+                    cartAddedSuccess = true
+                )
             }
+
+            // Run the actual network call in background (ensures it finishes even if screen closes)
+            kotlinx.coroutines.withContext(kotlinx.coroutines.NonCancellable) {
+                try {
+                    cartUseCases.addToCart(variantId)
+                } catch (e: Exception) {
+                    android.util.Log.e("ProductDetails", "Background add to cart failed", e)
+                }
+            }
+
+            // Hide success alert after a while
+            kotlinx.coroutines.delay(2000)
+            _state.update { it.copy(cartAddedSuccess = false) }
         }
     }
 

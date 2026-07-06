@@ -94,7 +94,10 @@ class CartRepositoryImpl @Inject constructor(
         }
 
         if (cartId != null) {
-            remoteDataSource.addCartItem(cartId, variantId)
+            val response = remoteDataSource.addCartItem(cartId, variantId)
+            if (response?.userErrors?.isNotEmpty() == true) {
+                Log.e(TAG, "Error adding item to Shopify cart: ${response.userErrors.first().message}")
+            }
         }
     }
 
