@@ -3,7 +3,6 @@ package com.dukkan.data.source.remote.apollo
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
 import com.dukkan.CollectionProductsQuery
-import com.dukkan.GetBrandsQuery
 import com.dukkan.GetCollectionsQuery
 import com.dukkan.GetProductsByVendorQuery
 import com.dukkan.ProductQuery
@@ -16,6 +15,18 @@ import javax.inject.Singleton
 
 @Singleton
 class ProductsDataSourceImpl @Inject constructor(private val apolloClient: ApolloClient) : ProductsDataSource {
+
+    companion object {
+        private val CATEGORY_HANDLES = setOf(
+            "men", "women", "kid", "sale", "top",
+        )
+
+        private val BRAND_HANDLES = setOf(
+            "vans", "adidas", "nike", "converse", "asics-tiger", "palladuim",
+            "puma", "supra", "timberland", "dr-martens", "herschel", "flex-fit",
+        )
+    }
+
     override suspend fun getProducts(
         first: Int,
         after: String?,
@@ -52,19 +63,24 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
         return response.data?.product
     }
 
-    override suspend fun fetchCategories(): List<GetCollectionsQuery.Node> {
-        val response = apolloClient.query(GetCollectionsQuery(first = 20)).execute()
+    private suspend fun fetchCollectionNodes(): List<GetCollectionsQuery.Node> {
+        val response = apolloClient.query(GetCollectionsQuery(first = 50)).execute()
 
         if (response.hasErrors()) {
-            android.util.Log.e("CategoriesDebug", "GraphQL Errors: ${response.errors}")
+            android.util.Log.e("CollectionsDebug", "GraphQL Errors: ${response.errors}")
         }
 
-//        val excludedHandles = setOf("frontpage", "automated-collection", "hydrogen")
+        val nodes = response.data?.collections?.edges?.mapNotNull { it.node } ?: emptyList()
+        android.util.Log.d("CollectionsDebug", "Fetched ${nodes.size} collections: ${nodes.map { it.handle }}")
+        return nodes
+    }
 
-        return response.data?.collections?.edges
-            ?.mapNotNull { it.node }
-//            ?.filter { it.handle !in excludedHandles }
-            ?: emptyList()
+    override suspend fun fetchCategories(): List<GetCollectionsQuery.Node> {
+        return fetchCollectionNodes().filter { node -> node.handle in CATEGORY_HANDLES }
+    }
+
+    override suspend fun fetchBrands(): List<GetCollectionsQuery.Node> {
+        return fetchCollectionNodes().filter { node -> node.handle in BRAND_HANDLES }
     }
 
     override suspend fun getProductsByCollectionHandle(
@@ -90,18 +106,6 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
 
         return response.data?.collection?.products?.edges
             ?.mapNotNull { it.node?.toDomainModel() }
-            ?: emptyList()
-    }
-
-    override suspend fun fetchBrands(): List<GetBrandsQuery.Node> {
-        val response = apolloClient.query(GetBrandsQuery(first = 100)).execute()
-
-        if (response.hasErrors()) {
-            android.util.Log.e("BrandsDebug", "GraphQL Errors: ${response.errors}")
-        }
-
-        return response.data?.products?.edges
-            ?.mapNotNull { it.node }
             ?: emptyList()
     }
 

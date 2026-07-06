@@ -7,7 +7,7 @@ import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.GetBrandsUseCase
 import com.dukkan.domain.usecase.GetCurrentUserUseCase
-import com.dukkan.domain.usecase.category.GetProductTypesUseCase
+import com.dukkan.domain.usecase.category.GetCategoriesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -37,10 +38,10 @@ sealed interface HomeEvent {
 class HomeViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
-    private val getProductTypesUseCase: GetProductTypesUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
     private val getBrandsUseCase: GetBrandsUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-  private val getFavorites: GetFavoritesUseCase,
+    private val getFavorites: GetFavoritesUseCase,
     private val getCurrency: GetCurrencyUseCase,
     private val getLanguage: GetLanguageUseCase,
 ) : ViewModel() {
@@ -122,7 +123,7 @@ class HomeViewModel @Inject constructor(
                 val result = getProductsUseCase(limit = 10)
 
                 val products = result
-                val categories = getProductTypesUseCase()
+                val categories = getCategoriesUseCase().first().map { it.name }
                 val brands = getBrandsUseCase().firstOrNull() ?: emptyList()
 
                 _homeContent.value = HomeContent(products, categories, brands)
