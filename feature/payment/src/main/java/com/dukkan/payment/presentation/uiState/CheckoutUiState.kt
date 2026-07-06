@@ -1,4 +1,4 @@
-package com.dukkan.payment.presentation
+package com.dukkan.payment.presentation.uiState
 
 import androidx.compose.runtime.Immutable
 import com.dukkan.payment.domain.model.CheckoutAddress
@@ -8,6 +8,7 @@ import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.model.OrderConfirmation
+import com.dukkan.payment.presentation.UiText
 
 @Immutable
 internal data class CheckoutUiState(
