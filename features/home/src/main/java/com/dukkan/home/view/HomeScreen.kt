@@ -27,18 +27,15 @@ import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
 
-import com.dukkan.domain.model.Category.Category
 import com.dukkan.home.components.HomeBrandsSection
 
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
-import com.dukkan.home.components.HomeSearchBar
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
-import com.dukkan.home.components.HomeBrandsSection
 
 @Composable
 fun HomeScreen(
@@ -142,10 +139,9 @@ fun HomeScreenContent(
 
                 is HomeUiState.Success -> {
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeHeader(firstName = firstName)
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeSearchBar(onSearchClick = onSearchClick)
+                        HomeHeader(
+                            firstName = firstName,
+                        )
                     }
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Spacer(modifier = Modifier.height(10.dp))

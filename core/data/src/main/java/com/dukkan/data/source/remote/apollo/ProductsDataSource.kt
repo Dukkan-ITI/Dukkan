@@ -1,10 +1,8 @@
 package com.dukkan.data.source.remote.apollo
 
-import com.dukkan.GetBrandsQuery
 import com.dukkan.GetCollectionsQuery
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
-import com.dukkan.type.Product
 
 interface ProductsDataSource {
     suspend fun getProducts(
@@ -30,7 +28,7 @@ interface ProductsDataSource {
         language: String,
     ): List<com.dukkan.domain.model.Product>
 
-    suspend fun fetchBrands(): List<GetBrandsQuery.Node>
+    suspend fun fetchBrands(): List<GetCollectionsQuery.Node>
 
     suspend fun getProductsByVendor(
         vendor: String,

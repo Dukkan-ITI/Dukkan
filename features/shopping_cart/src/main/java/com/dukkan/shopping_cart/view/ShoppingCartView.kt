@@ -162,6 +162,7 @@ private fun ShoppingCartContent(
                 item {
                     Button(
                         onClick = onCheckoutClick,
+                        enabled = !state.cart?.lines.isNullOrEmpty(),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(64.dp)
