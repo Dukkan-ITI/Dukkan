@@ -75,6 +75,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun addCartItem(variantId: String) {
         cachedCart = null
+        cachedCurrencyCountry = null
         var cartId = localDataSource.getCartId()
         if (cartId == null) {
             val customerAccessToken = tokenStore.getToken()?.accessToken
@@ -82,11 +83,6 @@ class CartRepositoryImpl @Inject constructor(
                 TAG,
                 "First add to cart — creating cart (hasAccessToken=${customerAccessToken != null})"
             )
-            if (customerAccessToken != null) {
-                Log.d(TAG, "First add to cart — using customer access token: $customerAccessToken")
-            } else {
-                Log.w(TAG, "First add to cart — no customer access token, creating guest cart")
-            }
             val createdCart = remoteDataSource.createCart(customerAccessToken)
             cartId = createdCart?.cart?.id
             if (cartId != null) {
@@ -104,6 +100,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun updateCartItemQuantity(lineId: String, quantity: Int) {
         cachedCart = null
+        cachedCurrencyCountry = null
         val cartId = localDataSource.getCartId() ?: return
         if (quantity <= 0) {
             remoteDataSource.removeCartItem(cartId, lineId)
@@ -114,6 +111,7 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun removeCartItem(lineId: String) {
         cachedCart = null
+        cachedCurrencyCountry = null
         val cartId = localDataSource.getCartId() ?: return
         remoteDataSource.removeCartItem(cartId, lineId)
     }
