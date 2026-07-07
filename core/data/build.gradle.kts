@@ -25,7 +25,8 @@ apollo {
 
         introspection {
             endpointUrl.set("https://mad46-and5.myshopify.com/api/2026-04/graphql.json")
-            headers.put("X-Shopify-Storefront-Access-Token",
+            headers.put(
+                "X-Shopify-Storefront-Access-Token",
                 providers.gradleProperty("shopifyStorefrontToken").get()
             )
             schemaFile.set(file("src/main/graphql/com/dukkan/schema.json"))
@@ -38,7 +39,8 @@ apollo {
 
         introspection {
             endpointUrl.set("https://mad46-and5.myshopify.com/admin/api/2026-04/graphql.json")
-            headers.put("X-Shopify-Access-Token",
+            headers.put(
+                "X-Shopify-Access-Token",
                 providers.gradleProperty("shopifyAdminToken").get()
             )
             schemaFile.set(file("src/main/graphql/com/dukkan/admin/schema.json"))
@@ -132,5 +134,4 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.okhttp)
 }
