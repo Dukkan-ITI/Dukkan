@@ -1,5 +1,8 @@
 package com.dukkan.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class SearchIntent(
     val query: String,
     val category: String? = null,

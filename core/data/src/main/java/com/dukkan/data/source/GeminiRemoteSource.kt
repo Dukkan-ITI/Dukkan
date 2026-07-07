@@ -11,6 +11,7 @@ import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.Tool
 import com.google.firebase.ai.type.content
+import com.google.firebase.ai.type.generationConfig
 import kotlinx.serialization.json.JsonObject
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,6 +19,7 @@ import com.dukkan.data.util.GeminiConstants.ASK_CLARIFYING_QUESTION
 import com.dukkan.data.util.GeminiConstants.MODEL_NAME
 import com.dukkan.data.util.GeminiConstants.SEARCH_SHOPIFY_PRODUCTS
 import com.dukkan.data.util.GeminiConstants.SYSTEM_INSTRUCTION
+
 @Singleton
 class GeminiRemoteSource @Inject constructor() {
 
@@ -56,6 +58,25 @@ class GeminiRemoteSource @Inject constructor() {
             }
         )
 
+    private val extractionModel: GenerativeModel = Firebase.ai(backend = GenerativeBackend.googleAI())
+        .generativeModel(
+            modelName = MODEL_NAME,
+            generationConfig = generationConfig {
+                responseMimeType = "application/json"
+                responseSchema = Schema.obj(
+                    properties = mapOf(
+                        "query" to Schema.string("Search query extracted from audio"),
+                        "category" to Schema.string("Product category", nullable = true),
+                        "color" to Schema.string("Product color", nullable = true),
+                        "size" to Schema.string("Product size", nullable = true),
+                        "maxPrice" to Schema.double("Maximum price limit", nullable = true),
+                        "availableOnly" to Schema.boolean("If shopper only wants in-stock items")
+                    ),
+                    optionalProperties = listOf("category", "color", "size", "maxPrice", "availableOnly")
+                )
+            }
+        )
+
     fun startChat(): Chat = model.startChat()
 
     suspend fun sendUserMessage(chat: Chat, message: String): GenerateContentResponse =
@@ -71,4 +92,13 @@ class GeminiRemoteSource @Inject constructor() {
                 part(FunctionResponsePart(functionName, response))
             }
         )
+
+    suspend fun interpretAudio(audioBytes: ByteArray, mimeType: String): GenerateContentResponse {
+        return extractionModel.generateContent(
+            content {
+                inlineData(audioBytes, mimeType)
+                text("Extract search intent from this audio. Return valid JSON. If the audio is silent, unclear, too short, or does not contain an actual product search request, return 'query' as an empty string (\"\") and leave other fields null. DO NOT invent or guess a product under any circumstance — only extract what is clearly and explicitly said.")
+            }
+        )
+    }
 }

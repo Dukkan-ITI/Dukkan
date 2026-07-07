@@ -4,7 +4,7 @@ object GeminiConstants {
     const val SEARCH_SHOPIFY_PRODUCTS = "search_shopify_products"
     const val ASK_CLARIFYING_QUESTION = "ask_clarifying_question"
 
-    const val MODEL_NAME = "gemini-3.5-flash"
+    const val MODEL_NAME = "gemini-2.5-flash-lite"
 
     const val MAX_TURNS = 4
     const val MAX_SHOPIFY_CALLS = 2

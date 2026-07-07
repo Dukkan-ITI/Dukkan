@@ -8,4 +8,6 @@ interface GeminiRepository {
     fun startSearch(query: String): Flow<AgenticSearchResult>
 
     fun resumeWithAnswer(sessionId: String, answer: String): Flow<AgenticSearchResult>
+
+    suspend fun interpretQuery(audioBytes: ByteArray, mimeType: String): SearchIntent
 }

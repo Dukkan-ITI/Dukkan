@@ -11,6 +11,7 @@ import com.dukkan.domain.usecase.search.PredictiveSearchUseCase
 import com.dukkan.domain.usecase.search.AgenticSearchUseCase
 import com.dukkan.domain.usecase.search.ResumeSearchClarificationUseCase
 import com.dukkan.domain.usecase.search.SearchProductsUseCase
+import com.dukkan.domain.usecase.search.InterpretVoiceSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -33,7 +34,8 @@ class SearchViewModel @Inject constructor(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val predictiveSearchUseCase: PredictiveSearchUseCase,
     private val agenticSearchUseCase: AgenticSearchUseCase,
-    private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase
+    private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase,
+    private val interpretVoiceSearchUseCase: InterpretVoiceSearchUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -258,7 +260,7 @@ class SearchViewModel @Inject constructor(
                     GeminiError.ClarificationLimitReached -> UiText.StringResource(R.string.error_ai_clarification_limit)
                     GeminiError.MaxStepsReached -> UiText.StringResource(R.string.error_ai_max_steps)
                     GeminiError.TimeoutExceeded -> UiText.StringResource(R.string.error_ai_timeout_exceeded)
-                    GeminiError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_search_failed)
+                    GeminiError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.search_ai_fallback_message)
                     GeminiError.Unknown -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
                 }
 
@@ -305,7 +307,7 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { s ->
                         s.copy(
                             isLoadingMore = false,
-                            error = e.localizedMessage?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.search_load_more_failed)
+                            error = e.localizedMessage?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.search_failed)
                         )
                     }
                 }
@@ -386,11 +388,75 @@ class SearchViewModel @Inject constructor(
         val sessionId = state.clarificationSessionId
         val answer = state.clarificationAnswerInput.trim()
         val query = state.submittedQuery
+        val audioBytes = state.lastAudioBytes
+        val mimeType = state.lastAudioMimeType
 
         if (sessionId != null && answer.isNotBlank()) {
             onClarificationAnswered()
+        } else if (audioBytes != null && mimeType != null) {
+            onAiVoiceSearchSubmitted(audioBytes, mimeType)
         } else if (query.isNotBlank()) {
             onAiSearchTriggered(query)
+        }
+    }
+
+    fun onAiVoiceSearchSubmitted(audioBytes: ByteArray, mimeType: String = "audio/mp4") {
+        // Minimum size guard (e.g., 2KB for ~0.5s of AAC audio)
+        if (audioBytes.size < 2000) {
+            _uiState.update { 
+                it.copy(
+                    isAiSearchLoading = false, 
+                    isAiError = true, 
+                    aiMessage = UiText.StringResource(R.string.search_voice_not_understood)
+                ) 
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { 
+                it.copy(
+                    isAiSearchLoading = true, 
+                    isAiError = false, 
+                    aiMessage = null, 
+                    lastAudioBytes = audioBytes,
+                    lastAudioMimeType = mimeType
+                ) 
+            }
+            runCatching {
+                val intent = interpretVoiceSearchUseCase(audioBytes, mimeType)
+                val query = intent.query.trim()
+                if (query.isNotBlank()) {
+                    _uiState.update { it.copy(queryInput = query, submittedQuery = query) }
+                    onAiSearchTriggered(query)
+                } else {
+                    throw Exception("not_understood")
+                }
+            }.onFailure { e ->
+                val errorText = when {
+                    e.message == "not_understood" -> UiText.StringResource(R.string.search_voice_not_understood)
+                    e.message == "clarify" -> UiText.StringResource(R.string.search_ai_clarify_fallback)
+                    else -> mapThrowableToUiText(e)
+                }
+                _uiState.update { 
+                    it.copy(
+                        isAiSearchLoading = false, 
+                        isAiError = true, 
+                        aiMessage = errorText
+                    ) 
+                }
+            }
+        }
+    }
+
+    private fun mapThrowableToUiText(e: Throwable): UiText {
+        val msg = e.message ?: ""
+        return when {
+            msg.contains("429") || msg.contains("quota", true) || msg.contains("rate limit", true) -> 
+                UiText.StringResource(R.string.error_ai_rate_limited)
+            msg.contains("timeout", true) || msg.contains("503") || msg.contains("504") -> 
+                UiText.StringResource(R.string.error_ai_timeout)
+            else -> e.localizedMessage?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
         }
     }
 }

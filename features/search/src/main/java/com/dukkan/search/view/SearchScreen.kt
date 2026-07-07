@@ -32,6 +32,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import java.io.File
 import com.dukkan.search.R
 import com.dukkan.search.components.ClarificationPrompt
 import com.dukkan.search.components.PredictiveSuggestionsDropdown
@@ -56,6 +68,7 @@ fun SearchScreen(
         onQueryChange = viewModel::onQueryInputChanged,
         onSearchSubmit = viewModel::onSearchSubmitted,
         onAiSearchSubmit = viewModel::onAiSearchTriggered,
+        onAiVoiceSearchSubmitted = viewModel::onAiVoiceSearchSubmitted,
         onLoadMore = viewModel::onLoadMore,
         onProductClick = { product ->
             viewModel.onSearchSubmitted(product.title)
@@ -82,6 +95,7 @@ fun SearchScreenContent(
     onQueryChange: (String) -> Unit,
     onSearchSubmit: (String) -> Unit,
     onAiSearchSubmit: (String) -> Unit,
+    onAiVoiceSearchSubmitted: (ByteArray) -> Unit,
     onLoadMore: () -> Unit,
     onProductClick: (com.dukkan.domain.model.SearchProduct) -> Unit,
     onCollectionClick: (com.dukkan.domain.model.SearchCollection) -> Unit,
@@ -94,6 +108,73 @@ fun SearchScreenContent(
     onRetryAiSearch: () -> Unit,
     onCancelAiSearch: () -> Unit
 ) {
+    val context = LocalContext.current
+    var isRecording by remember { mutableStateOf(false) }
+    val recordFile = remember { File(context.cacheDir, "voice_search.m4a") }
+
+    val recorder = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(context)
+        } else {
+            @Suppress("DEPRECATION")
+            MediaRecorder()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                if (isRecording) recorder.stop()
+            } catch (_: Exception) {}
+            recorder.release()
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Permission granted
+        }
+    }
+
+    val onVoiceClick = {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            if (!isRecording) {
+                try {
+                    recorder.apply {
+                        reset()
+                        setAudioSource(MediaRecorder.AudioSource.MIC)
+                        setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                        setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                        setOutputFile(recordFile.absolutePath)
+                        prepare()
+                        start()
+                    }
+                    isRecording = true
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                try {
+                    recorder.stop()
+                    isRecording = false
+                    val bytes = recordFile.readBytes()
+                    if (bytes.isNotEmpty()) {
+                        onAiVoiceSearchSubmitted(bytes)
+                    }
+                } catch (e: Exception) {
+                    isRecording = false
+                    e.printStackTrace()
+                } finally {
+                    recordFile.delete()
+                }
+            }
+        } else {
+            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
     val listState = rememberLazyListState()
 
     val shouldLoadMore by remember {
@@ -133,7 +214,9 @@ fun SearchScreenContent(
                             query = uiState.queryInput,
                             onQueryChange = onQueryChange,
                             onSearchSubmit = onSearchSubmit,
+                            onVoiceClick = onVoiceClick,
                             isAiSearchLoading = uiState.isAiSearchLoading,
+                            isRecording = isRecording,
                             modifier = Modifier.weight(1f)
                         )
                         androidx.compose.material3.IconButton(

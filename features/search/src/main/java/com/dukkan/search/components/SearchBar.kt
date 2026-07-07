@@ -18,8 +18,10 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -46,8 +49,10 @@ fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
     onSearchSubmit: (String) -> Unit,
+    onVoiceClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isAiSearchLoading: Boolean = false
+    isAiSearchLoading: Boolean = false,
+    isRecording: Boolean = false
 ) {
     val rotationAnimatable = remember { Animatable(0f) }
     LaunchedEffect(isAiSearchLoading) {
@@ -64,6 +69,16 @@ fun SearchBar(
         }
     }
     val rotation = rotationAnimatable.value
+
+    val micScale by rememberInfiniteTransition(label = "").animateFloat(
+        initialValue = 1f,
+        targetValue = if (isRecording) 1.25f else 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = ""
+    )
 
     val sweepGradient = Brush.sweepGradient(
         colors = listOf(
@@ -127,5 +142,15 @@ fun SearchBar(
                 inner()
             }
         )
+        IconButton(
+            onClick = onVoiceClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Mic,
+                contentDescription = stringResource(R.string.search_voice_input),
+                tint = if (isRecording) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                modifier = if (isRecording) Modifier.scale(micScale) else Modifier
+            )
+        }
     }
 }

@@ -28,4 +28,20 @@
     <string name="search_clear">مسح</string>
     <string name="search_failed">فشل البحث</string>
     <string name="search_load_more_failed">فشل تحميل المزيد</string>
+    <string name="search_ai_assistant_title">دكان AI</string>
+    <string name="search_ai_answer_placeholder">مثلاً: للجري، أحمر، أقل من 100$...</string>
+    <string name="search_ai_send_answer">إرسال</string>
+    <string name="search_retry">إعادة المحاولة</string>
+    <string name="search_ai_fallback_message">لم أتمكن من إكمال هذا البحث الآن. عرض النتائج القياسية بدلاً من ذلك.</string>
+    <string name="search_ai_clarify_fallback">لم أتمكن من إكمال هذا البحث. هل يمكنك إعادة الصياغة أو تقديم المزيد من التفاصيل؟</string>
+    <string name="search_ai_still_searching">ما زلت أبحث... هذا يستغرق وقتاً أطول قليلاً من المعتاد.</string>
+    <string name="error_ai_rate_limited">يأخذ دكان AI استراحة قصيرة — يرجى المحاولة مرة أخرى بعد قليل.</string>
+    <string name="error_ai_timeout">يبدو أن خوادمنا بطيئة قليلاً الآن. حاول مرة أخرى!</string>
+    <string name="error_ai_unknown">حدث خطأ ما من جانبنا. يرجى المحاولة مرة أخرى.</string>
+    <string name="error_ai_clarification_limit">أحتاج إلى تفاصيل أكثر قليلاً. يرجى تجربة بحث أكثر تحديداً.</string>
+    <string name="error_ai_max_steps">استغرق البحث خطوات كثيرة جداً. يرجى تجربة طلب أكثر تحديداً.</string>
+    <string name="error_ai_timeout_exceeded">استغرق بحث الذكاء الاصطناعي وقتاً طويلاً. يرجى المحاولة مرة أخرى.</string>
+    <string name="error_ai_search_failed">فشل بحث الذكاء الاصطناعي.</string>
+    <string name="search_voice_not_understood">لم أفهم ذلك، يرجى المحاولة مرة أخرى</string>
+    <string name="search_voice_input">البحث الصوتي</string>
 </resources>

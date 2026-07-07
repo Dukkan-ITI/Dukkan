@@ -12,6 +12,7 @@ import com.dukkan.domain.repository.GeminiRepository
 import com.dukkan.domain.repository.SearchRepository
 import com.google.firebase.ai.Chat
 import com.google.firebase.ai.type.GenerateContentResponse
+import kotlinx.serialization.json.Json
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
@@ -87,6 +88,18 @@ class GeminiRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun interpretQuery(audioBytes: ByteArray, mimeType: String): SearchIntent {
+        val response = geminiRemoteSource.interpretAudio(audioBytes, mimeType)
+        val jsonString = response.text ?: return SearchIntent(query = "")
+
+        Log.d("GeminiRepository", "Raw Gemini response: $jsonString")   // ← السطر الجديد
+
+        val intent = Json { ignoreUnknownKeys = true }.decodeFromString<SearchIntent>(jsonString)
+
+        Log.d("GeminiRepository", "Parsed SearchIntent: $intent")   // ← وده كمان
+
+        return intent
+    }
     private suspend fun kotlinx.coroutines.flow.FlowCollector<AgenticSearchResult>.emitAllResults(
         sessionId: String,
         session: SearchSession,

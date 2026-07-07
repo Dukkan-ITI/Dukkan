@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dukkan.domain.model.SearchCollection
+import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.model.SearchProduct
 
 sealed class UiText {
@@ -52,8 +53,12 @@ data class SearchUiState(
     val clarificationSessionId: String? = null,
     val clarificationAnswerInput: String = "",
 
+    // Voice Search state
+    val lastAudioBytes: ByteArray? = null,
+    val lastAudioMimeType: String? = null,
+
     // Filter state
-    val activeFilters: com.dukkan.domain.model.SearchFilter = com.dukkan.domain.model.SearchFilter(),
+    val activeFilters: SearchFilter = SearchFilter(),
     val isFilterSheetOpen: Boolean = false,
     val availableVendors: List<String> = emptyList(),
     val availableProductTypes: List<String> = emptyList()
