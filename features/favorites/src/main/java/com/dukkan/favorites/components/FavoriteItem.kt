@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.FavoriteProduct
-import com.dukkan.domain.model.asString
+
 
 @Composable
 fun FavoriteItem(
@@ -18,6 +18,8 @@ fun FavoriteItem(
         priceLabel = product.toMoney().asString(),
         imageUrl = product.imageUrl,
         isFavorite = true,
+        rating = product.rating,
+        reviewCount = product.reviewCount,
         onFavoriteClick = onUnfav,
         onCardClick = onProductClick,
         modifier = modifier

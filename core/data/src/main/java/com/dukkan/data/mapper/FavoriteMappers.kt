@@ -8,7 +8,9 @@ fun FavoriteEntity.toDomainModel() = FavoriteProduct(
     title = title,
     imageUrl = imageUrl,
     price = price,
-    currencyCode = currencyCode
+    currencyCode = currencyCode,
+    rating = rating,
+    reviewCount = reviewCount
 )
 
 fun FavoriteProduct.toEntity() = FavoriteEntity(
@@ -16,5 +18,7 @@ fun FavoriteProduct.toEntity() = FavoriteEntity(
     title = title,
     imageUrl = imageUrl,
     price = price,
-    currencyCode = currencyCode
+    currencyCode = currencyCode,
+    rating = rating,
+    reviewCount = reviewCount
 )

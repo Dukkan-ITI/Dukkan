@@ -9,18 +9,41 @@ import com.dukkan.domain.model.NetworkImage
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.model.ProductSummary
 import com.dukkan.domain.model.ProductVariant
+import com.dukkan.domain.model.Review
 
 fun ProductQuery.Product.toDomainModel(): Product {
+    val reviews = metafields
+        .filterNotNull()
+        .flatMap { it.references?.edges.orEmpty() }
+        .mapNotNull { edge ->
+            val obj = edge?.node?.onMetaobject ?: return@mapNotNull null
+            val isApproved = obj.approved?.value == "true"
+            if (!isApproved) return@mapNotNull null
+            Review(
+                id         = obj.id,
+                authorName = obj.customerName?.value.orEmpty(),
+                rating     = obj.rating?.value?.toIntOrNull() ?: 0,
+                title      = obj.reviewTitle?.value.orEmpty(),
+                body       = obj.body?.value.orEmpty(),
+                createdAt  = obj.createdAt?.value.orEmpty(),
+                approved   = true,
+            )
+        }
+    val averageRating = if (reviews.isEmpty()) null
+                        else reviews.map { it.rating }.average().toFloat()
+
     return Product(
-        id = id,
-        title = title,
+        id            = id,
+        title         = title,
         featuredImage = featuredImage?.toDomainModel(),
-        minPrice = priceRange.minVariantPrice.toDomainModel(),
-        maxPrice = priceRange.maxVariantPrice.toDomainModel(),
-        description = description,
-        productType = productType,
-        images = images.toDomainModel(),
-        variants = variants.toDomainModel(),
+        minPrice      = priceRange.minVariantPrice.toDomainModel(),
+        maxPrice      = priceRange.maxVariantPrice.toDomainModel(),
+        description   = description,
+        productType   = productType,
+        images        = images.toDomainModel(),
+        variants      = variants.toDomainModel(),
+        reviews       = reviews,
+        averageRating = averageRating,
     )
 }
 
@@ -51,6 +74,15 @@ fun ProductQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currency
 fun ProductQuery.Price.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 fun ProductsQuery.Node.toDomainModel(): Product {
+        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten() ?: emptyList()
+        
+        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+
     return Product(
         id = id,
         title = title,
@@ -61,6 +93,8 @@ fun ProductsQuery.Node.toDomainModel(): Product {
         productType = null,
         images = null,
         variants = null,
+        reviews = dummyReviews,
+        averageRating = averageRating,
     )
 }
 
@@ -74,6 +108,15 @@ fun ProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currenc
 fun ProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 fun CollectionProductsQuery.Node.toDomainModel(): Product {
+        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten() ?: emptyList()
+        
+        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+
     return Product(
         id = id,
         title = title,
@@ -84,6 +127,8 @@ fun CollectionProductsQuery.Node.toDomainModel(): Product {
         productType = null,
         images = null,
         variants = null,
+        reviews = dummyReviews,
+        averageRating = averageRating,
     )
 }
 
@@ -108,6 +153,15 @@ private fun money(amount: Any?, currencyCode: String): Money {
 }
 
 fun GetProductsByVendorQuery.Node.toDomainModel(): Product {
+        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten() ?: emptyList()
+        
+        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+
     return Product(
         id = id,
         title = title,
@@ -118,6 +172,8 @@ fun GetProductsByVendorQuery.Node.toDomainModel(): Product {
         productType = null,
         images = null,
         variants = null,
+        reviews = dummyReviews,
+        averageRating = averageRating,
     )
 }
 

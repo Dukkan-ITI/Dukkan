@@ -29,12 +29,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.dukkan.design_system.R as DesignSystemR
-import com.dukkan.domain.model.asString
 import com.dukkan.domain.model.orders.Order
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun OrderCard(
@@ -84,7 +83,10 @@ fun OrderCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Text(
                         text = "#JN-${order.orderNumber}",
                         style = MaterialTheme.typography.titleMedium,

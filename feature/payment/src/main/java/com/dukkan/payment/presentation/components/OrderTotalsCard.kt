@@ -22,10 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dukkan.domain.model.asString
+import com.dukkan.design_system.theme.BricolageGrotesque
 import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.payment.R
-import com.dukkan.design_system.theme.BricolageGrotesque
 
 @Composable
 internal fun OrderTotalsCard(
@@ -46,7 +45,11 @@ internal fun OrderTotalsCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = pluralStringResource(R.plurals.payment_summary_items_count, cartSummary.lineCount, cartSummary.lineCount),
+                    text = pluralStringResource(
+                        R.plurals.payment_summary_items_count,
+                        cartSummary.lineCount,
+                        cartSummary.lineCount
+                    ),
                     fontSize = 13.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

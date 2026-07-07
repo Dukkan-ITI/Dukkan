@@ -71,7 +71,9 @@ class FavoriteRepositoryImpl @Inject constructor(
                             title = product.title,
                             imageUrl = product.featuredImage?.url.orEmpty(),
                             price = product.minPrice.amount.toString(),
-                            currencyCode = product.minPrice.currencyCode
+                            currencyCode = product.minPrice.currencyCode,
+                            rating = product.averageRating,
+                            reviewCount = product.reviews.size.takeIf { it > 0 }
                         )
                         localDataSource.addFavorite(favoriteProduct.toEntity())
                     }

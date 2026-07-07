@@ -16,16 +16,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dukkan.categories.R
 import com.dukkan.categories.uistate.CategoryProductsUiState
 import com.dukkan.categories.viewmodel.CategoryProductsViewModel
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.Product
-import com.dukkan.domain.model.asString
-import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dukkan.categories.R
 
 @Composable
 fun CategoryProductsScreen(
@@ -49,9 +48,11 @@ fun CategoryProductsScreen(
             is CategoryProductsUiState.Loading -> {
                 CircularProgressIndicator()
             }
+
             is CategoryProductsUiState.Error -> {
                 Text(text = state.message)
             }
+
             is CategoryProductsUiState.Success -> {
                 if (state.products.isEmpty()) {
                     Text(text = stringResource(id = R.string.no_products_found))

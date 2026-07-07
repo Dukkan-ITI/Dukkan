@@ -45,5 +45,26 @@ query ProductQuery($id: ID!, $country: CountryCode!, $language: LanguageCode!) @
                 }
             }
         }
+        metafields(identifiers: [{ namespace: "reviews", key: "items" }]) {
+            key
+            namespace
+            value
+            type
+            references(first: 50) {
+                edges {
+                    node {
+                        ... on Metaobject {
+                            id
+                            customerName: field(key: "customer_name") { value }
+                            rating: field(key: "rating") { value }
+                            reviewTitle: field(key: "title") { value }
+                            body: field(key: "body") { value }
+                            createdAt: field(key: "created_at") { value }
+                            approved: field(key: "approved") { value }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

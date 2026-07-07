@@ -6,8 +6,8 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +24,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.HourglassEmpty
-import androidx.compose.material.icons.filled.MarkEmailRead
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -51,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.dukkan.design_system.theme.BricolageGrotesque
-import com.dukkan.domain.model.asString
 import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.payment.R
 import com.dukkan.payment.domain.model.PaymentMethod
@@ -67,7 +64,12 @@ internal fun PaymentResultOverlay(
     onDismiss: () -> Unit,
 ) {
     when (result) {
-        is OrderResult.Failure -> FailureScreen(result = result, onRetry = onRetry, onDismiss = onDismiss)
+        is OrderResult.Failure -> FailureScreen(
+            result = result,
+            onRetry = onRetry,
+            onDismiss = onDismiss
+        )
+
         is OrderResult.Success -> ConfirmationScreen(
             isPending = false,
             orderId = result.confirmation.orderId,
@@ -75,10 +77,12 @@ internal fun PaymentResultOverlay(
             paymentMethod = paymentMethod,
             onContinue = { onResultAcknowledged(false) },
         )
+
         is OrderResult.Pending -> ConfirmationScreen(
             isPending = true,
             orderId = result.confirmation?.orderId,
-            totalText = result.confirmation?.total?.asString() ?: cartSummary?.total?.asString() ?: "—",
+            totalText = result.confirmation?.total?.asString() ?: cartSummary?.total?.asString()
+            ?: "—",
             paymentMethod = paymentMethod,
             onContinue = { onResultAcknowledged(true) },
         )
@@ -136,24 +140,40 @@ private fun ConfirmationScreen(
             color = MaterialTheme.colorScheme.background,
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 34.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 34.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 Box(modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center) {
                     if (!isPending) {
-                        Box(modifier = Modifier.size(88.dp).graphicsLayer {
-                            scaleX = pulseScale; scaleY = pulseScale; alpha = pulseAlpha * badgeScale.value
-                        }.background(MaterialTheme.colorScheme.primary, CircleShape))
+                        Box(modifier = Modifier
+                            .size(88.dp)
+                            .graphicsLayer {
+                                scaleX = pulseScale; scaleY = pulseScale; alpha =
+                                pulseAlpha * badgeScale.value
+                            }
+                            .background(MaterialTheme.colorScheme.primary, CircleShape))
                     }
-                    Box(modifier = Modifier.size(88.dp).graphicsLayer {
-                        scaleX = badgeScale.value; scaleY = badgeScale.value
-                    }.background(if (isPending) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primary, CircleShape),
-                        contentAlignment = Alignment.Center) {
-                        Icon(imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.Check,
+                    Box(
+                        modifier = Modifier
+                            .size(88.dp)
+                            .graphicsLayer {
+                                scaleX = badgeScale.value; scaleY = badgeScale.value
+                            }
+                            .background(
+                                if (isPending) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.primary,
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (isPending) Icons.Default.HourglassEmpty else Icons.Default.Check,
                             contentDescription = null,
                             tint = if (isPending) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(42.dp))
+                            modifier = Modifier.size(42.dp)
+                        )
                     }
                 }
 
@@ -169,31 +189,54 @@ private fun ConfirmationScreen(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = if (isPending) stringResource(R.string.payment_pending_message, orderId?.extractShopifyOrderId() ?: "—")
-                    else stringResource(R.string.payment_success_message, orderId?.extractShopifyOrderId() ?: "—"),
-                    fontSize = 14.5.sp, lineHeight = 21.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center, modifier = Modifier.alpha(contentAlpha.value)
+                    text = if (isPending) stringResource(
+                        R.string.payment_pending_message,
+                        orderId?.extractShopifyOrderId() ?: "—"
+                    )
+                    else stringResource(
+                        R.string.payment_success_message,
+                        orderId?.extractShopifyOrderId() ?: "—"
+                    ),
+                    fontSize = 14.5.sp,
+                    lineHeight = 21.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.alpha(contentAlpha.value)
                 )
 
                 Spacer(modifier = Modifier.height(26.dp))
 
                 Card(
-                    modifier = Modifier.fillMaxWidth().graphicsLayer {
-                        translationY = (1f - contentAlpha.value) * 50f
-                        alpha = contentAlpha.value
-                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .graphicsLayer {
+                            translationY = (1f - contentAlpha.value) * 50f
+                            alpha = contentAlpha.value
+                        },
                     shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp, vertical = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(text = stringResource(R.string.payment_total_paid), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                            Text(text = totalText, fontFamily = BricolageGrotesque, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
+                            Text(
+                                text = stringResource(R.string.payment_total_paid),
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = totalText,
+                                fontFamily = BricolageGrotesque,
+                                fontWeight = FontWeight.ExtraBold,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
                         }
                     }
                 }
@@ -204,9 +247,17 @@ private fun ConfirmationScreen(
                     onClick = onContinue,
                     shape = RoundedCornerShape(100.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.fillMaxWidth().height(56.dp).alpha(contentAlpha.value),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .alpha(contentAlpha.value),
                 ) {
-                    Text(text = stringResource(R.string.payment_continue_shopping), fontFamily = BricolageGrotesque, fontWeight = FontWeight.Bold, fontSize = 15.5.sp)
+                    Text(
+                        text = stringResource(R.string.payment_continue_shopping),
+                        fontFamily = BricolageGrotesque,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.5.sp
+                    )
                 }
             }
         }
@@ -295,16 +346,26 @@ private fun FailureScreen(
                             onClick = onRetry,
                             shape = RoundedCornerShape(100.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                            modifier = Modifier.fillMaxWidth().height(56.dp).alpha(contentAlpha.value),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .alpha(contentAlpha.value),
                         ) {
-                            Text(text = stringResource(R.string.payment_retry), fontFamily = BricolageGrotesque, fontWeight = FontWeight.Bold)
+                            Text(
+                                text = stringResource(R.string.payment_retry),
+                                fontFamily = BricolageGrotesque,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
 
                     OutlinedButton(
                         onClick = onDismiss,
                         shape = RoundedCornerShape(100.dp),
-                        modifier = Modifier.fillMaxWidth().height(56.dp).alpha(contentAlpha.value),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .alpha(contentAlpha.value),
                     ) {
                         Text(stringResource(R.string.payment_cancel))
                     }

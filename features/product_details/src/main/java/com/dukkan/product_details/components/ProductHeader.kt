@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dukkan.design_system.theme.AppTheme
 import com.dukkan.domain.model.Money
-import com.dukkan.domain.model.asString
+
 
 /**
  * Title block of the product details screen: an optional category label, the
@@ -27,6 +27,8 @@ fun ProductHeader(
     price: Money,
     modifier: Modifier = Modifier,
     category: String? = null,
+    rating: Float? = null,
+    reviewCount: Int? = null,
 ) {
     Row(
         modifier = modifier,
@@ -50,6 +52,13 @@ fun ProductHeader(
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onBackground,
             )
+            if (rating != null) {
+                com.dukkan.design_system.components.StarRatingBar(
+                    rating = rating,
+                    reviewCount = reviewCount,
+                    starSize = 16.dp,
+                )
+            }
         }
         Text(
             text = price.asString(),
