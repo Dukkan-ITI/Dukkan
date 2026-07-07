@@ -32,7 +32,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import com.dukkan.design_system.components.PrimaryButton
+import com.dukkan.product_details.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +63,7 @@ fun WriteReviewBottomSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Write a Review",
+                text = stringResource(R.string.product_details_write_review),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
@@ -72,7 +74,7 @@ fun WriteReviewBottomSheet(
             // Interactive star picker
             Column {
                 Text(
-                    text = "Your Rating",
+                    text = stringResource(R.string.product_details_your_rating),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 )
@@ -90,7 +92,7 @@ fun WriteReviewBottomSheet(
                             Icon(
                                 imageVector = if (starIndex <= selectedRating) Icons.Default.Star
                                 else Icons.Default.StarBorder,
-                                contentDescription = "$starIndex stars",
+                                contentDescription = stringResource(R.string.product_details_stars, starIndex),
                                 tint = if (starIndex <= selectedRating) Color(0xFFFFC107)
                                 else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                                 modifier = Modifier.size(32.dp),
@@ -104,7 +106,7 @@ fun WriteReviewBottomSheet(
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
-                label = { Text("Title (optional)") },
+                label = { Text(stringResource(R.string.product_details_title_optional)) },
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth(),
@@ -114,7 +116,7 @@ fun WriteReviewBottomSheet(
             OutlinedTextField(
                 value = body,
                 onValueChange = { body = it },
-                label = { Text("Your Review") },
+                label = { Text(stringResource(R.string.product_details_your_review)) },
                 minLines = 3,
                 maxLines = 6,
                 shape = RoundedCornerShape(12.dp),
@@ -132,7 +134,7 @@ fun WriteReviewBottomSheet(
 
             // Submit button
             PrimaryButton(
-                text = "Submit Review",
+                text = stringResource(R.string.product_details_submit_review),
                 isLoading = isSubmitting,
                 onClick = {
                     if (selectedRating > 0 && !isSubmitting) {

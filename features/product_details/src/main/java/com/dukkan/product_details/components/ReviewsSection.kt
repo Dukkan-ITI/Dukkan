@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import com.dukkan.design_system.components.StarRatingBar
 import com.dukkan.domain.model.Review
+import com.dukkan.product_details.R
 
 @Composable
 fun ReviewsSection(
@@ -39,7 +41,7 @@ fun ReviewsSection(
         ) {
             Column {
                 Text(
-                    text = "Customer Reviews",
+                    text = stringResource(R.string.product_details_customer_reviews),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
@@ -69,7 +71,7 @@ fun ReviewsSection(
             if (isLoggedIn) {
                 OutlinedButton(onClick = onWriteReviewClick) {
                     Text(
-                        text = "Write a Review",
+                        text = stringResource(R.string.product_details_write_review),
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
@@ -79,7 +81,7 @@ fun ReviewsSection(
         // Review list or empty state
         if (reviews.isEmpty()) {
             Text(
-                text = "No reviews yet. Be the first to review this product!",
+                text = stringResource(R.string.product_details_no_reviews_yet),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
                 modifier = Modifier.padding(vertical = 8.dp),
