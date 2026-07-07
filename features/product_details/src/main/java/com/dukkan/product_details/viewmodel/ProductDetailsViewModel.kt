@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.dukkan.navigation.Screen
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.GetCurrentUserUseCase
@@ -15,7 +14,9 @@ import com.dukkan.domain.usecase.product.GetProductByIdUseCase
 import com.dukkan.domain.usecase.review.AddReviewUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
@@ -100,7 +102,7 @@ class ProductDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             // Show loading spinner briefly
             _state.update { it.copy(isAddingToCart = true) }
-            kotlinx.coroutines.delay(500) // Brief moment of loading
+            delay(500) // Brief moment of loading
 
             // Trigger success alert
             _state.update {
@@ -120,7 +122,7 @@ class ProductDetailsViewModel @Inject constructor(
             }
 
             // Hide success alert after a while
-            kotlinx.coroutines.delay(2000)
+            delay(2000)
             _state.update { it.copy(cartAddedSuccess = false) }
         }
     }
@@ -143,29 +145,29 @@ class ProductDetailsViewModel @Inject constructor(
             _state.update { it.copy(isSubmittingReview = true, reviewError = null) }
             val authorName = getCurrentUser()?.name?.takeIf { it.isNotBlank() } ?: "Anonymous"
             addReviewUseCase(
-                productGid  = product.id,
-                authorName  = authorName,
-                rating      = rating,
-                title       = title,
-                body        = body,
+                productGid = product.id,
+                authorName = authorName,
+                rating = rating,
+                title = title,
+                body = body,
             ).onSuccess {
                 _state.update {
                     it.copy(
                         isSubmittingReview = false,
-                        reviewSuccess      = true,
-                        showReviewSheet    = false,
+                        reviewSuccess = true,
+                        showReviewSheet = false,
                     )
                 }
                 // Reload product so the new review appears in the list
-                kotlinx.coroutines.delay(500)
+                delay(500.milliseconds)
                 getProductDetails()
-                kotlinx.coroutines.delay(2000)
+                delay(2000.milliseconds)
                 _state.update { it.copy(reviewSuccess = false) }
             }.onFailure { e ->
                 _state.update {
                     it.copy(
                         isSubmittingReview = false,
-                        reviewError        = e.message ?: "Failed to submit review",
+                        reviewError = e.message ?: "Failed to submit review",
                     )
                 }
             }

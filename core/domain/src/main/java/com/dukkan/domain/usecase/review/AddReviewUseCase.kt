@@ -12,7 +12,7 @@ class AddReviewUseCase @Inject constructor(
         rating: Int,
         title: String,
         body: String,
-    ): Result<Unit> = repository.submitReview(
+    ): Result<String> = repository.submitReview(
         productGid = productGid,
         authorName = authorName,
         rating = rating,

@@ -39,7 +39,7 @@ class ReviewAdminDataSourceImpl @Inject constructor(
         rating: Int,
         title: String,
         body: String,
-    ): Result<Unit> = runCatching {
+    ): Result<String> = runCatching {
         // ── Step 1: Create the review metaobject ─────────────────────────────
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
@@ -121,5 +121,7 @@ class ReviewAdminDataSourceImpl @Inject constructor(
         }
 
         Log.d(TAG, "Step 4 done — review attached to product $productGid")
+
+        newReviewGid
     }
 }

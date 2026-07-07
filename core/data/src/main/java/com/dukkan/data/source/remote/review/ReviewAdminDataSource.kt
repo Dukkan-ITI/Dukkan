@@ -7,5 +7,5 @@ interface ReviewAdminDataSource {
         rating: Int,
         title: String,
         body: String,
-    ): Result<Unit>
+    ): Result<String>
 }
