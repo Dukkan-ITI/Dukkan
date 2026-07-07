@@ -56,5 +56,13 @@ data class SearchUiState(
     val activeFilters: com.dukkan.domain.model.SearchFilter = com.dukkan.domain.model.SearchFilter(),
     val isFilterSheetOpen: Boolean = false,
     val availableVendors: List<String> = emptyList(),
-    val availableProductTypes: List<String> = emptyList()
+    val availableProductTypes: List<String> = emptyList(),
+
+    // Voice search
+    val isListening: Boolean = false,
+    val lastSearchSource: SearchSource = SearchSource.TYPED
 )
+
+enum class SearchSource {
+    TYPED, VOICE
+}

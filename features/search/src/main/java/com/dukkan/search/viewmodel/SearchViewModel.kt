@@ -176,9 +176,9 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(clarificationAnswerInput = answer) }
     }
 
-    fun onClarificationAnswered() {
+    fun onClarificationAnswered(voiceAnswer: String? = null) {
         val state = _uiState.value
-        val answer = state.clarificationAnswerInput.trim()
+        val answer = voiceAnswer?.trim() ?: state.clarificationAnswerInput.trim()
         if (answer.isBlank()) return
 
         val sessionId = state.clarificationSessionId
@@ -393,5 +393,32 @@ class SearchViewModel @Inject constructor(
         } else if (query.isNotBlank()) {
             onAiSearchTriggered(query)
         }
+    }
+
+    fun onAiVoiceSearchSubmitted(text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isBlank()) return
+        _uiState.update { 
+            it.copy(
+                lastSearchSource = com.dukkan.search.uistate.SearchSource.VOICE,
+                queryInput = trimmed,
+                submittedQuery = trimmed
+            ) 
+        }
+        onAiSearchTriggered(trimmed)
+    }
+
+    fun onVoiceInputReceived(text: String) {
+        val state = _uiState.value
+        if (state.clarificationSessionId != null) {
+            onClarificationAnswerChanged(text)
+            onClarificationAnswered(text)
+        } else {
+            onAiVoiceSearchSubmitted(text)
+        }
+    }
+
+    fun setListeningState(isListening: Boolean) {
+        _uiState.update { it.copy(isListening = isListening) }
     }
 }

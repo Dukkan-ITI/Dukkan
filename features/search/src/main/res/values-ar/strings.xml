@@ -28,4 +28,8 @@
     <string name="search_clear">مسح</string>
     <string name="search_failed">فشل البحث</string>
     <string name="search_load_more_failed">فشل تحميل المزيد</string>
+    <string name="search_voice_not_understood">لم أفهم ذلك، يرجى المحاولة مرة أخرى</string>
+    <string name="search_voice_input">البحث الصوتي</string>
+    <string name="search_voice_listening">جارٍ الاستماع…</string>
+    <string name="search_voice_permission_denied">تم رفض الإذن. يرجى تمكين إذن الميكروفون في الإعدادات.</string>
 </resources>

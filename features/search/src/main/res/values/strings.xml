@@ -43,4 +43,8 @@
     <string name="error_ai_max_steps">Search took too many steps. Please try a more specific request.</string>
     <string name="error_ai_timeout_exceeded">AI search took too long. Please try again.</string>
     <string name="error_ai_search_failed">AI search failed.</string>
+    <string name="search_voice_not_understood">Didn\'t catch that, please try again</string>
+    <string name="search_voice_input">Voice Search</string>
+    <string name="search_voice_listening">Listening…</string>
+    <string name="search_voice_permission_denied">Permission Denied. Please enable microphone permission in Settings.</string>
 </resources>

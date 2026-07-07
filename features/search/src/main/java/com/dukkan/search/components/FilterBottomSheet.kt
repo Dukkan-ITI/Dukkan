@@ -1,21 +1,29 @@
 package com.dukkan.search.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import com.dukkan.search.R
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.dukkan.search.R
 import com.dukkan.domain.model.SearchFilter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,8 +42,6 @@ fun FilterBottomSheet(
     var selectedVendors by remember { mutableStateOf(initialFilters.vendors.toSet()) }
     var selectedTypes by remember { mutableStateOf(initialFilters.productTypes.toSet()) }
 
-
-
     val minVal = minPrice.toDoubleOrNull()
     val maxVal = maxPrice.toDoubleOrNull()
     val isPriceError = minVal != null && maxVal != null && minVal > maxVal
@@ -50,15 +56,39 @@ fun FilterBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = Modifier.fillMaxHeight(0.9f)
+        modifier = Modifier.fillMaxHeight(0.9f),
+        containerColor = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 20.dp)
         ) {
-            Text(stringResource(R.string.search_filters), style = MaterialTheme.typography.titleLarge)
-            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.FilterAlt,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Text(
+                    stringResource(R.string.search_filters),
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
 
             Column(
                 modifier = Modifier
@@ -66,8 +96,7 @@ fun FilterBottomSheet(
                     .verticalScroll(rememberScrollState())
             ) {
                 // Price Range
-                Text(stringResource(R.string.search_price_range), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
+                FilterSectionHeader(stringResource(R.string.search_price_range))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -78,7 +107,8 @@ fun FilterBottomSheet(
                         label = { Text(stringResource(R.string.search_min)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
-                        isError = isPriceError
+                        isError = isPriceError,
+                        colors = colorfulTextFieldColors()
                     )
                     OutlinedTextField(
                         value = maxPrice,
@@ -86,7 +116,8 @@ fun FilterBottomSheet(
                         label = { Text(stringResource(R.string.search_max)) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
-                        isError = isPriceError
+                        isError = isPriceError,
+                        colors = colorfulTextFieldColors()
                     )
                 }
                 if (isPriceError) {
@@ -101,33 +132,46 @@ fun FilterBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Availability
-                Text(stringResource(R.string.search_availability), style = MaterialTheme.typography.titleMedium)
+                FilterSectionHeader(stringResource(R.string.search_availability))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(if (availableOnly) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent)
+                        .border(1.dp, if (availableOnly) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Checkbox(
                         checked = availableOnly,
-                        onCheckedChange = { availableOnly = it }
+                        onCheckedChange = { availableOnly = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                            checkmarkColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     )
-                    Text(stringResource(R.string.search_in_stock_only))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        stringResource(R.string.search_in_stock_only),
+                        fontWeight = if (availableOnly) FontWeight.Bold else FontWeight.Normal,
+                        color = if (availableOnly) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Vendor / Brand
-                Text(stringResource(R.string.search_brand_vendor), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
+                FilterSectionHeader(stringResource(R.string.search_brand_vendor))
                 if (availableVendors.isEmpty()) {
-                    Text(
-                        stringResource(R.string.search_brand_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    EmptyFilterText(stringResource(R.string.search_brand_empty))
                 } else {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(vertical = 4.dp)
+                    ) {
                         items(availableVendors) { vendor ->
-                            FilterChip(
+                            ColorfulFilterChip(
+                                label = vendor,
                                 selected = selectedVendors.contains(vendor),
                                 onClick = {
                                     selectedVendors = if (selectedVendors.contains(vendor)) {
@@ -135,11 +179,7 @@ fun FilterBottomSheet(
                                     } else {
                                         selectedVendors + vendor
                                     }
-                                },
-                                label = { Text(vendor) },
-                                leadingIcon = if (selectedVendors.contains(vendor)) {
-                                    { Icon(Icons.Default.Check, contentDescription = null) }
-                                } else null
+                                }
                             )
                         }
                     }
@@ -148,18 +188,17 @@ fun FilterBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Product Type
-                Text(stringResource(R.string.search_product_type), style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(8.dp))
+                FilterSectionHeader(stringResource(R.string.search_product_type))
                 if (availableTypes.isEmpty()) {
-                    Text(
-                        stringResource(R.string.search_type_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    EmptyFilterText(stringResource(R.string.search_type_empty))
                 } else {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(vertical = 4.dp)
+                    ) {
                         items(availableTypes) { type ->
-                            FilterChip(
+                            ColorfulFilterChip(
+                                label = type,
                                 selected = selectedTypes.contains(type),
                                 onClick = {
                                     selectedTypes = if (selectedTypes.contains(type)) {
@@ -167,11 +206,7 @@ fun FilterBottomSheet(
                                     } else {
                                         selectedTypes + type
                                     }
-                                },
-                                label = { Text(type) },
-                                leadingIcon = if (selectedTypes.contains(type)) {
-                                    { Icon(Icons.Default.Check, contentDescription = null) }
-                                } else null
+                                }
                             )
                         }
                     }
@@ -184,12 +219,16 @@ fun FilterBottomSheet(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(top = 16.dp, bottom = 32.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = onClearFilters) {
-                    Text(stringResource(R.string.search_clear_all))
+                TextButton(
+                    onClick = onClearFilters,
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+                ) {
+                    Text(stringResource(R.string.search_clear_all), fontWeight = FontWeight.SemiBold)
                 }
                 Button(
                     onClick = {
@@ -205,11 +244,89 @@ fun FilterBottomSheet(
                             )
                         }
                     },
-                    enabled = !isPriceError
+                    enabled = !isPriceError,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
                 ) {
-                    Text(if (activeCount > 0) stringResource(R.string.search_apply_with_count, activeCount) else stringResource(R.string.search_apply))
+                    Text(
+                        if (activeCount > 0) stringResource(R.string.search_apply_with_count, activeCount) else stringResource(R.string.search_apply),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun FilterSectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(bottom = 12.dp)
+    )
+}
+
+@Composable
+fun EmptyFilterText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun colorfulTextFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = MaterialTheme.colorScheme.primary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+    focusedLabelColor = MaterialTheme.colorScheme.primary,
+    focusedContainerColor = Color.Transparent,
+    unfocusedContainerColor = Color.Transparent
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ColorfulFilterChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { 
+            Text(
+                label,
+                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+            ) 
+        },
+        leadingIcon = if (selected) {
+            { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+        } else null,
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = Color.Transparent,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = selected,
+            borderColor = MaterialTheme.colorScheme.outlineVariant,
+            selectedBorderColor = MaterialTheme.colorScheme.primary,
+            borderWidth = 1.dp,
+            selectedBorderWidth = 1.5.dp
+        ),
+        shape = RoundedCornerShape(100.dp)
+    )
 }
