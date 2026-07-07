@@ -78,6 +78,12 @@ fun AddressFormSheet(
 
     var isLocationSelected by remember(initialAddress) { mutableStateOf(initialAddress != null) }
 
+    var isAddress1Disabled by remember(initialAddress) { mutableStateOf(initialAddress?.address1?.isNotBlank() == true) }
+    var isCityDisabled by remember(initialAddress) { mutableStateOf(initialAddress?.city?.isNotBlank() == true) }
+    var isProvinceDisabled by remember(initialAddress) { mutableStateOf(initialAddress?.province?.isNotBlank() == true) }
+    var isCountryDisabled by remember(initialAddress) { mutableStateOf(initialAddress?.country?.isNotBlank() == true) }
+    var isZipDisabled by remember(initialAddress) { mutableStateOf(initialAddress?.zip?.isNotBlank() == true) }
+
     LaunchedEffect(selectedLatLng) {
         if (selectedLatLng != null) {
             coroutineScope.launch {
@@ -93,6 +99,12 @@ fun AddressFormSheet(
                                 province = address.adminArea ?: ""
                                 country = address.countryName ?: ""
                                 zip = address.postalCode ?: ""
+
+                                isAddress1Disabled = address1.isNotBlank()
+                                isCityDisabled = city.isNotBlank()
+                                isProvinceDisabled = province.isNotBlank()
+                                isCountryDisabled = country.isNotBlank()
+                                isZipDisabled = zip.isNotBlank()
                             }
                         }
                     } catch (e: Exception) {
@@ -133,12 +145,18 @@ fun AddressFormSheet(
 
             PlacesAutocompleteField(
                 onPlaceSelected = { place ->
-                    address1 = place.name ?: place.addressComponents?.asList()?.find { it.types.contains("route") }?.name ?: ""
-                    city = place.addressComponents?.asList()?.find { it.types.contains("locality") }?.name ?: ""
-                    province = place.addressComponents?.asList()?.find { it.types.contains("administrative_area_level_1") }?.name ?: ""
-                    country = place.addressComponents?.asList()?.find { it.types.contains("country") }?.name ?: ""
-                    zip = place.addressComponents?.asList()?.find { it.types.contains("postal_code") }?.name ?: ""
+                    address1 = place.name
+                    city = place.city ?: ""
+                    province = place.state ?: ""
+                    country = place.country ?: ""
+                    zip = place.postalCode ?: ""
                     isLocationSelected = true
+
+                    isAddress1Disabled = address1.isNotBlank()
+                    isCityDisabled = city.isNotBlank()
+                    isProvinceDisabled = province.isNotBlank()
+                    isCountryDisabled = country.isNotBlank()
+                    isZipDisabled = zip.isNotBlank()
                 },
                 placeholder = "Search for a place...",
             )
@@ -200,7 +218,7 @@ fun AddressFormSheet(
                         onValueChange = { address1 = it },
                         placeholder = stringResource(R.string.saved_addresses_field_address1),
                         imeAction = ImeAction.Next,
-                        enabled = !isLocationSelected || address1.isEmpty()
+                        enabled = !isAddress1Disabled
                     )
                     AddressTextField(
                         value = address2,
@@ -215,7 +233,7 @@ fun AddressFormSheet(
                             placeholder = stringResource(R.string.saved_addresses_field_city),
                             imeAction = ImeAction.Next,
                             modifier = Modifier.weight(1f),
-                            enabled = !isLocationSelected || city.isEmpty()
+                            enabled = !isCityDisabled
                         )
                         AddressTextField(
                             value = province,
@@ -223,7 +241,7 @@ fun AddressFormSheet(
                             placeholder = stringResource(R.string.saved_addresses_field_province),
                             imeAction = ImeAction.Next,
                             modifier = Modifier.weight(1f),
-                            enabled = !isLocationSelected || province.isEmpty()
+                            enabled = !isProvinceDisabled
                         )
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -232,7 +250,7 @@ fun AddressFormSheet(
                             onValueChange = { country = it },
                             placeholder = stringResource(R.string.saved_addresses_field_country),
                             modifier = Modifier.weight(1f),
-                            enabled = !isLocationSelected || country.isEmpty()
+                            enabled = !isCountryDisabled
                         )
                         AddressTextField(
                             value = zip,
@@ -240,7 +258,7 @@ fun AddressFormSheet(
                             placeholder = stringResource(R.string.saved_addresses_field_zip),
                             imeAction = ImeAction.Next,
                             modifier = Modifier.weight(1f),
-                            enabled = !isLocationSelected || zip.isEmpty()
+                            enabled = !isZipDisabled
                         )
                     }
                 AddressTextField(

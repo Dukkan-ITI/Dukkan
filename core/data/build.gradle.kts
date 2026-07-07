@@ -61,6 +61,11 @@ android {
             "SHOPIFY_ADMIN_TOKEN",
             "\"${providers.gradleProperty("shopifyAdminToken").getOrElse("")}\""
         )
+        buildConfigField(
+            "String",
+            "LOCATION_IQ_API_KEY",
+            "\"${providers.gradleProperty("locationIqApiKey").getOrElse("")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -110,4 +115,7 @@ dependencies {
 dependencies {
     implementation(project(":core:domain"))
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
 }

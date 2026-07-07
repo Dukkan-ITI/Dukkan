@@ -7,6 +7,7 @@ import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
 import com.dukkan.data.repository.BrandsRepositoryImpl
 import com.dukkan.data.repository.CouponRepositoryImpl
+import com.dukkan.data.repository.PlacesRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
 import com.dukkan.data.source.local.CouponStore
@@ -25,10 +26,12 @@ import com.dukkan.data.source.remote.apollo.AddressDataSource
 import com.dukkan.data.source.remote.apollo.AddressDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.data.source.remote.apollo.ProductsDataSourceImpl
+import com.dukkan.data.source.remote.location.LocationIQApiService
 import com.dukkan.domain.repository.AddressRepository
 import com.dukkan.domain.repository.AuthRepository
 import com.dukkan.domain.repository.BrandsRepository
 import com.dukkan.domain.repository.CouponRepository
+import com.dukkan.domain.repository.PlacesRepository
 import com.dukkan.domain.repository.ProductsRepository
 import com.dukkan.domain.repository.SettingsRepository
 import dagger.Module
@@ -36,6 +39,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -136,4 +142,27 @@ object DataModule {
     @Provides
     fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
         BrandsRepositoryImpl(productsDataSource)
+
+    @Singleton
+    @Provides
+    fun provideLocationIQApiService(): LocationIQApiService {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        return retrofit2.Retrofit.Builder()
+            .baseUrl("https://api.locationiq.com/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(LocationIQApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providePlacesRepository(apiService: LocationIQApiService): PlacesRepository =
+        PlacesRepositoryImpl(apiService, BuildConfig.LOCATION_IQ_API_KEY)
 }
