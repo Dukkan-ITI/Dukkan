@@ -10,7 +10,7 @@ import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.domain.repository.SettingsRepository
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.coupon.CouponUseCases
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -29,13 +29,7 @@ class SearchDataSourceImpl @Inject constructor(
                 ))
             )
         }
-        vendors.forEach { vendor ->
-            filters += ProductFilter(productVendor = Optional.present(vendor))
-        }
-        productTypes.forEach { type ->
-            filters += ProductFilter(productType = Optional.present(type))
-        }
-
+        // Instead of ProductFilter for vendors/types, we will append them to the query string to support OR logic
         return filters
     }
 
@@ -46,9 +40,22 @@ class SearchDataSourceImpl @Inject constructor(
         filters: SearchFilter?
     ): SearchProductsQuery.Data? {
         val apolloFilters = filters?.toApolloFilters()
+        
+        var finalQuery = query
+        if (filters != null) {
+            if (filters.vendors.isNotEmpty()) {
+                val vendorQuery = filters.vendors.joinToString(" OR ") { "vendor:\"$it\"" }
+                finalQuery = if (finalQuery.isBlank()) vendorQuery else "$finalQuery AND ($vendorQuery)"
+            }
+            if (filters.productTypes.isNotEmpty()) {
+                val typeQuery = filters.productTypes.joinToString(" OR ") { "product_type:\"$it\"" }
+                finalQuery = if (finalQuery.isBlank()) typeQuery else "$finalQuery AND ($typeQuery)"
+            }
+        }
+
         val response = apolloClient.query(
             SearchProductsQuery(
-                query = Optional.present(query),
+                query = Optional.present(finalQuery),
                 first = Optional.present(first),
                 after = Optional.presentIfNotNull(after),
                 filters = Optional.presentIfNotNull(apolloFilters?.takeIf { it.isNotEmpty() })

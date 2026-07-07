@@ -1,4 +1,4 @@
-package com.dukkan.domain.usecase
+package com.dukkan.domain.usecase.auth
 
 import com.dukkan.domain.repository.AuthRepository
 import com.dukkan.domain.repository.OrderRepository

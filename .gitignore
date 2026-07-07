@@ -91,3 +91,8 @@ domain-compile.log
 # Agent Framework
 skills-lock.json
 payment_description.md
+
+# Temporary scripts and payloads
+*.ps1
+payload.json
+test_api.py

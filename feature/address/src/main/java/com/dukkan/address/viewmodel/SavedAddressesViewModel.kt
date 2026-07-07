@@ -3,7 +3,7 @@ package com.dukkan.address.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.model.Address
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.address.AddAddressUseCase
 import com.dukkan.domain.usecase.address.DeleteAddressUseCase
 import com.dukkan.domain.usecase.address.GetAddressesUseCase

@@ -1,4 +1,4 @@
-package com.dukkan.data.source.local
+package com.dukkan.data.source.local.coupon
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,10 +6,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.dukkan.data.source.local.LocalConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.collections.get
 
 private val Context.couponDataStore: DataStore<Preferences> by preferencesDataStore(
     name = LocalConstants.COUPON_NAME

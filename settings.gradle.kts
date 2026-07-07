@@ -33,6 +33,7 @@ include(":core:design_system")
 include(":feature:auth")
 
 include(":core:data")
+include(":core:ai_agent")
 include(":core:navigation")
 
 include(":features:onboarding")
