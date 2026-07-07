@@ -12,6 +12,7 @@ import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductByIdUseCase
+import com.dukkan.domain.usecase.review.AddReviewUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,7 @@ class ProductDetailsViewModel @Inject constructor(
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val cartUseCases: CartUseCases,
     private val getCurrentUser: GetCurrentUserUseCase,
+    private val addReviewUseCase: AddReviewUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
 ) : ViewModel() {
@@ -125,5 +127,48 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun dismissGuestDialog() {
         _state.update { it.copy(showGuestDialog = false) }
+    }
+
+    fun openReviewSheet() {
+        _state.update { it.copy(showReviewSheet = true, reviewError = null) }
+    }
+
+    fun dismissReviewSheet() {
+        _state.update { it.copy(showReviewSheet = false, reviewError = null) }
+    }
+
+    fun submitReview(rating: Int, title: String, body: String) {
+        val product = _state.value.product ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(isSubmittingReview = true, reviewError = null) }
+            val authorName = getCurrentUser()?.name?.takeIf { it.isNotBlank() } ?: "Anonymous"
+            addReviewUseCase(
+                productGid  = product.id,
+                authorName  = authorName,
+                rating      = rating,
+                title       = title,
+                body        = body,
+            ).onSuccess {
+                _state.update {
+                    it.copy(
+                        isSubmittingReview = false,
+                        reviewSuccess      = true,
+                        showReviewSheet    = false,
+                    )
+                }
+                // Reload product so the new review appears in the list
+                kotlinx.coroutines.delay(500)
+                getProductDetails()
+                kotlinx.coroutines.delay(2000)
+                _state.update { it.copy(reviewSuccess = false) }
+            }.onFailure { e ->
+                _state.update {
+                    it.copy(
+                        isSubmittingReview = false,
+                        reviewError        = e.message ?: "Failed to submit review",
+                    )
+                }
+            }
+        }
     }
 }

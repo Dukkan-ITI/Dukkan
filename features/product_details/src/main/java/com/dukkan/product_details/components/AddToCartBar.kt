@@ -20,11 +20,16 @@ import com.dukkan.design_system.components.PrimaryButton
 import com.dukkan.design_system.theme.BricolageGrotesque
 import com.dukkan.design_system.theme.HankenGrotesque
 import com.dukkan.domain.model.Money
-import com.dukkan.domain.model.asString
+
 import com.dukkan.product_details.R
 
 @Composable
-fun AddToCartBar(price: Money, onAddToCart: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false) {
+fun AddToCartBar(
+    price: Money,
+    onAddToCart: () -> Unit,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
+) {
     val outlineColor = MaterialTheme.colorScheme.outline
     Row(
         modifier = modifier
@@ -38,13 +43,16 @@ fun AddToCartBar(price: Money, onAddToCart: () -> Unit, modifier: Modifier = Mod
                     strokeWidth = widthPx
                 )
             }
-            .padding(24.dp)
-            ,
+            .padding(24.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         PriceDisplay(price = price)
-        AddToCartButton(onClick = onAddToCart, isLoading = isLoading, modifier = Modifier.weight(1f))
+        AddToCartButton(
+            onClick = onAddToCart,
+            isLoading = isLoading,
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -69,7 +77,11 @@ private fun PriceDisplay(price: Money) {
 }
 
 @Composable
-fun AddToCartButton(onClick: () -> Unit, modifier: Modifier = Modifier, isLoading: Boolean = false) {
+fun AddToCartButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false
+) {
     PrimaryButton(
         text = stringResource(R.string.product_details_add_to_cart),
         onClick = onClick,

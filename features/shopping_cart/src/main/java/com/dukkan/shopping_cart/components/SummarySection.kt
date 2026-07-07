@@ -19,9 +19,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dukkan.domain.model.asString
-import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.R
+import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import java.math.BigDecimal
 
 @Composable

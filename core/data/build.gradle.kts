@@ -42,6 +42,11 @@ android {
             "SHOPIFY_STOREFRONT_TOKEN",
             "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
         )
+        buildConfigField(
+            "String",
+            "SHOPIFY_ADMIN_TOKEN",
+            "\"${providers.gradleProperty("shopifyAdminToken").getOrElse("")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -62,6 +67,11 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.apollo.runtime)
+
+    // Admin API HTTP client
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
 }
 
 // Room

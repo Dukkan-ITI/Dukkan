@@ -5,7 +5,9 @@ data class FavoriteProduct(
     val title: String,
     val imageUrl: String,
     val price: String,
-    val currencyCode: String
+    val currencyCode: String,
+    val rating: Float? = null,
+    val reviewCount: Int? = null
 ) {
     fun toMoney(): Money = Money.from(price, currencyCode)
 }

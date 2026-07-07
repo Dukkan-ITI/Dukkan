@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,10 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dukkan.domain.model.asString
+import com.dukkan.design_system.theme.BricolageGrotesque
 import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.payment.R
-import com.dukkan.design_system.theme.BricolageGrotesque
 
 /**
  * Fixed bottom bar for the checkout screen: real order total on the left,
