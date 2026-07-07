@@ -13,13 +13,10 @@ data class Money(
         fun from(amount: String, currencyCode: String) =
             Money(BigDecimal(amount), currencyCode)
     }
-}
 
-
-
-
-fun Money.asString(): String {
-    val formatter = NumberFormat.getCurrencyInstance()
-    formatter.currency = Currency.getInstance(currencyCode)
-    return formatter.format(amount)
+    fun asString(): String {
+        val formatter = NumberFormat.getCurrencyInstance()
+        formatter.currency = Currency.getInstance(currencyCode)
+        return formatter.format(amount)
+    }
 }

@@ -20,8 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.dukkan.design_system.components.StarRatingBar
 import com.dukkan.domain.model.SearchProduct
-import com.dukkan.domain.model.asString
+
 
 @Composable
 fun ProductResultItem(
@@ -63,6 +64,13 @@ fun ProductResultItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+            product.averageRating?.let { averageRating ->
+                StarRatingBar(
+                    rating = averageRating,
+                    reviewCount = product.reviewCount,
+                    starSize = 12.dp
+                )
+            }
             Text(
                 text = product.price.asString(),
                 style = MaterialTheme.typography.bodyMedium.copy(

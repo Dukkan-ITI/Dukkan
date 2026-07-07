@@ -10,5 +10,9 @@ data class ProductDetailsState(
     val isAddingToCart: Boolean = false,
     val cartAddedSuccess: Boolean = false,
     val isLoggedIn: Boolean = false,
-    val showGuestDialog: Boolean = false
+    val showGuestDialog: Boolean = false,
+    val showReviewSheet: Boolean = false,
+    val isSubmittingReview: Boolean = false,
+    val reviewError: String? = null,
+    val reviewSuccess: Boolean = false
 )

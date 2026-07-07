@@ -47,7 +47,9 @@ import com.dukkan.product_details.components.AddToCartBar
 import com.dukkan.product_details.components.ProductDetailsSection
 import com.dukkan.product_details.components.ProductHeader
 import com.dukkan.product_details.components.ProductImagePager
+import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
+import com.dukkan.product_details.components.WriteReviewBottomSheet
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
 
@@ -71,7 +73,10 @@ fun ProductDetailsScreen(
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
-        onAddToCartClick = viewModel::addToCart
+        onAddToCartClick = viewModel::addToCart,
+        onWriteReviewClick = viewModel::openReviewSheet,
+        onDismissReviewSheet = viewModel::dismissReviewSheet,
+        onSubmitReview = viewModel::submitReview,
     )
 }
 
@@ -81,7 +86,10 @@ private fun ProductDetailsContent(
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
-    onAddToCartClick: (String) -> Unit
+    onAddToCartClick: (String) -> Unit,
+    onWriteReviewClick: () -> Unit,
+    onDismissReviewSheet: () -> Unit,
+    onSubmitReview: (Int, String, String) -> Unit,
 ) {
     when {
         state.isLoading -> LoadingScreen()
@@ -91,7 +99,10 @@ private fun ProductDetailsContent(
             state = state,
             onBackClick = onBackClick,
             onFavoriteClick = onFavoriteClick,
-            onAddToCartClick = onAddToCartClick
+            onAddToCartClick = onAddToCartClick,
+            onWriteReviewClick = onWriteReviewClick,
+            onDismissReviewSheet = onDismissReviewSheet,
+            onSubmitReview = onSubmitReview,
         )
     }
 }
@@ -102,7 +113,10 @@ private fun LoadedProductDetails(
     state: ProductDetailsState,
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
-    onAddToCartClick: (String) -> Unit
+    onAddToCartClick: (String) -> Unit,
+    onWriteReviewClick: () -> Unit,
+    onDismissReviewSheet: () -> Unit,
+    onSubmitReview: (Int, String, String) -> Unit,
 ) {
     val images = product.images?.takeIf { it.isNotEmpty() } ?: listOf(product.featuredImage)
     val variants = product.variants.orEmpty()
@@ -136,6 +150,8 @@ private fun LoadedProductDetails(
                         title = product.title,
                         price = selectedVariant?.price ?: product.maxPrice,
                         category = product.productType,
+                        rating = product.averageRating,
+                        reviewCount = product.reviews.size.takeIf { it > 0 }
                     )
 
                     if (variants.size > 1) {
@@ -149,6 +165,14 @@ private fun LoadedProductDetails(
                     product.description?.takeIf { it.isNotBlank() }?.let { description ->
                         ProductDetailsSection(description = description)
                     }
+
+                    // Reviews section
+                    ReviewsSection(
+                        reviews = product.reviews,
+                        averageRating = product.averageRating,
+                        isLoggedIn = state.isLoggedIn,
+                        onWriteReviewClick = onWriteReviewClick,
+                    )
                 }
             }
 
@@ -168,6 +192,7 @@ private fun LoadedProductDetails(
             )
         }
 
+        // Cart added toast
         AnimatedVisibility(
             visible = state.cartAddedSuccess,
             enter = fadeIn() + slideInVertically { it },
@@ -198,5 +223,48 @@ private fun LoadedProductDetails(
                 )
             }
         }
+
+        // Review success toast
+        AnimatedVisibility(
+            visible = state.reviewSuccess,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 140.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Review submitted!",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+    }
+
+
+    // Write review bottom sheet
+    if (state.showReviewSheet) {
+        WriteReviewBottomSheet(
+            isSubmitting = state.isSubmittingReview,
+            errorMessage = state.reviewError,
+            onDismiss = onDismissReviewSheet,
+            onSubmit = onSubmitReview,
+        )
     }
 }

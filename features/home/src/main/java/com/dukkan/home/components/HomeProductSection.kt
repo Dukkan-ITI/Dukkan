@@ -2,7 +2,10 @@ package com.dukkan.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -19,10 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.design_system.components.ProductCard
-import com.dukkan.home.R
 import com.dukkan.design_system.theme.AppTheme
 import com.dukkan.domain.model.Product
-import com.dukkan.domain.model.asString
+import com.dukkan.home.R
+
 
 fun LazyGridScope.homeProductSection(
     products: List<Product> = emptyList(),
@@ -67,6 +70,8 @@ fun LazyGridScope.homeProductSection(
             priceLabel = product.maxPrice.asString(),
             imageUrl = product.featuredImage?.url,
             isFavorite = isFav,
+            rating = product.averageRating,
+            reviewCount = product.reviews.size.takeIf { it > 0 },
             onFavoriteClick = {
                 onFavoriteClick(product, isFav)
             },
