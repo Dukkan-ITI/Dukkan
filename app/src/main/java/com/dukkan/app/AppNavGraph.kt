@@ -15,6 +15,7 @@ import com.dukkan.brands.view.BrandProductsScreen
 import com.dukkan.brands.view.BrandsScreen
 import com.dukkan.categories.view.CategoriesScreen
 import com.dukkan.categories.view.CategoryProductsScreen
+import com.dukkan.chatbot.view.ChatScreen
 import com.dukkan.favorites.view.FavoritesView
 import com.dukkan.home.view.HomeScreen
 import com.dukkan.home.view.AllProductsScreen
@@ -76,9 +77,6 @@ fun AppNavGraph(
                 onSeeAllClicked = {
                     navController.navigate(Screen.AllProducts)
                 },
-                onSearchClick = {
-                    navController.navigate(Screen.Search)
-                },
                 onNavigateToCategories = { navController.navigate(Screen.Categories) },
                 onCategoryClick = { category ->
                     navController.navigate(Screen.CategoryProducts(category))
@@ -89,6 +87,9 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
                 }
             )
         }
@@ -257,6 +258,10 @@ fun AppNavGraph(
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 }
             )
+        }
+
+        composable<Screen.Chatbot> {
+            ChatScreen()
         }
     }
 }

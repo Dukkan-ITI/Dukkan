@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":features:brands"))
     implementation(project(":feature:payment"))
     implementation(project(":features:order_list"))
+    implementation(project(":feature:chatbot"))
 
 
 
