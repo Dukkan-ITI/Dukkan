@@ -7,7 +7,7 @@ import androidx.navigation.toRoute
 import com.dukkan.navigation.Screen
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase

@@ -56,21 +56,6 @@ android {
             "SHOPIFY_STOREFRONT_TOKEN",
             "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
         )
-        buildConfigField(
-            "String",
-            "OLLAMA_BASE_URL",
-            "\"${gradleOrLocalProperty("ollamaBaseUrl", "https://ollama.com/api")}\""
-        )
-        buildConfigField(
-            "String",
-            "OLLAMA_MODEL",
-            "\"${gradleOrLocalProperty("ollamaModel", "qwen3")}\""
-        )
-        buildConfigField(
-            "String",
-            "OLLAMA_API_KEY",
-            "\"${gradleOrLocalProperty("ollamaApiKey")}\""
-        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -115,6 +100,7 @@ dependencies {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:ai_agent"))
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
 }

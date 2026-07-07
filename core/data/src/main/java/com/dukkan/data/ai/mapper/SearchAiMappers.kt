@@ -1,6 +1,5 @@
-package com.dukkan.data.mapper
+package com.dukkan.data.ai.mapper
 
-import com.dukkan.domain.model.ClarificationRequest
 import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.model.SearchIntent
 import com.dukkan.domain.model.SearchProduct
@@ -26,7 +25,7 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
     val size = stringValue("size")
     val maxPrice = doubleValue("maxPrice")
     val availableOnly = booleanValue("availableOnly") ?: false
-    val enrichedQuery = listOf(query, color, size)
+    val enrichedQuery = listOf(query, category, color, size)
         .filterNot { it.isNullOrBlank() }
         .joinToString(separator = " ")
 
@@ -47,13 +46,6 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
         )
     )
 }
-
-fun Map<String, JsonElement>.toClarificationRequest(sessionId: String): ClarificationRequest =
-    ClarificationRequest(
-        question = stringValue("question")?.takeIf { it.isNotBlank() }
-            ?: "What kind of product are you looking for?",
-        sessionId = sessionId
-    )
 
 fun List<SearchProduct>.toAiToolResponse(totalCount: Int): JsonObject =
     JsonObject(

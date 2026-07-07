@@ -5,9 +5,9 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.usecase.GetShopifyTokenUseCase
-import com.dukkan.domain.usecase.LoginUseCase
-import com.dukkan.domain.usecase.LoginWithGoogleUseCase
-import com.dukkan.domain.usecase.RegisterUseCase
+import com.dukkan.domain.usecase.auth.LoginUseCase
+import com.dukkan.domain.usecase.auth.LoginWithGoogleUseCase
+import com.dukkan.domain.usecase.auth.RegisterUseCase
 import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
 import com.google.firebase.auth.FirebaseAuth

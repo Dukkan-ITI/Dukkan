@@ -87,4 +87,9 @@ domain-compile.log
 *.hprof
 
 # Agent Framework
-skills-lock.json
+skills-lock.json
+
+# Temporary scripts and payloads
+*.ps1
+payload.json
+test_api.py
