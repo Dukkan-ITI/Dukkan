@@ -99,16 +99,21 @@ class SearchTask @Inject constructor(
 
             val toolCall = response.toolCalls.first()
             if (toolCall.name == SearchAiConstants.SEARCH_SHOPIFY_PRODUCTS) {
-                if (turns > 0 && lastProducts.containsKey(sessionId)) {
+                if (turns >= 2 && lastProducts.containsKey(sessionId)) {
                     // Prevent infinite loops if model tries to search again instead of answering
                     val finalQuery = lastQuery.remove(sessionId) ?: input.query
                     val finalProducts = lastProducts.remove(sessionId) ?: emptyList()
                     sessions.remove(sessionId)
+                    val message = if (finalProducts.isEmpty()) {
+                        "Sorry, I couldn't find any products matching your search."
+                    } else {
+                        "Here are the products I found for you."
+                    }
                     return Result.success(AgenticSearchResult.Success(
                         query = finalQuery,
                         products = finalProducts,
                         totalCount = finalProducts.size,
-                        message = "Here are the products I found for you."
+                        message = message
                     ))
                 }
 
