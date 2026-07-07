@@ -13,14 +13,15 @@ sealed interface AgenticSearchResult {
     ) : AgenticSearchResult
 
     data class Error(
-        val errorType: GeminiError,
+        val errorType: AiSearchError,
         val message: String? = null
     ) : AgenticSearchResult
 }
 
-enum class GeminiError {
+enum class AiSearchError {
     RateLimited,
     Timeout,
+    ConfigurationMissing,
     Unknown,
     ClarificationLimitReached,
     MaxStepsReached,

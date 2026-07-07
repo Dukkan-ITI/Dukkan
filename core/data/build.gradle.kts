@@ -1,8 +1,22 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.apollo)
     id("dukkan.hilt")
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun gradleOrLocalProperty(name: String, defaultValue: String = ""): String =
+    providers.gradleProperty(name).orNull
+        ?: localProperties.getProperty(name)
+        ?: defaultValue
 
 apollo {
     service("service") {
@@ -42,6 +56,21 @@ android {
             "SHOPIFY_STOREFRONT_TOKEN",
             "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
         )
+        buildConfigField(
+            "String",
+            "OLLAMA_BASE_URL",
+            "\"${gradleOrLocalProperty("ollamaBaseUrl", "https://ollama.com/api")}\""
+        )
+        buildConfigField(
+            "String",
+            "OLLAMA_MODEL",
+            "\"${gradleOrLocalProperty("ollamaModel", "qwen3")}\""
+        )
+        buildConfigField(
+            "String",
+            "OLLAMA_API_KEY",
+            "\"${gradleOrLocalProperty("ollamaApiKey")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -80,7 +109,6 @@ dependencies {
 //firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.ai)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 }
@@ -88,4 +116,5 @@ dependencies {
 dependencies {
     implementation(project(":core:domain"))
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
 }

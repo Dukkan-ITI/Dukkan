@@ -1,11 +1,11 @@
 package com.dukkan.domain.usecase.search
 
-import com.dukkan.domain.repository.GeminiRepository
+import com.dukkan.domain.repository.AiSearchRepository
 import javax.inject.Inject
 
 class ResumeSearchClarificationUseCase @Inject constructor(
-    private val geminiRepository: GeminiRepository
+    private val aiSearchRepository: AiSearchRepository
 ) {
     operator fun invoke(sessionId: String, answer: String) =
-        geminiRepository.resumeWithAnswer(sessionId, answer)
+        aiSearchRepository.resumeWithAnswer(sessionId, answer)
 }

@@ -37,10 +37,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import okhttp3.OkHttpClient
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+
     @Singleton
     @Provides
     fun provideApolloClient(): ApolloClient = ApolloClient.Builder()

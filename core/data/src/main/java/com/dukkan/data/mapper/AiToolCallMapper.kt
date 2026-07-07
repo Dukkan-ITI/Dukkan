@@ -4,6 +4,7 @@ import com.dukkan.domain.model.ClarificationRequest
 import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.model.SearchIntent
 import com.dukkan.domain.model.SearchProduct
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -54,11 +55,11 @@ fun Map<String, JsonElement>.toClarificationRequest(sessionId: String): Clarific
         sessionId = sessionId
     )
 
-fun List<SearchProduct>.toGeminiToolResponse(totalCount: Int): JsonObject =
+fun List<SearchProduct>.toAiToolResponse(totalCount: Int): JsonObject =
     JsonObject(
         mapOf(
             "totalCount" to JsonPrimitive(totalCount),
-            "products" to kotlinx.serialization.json.JsonArray(
+            "products" to JsonArray(
                 take(8).map { product ->
                     JsonObject(
                         mapOf(

@@ -1,15 +1,15 @@
 package com.dukkan.data.util
 
-object GeminiConstants {
+object AiSearchConstants {
     const val SEARCH_SHOPIFY_PRODUCTS = "search_shopify_products"
     const val ASK_CLARIFYING_QUESTION = "ask_clarifying_question"
 
-    const val MODEL_NAME = "gemini-3.5-flash"
+    const val DEFAULT_OLLAMA_MODEL = "gpt-oss:120b-cloud"
 
     const val MAX_TURNS = 4
     const val MAX_SHOPIFY_CALLS = 2
     const val MAX_CLARIFICATIONS = 3
-    
+
     const val CACHE_MAX_ENTRIES = 100
     const val CACHE_TTL_MS = 10 * 60 * 1000L // 10 minutes
 
