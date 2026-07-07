@@ -13,4 +13,6 @@ data class SavedAddressesState(
     val deleteCandidate: Address? = null,
     val isDeleting: Boolean = false,
     val updatingDefaultId: String? = null,
+    val isMapVisible: Boolean = false,
+    val selectedLatLng: com.google.android.gms.maps.model.LatLng? = null,
 )

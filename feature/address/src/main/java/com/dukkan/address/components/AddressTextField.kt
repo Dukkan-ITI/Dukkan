@@ -46,18 +46,22 @@ fun AddressTextField(
     imeAction: ImeAction = ImeAction.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     errorMessage: String? = null,
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     val hasError = errorMessage != null
     val borderColor = when {
+        !enabled -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         hasError -> MaterialTheme.colorScheme.error
         isFocused -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.outlineVariant
     }
 
     val borderWidth = if (isFocused || hasError) 2.dp else 1.dp
+    val backgroundColor = if (enabled) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val textColor = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
 
     val shape = RoundedCornerShape(14.dp)
 
@@ -67,9 +71,10 @@ fun AddressTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = enabled,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 fontSize = 14.5.sp,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = textColor,
             ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             interactionSource = interactionSource,
@@ -79,7 +84,7 @@ fun AddressTextField(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface, shape)
+                        .background(backgroundColor, shape)
                         .border(borderWidth, borderColor, shape),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

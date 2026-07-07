@@ -70,6 +70,10 @@ fun SavedAddressesScreen(
         onSaveAddress = viewModel::saveAddress,
         onDismissDeleteDialog = viewModel::dismissDeleteDialog,
         onConfirmDelete = viewModel::confirmDelete,
+        onMapClick = viewModel::onMapClick,
+        onDismissMap = viewModel::dismissMap,
+        onLocationSelected = viewModel::onLocationSelected,
+        onClearSelectedLatLng = viewModel::clearSelectedLatLng,
     )
 }
 
@@ -86,8 +90,20 @@ private fun SavedAddressesContent(
     onSaveAddress: (Address) -> Unit,
     onDismissDeleteDialog: () -> Unit,
     onConfirmDelete: () -> Unit,
+    onMapClick: () -> Unit,
+    onDismissMap: () -> Unit,
+    onLocationSelected: (com.google.android.gms.maps.model.LatLng) -> Unit,
+    onClearSelectedLatLng: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (state.isMapVisible) {
+        LocationPickerScreen(
+            onLocationSelected = onLocationSelected,
+            onCancel = onDismissMap,
+        )
+        return
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -176,6 +192,9 @@ private fun SavedAddressesContent(
             initialAddress = state.editingAddress,
             isSaving = state.isSaving,
             formError = state.formError,
+            selectedLatLng = state.selectedLatLng,
+            onMapClick = onMapClick,
+            onClearSelectedLatLng = onClearSelectedLatLng,
             onDismissRequest = onDismissFormSheet,
             onSave = onSaveAddress,
         )
@@ -219,6 +238,10 @@ private fun SavedAddressesPreview() {
             onSaveAddress = {},
             onDismissDeleteDialog = {},
             onConfirmDelete = {},
+            onMapClick = {},
+            onDismissMap = {},
+            onLocationSelected = {},
+            onClearSelectedLatLng = {},
         )
     }
 }

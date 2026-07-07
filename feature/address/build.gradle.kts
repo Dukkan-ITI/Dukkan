@@ -1,5 +1,6 @@
 plugins {
     id("dukkan.feature")
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -11,4 +12,8 @@ dependencies {
     implementation(project(":core:domain"))
 
     implementation(libs.androidx.compose.material.icons.core)
+
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.places)
 }
