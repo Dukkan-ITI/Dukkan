@@ -6,7 +6,7 @@ import com.dukkan.domain.model.AuthUser
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.repository.SettingsRepository
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.*
 import com.dukkan.domain.usecase.coupon.CouponUseCases
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
