@@ -1,6 +1,7 @@
-package com.dukkan.data.source.remote
+package com.dukkan.data.source.remote.data_source.auth
 
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
 import com.dukkan.CreateCustomerAccessTokenMutation
 import com.dukkan.CustomerCreateMutation
 import com.dukkan.CustomerAccessTokenCreateWithMultipassMutation
@@ -24,8 +25,8 @@ class ShopifyAuthDataSourceImpl(
             val input = CustomerCreateInput(
                 email = email,
                 password = password,
-                firstName = com.apollographql.apollo.api.Optional.presentIfNotNull(firstName.takeIf { it.isNotBlank() }),
-                lastName = com.apollographql.apollo.api.Optional.presentIfNotNull(lastName.takeIf { it.isNotBlank() })
+                firstName = Optional.presentIfNotNull(firstName.takeIf { it.isNotBlank() }),
+                lastName = Optional.presentIfNotNull(lastName.takeIf { it.isNotBlank() })
             )
             val response = apolloClient
                 .mutation(CustomerCreateMutation(input = input))

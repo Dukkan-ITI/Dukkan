@@ -1,7 +1,7 @@
 package com.dukkan.data.repository
 
-import com.dukkan.data.source.local.CouponData
-import com.dukkan.data.source.local.CouponStore
+import com.dukkan.data.source.local.coupon.CouponData
+import com.dukkan.data.source.local.coupon.CouponStore
 import com.dukkan.domain.model.Coupon
 import com.dukkan.domain.repository.CouponRepository
 import kotlinx.coroutines.flow.Flow

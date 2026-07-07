@@ -1,4 +1,4 @@
-package com.dukkan.data.source.local
+package com.dukkan.data.source.local.coupon
 
 import com.dukkan.domain.model.Coupon
 
