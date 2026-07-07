@@ -1,30 +1,46 @@
 package com.dukkan.shopping_cart.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dukkan.shopping_cart.components.CartItemRow
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.dukkan.design_system.components.GuestPlaceholderScreen
 import com.dukkan.domain.model.cart.CartLine
-import com.dukkan.domain.model.asString
+import com.dukkan.shopping_cart.R
+import com.dukkan.shopping_cart.components.CartItemRow
 import com.dukkan.shopping_cart.components.EmptyCartState
 import com.dukkan.shopping_cart.components.PromoCodeSection
 import com.dukkan.shopping_cart.components.RemoveItemDialog
 import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
-import com.dukkan.shopping_cart.R
-
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.ui.res.stringResource
-import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun ShoppingCartView(
@@ -87,116 +103,126 @@ private fun ShoppingCartContent(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = androidx.compose.ui.Alignment.Bottom) {
-                    Text(
-                        text = stringResource(R.string.your_bag),
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.items_count_format, state.cart?.lines?.size ?: 0),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
-                }
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, fill = true)
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                if (state.isLoading) {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxWidth().height(300.dp),
-                            contentAlignment = androidx.compose.ui.Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                } else if (state.cart?.lines.isNullOrEmpty()) {
-                    item {
-                        Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
-                            EmptyCartState(onStartShoppingClick)
-                        }
-                    }
-                } else {
-                    items(state.cart?.lines ?: emptyList(), key = { it.id }) { item ->
-                        CartItemRow(
-                            item = item,
-                            onQuantityChanged = onQuantityChanged,
-                            onRemoveClick = { onRemoveClick(item) }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = androidx.compose.ui.Alignment.Bottom) {
+                        Text(
+                            text = stringResource(R.string.your_bag),
+                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
-                    }
-                }
-
-                item {
-                    PromoCodeSection(
-                        promoCode = state.promoCode,
-                        appliedCodes = state.cart?.appliedDiscounts?.map { it.code } ?: emptyList(),
-                        onPromoCodeChange = onPromoCodeChange,
-                        onApplyPromoCode = onApplyPromoCode,
-                        onRemovePromoCode = onRemovePromoCode,
-                        isApplying = state.isApplyingPromo,
-                        error = state.promoError
-                    )
-                }
-
-                item {
-                    SummarySection(state)
-                }
-
-                item {
-                    Button(
-                        onClick = onCheckoutClick,
-                        enabled = !state.cart?.lines.isNullOrEmpty(),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(64.dp)
-                            .padding(top = 8.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ) {
+                        Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = stringResource(
-                                R.string.checkout_format,
-                                state.cart?.cost?.totalAmount?.asString()
-                                    ?: stringResource(R.string.default_amount),
+                                R.string.items_count_format,
+                                state.cart?.lines?.size ?: 0
                             ),
-                            style = MaterialTheme.typography.titleMedium
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(bottom = 4.dp)
                         )
                     }
                 }
 
-                item {
-                    Spacer(modifier = Modifier.navigationBarsPadding().height(80.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f, fill = true)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    if (state.isLoading) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(300.dp),
+                                contentAlignment = androidx.compose.ui.Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                            }
+                        }
+                    } else if (state.cart?.lines.isNullOrEmpty()) {
+                        item {
+                            Box(modifier = Modifier
+                                .fillMaxWidth()
+                                .height(300.dp)) {
+                                EmptyCartState(onStartShoppingClick)
+                            }
+                        }
+                    } else {
+                        items(state.cart?.lines ?: emptyList(), key = { it.id }) { item ->
+                            CartItemRow(
+                                item = item,
+                                onQuantityChanged = onQuantityChanged,
+                                onRemoveClick = { onRemoveClick(item) }
+                            )
+                        }
+                    }
+
+                    item {
+                        PromoCodeSection(
+                            promoCode = state.promoCode,
+                            appliedCodes = state.cart?.appliedDiscounts?.map { it.code }
+                                ?: emptyList(),
+                            onPromoCodeChange = onPromoCodeChange,
+                            onApplyPromoCode = onApplyPromoCode,
+                            onRemovePromoCode = onRemovePromoCode,
+                            isApplying = state.isApplyingPromo,
+                            error = state.promoError
+                        )
+                    }
+
+                    item {
+                        SummarySection(state)
+                    }
+
+                    item {
+                        Button(
+                            onClick = onCheckoutClick,
+                            enabled = !state.cart?.lines.isNullOrEmpty(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp)
+                                .padding(top = 8.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.checkout_format,
+                                    state.cart?.cost?.totalAmount?.asString()
+                                        ?: stringResource(R.string.default_amount),
+                                ),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier
+                            .navigationBarsPadding()
+                            .height(80.dp))
+                    }
                 }
             }
-        }
 
-        state.showRemoveDialogForItem?.let { item ->
-            RemoveItemDialog(
-                item = item,
-                onDismiss = onDismissRemoveDialog,
-                onConfirm = onConfirmRemoveItem
-            )
+            state.showRemoveDialogForItem?.let { item ->
+                RemoveItemDialog(
+                    item = item,
+                    onDismiss = onDismissRemoveDialog,
+                    onConfirm = onConfirmRemoveItem
+                )
+            }
         }
     }
-}
 }

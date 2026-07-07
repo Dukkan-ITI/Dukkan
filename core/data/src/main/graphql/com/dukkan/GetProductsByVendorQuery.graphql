@@ -24,6 +24,22 @@ query GetProductsByVendor(
                         currencyCode
                     }
                 }
+                metafields(identifiers: [{ namespace: "reviews", key: "items" }]) {
+                    key
+                    namespace
+                    value
+                    type
+                    references(first: 50) {
+                        edges {
+                            node {
+                                ... on Metaobject {
+                                    id
+                                    rating: field(key: "rating") { value }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

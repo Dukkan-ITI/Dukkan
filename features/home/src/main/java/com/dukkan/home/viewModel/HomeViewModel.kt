@@ -2,6 +2,7 @@ package com.dukkan.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dukkan.domain.repository.ReviewRepository
 import com.dukkan.domain.model.Brand
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
@@ -44,6 +45,7 @@ class HomeViewModel @Inject constructor(
     private val getFavorites: GetFavoritesUseCase,
     private val getCurrency: GetCurrencyUseCase,
     private val getLanguage: GetLanguageUseCase,
+    private val reviewRepository: ReviewRepository,
 ) : ViewModel() {
 
     private data class HomeContent(
@@ -101,6 +103,23 @@ class HomeViewModel @Inject constructor(
                     hasNextPage = false
                     loadInitialProducts()
                 }
+        }
+
+        viewModelScope.launch {
+            reviewRepository.reviewUpdates.collect { (productId, review) ->
+                _homeContent.update { current ->
+                    current.copy(
+                        products = current.products.map { p ->
+                            if (p.id == productId) {
+                                val newReviews = p.reviews + review
+                                val newTotalRating = p.reviews.sumOf { it.rating.toDouble() } + review.rating
+                                val newAvg = (newTotalRating / newReviews.size).toFloat()
+                                p.copy(reviews = newReviews, averageRating = newAvg)
+                            } else p
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -160,9 +179,11 @@ class HomeViewModel @Inject constructor(
             val favoriteProduct = FavoriteProduct(
                 id = product.id,
                 title = product.title,
-                imageUrl = product.featuredImage?.url.orEmpty(),
+                imageUrl = product.featuredImage?.url ?: "",
                 price = product.minPrice.amount.toString(),
-                currencyCode = product.minPrice.currencyCode
+                currencyCode = product.minPrice.currencyCode,
+                rating = product.averageRating,
+                reviewCount = product.reviews.size.takeIf { it > 0 }
             )
             toggleFavoriteUseCase(favoriteProduct, isCurrentlyFavorite)
         }

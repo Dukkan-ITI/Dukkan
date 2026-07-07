@@ -9,5 +9,7 @@ data class SearchProduct(
     val price: Money,
     val imageUrl: String?,
     val imageAltText: String?,
-    val variants: List<SearchProductVariant>
+    val variants: List<SearchProductVariant>,
+    val averageRating: Float? = null,
+    val reviewCount: Int? = null
 )

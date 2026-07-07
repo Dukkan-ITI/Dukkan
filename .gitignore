@@ -85,11 +85,14 @@ domain-compile.log
 
 # Paymob SDK
 *.hprof
+/fake_products.csv
+/message.txt
 
 # Agent Framework
 skills-lock.json
+payment_description.md
 
 # Temporary scripts and payloads
 *.ps1
 payload.json
-test_api.py
+test_api.py

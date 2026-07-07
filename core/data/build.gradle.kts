@@ -21,6 +21,7 @@ fun gradleOrLocalProperty(name: String, defaultValue: String = ""): String =
 apollo {
     service("service") {
         packageName.set("com.dukkan")
+        srcDir(file("src/main/graphql/com/dukkan"))
 
         introspection {
             endpointUrl.set("https://mad46-and5.myshopify.com/api/2026-04/graphql.json")
@@ -28,6 +29,19 @@ apollo {
                 providers.gradleProperty("shopifyStorefrontToken").get()
             )
             schemaFile.set(file("src/main/graphql/com/dukkan/schema.json"))
+        }
+    }
+
+    service("admin") {
+        packageName.set("com.dukkan.admin")
+        srcDir(file("src/main/graphql/admin"))
+
+        introspection {
+            endpointUrl.set("https://mad46-and5.myshopify.com/admin/api/2026-04/graphql.json")
+            headers.put("X-Shopify-Access-Token",
+                providers.gradleProperty("shopifyAdminToken").get()
+            )
+            schemaFile.set(file("src/main/graphql/com/dukkan/admin/schema.json"))
         }
     }
 }
@@ -56,6 +70,11 @@ android {
             "SHOPIFY_STOREFRONT_TOKEN",
             "\"${providers.gradleProperty("shopifyStorefrontToken").getOrElse("")}\""
         )
+        buildConfigField(
+            "String",
+            "SHOPIFY_ADMIN_TOKEN",
+            "\"${providers.gradleProperty("shopifyAdminToken").getOrElse("")}\""
+        )
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -73,6 +92,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.apollo.runtime)

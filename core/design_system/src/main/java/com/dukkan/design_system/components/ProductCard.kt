@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,6 +44,8 @@ fun ProductCard(
     onFavoriteClick: () -> Unit,
     onCardClick: () -> Unit,
     modifier: Modifier = Modifier,
+    rating: Float? = null,
+    reviewCount: Int? = null,
 ) {
     Column(
         modifier = modifier
@@ -104,6 +105,13 @@ fun ProductCard(
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onSurface
             )
+            if (rating != null) {
+                StarRatingBar(
+                    rating = rating,
+                    reviewCount = reviewCount,
+                    starSize = 12.dp,
+                )
+            }
             Text(
                 text = priceLabel,
                 style = MaterialTheme.typography.bodyMedium.copy(

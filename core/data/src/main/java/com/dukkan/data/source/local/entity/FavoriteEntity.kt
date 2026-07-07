@@ -10,5 +10,7 @@ data class FavoriteEntity(
      val title: String,
      val imageUrl: String,
      val price: String,
-     val currencyCode: String
+     val currencyCode: String,
+     val rating: Float? = null,
+     val reviewCount: Int? = null
 )

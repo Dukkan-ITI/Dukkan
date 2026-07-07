@@ -37,7 +37,17 @@ fun SearchProductsQuery.OnProduct.toSearchProduct(): SearchProduct {
         price = priceRange.minVariantPrice.toDomainMoney(),
         imageUrl = featuredImage?.url?.toString(),
         imageAltText = featuredImage?.altText,
-        variants = variants.nodes.map { it.toSearchProductVariant() }
+        variants = variants.nodes.map { it.toSearchProductVariant() },
+        averageRating = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten()?.takeIf { it.isNotEmpty() }?.average()?.toFloat(),
+        reviewCount = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten()?.size
     )
 }
 
@@ -77,7 +87,17 @@ private fun PredictiveSearchQuery.Product.toSearchProduct(): SearchProduct {
         price = priceRange.minVariantPrice.toDomainMoney(),
         imageUrl = featuredImage?.url?.toString(),
         imageAltText = featuredImage?.altText,
-        variants = emptyList()
+        variants = emptyList(),
+        averageRating = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten()?.takeIf { it.isNotEmpty() }?.average()?.toFloat(),
+        reviewCount = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
+            val metaobject = edge.node.onMetaobject
+            val ratingField = metaobject?.rating?.value as? String
+            ratingField?.toIntOrNull()
+        } }?.flatten()?.size
     )
 }
 

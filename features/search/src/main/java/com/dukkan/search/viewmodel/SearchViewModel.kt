@@ -27,13 +27,16 @@ import kotlinx.coroutines.launch
 import com.dukkan.search.R
 import javax.inject.Inject
 
+import com.dukkan.domain.repository.ReviewRepository
+
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val predictiveSearchUseCase: PredictiveSearchUseCase,
     private val agenticSearchUseCase: AgenticSearchUseCase,
-    private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase
+    private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase,
+    private val reviewRepository: ReviewRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -57,6 +60,24 @@ class SearchViewModel @Inject constructor(
             .filter { it.isBlank() }
             .onEach { clearPredictive() }
             .launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            reviewRepository.reviewUpdates.collect { (productId, review) ->
+                _uiState.update { current ->
+                    current.copy(
+                        searchResults = current.searchResults.map { p ->
+                            if (p.id == productId) {
+                                val currentCount = p.reviewCount ?: 0
+                                val currentTotal = (p.averageRating ?: 0f) * currentCount
+                                val newCount = currentCount + 1
+                                val newAvg = (currentTotal + review.rating) / newCount
+                                p.copy(reviewCount = newCount, averageRating = newAvg)
+                            } else p
+                        }
+                    )
+                }
+            }
+        }
     }
 
     fun onQueryInputChanged(text: String) {

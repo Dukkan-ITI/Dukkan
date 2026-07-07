@@ -21,9 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.dukkan.domain.model.asString
-import com.dukkan.order_list.R
 import com.dukkan.domain.model.orders.OrderLineItem
+import com.dukkan.order_list.R
 
 @Composable
 fun OrderLineItemRow(item: OrderLineItem) {

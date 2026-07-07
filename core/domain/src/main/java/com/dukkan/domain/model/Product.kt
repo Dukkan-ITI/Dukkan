@@ -10,4 +10,6 @@ data class Product(
     val productType: String?,
     val images: List<NetworkImage>?,
     val variants: List<ProductVariant>?,
+    val reviews: List<Review> = emptyList(),
+    val averageRating: Float? = null,
 )

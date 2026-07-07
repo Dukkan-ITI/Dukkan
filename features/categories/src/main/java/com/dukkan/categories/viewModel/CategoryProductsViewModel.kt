@@ -70,9 +70,11 @@ class CategoryProductsViewModel @Inject constructor(
             val favoriteProduct = FavoriteProduct(
                 id = product.id,
                 title = product.title,
-                imageUrl = product.featuredImage?.url.orEmpty(),
+                imageUrl = product.featuredImage?.url ?: "",
                 price = product.minPrice.amount.toString(),
-                currencyCode = product.minPrice.currencyCode
+                currencyCode = product.minPrice.currencyCode,
+                rating = product.averageRating,
+                reviewCount = product.reviews.size.takeIf { it > 0 }
             )
             toggleFavoriteUseCase(favoriteProduct, isCurrentlyFavorite)
         }

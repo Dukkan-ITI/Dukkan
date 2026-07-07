@@ -1,0 +1,7 @@
+query GetProductReviewRefs($productId: ID!) {
+  product(id: $productId) {
+    metafield(namespace: "reviews", key: "items") {
+      value
+    }
+  }
+}
