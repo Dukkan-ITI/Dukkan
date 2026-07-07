@@ -1,8 +1,6 @@
 package com.dukkan.payment.domain.usecase
 
 import com.dukkan.payment.domain.model.CreatedOrder
-import com.dukkan.payment.domain.model.OrderDraft
-import com.dukkan.payment.domain.model.OrderFinancialStatus
 import com.dukkan.payment.domain.repository.OrderRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -15,24 +13,23 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class CreateOrderUseCaseTest {
+class MarkOrderPaidUseCaseTest {
     private val repository = mockk<OrderRepository>()
-    private lateinit var useCase: CreateOrderUseCase
+    private lateinit var useCase: MarkOrderPaidUseCase
 
     @Before
     fun setUp() {
-        useCase = CreateOrderUseCase(repository)
+        useCase = MarkOrderPaidUseCase(repository)
     }
 
     @Test
-    fun `invoke calls repository createOrder`() = runTest {
-        val draft = mockk<OrderDraft>()
+    fun `invoke calls repository markOrderAsPaid`() = runTest {
         val result = Result.success(mockk<CreatedOrder>())
-        coEvery { repository.createOrder(draft, OrderFinancialStatus.PAID) } returns result
+        coEvery { repository.markOrderAsPaid("ord_1") } returns result
 
-        val actual = useCase(draft, OrderFinancialStatus.PAID)
+        val actual = useCase("ord_1")
 
         assertEquals(result, actual)
-        coVerify(exactly = 1) { repository.createOrder(draft, OrderFinancialStatus.PAID) }
+        coVerify(exactly = 1) { repository.markOrderAsPaid("ord_1") }
     }
 }
