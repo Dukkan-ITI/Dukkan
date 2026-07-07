@@ -20,6 +20,7 @@ import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonPrimitive
 
 data class SearchTaskInput(val sessionId: String? = null, val query: String)
 
@@ -58,6 +59,14 @@ class SearchTask @Inject constructor(
                     "vendors" to ToolParameter(ToolParameterType.String, "Comma separated list of requested vendors or brands.")
                 ),
                 required = listOf("query")
+            ),
+            ToolDefinition(
+                name = SearchAiConstants.ASK_CLARIFYING_QUESTION,
+                description = "Ask the user a conversational question to clarify what they are looking for.",
+                properties = mapOf(
+                    "question" to ToolParameter(ToolParameterType.String, "The conversational question to ask the user.")
+                ),
+                required = listOf("question")
             )
         )
 
@@ -147,6 +156,14 @@ class SearchTask @Inject constructor(
                     toolResultName = toolCall.name,
                     toolResultId = toolCall.id,
                     toolResult = relevantProducts.toAiToolResponse(relevantProducts.size)
+                ))
+            } else if (toolCall.name == SearchAiConstants.ASK_CLARIFYING_QUESTION) {
+                val question = toolCall.arguments["question"]?.jsonPrimitive?.content ?: "Can you please provide more details?"
+                return Result.success(AgenticSearchResult.AwaitingClarification(
+                    ClarificationRequest(
+                        sessionId = sessionId,
+                        question = question
+                    )
                 ))
             } else {
                 // Hallucinated or unknown tool call
