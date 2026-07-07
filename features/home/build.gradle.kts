@@ -14,4 +14,8 @@ dependencies {
 
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.coil.compose)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 }

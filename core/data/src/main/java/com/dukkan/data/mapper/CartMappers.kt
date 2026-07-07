@@ -68,4 +68,4 @@ private fun GetCartQuery.OnProductVariant.toDomainModel(): ProductVariant = Prod
     )
 )
 
-private fun MoneyFields.toMoney(): Money = Money.from(amount as String, currencyCode.rawValue)
+private fun MoneyFields.toMoney(): Money = Money.from(amount.toString(), currencyCode.rawValue)
