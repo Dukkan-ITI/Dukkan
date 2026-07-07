@@ -52,18 +52,12 @@ class SearchTask @Inject constructor(
                     "category" to ToolParameter(ToolParameterType.String, "Optional product category or product type."),
                     "color" to ToolParameter(ToolParameterType.String, "Optional product color."),
                     "size" to ToolParameter(ToolParameterType.String, "Optional product size or variant option."),
+                    "minPrice" to ToolParameter(ToolParameterType.Number, "Optional minimum price."),
                     "maxPrice" to ToolParameter(ToolParameterType.Number, "Optional maximum price."),
-                    "availableOnly" to ToolParameter(ToolParameterType.Boolean, "Whether to show only products available for sale.")
+                    "availableOnly" to ToolParameter(ToolParameterType.Boolean, "Whether to show only products available for sale."),
+                    "vendors" to ToolParameter(ToolParameterType.String, "Comma separated list of requested vendors or brands.")
                 ),
                 required = listOf("query")
-            ),
-            ToolDefinition(
-                name = SearchAiConstants.ASK_CLARIFYING_QUESTION,
-                description = "Ask one short clarification when the shopper's request is too ambiguous to search well.",
-                properties = mapOf(
-                    "question" to ToolParameter(ToolParameterType.String, "A concise clarification question for the shopper.")
-                ),
-                required = listOf("question")
             )
         )
 
@@ -104,12 +98,20 @@ class SearchTask @Inject constructor(
             }
 
             val toolCall = response.toolCalls.first()
-            if (toolCall.name == SearchAiConstants.ASK_CLARIFYING_QUESTION) {
-                val question = toolCall.arguments["question"]?.toString()?.trim('"') ?: "Can you clarify?"
-                return Result.success(AgenticSearchResult.AwaitingClarification(
-                    ClarificationRequest(question = question, sessionId = sessionId)
-                ))
-            } else if (toolCall.name == SearchAiConstants.SEARCH_SHOPIFY_PRODUCTS) {
+            if (toolCall.name == SearchAiConstants.SEARCH_SHOPIFY_PRODUCTS) {
+                if (turns > 0 && lastProducts.containsKey(sessionId)) {
+                    // Prevent infinite loops if model tries to search again instead of answering
+                    val finalQuery = lastQuery.remove(sessionId) ?: input.query
+                    val finalProducts = lastProducts.remove(sessionId) ?: emptyList()
+                    sessions.remove(sessionId)
+                    return Result.success(AgenticSearchResult.Success(
+                        query = finalQuery,
+                        products = finalProducts,
+                        totalCount = finalProducts.size,
+                        message = "Here are the products I found for you."
+                    ))
+                }
+
                 val searchArgs = toolCall.arguments.toShopifySearchToolArgs(input.query)
                 val searchResult = searchRepository.searchProducts(
                     query = searchArgs.query,
@@ -141,6 +143,12 @@ class SearchTask @Inject constructor(
                     toolResultId = toolCall.id,
                     toolResult = relevantProducts.toAiToolResponse(relevantProducts.size)
                 ))
+            } else {
+                // Hallucinated or unknown tool call
+                sessions.remove(sessionId)
+                lastQuery.remove(sessionId)
+                lastProducts.remove(sessionId)
+                return Result.success(AgenticSearchResult.Error(AiSearchError.Unknown, "AI attempted to call unknown tool: ${toolCall.name}"))
             }
             turns++
         }

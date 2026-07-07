@@ -23,6 +23,7 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
     val category = stringValue("category")
     val color = stringValue("color")
     val size = stringValue("size")
+    val minPrice = doubleValue("minPrice")
     val maxPrice = doubleValue("maxPrice")
     val availableOnly = booleanValue("availableOnly") ?: false
     val enrichedQuery = listOf(query, category, color, size)
@@ -32,6 +33,7 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
     return ShopifySearchToolArgs(
         query = enrichedQuery,
         filters = SearchFilter(
+            minPrice = minPrice,
             maxPrice = maxPrice,
             availableOnly = availableOnly,
             productTypes = category?.takeIf { it.isNotBlank() }?.let(::listOf) ?: emptyList()
@@ -41,6 +43,7 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
             category = category,
             color = color,
             size = size,
+            minPrice = minPrice,
             maxPrice = maxPrice,
             availableOnly = availableOnly
         )
