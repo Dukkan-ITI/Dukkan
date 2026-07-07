@@ -1,8 +1,18 @@
 package com.dukkan.data.source.remote.review
 
 import android.util.Log
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
+import com.dukkan.admin.CreateProductReviewMutation
+import com.dukkan.admin.GetProductReviewRefsQuery
+import com.dukkan.admin.SetProductReviewsMutation
+import com.dukkan.admin.type.MetaobjectCapabilityDataInput
+import com.dukkan.admin.type.MetaobjectCreateInput
+import com.dukkan.admin.type.MetaobjectFieldInput
+import com.dukkan.data.di.AdminApi
 import org.json.JSONArray
-import java.time.Instant
+import java.text.SimpleDateFormat
+import java.util.TimeZone
 import javax.inject.Inject
 
 /**
@@ -15,14 +25,12 @@ import javax.inject.Inject
  *  4. metafieldsSet     — attach updated list to the product
  */
 class ReviewAdminDataSourceImpl @Inject constructor(
-    private val service: ReviewAdminService,
+    @AdminApi private val apolloClient: ApolloClient,
 ) : ReviewAdminDataSource {
 
     companion object {
         private const val TAG = "ReviewAdmin"
         private const val METAOBJECT_TYPE = "dukkan_product_review"
-        private const val NAMESPACE = "reviews"
-        private const val KEY = "items"
     }
 
     override suspend fun submitReview(
@@ -33,73 +41,60 @@ class ReviewAdminDataSourceImpl @Inject constructor(
         body: String,
     ): Result<Unit> = runCatching {
         // ── Step 1: Create the review metaobject ─────────────────────────────
-        val createdAt = Instant.now().toString()
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+        val createdAt = sdf.format(java.util.Date())
 
-        val createMutation = """
-            mutation CreateProductReview(${'$'}metaobject: MetaobjectCreateInput!) {
-              metaobjectCreate(metaobject: ${'$'}metaobject) {
-                metaobject { id }
-                userErrors { field message }
-              }
-            }
-        """.trimIndent()
-
-        val createVariables = mapOf(
-            "metaobject" to mapOf(
-                "type" to METAOBJECT_TYPE,
-                "capabilities" to mapOf(
-                    "publishable" to mapOf("status" to "ACTIVE")
-                ),
-                "fields" to listOf(
-                    mapOf("key" to "product",       "value" to productGid),
-                    mapOf("key" to "customer_name", "value" to authorName),
-                    mapOf("key" to "rating",        "value" to rating.toString()),
-                    mapOf("key" to "title",         "value" to title),
-                    mapOf("key" to "body",          "value" to body),
-                    mapOf("key" to "created_at",    "value" to createdAt),
-                    mapOf("key" to "approved",      "value" to "true"),
+        val metaobjectInput = MetaobjectCreateInput(
+            type = METAOBJECT_TYPE,
+            capabilities = Optional.present(
+                MetaobjectCapabilityDataInput(
+                    publishable = Optional.present(
+                        com.dukkan.admin.type.MetaobjectCapabilityDataPublishableInput(
+                            status = com.dukkan.admin.type.MetaobjectStatus.ACTIVE
+                        )
+                    )
+                )
+            ),
+            fields = Optional.present(
+                listOf(
+                    MetaobjectFieldInput(key = "product", value = productGid),
+                    MetaobjectFieldInput(key = "customer_name", value = authorName),
+                    MetaobjectFieldInput(key = "rating", value = rating.toString()),
+                    MetaobjectFieldInput(key = "title", value = title),
+                    MetaobjectFieldInput(key = "body", value = body),
+                    MetaobjectFieldInput(key = "created_at", value = createdAt),
+                    MetaobjectFieldInput(key = "approved", value = "true")
                 )
             )
         )
 
-        val createResponse = service.execute(AdminGraphqlRequest(createMutation, createVariables))
-        val createData = createResponse.body()
-            ?: throw Exception("No response from Admin API (create metaobject)")
+        val createResponse =
+            apolloClient.mutation(CreateProductReviewMutation(metaobjectInput)).execute()
 
-        val userErrors = extractUserErrors(createData, "metaobjectCreate")
-        if (userErrors.isNotEmpty()) throw Exception("Review creation failed: $userErrors")
+        if (createResponse.hasErrors()) {
+            throw Exception("Review creation failed: ${createResponse.errors?.joinToString { it.message }}")
+        }
 
-        @Suppress("UNCHECKED_CAST")
-        val newReviewGid = ((createData.data
-            ?.get("metaobjectCreate") as? Map<String, Any?>)
-            ?.get("metaobject") as? Map<String, Any?>)
-            ?.get("id") as? String
+        val userErrors = createResponse.data?.metaobjectCreate?.userErrors
+        if (!userErrors.isNullOrEmpty()) {
+            throw Exception("Review creation failed: ${userErrors.joinToString { it.message }}")
+        }
+
+        val newReviewGid = createResponse.data?.metaobjectCreate?.metaobject?.id
             ?: throw Exception("Review metaobject ID not returned")
 
         Log.d(TAG, "Step 1 done — created metaobject: $newReviewGid")
 
         // ── Step 2: Fetch current reviews.items for the product ──────────────
-        val readQuery = """
-            query GetProductReviewRefs(${'$'}productId: ID!) {
-              product(id: ${'$'}productId) {
-                metafield(namespace: "$NAMESPACE", key: "$KEY") {
-                  value
-                }
-              }
-            }
-        """.trimIndent()
+        val readResponse = apolloClient.query(GetProductReviewRefsQuery(productGid)).execute()
 
-        val readResponse = service.execute(
-            AdminGraphqlRequest(readQuery, mapOf("productId" to productGid))
-        )
-        val readData = readResponse.body()
-            ?: throw Exception("No response from Admin API (read metafield)")
+        if (readResponse.hasErrors()) {
+            throw Exception("Failed to fetch product metafields: ${readResponse.errors?.joinToString { it.message }}")
+        }
 
-        @Suppress("UNCHECKED_CAST")
-        val existingValueJson = ((readData.data
-            ?.get("product") as? Map<String, Any?>)
-            ?.get("metafield") as? Map<String, Any?>)
-            ?.get("value") as? String
+        val existingValueJson = readResponse.data?.product?.metafield?.value
 
         // ── Step 3: Append new GID to the existing list ──────────────────────
         val existingIds = if (existingValueJson != null) {
@@ -113,40 +108,18 @@ class ReviewAdminDataSourceImpl @Inject constructor(
         Log.d(TAG, "Step 3 done — updated IDs list: $updatedJson")
 
         // ── Step 4: Set reviews.items metafield on the product ───────────────
-        val setMutation = """
-            mutation SetProductReviews(${'$'}productId: ID!, ${'$'}reviewIdsJson: String!) {
-              metafieldsSet(metafields: [{
-                ownerId:   ${'$'}productId
-                namespace: "$NAMESPACE"
-                key:       "$KEY"
-                type:      "list.metaobject_reference"
-                value:     ${'$'}reviewIdsJson
-              }]) {
-                metafields { id }
-                userErrors  { field message }
-              }
-            }
-        """.trimIndent()
+        val setResponse =
+            apolloClient.mutation(SetProductReviewsMutation(productGid, updatedJson)).execute()
 
-        val setVariables = mapOf(
-            "productId"     to productGid,
-            "reviewIdsJson" to updatedJson,
-        )
+        if (setResponse.hasErrors()) {
+            throw Exception("Failed to attach review: ${setResponse.errors?.joinToString { it.message }}")
+        }
 
-        val setResponse = service.execute(AdminGraphqlRequest(setMutation, setVariables))
-        val setData = setResponse.body()
-            ?: throw Exception("No response from Admin API (metafieldsSet)")
-
-        val setErrors = extractUserErrors(setData, "metafieldsSet")
-        if (setErrors.isNotEmpty()) throw Exception("Attaching review failed: $setErrors")
+        val setUserErrors = setResponse.data?.metafieldsSet?.userErrors
+        if (!setUserErrors.isNullOrEmpty()) {
+            throw Exception("Attaching review failed: ${setUserErrors.joinToString { it.message }}")
+        }
 
         Log.d(TAG, "Step 4 done — review attached to product $productGid")
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun extractUserErrors(response: AdminGraphqlResponse, operationKey: String): List<String> {
-        val op = response.data?.get(operationKey) as? Map<String, Any?> ?: return emptyList()
-        val errors = op["userErrors"] as? List<Map<String, Any?>> ?: return emptyList()
-        return errors.mapNotNull { it["message"] as? String }
     }
 }

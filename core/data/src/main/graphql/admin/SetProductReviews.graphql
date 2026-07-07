@@ -1,0 +1,21 @@
+mutation SetProductReviews($productId: ID!, $reviewIdsJson: String!) {
+  metafieldsSet(
+    metafields: [
+      {
+        ownerId: $productId
+        namespace: "reviews"
+        key: "items"
+        type: "list.metaobject_reference"
+        value: $reviewIdsJson
+      }
+    ]
+  ) {
+    metafields {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
