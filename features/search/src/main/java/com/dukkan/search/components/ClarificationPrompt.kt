@@ -47,6 +47,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.filled.Mic
 
 @Composable
 fun TypewriterText(
@@ -87,8 +88,10 @@ fun ClarificationPrompt(
     message: String?,
     isLoading: Boolean,
     isError: Boolean,
+    isListening: Boolean = false,
     onAnswerChange: (String) -> Unit,
     onSubmitAnswer: () -> Unit,
+    onMicClick: () -> Unit = {},
     onRetry: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
@@ -194,7 +197,16 @@ fun ClarificationPrompt(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         placeholder = {
-                            Text(stringResource(R.string.search_ai_answer_placeholder))
+                            Text(if (isListening) stringResource(R.string.search_voice_listening) else stringResource(R.string.search_ai_answer_placeholder))
+                        },
+                        trailingIcon = {
+                            IconButton(onClick = onMicClick) {
+                                Icon(
+                                    imageVector = Icons.Default.Mic,
+                                    contentDescription = stringResource(R.string.search_voice_input),
+                                    tint = if (isListening) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     )
                     Button(

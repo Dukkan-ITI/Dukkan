@@ -1,9 +1,9 @@
-package com.dukkan.data.mapper
+package com.dukkan.data.ai.mapper
 
-import com.dukkan.domain.model.ClarificationRequest
 import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.model.SearchIntent
 import com.dukkan.domain.model.SearchProduct
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -23,15 +23,17 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
     val category = stringValue("category")
     val color = stringValue("color")
     val size = stringValue("size")
+    val minPrice = doubleValue("minPrice")
     val maxPrice = doubleValue("maxPrice")
     val availableOnly = booleanValue("availableOnly") ?: false
-    val enrichedQuery = listOf(query, color, size)
+    val enrichedQuery = listOf(query, category, color, size)
         .filterNot { it.isNullOrBlank() }
         .joinToString(separator = " ")
 
     return ShopifySearchToolArgs(
         query = enrichedQuery,
         filters = SearchFilter(
+            minPrice = minPrice,
             maxPrice = maxPrice,
             availableOnly = availableOnly,
             productTypes = category?.takeIf { it.isNotBlank() }?.let(::listOf) ?: emptyList()
@@ -41,24 +43,18 @@ fun Map<String, JsonElement>.toShopifySearchToolArgs(fallbackQuery: String): Sho
             category = category,
             color = color,
             size = size,
+            minPrice = minPrice,
             maxPrice = maxPrice,
             availableOnly = availableOnly
         )
     )
 }
 
-fun Map<String, JsonElement>.toClarificationRequest(sessionId: String): ClarificationRequest =
-    ClarificationRequest(
-        question = stringValue("question")?.takeIf { it.isNotBlank() }
-            ?: "What kind of product are you looking for?",
-        sessionId = sessionId
-    )
-
-fun List<SearchProduct>.toGeminiToolResponse(totalCount: Int): JsonObject =
+fun List<SearchProduct>.toAiToolResponse(totalCount: Int): JsonObject =
     JsonObject(
         mapOf(
             "totalCount" to JsonPrimitive(totalCount),
-            "products" to kotlinx.serialization.json.JsonArray(
+            "products" to JsonArray(
                 take(8).map { product ->
                     JsonObject(
                         mapOf(

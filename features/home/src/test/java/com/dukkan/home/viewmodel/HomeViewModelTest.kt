@@ -12,7 +12,7 @@ import com.dukkan.domain.model.NetworkImage
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.model.ProductSummary
 import com.dukkan.domain.usecase.GetBrandsUseCase
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.category.GetCategoriesUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase

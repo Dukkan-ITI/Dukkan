@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.ads.uistate.CouponBannerUIState
 import com.dukkan.domain.model.Coupon
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.coupon.CouponUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

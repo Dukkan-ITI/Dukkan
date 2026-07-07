@@ -6,9 +6,9 @@ import com.apollographql.apollo.api.Optional
 import com.dukkan.GetCustomerOrdersQuery
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
-import com.dukkan.data.source.remote.FirebaseAuthDataSource
-import com.dukkan.data.source.remote.IFirebaseStoreDataSource
-import com.dukkan.data.source.remote.ShopifyAuthDataSource
+import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSource
+import com.dukkan.data.source.remote.data_source.auth.IFirebaseStoreDataSource
+import com.dukkan.data.source.remote.data_source.auth.ShopifyAuthDataSource
 import com.dukkan.domain.model.AuthUser
 import com.dukkan.domain.model.ShopifyToken
 import com.dukkan.domain.repository.AuthRepository

@@ -10,18 +10,18 @@ import com.dukkan.data.repository.CouponRepositoryImpl
 import com.dukkan.data.repository.PlacesRepositoryImpl
 import com.dukkan.data.repository.ProductsRepositoryImpl
 import com.dukkan.data.repository.SettingsRepositoryImpl
-import com.dukkan.data.source.local.CouponStore
-import com.dukkan.data.source.local.CouponStoreImpl
+import com.dukkan.data.source.local.coupon.CouponStore
+import com.dukkan.data.source.local.coupon.CouponStoreImpl
 import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.ShopifyTokenStoreImpl
-import com.dukkan.data.source.remote.FirebaseAuthDataSource
-import com.dukkan.data.source.remote.FirebaseAuthDataSourceImpl
-import com.dukkan.data.source.remote.FirebaseStoreDataSourceImp
-import com.dukkan.data.source.remote.IFirebaseStoreDataSource
-import com.dukkan.data.source.remote.ShopifyAuthDataSource
-import com.dukkan.data.source.remote.ShopifyAuthDataSourceImpl
+import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSource
+import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSourceImpl
+import com.dukkan.data.source.remote.data_source.auth.FirebaseStoreDataSourceImp
+import com.dukkan.data.source.remote.data_source.auth.IFirebaseStoreDataSource
+import com.dukkan.data.source.remote.data_source.auth.ShopifyAuthDataSource
+import com.dukkan.data.source.remote.data_source.auth.ShopifyAuthDataSourceImpl
 import com.dukkan.data.source.remote.apollo.AddressDataSource
 import com.dukkan.data.source.remote.apollo.AddressDataSourceImpl
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
@@ -47,6 +47,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+
     @Singleton
     @Provides
     fun provideApolloClient(): ApolloClient = ApolloClient.Builder()

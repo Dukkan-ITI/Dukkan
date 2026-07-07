@@ -35,7 +35,7 @@ fun SearchProductsQuery.OnProduct.toSearchProduct(): SearchProduct {
         productType = productType,
         availableForSale = availableForSale,
         price = priceRange.minVariantPrice.toDomainMoney(),
-        imageUrl = featuredImage?.url?.let { it as? String },
+        imageUrl = featuredImage?.url?.toString(),
         imageAltText = featuredImage?.altText,
         variants = variants.nodes.map { it.toSearchProductVariant() },
         averageRating = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
@@ -85,7 +85,7 @@ private fun PredictiveSearchQuery.Product.toSearchProduct(): SearchProduct {
         productType = "",
         availableForSale = availableForSale,
         price = priceRange.minVariantPrice.toDomainMoney(),
-        imageUrl = featuredImage?.url?.let { it as? String },
+        imageUrl = featuredImage?.url?.toString(),
         imageAltText = featuredImage?.altText,
         variants = emptyList(),
         averageRating = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
@@ -106,7 +106,7 @@ private fun PredictiveSearchQuery.Collection.toSearchCollection(): SearchCollect
         id = id,
         title = title,
         handle = handle,
-        imageUrl = image?.url?.let { it as? String }
+        imageUrl = image?.url?.toString()
     )
 }
 

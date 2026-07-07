@@ -8,8 +8,8 @@ import com.dukkan.domain.model.AppCurrency
 import com.dukkan.domain.model.AppLanguage
 import com.dukkan.domain.model.AuthUser
 import com.dukkan.domain.model.ThemeMode
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
-import com.dukkan.domain.usecase.SignOutUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.SignOutUseCase
 import com.dukkan.domain.usecase.cart.ClearCartOnLogoutUseCase
 import com.dukkan.domain.usecase.favorite.ClearFavoritesOnLogoutUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
