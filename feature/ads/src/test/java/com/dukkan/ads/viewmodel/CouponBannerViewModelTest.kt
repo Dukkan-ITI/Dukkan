@@ -2,7 +2,7 @@ package com.dukkan.ads.viewmodel
 
 import com.dukkan.domain.model.AuthUser
 import com.dukkan.domain.model.Coupon
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.coupon.CouponUseCases
 import io.mockk.*
 import io.mockk.impl.annotations.MockK

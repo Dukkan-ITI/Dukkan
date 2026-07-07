@@ -1,4 +1,4 @@
-package com.dukkan.data.source.remote
+package com.dukkan.data.source.remote.data_source.auth
 
 import com.dukkan.data.mapper.toUserAuthDto
 import com.dukkan.data.source.remote.dto.UserAuthDto

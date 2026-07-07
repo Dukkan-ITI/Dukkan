@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.repository.ReviewRepository
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.RemoveFavoriteUseCase
 import com.dukkan.favorites.uistate.FavoritesUiState

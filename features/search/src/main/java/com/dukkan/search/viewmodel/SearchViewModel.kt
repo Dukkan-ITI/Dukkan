@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.uistate.UiText
 import com.dukkan.domain.model.AgenticSearchResult
-import com.dukkan.domain.model.GeminiError
+import com.dukkan.domain.model.AiSearchError
 import com.dukkan.domain.model.SearchFilter
 import com.dukkan.domain.usecase.search.PredictiveSearchUseCase
 import com.dukkan.domain.usecase.search.AgenticSearchUseCase
@@ -197,9 +197,9 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(clarificationAnswerInput = answer) }
     }
 
-    fun onClarificationAnswered() {
+    fun onClarificationAnswered(voiceAnswer: String? = null) {
         val state = _uiState.value
-        val answer = state.clarificationAnswerInput.trim()
+        val answer = voiceAnswer?.trim() ?: state.clarificationAnswerInput.trim()
         if (answer.isBlank()) return
 
         val sessionId = state.clarificationSessionId
@@ -274,13 +274,14 @@ class SearchViewModel @Inject constructor(
 
             is AgenticSearchResult.Error -> {
                 val messageResource = when (result.errorType) {
-                    GeminiError.RateLimited -> UiText.StringResource(R.string.error_ai_rate_limited)
-                    GeminiError.Timeout -> UiText.StringResource(R.string.error_ai_timeout)
-                    GeminiError.ClarificationLimitReached -> UiText.StringResource(R.string.error_ai_clarification_limit)
-                    GeminiError.MaxStepsReached -> UiText.StringResource(R.string.error_ai_max_steps)
-                    GeminiError.TimeoutExceeded -> UiText.StringResource(R.string.error_ai_timeout_exceeded)
-                    GeminiError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_search_failed)
-                    GeminiError.Unknown -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
+                    AiSearchError.RateLimited -> UiText.StringResource(R.string.error_ai_rate_limited)
+                    AiSearchError.Timeout -> UiText.StringResource(R.string.error_ai_timeout)
+                    AiSearchError.ConfigurationMissing -> UiText.StringResource(R.string.error_ai_configuration_missing)
+                    AiSearchError.ClarificationLimitReached -> UiText.StringResource(R.string.error_ai_clarification_limit)
+                    AiSearchError.MaxStepsReached -> UiText.StringResource(R.string.error_ai_max_steps)
+                    AiSearchError.TimeoutExceeded -> UiText.StringResource(R.string.error_ai_timeout_exceeded)
+                    AiSearchError.SearchFailed -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_search_failed)
+                    AiSearchError.Unknown -> result.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(R.string.error_ai_unknown)
                 }
 
                 _uiState.update {
@@ -413,5 +414,32 @@ class SearchViewModel @Inject constructor(
         } else if (query.isNotBlank()) {
             onAiSearchTriggered(query)
         }
+    }
+
+    fun onAiVoiceSearchSubmitted(text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isBlank()) return
+        _uiState.update { 
+            it.copy(
+                lastSearchSource = com.dukkan.search.uistate.SearchSource.VOICE,
+                queryInput = trimmed,
+                submittedQuery = trimmed
+            ) 
+        }
+        onAiSearchTriggered(trimmed)
+    }
+
+    fun onVoiceInputReceived(text: String) {
+        val state = _uiState.value
+        if (state.clarificationSessionId != null) {
+            onClarificationAnswerChanged(text)
+            onClarificationAnswered(text)
+        } else {
+            onAiVoiceSearchSubmitted(text)
+        }
+    }
+
+    fun setListeningState(isListening: Boolean) {
+        _uiState.update { it.copy(isListening = isListening) }
     }
 }

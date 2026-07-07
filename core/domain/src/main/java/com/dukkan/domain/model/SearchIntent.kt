@@ -5,6 +5,7 @@ data class SearchIntent(
     val category: String? = null,
     val color: String? = null,
     val size: String? = null,
+    val minPrice: Double? = null,
     val maxPrice: Double? = null,
     val availableOnly: Boolean = false
 )

@@ -7,7 +7,7 @@ import com.dukkan.domain.model.ThemeMode
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import com.dukkan.domain.usecase.settings.GetThemeUseCase
 import com.dukkan.domain.usecase.settings.GetOnboardingStatusUseCase
-import com.dukkan.domain.usecase.GetCurrentUserUseCase
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

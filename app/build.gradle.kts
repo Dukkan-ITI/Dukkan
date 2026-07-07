@@ -52,6 +52,7 @@ android {
 dependencies {
     implementation(project(":core:design_system"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:ai_agent"))
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":features:onboarding"))

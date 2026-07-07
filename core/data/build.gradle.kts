@@ -1,8 +1,22 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.apollo)
     id("dukkan.hilt")
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun gradleOrLocalProperty(name: String, defaultValue: String = ""): String =
+    providers.gradleProperty(name).orNull
+        ?: localProperties.getProperty(name)
+        ?: defaultValue
 
 apollo {
     service("service") {
@@ -102,12 +116,13 @@ dependencies {
 //firebase dependencies
 dependencies {
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.ai)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
 }
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:ai_agent"))
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp)
 }
