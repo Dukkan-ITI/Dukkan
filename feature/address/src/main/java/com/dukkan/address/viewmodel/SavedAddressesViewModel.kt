@@ -67,6 +67,22 @@ class SavedAddressesViewModel @Inject constructor(
             _state.value.copy(isFormSheetVisible = false, editingAddress = null, formError = null)
     }
 
+    fun onMapClick() {
+        _state.value = _state.value.copy(isMapVisible = true)
+    }
+
+    fun dismissMap() {
+        _state.value = _state.value.copy(isMapVisible = false)
+    }
+
+    fun onLocationSelected(latLng: com.google.android.gms.maps.model.LatLng) {
+        _state.value = _state.value.copy(isMapVisible = false, selectedLatLng = latLng)
+    }
+
+    fun clearSelectedLatLng() {
+        _state.value = _state.value.copy(selectedLatLng = null)
+    }
+
     fun saveAddress(address: Address) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isSaving = true, formError = null)
