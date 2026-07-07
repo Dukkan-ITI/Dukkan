@@ -84,4 +84,7 @@ domain-compile.log
 *.aab
 
 # Paymob SDK
-*.hprof
+*.hprof
+
+# Agent Framework
+skills-lock.json

@@ -28,4 +28,18 @@
     <string name="search_clear">Clear</string>
     <string name="search_failed">Search failed</string>
     <string name="search_load_more_failed">Load more failed</string>
+    <string name="search_ai_assistant_title">Dukkan AI</string>
+    <string name="search_ai_answer_placeholder">E.g., for running, red, under $100...</string>
+    <string name="search_ai_send_answer">Send</string>
+    <string name="search_retry">Retry</string>
+    <string name="search_ai_fallback_message">I couldn\'t complete that search right now. Showing standard results instead.</string>
+    <string name="search_ai_clarify_fallback">I couldn\'t complete that search. Could you please rephrase or provide more details?</string>
+    <string name="search_ai_still_searching">Still searching... This is taking a bit longer than usual.</string>
+    <string name="error_ai_rate_limited">Dukkan AI is taking a short break — please try again in a moment.</string>
+    <string name="error_ai_timeout">Looks like our servers are a bit slow right now. Give it another try!</string>
+    <string name="error_ai_unknown">Something went wrong on our end. Please try again.</string>
+    <string name="error_ai_clarification_limit">I need a little more detail. Please try a more specific search.</string>
+    <string name="error_ai_max_steps">Search took too many steps. Please try a more specific request.</string>
+    <string name="error_ai_timeout_exceeded">AI search took too long. Please try again.</string>
+    <string name="error_ai_search_failed">AI search failed.</string>
 </resources>
