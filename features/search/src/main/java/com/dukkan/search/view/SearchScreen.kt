@@ -299,7 +299,7 @@ fun SearchScreenContent(
                 }
 
                 when {
-                    uiState.isSearchLoading || uiState.isAiSearchLoading -> SearchLoadingState()
+                    uiState.isSearchLoading -> SearchLoadingState()
 
                     uiState.error != null -> {
                         Box(
