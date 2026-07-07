@@ -48,6 +48,7 @@ fun CountryDropdownField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
     var countries by remember { mutableStateOf(CountryCatalog.countries.orEmpty()) }
@@ -61,29 +62,35 @@ fun CountryDropdownField(
     }
 
     val shape = RoundedCornerShape(14.dp)
+    val backgroundColor = if (enabled) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val borderColor = when {
+        !enabled -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        expanded -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.outlineVariant
+    }
 
     Box(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface, shape)
+                .background(backgroundColor, shape)
                 .border(
                     width = if (expanded) 2.dp else 1.dp,
-                    color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                    color = borderColor,
                     shape = shape,
                 )
                 .clip(shape)
-                .clickable { expanded = true }
+                .clickable(enabled = enabled) { expanded = true }
                 .padding(horizontal = 17.dp, vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = value.ifBlank { placeholder },
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.5.sp),
-                color = if (value.isBlank()) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.onSurface
+                color = when {
+                    !enabled -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    value.isBlank() -> MaterialTheme.colorScheme.onSurfaceVariant
+                    else -> MaterialTheme.colorScheme.onSurface
                 },
                 modifier = Modifier.weight(1f),
             )

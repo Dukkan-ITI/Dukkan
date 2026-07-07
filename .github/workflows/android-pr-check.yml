@@ -43,13 +43,16 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Create local.properties
-        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "MAPS_API_KEY=${{ secrets.MAPS_API_KEY }}" >> local.properties
 
       - name: Inject secrets into gradle.properties
         run: |
           cat <<EOF > gradle.properties
           shopifyStorefrontToken=${{ secrets.SHOPIFY_STOREFRONT_TOKEN }}
           shopifyAdminToken=${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+          locationIqApiKey=${{ secrets.LOCATION_IQ_API_KEY }}
           android.disallowKotlinSourceSets=false
           org.gradle.jvmargs=-Xmx3072m -XX:MaxMetaspaceSize=768m -Dfile.encoding=UTF-8
           org.gradle.daemon=false

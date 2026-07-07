@@ -62,6 +62,11 @@ kotlinxCoroutinesTest = "1.7.3"
 sdp = "1.1.1"
 ssp = "1.1.1"
 
+# Maps & Places
+mapsCompose = "4.4.1"
+playServicesMaps = "18.2.0"
+secretsPlugin = "2.0.1"
+
 [libraries]
 
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
@@ -149,6 +154,10 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 sdp = { group = "com.intuit.sdp", name = "sdp-android", version.ref = "sdp" }
 ssp = { group = "com.intuit.ssp", name = "ssp-android", version.ref = "ssp" }
 
+# Maps & Places
+maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
@@ -163,3 +172,4 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 #fireabse
 google-services = { id = "com.google.gms.google-services", version = "4.5.0" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsPlugin" }

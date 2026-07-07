@@ -9,4 +9,5 @@ plugins {
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.apollo) apply false
+    alias(libs.plugins.secrets) apply false
 }
