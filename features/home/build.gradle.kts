@@ -18,4 +18,5 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    implementation(libs.androidx.compose.animation)
 }

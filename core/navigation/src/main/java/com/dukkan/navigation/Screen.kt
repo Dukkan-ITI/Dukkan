@@ -60,4 +60,7 @@ sealed class Screen {
 
     @Serializable
     data class GuestPlaceholder(val title: String)
+
+    @Serializable
+    object Chatbot
 }
