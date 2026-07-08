@@ -60,4 +60,10 @@ sealed class Screen {
 
     @Serializable
     object Chatbot
+
+    @Serializable
+    data class CompareProductSearch(val baseProductId: String, val baseProductTitle: String)
+
+    @Serializable
+    data class ProductComparison(val productId1: String, val productId2: String)
 }
