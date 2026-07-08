@@ -63,6 +63,7 @@ fun ProductDetailsScreen(
     onBackClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
+    onCompareClick: (String, String) -> Unit = { _, _ -> },
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -100,6 +101,7 @@ fun ProductDetailsScreen(
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
+        onCompareClick = onCompareClick,
         onAddToCartClick = viewModel::addToCart,
         onShareClick = viewModel::onShareClick,
         onWriteReviewClick = viewModel::openReviewSheet,
@@ -114,6 +116,7 @@ private fun ProductDetailsContent(
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
+    onCompareClick: (String, String) -> Unit,
     onAddToCartClick: (String) -> Unit,
     onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
@@ -128,6 +131,7 @@ private fun ProductDetailsContent(
             state = state,
             onBackClick = onBackClick,
             onFavoriteClick = onFavoriteClick,
+            onCompareClick = onCompareClick,
             onAddToCartClick = onAddToCartClick,
             onShareClick = onShareClick,
             onWriteReviewClick = onWriteReviewClick,
@@ -143,6 +147,7 @@ private fun LoadedProductDetails(
     state: ProductDetailsState,
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
+    onCompareClick: (String, String) -> Unit,
     onAddToCartClick: (String) -> Unit,
     onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
@@ -194,6 +199,25 @@ private fun LoadedProductDetails(
 
                     product.description?.takeIf { it.isNotBlank() }?.let { description ->
                         ProductDetailsSection(description = description)
+                    }
+
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = { onCompareClick(product.id, product.title) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                            contentDescription = "AI Compare",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Compare with another product",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                        )
                     }
 
                     // Reviews section
