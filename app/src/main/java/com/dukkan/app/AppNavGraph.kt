@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
@@ -37,8 +38,8 @@ fun AppNavGraph(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val cashOrderPlacedMessage = context.getString(R.string.payment_cash_order_placed)
-    val successOrderConfirmedMessage = context.getString(R.string.payment_success_order_confirmed)
+    val cashOrderPlacedMessage = stringResource(R.string.payment_cash_order_placed)
+    val successOrderConfirmedMessage = stringResource(R.string.payment_success_order_confirmed)
 
     NavHost(
         navController = navController,
@@ -157,19 +158,12 @@ fun AppNavGraph(
                 // Here is where other modules are informed of the payment outcome
                 when (result) {
                     is PaymentResult.Success -> {
-                        if (result.paymentMethod == "CASH") {
-                            Toast.makeText(
-                                context,
-                                cashOrderPlacedMessage,
-                                Toast.LENGTH_LONG
-                            ).show()
+                        val message = if (result.paymentMethod == "CASH") {
+                            cashOrderPlacedMessage
                         } else {
-                            Toast.makeText(
-                                context,
-                                successOrderConfirmedMessage,
-                                Toast.LENGTH_LONG
-                            ).show()
+                            successOrderConfirmedMessage
                         }
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                     }
                     is PaymentResult.Failed -> {
                         // Payment failed! You can show an error or log it.
