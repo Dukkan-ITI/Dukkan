@@ -26,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.dukkan.chatbot.R
 
 @Composable
 fun ChatInputBar(
@@ -48,48 +50,35 @@ fun ChatInputBar(
             value = text,
             onValueChange = { text = it },
             modifier = Modifier.weight(1f),
-            placeholder = { Text("Ask about products...") },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.ask_about_products),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             shape = RoundedCornerShape(24.dp),
             maxLines = 3
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Crossfade(targetState = text.isBlank(), label = "SendOrMic") { isBlank ->
-            if (isBlank) {
-                IconButton(
-                    onClick = { /* Trigger voice input */ },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(24.dp))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Mic,
-                        contentDescription = "Voice Input",
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
-                }
-            } else {
-                IconButton(
-                    onClick = {
-                        onSend(text)
-                        text = ""
-                    },
-                    enabled = !isLoading,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(
-                            if (isLoading) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primary, 
-                            RoundedCornerShape(24.dp)
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Send,
-                        contentDescription = "Send",
-                        tint = if (isLoading) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
+        IconButton(
+            onClick = {
+                onSend(text)
+                text = ""
+            },
+            enabled = text.isNotBlank() && !isLoading,
+            modifier = Modifier
+                .size(48.dp)
+                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
+        ) {
+            Icon(
+                imageVector = Icons.Default.Send,
+                contentDescription = stringResource(id = R.string.send),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

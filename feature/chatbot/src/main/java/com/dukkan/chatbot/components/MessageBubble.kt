@@ -31,49 +31,36 @@ fun MessageBubble(message: ChatMessage) {
     val backgroundColor = if (isUser) {
         MaterialTheme.colorScheme.primary
     } else {
-        MaterialTheme.colorScheme.surfaceVariant
+        MaterialTheme.colorScheme.outline
     }
     val textColor = if (isUser) {
         MaterialTheme.colorScheme.onPrimary
     } else {
-        MaterialTheme.colorScheme.onSurface // High contrast color
+        MaterialTheme.colorScheme.inverseOnSurface
     }
 
     Box(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
         contentAlignment = alignment
     ) {
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
-        ) {
-            if (!isUser) {
-                BotAvatar()
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-
-            Text(
-                text = message.text,
-                color = textColor,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomStart = if (isUser) 16.dp else 4.dp,
-                            bottomEnd = if (isUser) 4.dp else 16.dp
-                        )
+        Text(
+            text = message.text,
+            color = textColor,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = if (message.isFromUser) 16.dp else 4.dp,
+                        bottomEnd = if (message.isFromUser) 4.dp else 16.dp
                     )
+                )
                     .padding(horizontal = 16.dp, vertical = 10.dp)
             )
         }
     }
-}
 
 @Composable
 fun BotAvatar() {

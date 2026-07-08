@@ -24,6 +24,7 @@ import com.dukkan.favorites.uistate.FavoritesUiState
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
 import com.dukkan.design_system.components.AuthRequiredPlaceholder
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.design_system.components.ChatFab
 import com.dukkan.domain.model.FavoriteProduct
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun FavoritesView(
     onSignInClick: () -> Unit,
     onProductClick: (String) -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
     viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -46,23 +48,32 @@ fun FavoritesView(
         return
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-    ) {
-        Spacer(Modifier.height(24.dp))
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(Modifier.height(24.dp))
 
-        when (val state = uiState) {
-            is FavoritesUiState.Loading -> CircularProgressIndicator()
-            is FavoritesUiState.Empty   -> EmptyContent()
-            is FavoritesUiState.Success -> FavoritesContent(
-                favorites = state.favorites,
-                onUnfavClick = { viewModel.showRemoveDialog(it) },
-                onProductClick = onProductClick
-            )
+            when (val state = uiState) {
+                is FavoritesUiState.Loading -> CircularProgressIndicator()
+                is FavoritesUiState.Empty -> EmptyContent()
+                is FavoritesUiState.Success -> FavoritesContent(
+                    favorites = state.favorites,
+                    onUnfavClick = { viewModel.showRemoveDialog(it) },
+                    onProductClick = onProductClick
+                )
+            }
         }
     }
 

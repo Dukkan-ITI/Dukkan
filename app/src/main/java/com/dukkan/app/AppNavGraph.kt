@@ -98,6 +98,9 @@ fun AppNavGraph(
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToProductDetails = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
                 }
             )
         }
@@ -111,6 +114,9 @@ fun AppNavGraph(
                 },
                 onProductClick = { productId ->
                     navController.navigate(Screen.ProductDetail(productId = productId))
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
                 }
             )
         }
@@ -135,6 +141,9 @@ fun AppNavGraph(
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
                     }
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
                 }
             )
         }
@@ -186,6 +195,9 @@ fun AppNavGraph(
                 },
                 onNavigateToSavedAddresses = {
                     navController.navigate(Screen.SavedAddresses)
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
                 }
             )
         }

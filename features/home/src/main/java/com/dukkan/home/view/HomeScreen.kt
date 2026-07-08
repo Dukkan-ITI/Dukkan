@@ -1,6 +1,5 @@
 package com.dukkan.home.view
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,14 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,23 +21,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
+import com.dukkan.design_system.components.ChatFab
+import com.dukkan.design_system.components.FloatingBottomBarHeight
 import com.dukkan.design_system.components.FloatingBottomBarMargin
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
-
 import com.dukkan.home.components.HomeBrandsSection
-
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uistate.HomeUiState
-import com.dukkan.home.R
 import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
@@ -109,10 +102,8 @@ fun HomeScreenContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            com.dukkan.home.components.AiBotFab(
-                onClick = onNavigateToChat,
-                modifier = Modifier.padding(bottom = bottomBarSpace())
-            )
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -122,7 +113,7 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = bottomBarSpace())
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarHeight)
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {

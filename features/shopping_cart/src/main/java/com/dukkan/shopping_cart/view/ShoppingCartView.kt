@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dukkan.design_system.components.ChatFab
 import com.dukkan.design_system.components.AuthRequiredPlaceholder
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.shopping_cart.R
@@ -41,10 +41,13 @@ import com.dukkan.shopping_cart.components.RemoveItemDialog
 import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
+import androidx.compose.material3.Scaffold
+import com.dukkan.design_system.components.bottomBarSpace
 
 @Composable
 fun ShoppingCartView(
     onSignInClick: () -> Unit,
+    onNavigateToChat: () -> Unit = {},
     viewModel: ShoppingCartViewModel = hiltViewModel(),
     onStartShoppingClick: () -> Unit = {},
     onCheckoutClick: () -> Unit = {}
@@ -68,6 +71,7 @@ fun ShoppingCartView(
         state = state,
         onStartShoppingClick = onStartShoppingClick,
         onCheckoutClick = onCheckoutClick,
+        onNavigateToChat = onNavigateToChat,
         onQuantityChanged = viewModel::updateQuantity,
         onRemoveClick = { viewModel.showRemoveDialog(it) },
         onPromoCodeChange = viewModel::onPromoCodeChange,
@@ -83,6 +87,7 @@ private fun ShoppingCartContent(
     state: ShoppingCartState,
     onStartShoppingClick: () -> Unit,
     onCheckoutClick: () -> Unit,
+    onNavigateToChat: () -> Unit,
     onQuantityChanged: (CartLine, Int) -> Unit,
     onRemoveClick: (CartLine) -> Unit,
     onPromoCodeChange: (String) -> Unit,
@@ -91,13 +96,18 @@ private fun ShoppingCartContent(
     onDismissRemoveDialog: () -> Unit,
     onConfirmRemoveItem: () -> Unit
 ) {
-    Surface(
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
                 .statusBarsPadding()
         ) {
             Column(

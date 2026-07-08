@@ -1,21 +1,21 @@
 package com.dukkan.data.repository
+
+import com.dukkan.ai_agent.orchestrator.AiAgentOrchestrator
+import com.dukkan.data.ai.handler.ChatbotTask
+import com.dukkan.data.ai.handler.ChatbotTaskInput
 import com.dukkan.domain.repository.ChatbotRepository
 import javax.inject.Inject
 
 class ChatbotRepositoryImpl @Inject constructor(
-    // Inject your API service here (e.g., ChatApiService)
+    private val orchestrator: AiAgentOrchestrator
 ) : ChatbotRepository {
 
-    override suspend fun sendMessage(query: String): Result<String> {
-        return try {
-            // TODO: Replace with actual API call
-            // val response = chatApiService.getReply(query)
-            
-            // Mocking a network delay and response
-            kotlinx.coroutines.delay(1000)
-            Result.success("I am your Dukkan assistant! How can I help you find products today?")
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun sendMessage(query: String, sessionId: String): Result<String> {
+        if (query.isBlank()) return Result.success("")
+
+        return orchestrator.run(
+            ChatbotTask::class.java,
+            ChatbotTaskInput(sessionId = sessionId, message = query)
+        ).map { it.reply }
     }
 }
