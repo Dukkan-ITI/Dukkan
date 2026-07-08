@@ -5,6 +5,9 @@ query GetCollections($first: Int!) {
                 id
                 title
                 handle
+                image {
+                    url
+                }
             }
         }
     }

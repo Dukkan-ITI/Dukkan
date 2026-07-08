@@ -184,14 +184,21 @@ class CartRepositoryImpl @Inject constructor(
     override suspend fun syncCartOnLogin(userId: String) {
         cachedCart = null
         try {
-            localDataSource.deleteCartId()
-
+            val localCartId = localDataSource.getCartId()
             val remoteCartId = firestoreDataSource.getCartId(userId)
-            if (remoteCartId != null) {
+
+            if (remoteCartId != null && localCartId != null && remoteCartId != localCartId) {
+
+                localDataSource.saveCartId(remoteCartId)
+                Log.d(TAG, "Cart synced from Firestore (overwrote local guest cart) for user: $userId")
+            } else if (remoteCartId != null) {
                 localDataSource.saveCartId(remoteCartId)
                 Log.d(TAG, "Cart synced from Firestore for user: $userId")
+            } else if (localCartId != null) {
+                firestoreDataSource.saveCartId(localCartId, userId)
+                Log.d(TAG, "Local cart uploaded to Firestore for new user: $userId")
             } else {
-                Log.d(TAG, "No existing cart found in Firestore for user: $userId")
+                Log.d(TAG, "No local or remote cart found for user: $userId")
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to sync cart on login", e)

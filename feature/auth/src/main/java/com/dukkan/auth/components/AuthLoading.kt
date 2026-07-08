@@ -1,7 +1,10 @@
 package com.dukkan.auth.components
 
+import com.dukkan.auth.R
+
 
 import androidx.compose.animation.core.EaseInOut
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -79,7 +82,7 @@ fun AuthLoadingScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = "j",
+                    text = stringResource(R.string.auth_loading_logo),
                     color = Color.White,
                     fontSize = 34.sp,
                     fontWeight = FontWeight.ExtraBold,

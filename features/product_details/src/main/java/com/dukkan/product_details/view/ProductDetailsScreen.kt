@@ -72,7 +72,6 @@ fun ProductDetailsScreen(
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                ProductDetailsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
                 is ProductDetailsEvent.ShareProduct -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -214,7 +213,7 @@ private fun LoadedProductDetails(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Compare with another product",
+                            text = stringResource(R.string.compare_another_product),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                         )
