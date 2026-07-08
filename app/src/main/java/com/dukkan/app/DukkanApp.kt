@@ -12,6 +12,20 @@ class DukkanApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        
+        com.google.firebase.FirebaseApp.initializeApp(this)
+        val firebaseAppCheck = com.google.firebase.appcheck.FirebaseAppCheck.getInstance()
+        
+        if (BuildConfig.DEBUG) {
+            firebaseAppCheck.installAppCheckProviderFactory(
+                com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory.getInstance()
+            )
+        } else {
+            firebaseAppCheck.installAppCheckProviderFactory(
+                com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory.getInstance()
+            )
+        }
+        
         setupPaymob()
     }
 
