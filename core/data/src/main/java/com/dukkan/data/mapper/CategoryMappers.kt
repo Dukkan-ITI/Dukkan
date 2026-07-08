@@ -7,6 +7,7 @@ fun GetCollectionsQuery.Node.toDomainCategory(): Category {
     return Category(
         id = this.id,
         name = this.title,
-        handle = this.handle
+        handle = this.handle,
+        urlImage = this.image?.url?.toString()
     )
 }

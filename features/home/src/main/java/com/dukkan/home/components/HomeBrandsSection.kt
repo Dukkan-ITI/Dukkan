@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dukkan.home.R
-import com.dukkan.design_system.components.FilterChip
 import com.dukkan.domain.model.Brand
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -55,9 +54,9 @@ fun HomeBrandsSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(brands.take(10)) { brand ->
-                FilterChip(
+                CircularHomeItem(
+                    imageUrl = brand.urlImage,
                     label = brand.name,
-                    isSelected = false,
                     onClick = { onBrandClick(brand) }
                 )
             }
