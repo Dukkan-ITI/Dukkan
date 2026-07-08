@@ -1,5 +1,6 @@
 package com.dukkan.brands.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -9,46 +10,58 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.design_system.components.FilterChip
+import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
 import com.dukkan.brands.R
 import com.dukkan.brands.viewModel.BrandsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BrandsScreenContent(
     brands: List<Brand>,
     onBackClick: () -> Unit,
     onBrandClick: (Brand) -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.brands)) },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back)
-                        )
-                    }
-                }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.back),
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = stringResource(R.string.brands),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary
             )
         }
-    ) { paddingValues ->
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = paddingValues.calculateTopPadding() + 16.dp,
-                bottom = paddingValues.calculateBottomPadding() + 16.dp
-            ),
+            contentPadding = PaddingValues(bottom = bottomBarSpace()),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize()
