@@ -19,12 +19,12 @@ fun MessageBubble(message: ChatMessage) {
     val backgroundColor = if (message.isFromUser) {
         MaterialTheme.colorScheme.primary
     } else {
-        MaterialTheme.colorScheme.surfaceVariant
+        MaterialTheme.colorScheme.outline
     }
     val textColor = if (message.isFromUser) {
         MaterialTheme.colorScheme.onPrimary
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        MaterialTheme.colorScheme.inverseOnSurface
     }
 
     Box(
@@ -34,6 +34,7 @@ fun MessageBubble(message: ChatMessage) {
         Text(
             text = message.text,
             color = textColor,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
                 .background(
                     color = backgroundColor,

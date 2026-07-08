@@ -24,7 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.dukkan.chatbot.R
 
 @Composable
 fun ChatInputBar(
@@ -37,8 +39,8 @@ fun ChatInputBar(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding() // Prevents overlapping with the system navigation gesture bar
-            .imePadding()            // Smoothly shifts the entire bar upward when the soft keyboard appears
+            .navigationBarsPadding()
+            .imePadding()
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -46,7 +48,14 @@ fun ChatInputBar(
             value = text,
             onValueChange = { text = it },
             modifier = Modifier.weight(1f),
-            placeholder = { Text("Ask about products...") },
+            textStyle = MaterialTheme.typography.bodyMedium,
+            placeholder = {
+                Text(
+                    text = stringResource(id = R.string.ask_about_products),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
             shape = RoundedCornerShape(24.dp),
             maxLines = 3
         )
@@ -65,7 +74,7 @@ fun ChatInputBar(
         ) {
             Icon(
                 imageVector = Icons.Default.Send,
-                contentDescription = "Send",
+                contentDescription = stringResource(id = R.string.send),
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }
