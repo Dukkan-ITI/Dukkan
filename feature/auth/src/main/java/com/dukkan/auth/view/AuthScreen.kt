@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.exceptions.GetCredentialCancellationException
@@ -254,6 +255,7 @@ private fun AuthFormContent(
                 onValueChange = { onAction(AuthAction.EmailChanged(it)) },
                 placeholder = stringResource(if (state.isLoginMode) R.string.auth_login_email_placeholder else R.string.auth_register_email_placeholder),
                 errorMessage = state.emailError,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
             )
 
