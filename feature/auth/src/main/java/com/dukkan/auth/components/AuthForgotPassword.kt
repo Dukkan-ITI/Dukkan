@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,12 +35,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dukkan.auth.R
 
 @Composable
@@ -57,63 +63,91 @@ fun AuthForgotPasswordScreen(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 28.dp),
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
-        Box(
+        Spacer(Modifier.height(50.dp))
+
+        val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+        val logoRes = if (isRtl) {
+            com.dukkan.design_system.R.drawable.logo_ar
+        } else {
+            com.dukkan.design_system.R.drawable.logo_en
+        }
+
+        Image(
+            painter = painterResource(id = logoRes),
+            contentDescription = null,
             modifier = Modifier
-                .size(88.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = .12f)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = if (isEmailSent) Icons.Filled.MarkEmailRead else Icons.Filled.LockReset,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(40.dp)
-            )
-        }
-
-        Spacer(Modifier.height(28.dp))
-
-        AnimatedContent(
-            targetState = isEmailSent,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300)) using SizeTransform(
-                    clip = false
-                )
-            },
-            label = "ForgotPasswordTitleAnimation"
-        ) { sent ->
-            Text(
-                text = stringResource(
-                    if (sent) R.string.auth_forgot_password_sent_title else R.string.auth_forgot_password_title
-                ),
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-        }
-
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            text = if (isEmailSent) {
-                stringResource(R.string.auth_forgot_password_sent_subtitle, email)
-            } else {
-                stringResource(R.string.auth_forgot_password_subtitle)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
+                .height(100.dp)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Fit
         )
+
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            AnimatedContent(
+                targetState = isEmailSent,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(300)) togetherWith fadeOut(animationSpec = tween(300)) using SizeTransform(
+                        clip = false
+                    )
+                },
+                label = "ForgotPasswordTitleAnimation"
+            ) { sent ->
+                Text(
+                    text = stringResource(
+                        if (sent) R.string.auth_forgot_password_sent_title else R.string.auth_forgot_password_title
+                    ),
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = 34.sp,
+                        lineHeight = 38.sp,
+                        letterSpacing = (-1).sp,
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Start
+                )
+            }
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = if (isEmailSent) {
+                    stringResource(R.string.auth_forgot_password_sent_subtitle, email)
+                } else {
+                    stringResource(R.string.auth_forgot_password_subtitle)
+                },
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Start,
+                lineHeight = 24.sp
+            )
+        }
 
         Spacer(Modifier.height(32.dp))
 
         AnimatedVisibility(visible = !isEmailSent) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(horizontalAlignment = Alignment.Start) {
+                Box(
+                    modifier = Modifier
+                        .size(88.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = .12f))
+                        .align(Alignment.CenterHorizontally),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = if (isEmailSent) Icons.Filled.MarkEmailRead else Icons.Filled.LockReset,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(28.dp))
+
                 AuthTextField(
                     value = email,
                     onValueChange = onEmailChanged,
@@ -156,7 +190,10 @@ fun AuthForgotPasswordScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        TextButton(onClick = onBackToLoginClick) {
+        TextButton(
+            onClick = onBackToLoginClick,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
             Text(
                 text = stringResource(R.string.auth_forgot_password_back_button),
                 style = MaterialTheme.typography.labelLarge,
