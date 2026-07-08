@@ -3,6 +3,8 @@ package com.dukkan.product_details.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,7 @@ fun ProductTopBar(
     isScrolled: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor by animateColorAsState(
@@ -44,11 +47,24 @@ fun ProductTopBar(
         label = "TopBarBackground"
     )
 
+    val borderColor by animateColorAsState(
+        targetValue = if (isScrolled) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
+        label = "TopBarBorder"
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp))
-            .background(backgroundColor)
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(bottomEnd = 24.dp, bottomStart = 24.dp)
+            )
+            .border(
+                width = 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(bottomEnd = 24.dp, bottomStart = 24.dp)
+            )
+            .clip(RoundedCornerShape(bottomEnd = 24.dp, bottomStart = 24.dp))
             .statusBarsPadding()
             .padding(horizontal = 20.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -58,12 +74,19 @@ fun ProductTopBar(
             onClick = onBackClick,
             isScrolled = isScrolled,
         ) { tint -> drawBackChevron(tint) }
-        CircleIconButton(
-            contentDescription = stringResource(R.string.product_details_favorite),
-            tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
-            onClick = onFavoriteClick,
-            isScrolled = isScrolled,
-        ) { tint -> drawHeart(tint, filled = isFavorite) }
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            CircleIconButton(
+                contentDescription = stringResource(R.string.product_details_share_product),
+                onClick = onShareClick,
+                isScrolled = isScrolled,
+            ) { tint -> drawShare(tint) }
+            CircleIconButton(
+                contentDescription = stringResource(R.string.product_details_favorite),
+                tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+                onClick = onFavoriteClick,
+                isScrolled = isScrolled,
+            ) { tint -> drawHeart(tint, filled = isFavorite) }
+        }
     }
 }
 
@@ -81,6 +104,7 @@ private fun CircleIconButton(
         modifier = modifier.size(44.dp),
         shape = CircleShape,
         color = if (isScrolled) Color.Transparent else MaterialTheme.colorScheme.surface,
+        border = if (isScrolled) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null
     ) {
         Box(contentAlignment = Alignment.Center) {
             Canvas(
@@ -111,6 +135,20 @@ private fun DrawScope.drawBackChevron(tint: Color) {
             join = StrokeJoin.Round,
         ),
     )
+}
+
+private fun DrawScope.drawShare(tint: Color) {
+    val start = androidx.compose.ui.geometry.Offset(size.width * 0.28f, size.height * 0.52f)
+    val top = androidx.compose.ui.geometry.Offset(size.width * 0.68f, size.height * 0.28f)
+    val bottom = androidx.compose.ui.geometry.Offset(size.width * 0.68f, size.height * 0.72f)
+    val strokeWidth = 1.8.dp.toPx()
+    val radius = 2.4.dp.toPx()
+
+    drawLine(color = tint, start = start, end = top, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+    drawLine(color = tint, start = start, end = bottom, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+    drawCircle(color = tint, radius = radius, center = start)
+    drawCircle(color = tint, radius = radius, center = top)
+    drawCircle(color = tint, radius = radius, center = bottom)
 }
 
 private fun DrawScope.drawHeart(tint: Color, filled: Boolean) {

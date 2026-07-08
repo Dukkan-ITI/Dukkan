@@ -170,10 +170,6 @@ private fun LoadedProductDetails(
             ) {
                 ProductImagePager(
                     images = images.mapNotNull { it },
-                    isFavorite = isFavorite,
-                    onBackClick = onBackClick,
-                    onFavoriteClick = { onFavoriteClick(product, isFavorite) },
-                    onShareClick = onShareClick,
                 )
 
                 Column(
@@ -231,6 +227,7 @@ private fun LoadedProductDetails(
             isScrolled = isScrolled,
             onBackClick = onBackClick,
             onFavoriteClick = { onFavoriteClick(product, isFavorite) },
+            onShareClick = onShareClick,
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
