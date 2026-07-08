@@ -172,16 +172,12 @@ internal class CheckoutViewModel @Inject constructor(
         when (event) {
             is CheckoutEvent.SelectAddress -> {
                 persistedAddress = event.address
-                _uiState.update { it.copy(selectedAddress = event.address, isEditingAddress = false) }
+                _uiState.update { it.copy(selectedAddress = event.address) }
             }
 
             is CheckoutEvent.SelectMethod -> {
                 persistedMethod = event.method
                 _uiState.update { it.copy(selectedMethod = event.method) }
-            }
-            
-            is CheckoutEvent.SetEditingAddress -> {
-                _uiState.update { it.copy(isEditingAddress = event.isEditing) }
             }
 
             CheckoutEvent.SubmitOrder             -> submitOrder()

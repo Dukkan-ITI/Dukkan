@@ -17,7 +17,6 @@ internal data class CheckoutUiState(
     val storeCart: StoreCart? = null,
     val addresses: List<Address> = emptyList(),
     val selectedAddress: CheckoutAddress? = null,
-    val isEditingAddress: Boolean = false,
     val selectedMethod: PaymentMethod? = null,
     val isCreatingIntention: Boolean = false,
     val paymobCredentials: PaymobCredentials? = null,

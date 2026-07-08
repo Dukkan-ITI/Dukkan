@@ -5,14 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -30,13 +31,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import com.dukkan.payment.R
+import com.dukkan.payment.presentation.components.PaymentAddressTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +57,8 @@ internal fun AddressEditSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
+        containerColor = MaterialTheme.colorScheme.background,
         dragHandle = {
             androidx.compose.material3.BottomSheetDefaults.DragHandle()
         }
@@ -90,53 +93,46 @@ internal fun AddressEditSheet(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedTextField(
+                PaymentAddressTextField(
                     value = firstName,
                     onValueChange = { firstName = it },
-                    label = { Text(stringResource(R.string.payment_address_first_name)) },
-                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                    shape = RoundedCornerShape(12.dp),
+                    placeholder = stringResource(R.string.payment_address_first_name),
                     modifier = Modifier.weight(1f),
-                    singleLine = true
+                    imeAction = ImeAction.Next
                 )
                 
-                OutlinedTextField(
+                PaymentAddressTextField(
                     value = lastName,
                     onValueChange = { lastName = it },
-                    label = { Text(stringResource(R.string.payment_address_last_name)) },
-                    shape = RoundedCornerShape(12.dp),
+                    placeholder = stringResource(R.string.payment_address_last_name),
                     modifier = Modifier.weight(1f),
-                    singleLine = true
+                    imeAction = ImeAction.Next
                 )
             }
             
-            OutlinedTextField(
+            PaymentAddressTextField(
                 value = address1,
                 onValueChange = { address1 = it },
-                label = { Text(stringResource(R.string.payment_address_street)) },
-                leadingIcon = { Icon(Icons.Default.Home, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                shape = RoundedCornerShape(12.dp),
+                placeholder = stringResource(R.string.payment_address_street),
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                imeAction = ImeAction.Next
             )
             
-            OutlinedTextField(
+            PaymentAddressTextField(
                 value = city,
                 onValueChange = { city = it },
-                label = { Text(stringResource(R.string.payment_address_city)) },
-                shape = RoundedCornerShape(12.dp),
+                placeholder = stringResource(R.string.payment_address_city),
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                imeAction = ImeAction.Next
             )
             
-            OutlinedTextField(
+            PaymentAddressTextField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = { Text(stringResource(R.string.payment_address_phone)) },
-                leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, modifier = Modifier.size(20.dp)) },
-                shape = RoundedCornerShape(12.dp),
+                placeholder = stringResource(R.string.payment_address_phone),
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done
             )
             
             Spacer(modifier = Modifier.height(16.dp))
