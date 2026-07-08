@@ -1,7 +1,10 @@
 package com.dukkan.auth.components
 
+import com.dukkan.auth.R
+
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -64,7 +67,7 @@ fun AuthPrimaryButton(
 private fun AuthPrimaryButtonEnabledPreview() {
     AppTheme {
         AuthPrimaryButton(
-            text = "Welcome back",
+            text = stringResource(R.string.welcome_back),
             onClick = {},
             modifier = Modifier.padding(16.dp),
         )
@@ -76,7 +79,7 @@ private fun AuthPrimaryButtonEnabledPreview() {
 private fun AuthPrimaryButtonDisabledPreview() {
     AppTheme {
         AuthPrimaryButton(
-            text = "Welcome back",
+            text = stringResource(R.string.welcome_back),
             onClick = {},
             enabled = false,
             modifier = Modifier.padding(16.dp),

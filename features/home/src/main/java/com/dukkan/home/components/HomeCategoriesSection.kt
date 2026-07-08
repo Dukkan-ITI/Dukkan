@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dukkan.home.R
-import com.dukkan.design_system.components.FilterChip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
@@ -56,9 +55,9 @@ fun HomeCategoriesSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(categories.take(10)) { category ->
-                FilterChip(
+                CircularHomeItem(
+                    imageUrl = category.urlImage,
                     label = category.name,
-                    isSelected = false,
                     onClick = { onCategoryClick(category) }
                 )
             }

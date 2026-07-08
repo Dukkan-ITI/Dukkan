@@ -6,5 +6,6 @@ package com.dukkan.domain.model
  */
 data class Brand(
     val id: String,
-    val name: String
+    val name: String,
+    val urlImage: String? = null
 )

@@ -1,5 +1,6 @@
 package com.dukkan.product_details.view
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +60,7 @@ import com.dukkan.product_details.components.ProductImagePager
 import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
 import com.dukkan.product_details.components.WriteReviewBottomSheet
+import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
@@ -68,15 +71,28 @@ fun ProductDetailsScreen(
     onBackClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
+    onCompareClick: (String, String) -> Unit = { _, _ -> },
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                ProductDetailsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+                is ProductDetailsEvent.ShareProduct -> {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, event.url)
+                    }
+                    context.startActivity(
+                        Intent.createChooser(
+                            intent,
+                            context.getString(R.string.product_details_share_product)
+                        )
+                    )
+                }
             }
         }
     }
@@ -94,7 +110,9 @@ fun ProductDetailsScreen(
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
+        onCompareClick = onCompareClick,
         onAddToCartClick = viewModel::addToCart,
+        onShareClick = viewModel::onShareClick,
         onWriteReviewClick = viewModel::openReviewSheet,
         onDismissReviewSheet = viewModel::dismissReviewSheet,
         onSubmitReview = viewModel::submitReview,
@@ -108,7 +126,9 @@ private fun ProductDetailsContent(
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
+    onCompareClick: (String, String) -> Unit,
     onAddToCartClick: (String) -> Unit,
+    onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
@@ -140,6 +160,21 @@ private fun ProductDetailsContent(
                 onSubmitReview = onSubmitReview,
             )
         }
+    when {
+        state.isLoading -> LoadingScreen()
+        state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
+        state.product != null -> LoadedProductDetails(
+            product = state.product,
+            state = state,
+            onBackClick = onBackClick,
+            onFavoriteClick = onFavoriteClick,
+            onCompareClick = onCompareClick,
+            onAddToCartClick = onAddToCartClick,
+            onShareClick = onShareClick,
+            onWriteReviewClick = onWriteReviewClick,
+            onDismissReviewSheet = onDismissReviewSheet,
+            onSubmitReview = onSubmitReview,
+        )
     }
 }
 
@@ -150,7 +185,9 @@ private fun LoadedProductDetails(
     isOnline: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
+    onCompareClick: (String, String) -> Unit,
     onAddToCartClick: (String) -> Unit,
+    onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
@@ -160,6 +197,8 @@ private fun LoadedProductDetails(
 
     var selectedVariant by remember(product.id) { mutableStateOf(variants.firstOrNull()) }
     val isFavorite = state.favoriteIds.contains(product.id)
+    val scrollState = rememberScrollState()
+    val isScrolled = scrollState.value > 0
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -170,13 +209,10 @@ private fun LoadedProductDetails(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState),
             ) {
                 ProductImagePager(
                     images = images.mapNotNull { it },
-                    isFavorite = isFavorite,
-                    onBackClick = onBackClick,
-                    onFavoriteClick = { onFavoriteClick(product, isFavorite) },
                 )
 
                 Column(
@@ -221,6 +257,25 @@ private fun LoadedProductDetails(
                         ProductDetailsSection(description = description)
                     }
 
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = { onCompareClick(product.id, product.title) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                            contentDescription = "AI Compare",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.compare_another_product),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
                     // Reviews section
                     ReviewsSection(
                         reviews = product.reviews,
@@ -246,6 +301,15 @@ private fun LoadedProductDetails(
                     .navigationBarsPadding(),
             )
         }
+
+        ProductTopBar(
+            isFavorite = isFavorite,
+            isScrolled = isScrolled,
+            onBackClick = onBackClick,
+            onFavoriteClick = { onFavoriteClick(product, isFavorite) },
+            onShareClick = onShareClick,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
         // Cart added toast
         AnimatedVisibility(
@@ -304,7 +368,7 @@ private fun LoadedProductDetails(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Review submitted!",
+                    text = stringResource(R.string.product_details_review_submitted),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelLarge
                 )

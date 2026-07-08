@@ -37,5 +37,8 @@ fun List<Order>.toAiToolResponse(requestedOrderNumber: Int?): JsonObject = JsonO
 fun errorToolResult(message: String): JsonObject =
     JsonObject(mapOf("error" to JsonPrimitive(message)))
 
+fun successToolResult(message: String): JsonObject =
+    JsonObject(mapOf("success" to JsonPrimitive(message)))
+
 fun unknownToolResult(name: String): JsonObject =
     JsonObject(mapOf("error" to JsonPrimitive("Unknown tool requested: $name")))

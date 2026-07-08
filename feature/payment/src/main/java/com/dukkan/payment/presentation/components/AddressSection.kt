@@ -143,7 +143,7 @@ internal fun AddressSection(
                     )
                     androidx.compose.material3.TextButton(onClick = onEditClick) {
                         Text(
-                            text = "Add",
+                            text = stringResource(R.string.add_address),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                         )

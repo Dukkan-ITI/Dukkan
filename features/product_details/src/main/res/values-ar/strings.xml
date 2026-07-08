@@ -35,4 +35,8 @@
     <!-- machine-translated -->
     <string name="product_details_no_reviews_yet">لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!</string>
     <string name="offline_action_message">أنت غير متصل بالإنترنت. هذا الإجراء يتطلب اتصالاً بالإنترنت.</string>
+    <!-- machine-translated -->
+    <string name="product_details_share_product">مشاركة المنتج</string>
+    <!-- machine-translated -->
+    <string name="product_details_review_submitted">تم إرسال التقييم!</string>
 </resources>

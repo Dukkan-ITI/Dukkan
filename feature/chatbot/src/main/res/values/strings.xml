@@ -2,4 +2,7 @@
 <resources>
     <string name="ask_about_products">Ask about products...</string>
     <string name="send">Send</string>
+    <string name="chat_bubble_icon">D</string>
+    <string name="chatbot_ready">Dukkan AI is ready!\nAsk me anything.</string>
+    <string name="chatbot_error">Sorry, I couldn\'t process that request.</string>
 </resources>

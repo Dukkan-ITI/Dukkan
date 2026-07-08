@@ -6,4 +6,6 @@
     <string name="bottom_bar_favorites">المفضلة</string>
     <string name="bottom_bar_cart">السلة</string>
     <string name="bottom_bar_profile">الملف الشخصي</string>
+    <string name="payment_cash_order_placed">تم تأكيد الطلب! ستدفع نقداً عند الاستلام.</string>
+    <string name="payment_success_order_confirmed">تم الدفع بنجاح! تم تأكيد الطلب.</string>
 </resources>

@@ -32,11 +32,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface ProductDetailsEvent {
-    data object NavigateToFavoritesGuest : ProductDetailsEvent
+    data class ShareProduct(val url: String) : ProductDetailsEvent
 }
 
 @HiltViewModel
@@ -101,9 +103,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun toggleFavorite(product: Product, isCurrentlyFavorite: Boolean) {
         if (!_state.value.isLoggedIn) {
-            viewModelScope.launch {
-                _events.send(ProductDetailsEvent.NavigateToFavoritesGuest)
-            }
+            _state.update { it.copy(showGuestDialog = true) }
             return
         }
 
@@ -118,6 +118,16 @@ class ProductDetailsViewModel @Inject constructor(
             toggleFavoriteUseCase(favoriteProduct, isCurrentlyFavorite)
         }
     }
+
+    fun onShareClick() {
+        val product = _state.value.product ?: return
+        viewModelScope.launch {
+            _events.send(ProductDetailsEvent.ShareProduct(buildShareUrl(product)))
+        }
+    }
+
+    private fun buildShareUrl(product: Product): String =
+        "$PRODUCT_SHARE_BASE_URL/${product.id.toUrlPathSegment()}"
 
     fun addToCart(variantId: String) {
         if (!isOnline.value) {
@@ -214,5 +224,10 @@ class ProductDetailsViewModel @Inject constructor(
             delay(2000)
             _state.update { it.copy(showOfflineToast = false) }
         }
+    private fun String.toUrlPathSegment(): String =
+        URLEncoder.encode(this, StandardCharsets.UTF_8.toString()).replace("+", "%20")
+
+    private companion object {
+        const val PRODUCT_SHARE_BASE_URL = "https://dukkan-iti.github.io/Dukkan/products"
     }
 }

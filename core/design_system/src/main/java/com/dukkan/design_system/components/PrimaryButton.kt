@@ -1,6 +1,9 @@
 package com.dukkan.design_system.components
 
+import com.dukkan.design_system.R
+
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -54,5 +57,5 @@ fun PrimaryButton(
 @Preview
 @Composable
 private fun PrimaryButtonPreview() {
-    PrimaryButton(text = "Add To cart", onClick = {})
+    PrimaryButton(text = stringResource(R.string.add_to_cart_default), onClick = {})
 }
