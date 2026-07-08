@@ -45,7 +45,8 @@ import com.dukkan.domain.model.Product
 
 @Composable
 fun CategoryProductsScreen(
-    categoryHandle: String,
+    categoryId: String,
+    categoryName: String,
     viewModel: CategoryProductsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onProductClick: (Product) -> Unit = {},
@@ -61,8 +62,8 @@ fun CategoryProductsScreen(
         }
     }
 
-    LaunchedEffect(categoryHandle) {
-        viewModel.fetchProductsByHandle(categoryHandle)
+    LaunchedEffect(categoryId) {
+        viewModel.fetchProductsById(categoryId)
     }
 
     Column(
@@ -87,7 +88,7 @@ fun CategoryProductsScreen(
             }
             Spacer(Modifier.width(4.dp))
             Text(
-                text = categoryHandle.replaceFirstChar { it.uppercase() },
+                text = categoryName.replaceFirstChar { it.uppercase() },
                 fontSize = 26.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.primary

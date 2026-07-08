@@ -61,12 +61,12 @@ class CategoryProductsViewModel @Inject constructor(
         initialValue = CategoryProductsUiState.Loading
     )
 
-    fun fetchProductsByHandle(handle: String) {
+    fun fetchProductsById(categoryId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                _products.value = getProductsByCategoryUseCase(handle)
+                _products.value = getProductsByCategoryUseCase(categoryId)
                 _isLoading.value = false
             } catch (e: Exception) {
                 Log.e("CategoryProductsDebug", "Error loading products: ${e.message}", e)

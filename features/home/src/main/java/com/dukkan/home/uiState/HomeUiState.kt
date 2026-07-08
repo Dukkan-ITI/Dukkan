@@ -9,7 +9,7 @@ sealed interface HomeUiState {
     data class Success(
         val products: List<Product>,
         val favoriteIds: Set<String>,
-        val categories: List<String> = emptyList(),
+        val categories: List<com.dukkan.domain.model.Category.Category> = emptyList(),
         val brands: List<Brand> = emptyList(),
         ) : HomeUiState
     data class Error(val message: String) : HomeUiState
