@@ -31,4 +31,7 @@
     <string name="order_quantity_format">Qty: %1$d</string>
     <string name="offline_title">You\'re Offline</string>
     <string name="offline_message">You\'re viewing cached data. Any changes will sync automatically when you\'re back online.</string>
+    <string name="home_offline_message">You\'re viewing cached data. New content will be loaded automatically once you\'re back online.</string>
+    <string name="viewing_cached_data">Viewing cached data</string>
+    <string name="no_cache_available">No cached data found. You need to be online to load content for the first time.</string>
 </resources>

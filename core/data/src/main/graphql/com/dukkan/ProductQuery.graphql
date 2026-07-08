@@ -2,6 +2,7 @@ query ProductQuery($id: ID!, $country: CountryCode!, $language: LanguageCode!) @
     product(id: $id) {
         id
         title
+        vendor
         handle
         featuredImage {
             altText

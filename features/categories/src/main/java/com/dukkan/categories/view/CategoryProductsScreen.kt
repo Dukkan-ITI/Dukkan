@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,19 +30,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.dukkan.categories.R
 import com.dukkan.categories.uistate.CategoryProductsUiState
 import com.dukkan.categories.viewmodel.CategoryProductsEvent
 import com.dukkan.categories.viewmodel.CategoryProductsViewModel
+import com.dukkan.design_system.components.ErrorScreen
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Product
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun CategoryProductsScreen(
@@ -53,6 +61,7 @@ fun CategoryProductsScreen(
     onNavigateToFavorites: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -105,21 +114,57 @@ fun CategoryProductsScreen(
                 }
 
                 is CategoryProductsUiState.Error -> {
-                    Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                    if (!isOnline) {
+                        ErrorScreen(
+                            message = stringResource(DesignSystemR.string.offline_message),
+                            title = stringResource(DesignSystemR.string.offline_title),
+                            lottieRawRes = DesignSystemR.raw.no_internet
+                        )
+                    } else {
+                        Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                    }
                 }
 
                 is CategoryProductsUiState.Success -> {
                     if (state.products.isEmpty()) {
-                        Text(text = stringResource(id = R.string.no_products_found))
+                        if (!isOnline) {
+                            ErrorScreen(
+                                message = stringResource(DesignSystemR.string.offline_message),
+                                title = stringResource(DesignSystemR.string.offline_title),
+                                lottieRawRes = DesignSystemR.raw.no_internet
+                            )
+                        } else {
+                            Text(text = stringResource(id = R.string.no_products_found))
+                        }
                     } else {
-                        CategoryProductsGrid(
-                            products = state.products,
-                            favoriteIds = state.favoriteIds,
-                            onProductClick = onProductClick,
-                            onFavoriteClick = { product, isFav ->
-                                viewModel.onFavoriteClick(product, isFav)
-                            },
-                        )
+                        Column {
+                            if (!isOnline) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                        .background(MaterialTheme.colorScheme.errorContainer)
+                                        .padding(vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(DesignSystemR.string.viewing_cached_data),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            CategoryProductsGrid(
+                                products = state.products,
+                                favoriteIds = state.favoriteIds,
+                                onProductClick = onProductClick,
+                                onFavoriteClick = { product, isFav ->
+                                    viewModel.onFavoriteClick(product, isFav)
+                                },
+                            )
+                        }
                     }
                 }
             }

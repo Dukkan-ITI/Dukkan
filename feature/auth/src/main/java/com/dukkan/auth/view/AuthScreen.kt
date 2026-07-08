@@ -72,7 +72,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AuthScreen(
     onNavigateToHome: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.fillMaxSize(),
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()

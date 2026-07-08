@@ -36,4 +36,7 @@
     <string name="order_quantity_format">الكمية: %1$d</string>
     <string name="offline_title">أنت غير متصل</string>
     <string name="offline_message">أنت تشاهد البيانات المخزنة مؤقتًا. ستتم مزامنة أي تغييرات تلقائيًا عند عودة الاتصال.</string>
+    <string name="home_offline_message">أنت تشاهد البيانات المخزنة مؤقتًا. سيتم تحميل المحتوى الجديد تلقائيًا بمجرد عودة الاتصال.</string>
+    <string name="viewing_cached_data">يتم عرض بيانات مخزنة مؤقتاً</string>
+    <string name="no_cache_available">لم يتم العثور على بيانات مخزنة. يجب أن تكون متصلاً بالإنترنت لتحميل المحتوى للمرة الأولى.</string>
 </resources>

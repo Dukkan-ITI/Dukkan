@@ -9,6 +9,7 @@ import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.GetProductsByBrandUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,15 @@ class BrandProductsViewModel @Inject constructor(
     getFavorites: GetFavoritesUseCase,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     private val _isLoading = MutableStateFlow(true)

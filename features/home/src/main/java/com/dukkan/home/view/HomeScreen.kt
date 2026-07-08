@@ -1,5 +1,6 @@
 package com.dukkan.home.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,6 +58,7 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val firstName by viewModel.firstName.collectAsStateWithLifecycle()
+    val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -66,6 +71,7 @@ fun HomeScreen(
     HomeScreenContent(
         modifier = modifier,
         uiState = uiState,
+        isOnline = isOnline,
         firstName = firstName,
         onSeeAllClicked = onSeeAllClicked,
         onFavoriteClick = { product, isFavorite ->
@@ -86,6 +92,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     modifier: Modifier = Modifier,
     uiState: HomeUiState,
+    isOnline: Boolean = true,
     firstName: String? = null,
     onSeeAllClicked: () -> Unit,
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
@@ -106,86 +113,121 @@ fun HomeScreenContent(
                 modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
-        LazyVerticalGrid(
-            state = gridState,
-            columns = GridCells.Fixed(2),
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarHeight)
-        ) {
-            when (uiState) {
-                is HomeUiState.Loading -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        if (!isOnline && uiState !is HomeUiState.Success && uiState !is HomeUiState.Loading) {
+            com.dukkan.design_system.components.ErrorScreen(
+                title = stringResource(com.dukkan.design_system.R.string.offline_title),
+                message = stringResource(com.dukkan.design_system.R.string.no_cache_available),
+                lottieRawRes = com.dukkan.design_system.R.raw.no_internet,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            LazyVerticalGrid(
+                state = gridState,
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                contentPadding = PaddingValues(
+                    start = 22.dp,
+                    end = 22.dp,
+                    bottom = FloatingBottomBarHeight
+                )
+            ) {
+                when (uiState) {
+                    is HomeUiState.Loading -> {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                            }
                         }
                     }
-                }
 
-                is HomeUiState.Error -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(22.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = uiState.message,
-                                color = MaterialTheme.colorScheme.error
+                    is HomeUiState.Error -> {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(22.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = uiState.message,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
+                    }
+
+                    is HomeUiState.Success -> {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            HomeHeader(firstName = firstName, isOnline = isOnline)
+                        }
+
+                        if (!isOnline) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                        .background(MaterialTheme.colorScheme.errorContainer)
+                                        .padding(vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(com.dukkan.design_system.R.string.viewing_cached_data),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            CouponBannerSection(onShopClick = {})
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            HomeCategoriesSection(
+                                categories = uiState.categories,
+                                onSeeAllClick = onNavigateToCategories,
+                                onCategoryClick = onCategoryClick
                             )
                         }
-                    }
-                }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            HomeBrandsSection(
+                                brands = uiState.brands,
+                                onSeeAllClick = onNavigateToBrands,
+                                onBrandClick = onBrandClick
+                            )
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
 
-                is HomeUiState.Success -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeHeader(firstName = firstName)
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        CouponBannerSection(onShopClick = {})
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeCategoriesSection(
-                            categories = uiState.categories,
-                            onSeeAllClick = onNavigateToCategories,
-                            onCategoryClick = onCategoryClick
+                        homeProductSection(
+                            products = uiState.products,
+                            favoriteIds = uiState.favoriteIds,
+                            onSeeAllClick = onSeeAllClicked,
+                            onFavoriteClick = onFavoriteClick,
+                            onProductClick = onProductClick
                         )
                     }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        HomeBrandsSection(
-                            brands = uiState.brands,
-                            onSeeAllClick = onNavigateToBrands,
-                            onBrandClick = onBrandClick
-                        )
-                    }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    homeProductSection(
-                        products = uiState.products,
-                        favoriteIds = uiState.favoriteIds,
-                        onSeeAllClick = onSeeAllClicked,
-                        onFavoriteClick = onFavoriteClick,
-                        onProductClick = onProductClick
-                    )
                 }
             }
         }

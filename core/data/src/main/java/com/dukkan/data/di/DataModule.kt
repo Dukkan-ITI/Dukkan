@@ -18,6 +18,7 @@ import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.ShopifyTokenStoreImpl
+import com.dukkan.data.source.local.dao.HomeDao
 import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSourceImpl
 import com.dukkan.data.source.remote.data_source.auth.FirebaseStoreDataSourceImp
@@ -73,8 +74,9 @@ object DataModule {
     fun provideProductsRepository(
         productsDataSource: ProductsDataSource,
         settingsRepository: SettingsRepository,
+        homeDao: HomeDao,
     ): ProductsRepository =
-        ProductsRepositoryImpl(productsDataSource, settingsRepository)
+        ProductsRepositoryImpl(productsDataSource, settingsRepository, homeDao)
 
     @Singleton
     @Provides
@@ -146,8 +148,11 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
-        BrandsRepositoryImpl(productsDataSource)
+    fun provideBrandsRepository(
+        productsDataSource: ProductsDataSource,
+        homeDao: HomeDao,
+    ): BrandsRepository =
+        BrandsRepositoryImpl(productsDataSource, homeDao)
 
     @Singleton
     @Provides

@@ -4,12 +4,52 @@ import com.dukkan.CollectionProductsQuery
 import com.dukkan.GetProductsByVendorQuery
 import com.dukkan.ProductQuery
 import com.dukkan.ProductsQuery
+import com.dukkan.data.source.local.entity.HomeProductEntity
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.NetworkImage
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.model.ProductSummary
 import com.dukkan.domain.model.ProductVariant
 import com.dukkan.domain.model.Review
+import java.math.BigDecimal
+
+fun HomeProductEntity.toDomainModel(): Product {
+    val dummyReviews = List(reviewCount ?: 0) {
+        Review(id = "", authorName = "", rating = rating?.toInt() ?: 0, title = "", body = "", createdAt = "", approved = true)
+    }
+
+    return Product(
+        id = id,
+        title = title,
+        vendor = vendor,
+        featuredImage = imageUrl?.let { NetworkImage(url = it, blurredUrl = null, altText = null) },
+        minPrice = Money(amount = BigDecimal(priceAmount), currencyCode = currencyCode),
+        maxPrice = Money(amount = BigDecimal(priceAmount), currencyCode = currencyCode),
+        description = description,
+        productType = productType,
+        images = null,
+        variants = null,
+        reviews = dummyReviews,
+        averageRating = rating,
+    )
+}
+
+fun Product.toHomeEntity(): HomeProductEntity {
+    return HomeProductEntity(
+        id = id,
+        title = title,
+        vendor = vendor,
+        imageUrl = featuredImage?.url,
+        priceAmount = minPrice.amount.toPlainString(),
+        currencyCode = minPrice.currencyCode,
+        rating = averageRating,
+        reviewCount = reviews.size,
+        productType = productType,
+        description = description,
+        imagesJson = null,
+        variantsJson = null
+    )
+}
 
 fun ProductQuery.Product.toDomainModel(): Product {
     val reviews = metafields
@@ -35,6 +75,7 @@ fun ProductQuery.Product.toDomainModel(): Product {
     return Product(
         id            = id,
         title         = title,
+        vendor        = vendor,
         featuredImage = featuredImage?.toDomainModel(),
         minPrice      = priceRange.minVariantPrice.toDomainModel(),
         maxPrice      = priceRange.maxVariantPrice.toDomainModel(),
@@ -74,18 +115,17 @@ fun ProductQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currency
 fun ProductQuery.Price.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 fun ProductsQuery.Node.toDomainModel(): Product {
-        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
-            val metaobject = edge.node.onMetaobject
-            val ratingField = metaobject?.rating?.value as? String
-            ratingField?.toIntOrNull()
-        } }?.flatten() ?: emptyList()
-        
-        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
-        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+    val ratings = metafields?.flatMap { it?.references?.edges.orEmpty() }
+        ?.mapNotNull { it?.node?.onMetaobject?.rating?.value?.toIntOrNull() }
+        ?: emptyList()
+
+    val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+    val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
 
     return Product(
         id = id,
         title = title,
+        vendor = vendor,
         featuredImage = featuredImage?.toDomainModel(),
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
@@ -99,27 +139,25 @@ fun ProductsQuery.Node.toDomainModel(): Product {
 }
 
 fun ProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
-    if (url !is String) return null
-    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+    val urlStr = url as? String ?: return null
+    return NetworkImage(url = urlStr, blurredUrl = thumbhash, altText = null)
 }
 
 fun ProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
-
 fun ProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 fun CollectionProductsQuery.Node.toDomainModel(): Product {
-        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
-            val metaobject = edge.node.onMetaobject
-            val ratingField = metaobject?.rating?.value as? String
-            ratingField?.toIntOrNull()
-        } }?.flatten() ?: emptyList()
-        
-        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
-        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+    val ratings = metafields?.flatMap { it?.references?.edges.orEmpty() }
+        ?.mapNotNull { it?.node?.onMetaobject?.rating?.value?.toIntOrNull() }
+        ?: emptyList()
+
+    val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+    val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
 
     return Product(
         id = id,
         title = title,
+        vendor = vendor,
         featuredImage = featuredImage?.toDomainModel(),
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
@@ -133,17 +171,16 @@ fun CollectionProductsQuery.Node.toDomainModel(): Product {
 }
 
 fun CollectionProductsQuery.FeaturedImage.toDomainModel(): NetworkImage? {
-    if (url !is String) return null
-    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+    val urlStr = url as? String ?: return null
+    return NetworkImage(url = urlStr, blurredUrl = thumbhash, altText = null)
 }
 
 fun CollectionProductsQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
-
 fun CollectionProductsQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
 
 private fun networkImage(url: Any?, thumbhash: String?, altText: String?): NetworkImage {
-    require(url is String) { "Image URL is required" }
-    return NetworkImage(url = url, blurredUrl = thumbhash, altText = altText)
+    val urlStr = url as? String ?: throw IllegalArgumentException("Image URL is required")
+    return NetworkImage(url = urlStr, blurredUrl = thumbhash, altText = altText)
 }
 
 private fun money(amount: Any?, currencyCode: String): Money {
@@ -153,18 +190,17 @@ private fun money(amount: Any?, currencyCode: String): Money {
 }
 
 fun GetProductsByVendorQuery.Node.toDomainModel(): Product {
-        val ratings = metafields?.mapNotNull { it?.references?.edges?.mapNotNull { edge -> 
-            val metaobject = edge.node.onMetaobject
-            val ratingField = metaobject?.rating?.value as? String
-            ratingField?.toIntOrNull()
-        } }?.flatten() ?: emptyList()
-        
-        val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
-        val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
+    val ratings = metafields?.flatMap { it?.references?.edges.orEmpty() }
+        ?.mapNotNull { it?.node?.onMetaobject?.rating?.value?.toIntOrNull() }
+        ?: emptyList()
+
+    val averageRating = if (ratings.isEmpty()) null else ratings.average().toFloat()
+    val dummyReviews = ratings.map { Review(id = "", authorName = "", rating = it, title = "", body = "", createdAt = "", approved = true) }
 
     return Product(
         id = id,
         title = title,
+        vendor = vendor,
         featuredImage = featuredImage?.toDomainModel(),
         minPrice = priceRange.minVariantPrice.toDomainModel(),
         maxPrice = priceRange.maxVariantPrice.toDomainModel(),
@@ -178,10 +214,9 @@ fun GetProductsByVendorQuery.Node.toDomainModel(): Product {
 }
 
 fun GetProductsByVendorQuery.FeaturedImage.toDomainModel(): NetworkImage? {
-    if (url !is String) return null
-    return NetworkImage(url = url, blurredUrl = thumbhash, altText = null)
+    val urlStr = url as? String ?: return null
+    return NetworkImage(url = urlStr, blurredUrl = thumbhash, altText = null)
 }
 
 fun GetProductsByVendorQuery.MinVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)
-
 fun GetProductsByVendorQuery.MaxVariantPrice.toDomainModel(): Money = money(amount, currencyCode.rawValue)

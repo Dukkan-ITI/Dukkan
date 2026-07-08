@@ -21,6 +21,7 @@
     <string name="brands">العلامات التجارية</string>
     <string name="hey_there">مرحبًا</string>
     <string name="hey_name">مرحبًا %1$s 👋</string>
+    <string name="profile_picture">الصورة الشخصية</string>
     <string name="all_products">جميع المنتجات</string>
     <string name="no_products_found">لم يتم العثور على منتجات</string>
     <string name="error_loading_products">تعذر تحميل المنتجات. يرجى المحاولة مرة أخرى.</string>

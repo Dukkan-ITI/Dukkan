@@ -47,7 +47,6 @@ fun ErrorScreen(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
