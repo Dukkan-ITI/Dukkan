@@ -64,7 +64,8 @@ fun List<SearchProduct>.toAiToolResponse(totalCount: Int): JsonObject =
                             "productType" to JsonPrimitive(product.productType),
                             "priceAmount" to JsonPrimitive(product.price.amount),
                             "currencyCode" to JsonPrimitive(product.price.currencyCode),
-                            "availableForSale" to JsonPrimitive(product.availableForSale)
+                            "availableForSale" to JsonPrimitive(product.availableForSale),
+                            "variantId" to JsonPrimitive(product.variants.firstOrNull()?.id ?: "")
                         )
                     )
                 }

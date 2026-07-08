@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 @Singleton
 class FirebaseAiProvider @Inject constructor() : AiProvider {
     override val providerId: String = "gemini"
-    override val descriptor: ModelDescriptor = ModelDescriptor(providerId, "gemini-2.5-flash")
+    override val descriptor: ModelDescriptor = ModelDescriptor(providerId, "gemini-2.5-flash-lite")
 
     override suspend fun sendChat(request: AiChatRequest): AiChatResponse? {
         val result = generate(AiRequest(messages = request.messages, tools = request.tools))
@@ -44,7 +44,7 @@ class FirebaseAiProvider @Inject constructor() : AiProvider {
     override suspend fun generate(request: AiRequest): Result<AiResponse> = withContext(Dispatchers.IO) {
         try {
             val model = Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
-                modelName = "gemini-2.5-flash",
+                modelName = "gemini-2.5-flash-lite",
                 systemInstruction = request.systemInstruction?.let { com.google.firebase.ai.type.content { text(it) } },
                 tools = if (request.tools.isNotEmpty()) listOf(Tool.functionDeclarations(request.tools.map(::toFunctionDeclaration))) else emptyList()
             )
