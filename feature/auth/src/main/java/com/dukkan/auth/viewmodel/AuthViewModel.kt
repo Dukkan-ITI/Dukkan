@@ -126,31 +126,57 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Form())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
+    private val _showOfflineToast = MutableStateFlow(false)
+    val showOfflineToast: StateFlow<Boolean> = _showOfflineToast.asStateFlow()
+
     private val _events = Channel<AuthEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private var cooldownJob: Job? = null
 
-    fun onAction(action: AuthAction) = when (action) {
-        is AuthAction.FirstNameChanged -> onFirstNameChanged(action.firstName)
-        is AuthAction.LastNameChanged -> onLastNameChanged(action.lastName)
-        is AuthAction.EmailChanged -> onEmailChanged(action.email)
-        is AuthAction.PasswordChanged -> onPasswordChanged(action.password)
-        is AuthAction.ConfirmPasswordChanged -> onConfirmPasswordChanged(action.password)
-        AuthAction.TogglePasswordVisibility -> togglePasswordVisibility()
-        AuthAction.ToggleConfirmPasswordVisibility -> toggleConfirmPasswordVisibility()
-        AuthAction.ToggleMode -> toggleMode()
-        AuthAction.SubmitClicked -> submit()
-        AuthAction.GoogleClicked -> triggerGoogleSignIn()
-        is AuthAction.GoogleIdTokenReceived -> loginWithGoogle(action.idToken)
-        is AuthAction.GoogleSignInFailed -> onGoogleFailure(action.message)
-        AuthAction.ResendVerificationClicked -> resendVerificationEmail()
-        AuthAction.CheckVerificationClicked -> checkEmailVerified()
-        AuthAction.BackToLoginClicked -> backToLogin()
-        AuthAction.ForgotPasswordClicked -> openForgotPassword()
-        is AuthAction.ForgotPasswordEmailChanged -> onForgotPasswordEmailChanged(action.email)
-        AuthAction.SendResetLinkClicked -> sendResetLink()
-        AuthAction.BackToLoginFromForgotPasswordClicked -> backToLoginFromForgotPassword()
+    fun onAction(action: AuthAction) {
+        if (!isOnline.value && isAuthAttempt(action)) {
+            showOfflineToast()
+            return
+        }
+        when (action) {
+            is AuthAction.FirstNameChanged -> onFirstNameChanged(action.firstName)
+            is AuthAction.LastNameChanged -> onLastNameChanged(action.lastName)
+            is AuthAction.EmailChanged -> onEmailChanged(action.email)
+            is AuthAction.PasswordChanged -> onPasswordChanged(action.password)
+            is AuthAction.ConfirmPasswordChanged -> onConfirmPasswordChanged(action.password)
+            AuthAction.TogglePasswordVisibility -> togglePasswordVisibility()
+            AuthAction.ToggleConfirmPasswordVisibility -> toggleConfirmPasswordVisibility()
+            AuthAction.ToggleMode -> toggleMode()
+            AuthAction.SubmitClicked -> submit()
+            AuthAction.GoogleClicked -> triggerGoogleSignIn()
+            is AuthAction.GoogleIdTokenReceived -> loginWithGoogle(action.idToken)
+            is AuthAction.GoogleSignInFailed -> onGoogleFailure(action.message)
+            AuthAction.ResendVerificationClicked -> resendVerificationEmail()
+            AuthAction.CheckVerificationClicked -> checkEmailVerified()
+            AuthAction.BackToLoginClicked -> backToLogin()
+            AuthAction.ForgotPasswordClicked -> openForgotPassword()
+            is AuthAction.ForgotPasswordEmailChanged -> onForgotPasswordEmailChanged(action.email)
+            AuthAction.SendResetLinkClicked -> sendResetLink()
+            AuthAction.BackToLoginFromForgotPasswordClicked -> backToLoginFromForgotPassword()
+        }
+    }
+
+    private fun isAuthAttempt(action: AuthAction): Boolean = when (action) {
+        AuthAction.SubmitClicked,
+        AuthAction.GoogleClicked,
+        AuthAction.SendResetLinkClicked,
+        AuthAction.ResendVerificationClicked,
+        AuthAction.CheckVerificationClicked -> true
+        else -> false
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _showOfflineToast.value = true
+            delay(2000)
+            _showOfflineToast.value = false
+        }
     }
 
     private fun onFirstNameChanged(firstName: String) {

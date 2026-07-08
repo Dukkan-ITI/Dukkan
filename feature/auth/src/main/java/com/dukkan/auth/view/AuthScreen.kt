@@ -10,10 +10,13 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,9 +27,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -53,6 +62,10 @@ import androidx.compose.ui.unit.sp
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.dukkan.auth.R
 import com.dukkan.auth.utils.GoogleSignInHelper
 
@@ -77,6 +90,7 @@ fun AuthScreen(
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val isOnline by authViewModel.isOnline.collectAsStateWithLifecycle()
+    val showOfflineToast by authViewModel.showOfflineToast.collectAsStateWithLifecycle()
     val currentState = authState
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -120,16 +134,7 @@ fun AuthScreen(
 
     val onAction: (AuthAction) -> Unit = remember(authViewModel) { authViewModel::onAction }
 
-    if (!isOnline) {
-        com.dukkan.design_system.components.ErrorScreen(
-            title = stringResource(com.dukkan.design_system.R.string.offline_title),
-            message = stringResource(R.string.auth_offline_message),
-            lottieRawRes = com.dukkan.design_system.R.raw.no_internet,
-            onRetry = onNavigateToHome,
-            retryText = stringResource(R.string.auth_guest_link_label),
-            modifier = modifier
-        )
-    } else {
+    Box(modifier = modifier) {
         when (val state = currentState) {
             is AuthUiState.Loading -> {
                 val labelRes = if (rememberedLoginMode) {
@@ -139,7 +144,7 @@ fun AuthScreen(
                 }
                 AuthLoadingScreen(
                     label = stringResource(labelRes),
-                    modifier = modifier
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -148,7 +153,8 @@ fun AuthScreen(
                     state = state,
                     onAction = onAction,
                     onNavigateToHome = onNavigateToHome,
-                    modifier = modifier
+                    isOnline = isOnline,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -162,7 +168,7 @@ fun AuthScreen(
                     onResendClick = { onAction(AuthAction.ResendVerificationClicked) },
                     onCheckClick = { onAction(AuthAction.CheckVerificationClicked) },
                     onBackToLoginClick = { onAction(AuthAction.BackToLoginClicked) },
-                    modifier = modifier
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -175,11 +181,44 @@ fun AuthScreen(
                     onEmailChanged = { onAction(AuthAction.ForgotPasswordEmailChanged(it)) },
                     onSendClick = { onAction(AuthAction.SendResetLinkClicked) },
                     onBackToLoginClick = { onAction(AuthAction.BackToLoginFromForgotPasswordClicked) },
-                    modifier = modifier
+                    isOnline = isOnline,
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
             is AuthUiState.Success -> Unit
+        }
+
+        // Offline toast
+        AnimatedVisibility(
+            visible = showOfflineToast,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 60.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(MaterialTheme.colorScheme.error, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WifiOff,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "You are offline",
+                    color = MaterialTheme.colorScheme.onError,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
     }
 }
@@ -189,6 +228,7 @@ private fun AuthFormContent(
     state: AuthUiState.Form,
     onAction: (AuthAction) -> Unit,
     onNavigateToHome: () -> Unit,
+    isOnline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -208,14 +248,34 @@ private fun AuthFormContent(
             com.dukkan.design_system.R.drawable.logo_en
         }
 
-        Image(
-            painter = painterResource(id = logoRes),
-            contentDescription = null,
+        Box(
             modifier = Modifier
-                .height(100.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Fit
-        )
+                .fillMaxWidth()
+                .padding(horizontal = 28.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = logoRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Fit
+            )
+
+            if (!isOnline) {
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.RawRes(com.dukkan.design_system.R.raw.no_internet)
+                )
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .align(Alignment.CenterEnd)
+                )
+            }
+        }
 
 
         AuthHeadline(
@@ -316,12 +376,15 @@ private fun AuthFormContent(
                 ) {
                     TextButton(
                         onClick = { onAction(AuthAction.ForgotPasswordClicked) },
-                        contentPadding = PaddingValues(top = 6.dp)
+                        contentPadding = PaddingValues(top = 6.dp),
+                        enabled = isOnline,
                     ) {
                         Text(
                             text = stringResource(R.string.auth_forgot_password_link),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.primary
+                            color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                                alpha = 0.5f
+                            )
                         )
                     }
                 }

@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.credential.manager.play.services)
     implementation(libs.googleid)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.lottie.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
