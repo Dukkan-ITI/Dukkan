@@ -72,6 +72,10 @@ class ProductComparisonTask @Inject constructor() :
                     "recommendationText" to ToolParameter(
                         ToolParameterType.String,
                         "A conversational recommendation text for the user."
+                    ),
+                    "overallWinner" to ToolParameter(
+                        ToolParameterType.Number,
+                        "The index of the winning product (1 or 2). Omit or set to null if there is no clear winner."
                     )
                 ),
                 required = listOf("features", "recommendationText")
@@ -99,6 +103,7 @@ class ProductComparisonTask @Inject constructor() :
                 Once you have enough context, you MUST call 'submit_comparison'.
                 - Your features MUST be a stringified JSON array of objects (e.g., '[{"featureName": "Style", "product1Value": "Slip-On", "product2Value": "High Top", "winner": 1}]') and will be rendered as a side-by-side comparison table.
                 - Your recommendationText will be shown below the table as the final verdict.
+                - Your overallWinner parameter MUST be an integer representing the winning product (1 or 2).
             """.trimIndent(),
             messages = history.toList(),
             tools = tools
@@ -135,6 +140,7 @@ class ProductComparisonTask @Inject constructor() :
                         toolCall.arguments["features"]?.jsonPrimitive?.content ?: "[]"
                     val recommendationText =
                         toolCall.arguments["recommendationText"]?.jsonPrimitive?.content
+                    val overallWinner = toolCall.arguments["overallWinner"]?.jsonPrimitive?.intOrNull
 
                     val parsedArray = Json.parseToJsonElement(featuresJsonStr).jsonArray
                     val features = parsedArray.map { element ->
@@ -147,7 +153,7 @@ class ProductComparisonTask @Inject constructor() :
                         )
                     }
                     sessions.remove(sessionId)
-                    Result.success(ProductComparisonResult.Comparison(features, recommendationText))
+                    Result.success(ProductComparisonResult.Comparison(features, recommendationText, overallWinner))
                 }
 
                 "ask_clarifying_question" -> {

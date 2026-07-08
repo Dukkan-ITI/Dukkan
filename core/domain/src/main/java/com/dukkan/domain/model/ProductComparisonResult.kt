@@ -3,7 +3,8 @@ package com.dukkan.domain.model
 sealed class ProductComparisonResult {
     data class Comparison(
         val features: List<ComparisonFeature>,
-        val recommendationText: String?
+        val recommendationText: String?,
+        val overallWinner: Int?
     ) : ProductComparisonResult()
 
     data class NeedsMoreInfo(

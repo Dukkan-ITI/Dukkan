@@ -39,6 +39,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.dukkan.domain.model.ComparisonFeature
 import com.dukkan.domain.model.ProductComparisonResult
 import com.dukkan.product_details.viewmodel.ProductComparisonViewModel
@@ -176,6 +183,28 @@ fun ProductComparisonScreen(
                             }
                         }
 
+                        // Product Images Row
+                        if (state.product1 != null && state.product2 != null) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                ProductImageWithWinnerBadge(
+                                    imageUrl = state.product1!!.images?.firstOrNull()?.url,
+                                    title = state.product1!!.title,
+                                    isWinner = comparison.overallWinner == 1,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                ProductImageWithWinnerBadge(
+                                    imageUrl = state.product2!!.images?.firstOrNull()?.url,
+                                    title = state.product2!!.title,
+                                    isWinner = comparison.overallWinner == 2,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
                         Text(
                             text = "Detailed Comparison",
                             style = MaterialTheme.typography.titleLarge,
@@ -259,5 +288,57 @@ fun ComparisonFeatureRow(feature: ComparisonFeature) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ProductImageWithWinnerBadge(
+    imageUrl: String?,
+    title: String,
+    isWinner: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = title,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color.White),
+                contentScale = ContentScale.Crop
+            )
+            
+            if (isWinner) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(Color(0xFFFFD700), CircleShape)
+                        .padding(4.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = "Winner",
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+        
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }

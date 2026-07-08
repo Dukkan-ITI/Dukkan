@@ -18,7 +18,9 @@ data class ProductComparisonState(
     val isLoading: Boolean = true,
     val result: ProductComparisonResult? = null,
     val error: String? = null,
-    val answerInput: String = ""
+    val answerInput: String = "",
+    val product1: com.dukkan.domain.model.Product? = null,
+    val product2: com.dukkan.domain.model.Product? = null
 )
 
 @HiltViewModel
@@ -54,6 +56,7 @@ class ProductComparisonViewModel @Inject constructor(
 
             val p1 = p1Result.getOrThrow()
             val p2 = p2Result.getOrThrow()
+            _state.update { it.copy(product1 = p1, product2 = p2) }
 
             productComparisonUseCase(p1, p2, currentSessionId, answer)
                 .onSuccess { result ->
