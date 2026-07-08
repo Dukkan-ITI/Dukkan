@@ -13,6 +13,7 @@ import com.dukkan.domain.usecase.product.GetProductsByCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface CategoryProductsEvent {
-    data object NavigateToFavoritesGuest : CategoryProductsEvent
+    // Add events if needed in the future
 }
 
 @HiltViewModel
@@ -39,6 +40,13 @@ class CategoryProductsViewModel @Inject constructor(
 
     private val _events = Channel<CategoryProductsEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
+    
+    private val _showGuestAuthDialog = MutableStateFlow(false)
+    val showGuestAuthDialog: StateFlow<Boolean> = _showGuestAuthDialog.asStateFlow()
+
+    fun dismissGuestAuthDialog() {
+        _showGuestAuthDialog.value = false
+    }
 
     val uiState: StateFlow<CategoryProductsUiState> = combine(
         _products,
@@ -80,7 +88,7 @@ class CategoryProductsViewModel @Inject constructor(
         viewModelScope.launch {
             val user = getCurrentUserUseCase()
             if (user == null) {
-                _events.send(CategoryProductsEvent.NavigateToFavoritesGuest)
+                _showGuestAuthDialog.value = true
                 return@launch
             }
 

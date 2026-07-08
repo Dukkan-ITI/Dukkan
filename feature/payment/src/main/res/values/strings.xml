@@ -58,4 +58,5 @@
     <string name="payment_retry">Retry</string>
     <string name="payment_cancel">Cancel</string>
 
+    <string name="add_address">Add</string>
 </resources>

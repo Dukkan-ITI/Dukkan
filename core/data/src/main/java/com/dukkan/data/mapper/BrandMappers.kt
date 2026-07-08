@@ -8,7 +8,8 @@ fun List<GetCollectionsQuery.Node>.toDomainBrands(): List<Brand> {
     return this.map { node ->
         Brand(
             id = node.id,
-            name = node.title
+            name = node.title,
+            urlImage = node.image?.url?.toString()
         )
     }
 }

@@ -1,6 +1,10 @@
 package com.dukkan.chatbot.components
 
+import com.dukkan.chatbot.R
+
 import androidx.compose.animation.core.*
+import androidx.compose.ui.res.stringResource
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -179,7 +183,7 @@ fun BotAvatar() {
             colors = listOf(primary, tertiary)
         )
         Text(
-            text = "D",
+            text = stringResource(R.string.chat_bubble_icon),
             style = TextStyle(
                 brush = textGradient,
                 fontSize = 18.sp,

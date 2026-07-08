@@ -1,5 +1,7 @@
 package com.dukkan.app
 
+import com.dukkan.app.R
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -93,6 +95,11 @@ fun AppNavGraph(
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chatbot)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -133,6 +140,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -295,6 +307,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -318,6 +335,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }

@@ -31,7 +31,6 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface ProductDetailsEvent {
-    data object NavigateToFavoritesGuest : ProductDetailsEvent
     data class ShareProduct(val url: String) : ProductDetailsEvent
 }
 
@@ -89,9 +88,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun toggleFavorite(product: Product, isCurrentlyFavorite: Boolean) {
         if (!_state.value.isLoggedIn) {
-            viewModelScope.launch {
-                _events.send(ProductDetailsEvent.NavigateToFavoritesGuest)
-            }
+            _state.update { it.copy(showGuestDialog = true) }
             return
         }
 

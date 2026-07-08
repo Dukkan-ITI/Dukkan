@@ -177,7 +177,7 @@ fun AddressFormSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Choose on map",
+                    text = stringResource(R.string.choose_on_map),
                     style = MaterialTheme.typography.labelLarge.copy(
                         fontSize = 15.sp,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
