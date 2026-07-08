@@ -230,6 +230,7 @@ fun AppNavGraph(
             val args = backStackEntry.toRoute<Screen.CategoryProducts>()
             CategoryProductsScreen(
                 categoryHandle = args.categoryHandle,
+                onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
@@ -252,6 +253,7 @@ fun AppNavGraph(
             val args = backStackEntry.toRoute<Screen.BrandProducts>()
             BrandProductsScreen(
                 vendor = args.vendor,
+                onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
