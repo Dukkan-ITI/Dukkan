@@ -19,10 +19,10 @@ fun Order.toOrderUi(): OrderUi = OrderUi(
 
 private fun OrderDisplayStatus.toOrderStatus(): OrderStatus = when (this) {
     OrderDisplayStatus.DELIVERED -> OrderStatus.DELIVERED
-    OrderDisplayStatus.IN_TRANSIT,
-    OrderDisplayStatus.PROCESSING,
-    OrderDisplayStatus.PENDING,
-    OrderDisplayStatus.CANCELLED -> OrderStatus.IN_TRANSIT
+    OrderDisplayStatus.IN_TRANSIT -> OrderStatus.IN_TRANSIT
+    OrderDisplayStatus.PROCESSING -> OrderStatus.PROCESSING
+    OrderDisplayStatus.PENDING -> OrderStatus.PENDING
+    OrderDisplayStatus.CANCELLED -> OrderStatus.CANCELLED
 }
 
 private fun formatOrderDate(processedAt: String): String {
