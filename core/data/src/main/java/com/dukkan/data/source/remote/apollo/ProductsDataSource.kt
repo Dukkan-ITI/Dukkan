@@ -20,8 +20,8 @@ interface ProductsDataSource {
 
     suspend fun fetchCategories(): List<GetCollectionsQuery.Node>
 
-    suspend fun getProductsByCollectionHandle(
-        handle: String,
+    suspend fun getProductsByCollectionId(
+        categoryId: String,
         first: Int,
         after: String? = null,
         country: String,

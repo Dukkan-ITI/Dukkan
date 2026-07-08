@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
 
     private data class HomeContent(
         val products: List<Product>,
-        val categories: List<String>,
+        val categories: List<com.dukkan.domain.model.Category.Category>,
         val brands: List<Brand>,
     )
 
@@ -142,7 +142,7 @@ class HomeViewModel @Inject constructor(
                 val result = getProductsUseCase(limit = 10)
 
                 val products = result
-                val categories = getCategoriesUseCase().first().map { it.name }
+                val categories = getCategoriesUseCase().first()
                 val brands = getBrandsUseCase().firstOrNull() ?: emptyList()
 
                 _homeContent.value = HomeContent(products, categories, brands)

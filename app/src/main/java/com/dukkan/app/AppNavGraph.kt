@@ -78,7 +78,7 @@ fun AppNavGraph(
                 },
                 onNavigateToCategories = { navController.navigate(Screen.Categories) },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category))
+                    navController.navigate(Screen.CategoryProducts(categoryId = category.id, categoryName = category.name))
                 },
                 onNavigateToBrands = { navController.navigate(Screen.Brands) },
                 onBrandClick = { brand ->
@@ -221,7 +221,7 @@ fun AppNavGraph(
             CategoriesScreen(
                 onBackClick = { navController.popBackStack() },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category.handle))
+                    navController.navigate(Screen.CategoryProducts(categoryId = category.id, categoryName = category.name))
                 }
             )
         }
@@ -229,7 +229,8 @@ fun AppNavGraph(
         composable<Screen.CategoryProducts> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.CategoryProducts>()
             CategoryProductsScreen(
-                categoryHandle = args.categoryHandle,
+                categoryId = args.categoryId,
+                categoryName = args.categoryName,
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
