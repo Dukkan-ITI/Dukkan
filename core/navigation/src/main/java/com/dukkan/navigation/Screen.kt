@@ -43,7 +43,7 @@ sealed class Screen {
     object Categories
 
     @Serializable
-    data class CategoryProducts(val categoryHandle: String)
+    data class CategoryProducts(val categoryId: String, val categoryName: String)
 
     @Serializable
     object Brands
@@ -57,9 +57,6 @@ sealed class Screen {
 
     @Serializable
     object Payment
-
-    @Serializable
-    data class GuestPlaceholder(val title: String)
 
     @Serializable
     object Chatbot

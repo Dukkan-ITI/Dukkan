@@ -44,7 +44,7 @@ fun HomeScreen(
     onNavigateToProductDetails: (productId: String) -> Unit = {},
     onSeeAllClicked: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
+    onCategoryClick: (com.dukkan.domain.model.Category.Category) -> Unit = {},
     onNavigateToBrands: () -> Unit = {},
     onBrandClick: (Brand) -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
@@ -89,7 +89,7 @@ fun HomeScreenContent(
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
+    onCategoryClick: (com.dukkan.domain.model.Category.Category) -> Unit = {},
     onNavigateToBrands: () -> Unit = {},
     onBrandClick: (Brand) -> Unit = {},
     onNavigateToChat: () -> Unit = {},
@@ -110,7 +110,7 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarMargin)
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = bottomBarSpace())
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {

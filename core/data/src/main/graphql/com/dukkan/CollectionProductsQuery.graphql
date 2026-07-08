@@ -1,11 +1,11 @@
 query CollectionProducts(
-    $handle: String!
+    $id: ID!
     $first: Int!
     $after: String
     $country: CountryCode!
     $language: LanguageCode!
 ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
+    collection(id: $id) {
         id
         title
         products(first: $first, after: $after) {

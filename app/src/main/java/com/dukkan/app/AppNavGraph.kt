@@ -28,7 +28,6 @@ import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
 import com.dukkan.product_details.view.ProductDetailsScreen
-import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun AppNavGraph(
@@ -79,7 +78,7 @@ fun AppNavGraph(
                 },
                 onNavigateToCategories = { navController.navigate(Screen.Categories) },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category))
+                    navController.navigate(Screen.CategoryProducts(categoryId = category.id, categoryName = category.name))
                 },
                 onNavigateToBrands = { navController.navigate(Screen.Brands) },
                 onBrandClick = { brand ->
@@ -127,6 +126,9 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -209,20 +211,13 @@ fun AppNavGraph(
         composable<Screen.ProductDetail> {
             ProductDetailsScreen(
                 onBackClick = { navController.popBackStack() },
-                onNavigateToGuestPlaceholder = { title ->
-                    navController.navigate(Screen.GuestPlaceholder(title = title))
-                }
-            )
-        }
-
-        composable<Screen.GuestPlaceholder> { backStackEntry ->
-            val args = backStackEntry.toRoute<Screen.GuestPlaceholder>()
-            GuestPlaceholderScreen(
-                title = args.title,
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
                     }
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -238,7 +233,7 @@ fun AppNavGraph(
             CategoriesScreen(
                 onBackClick = { navController.popBackStack() },
                 onCategoryClick = { category ->
-                    navController.navigate(Screen.CategoryProducts(category.handle))
+                    navController.navigate(Screen.CategoryProducts(categoryId = category.id, categoryName = category.name))
                 }
             )
         }
@@ -246,9 +241,14 @@ fun AppNavGraph(
         composable<Screen.CategoryProducts> { backStackEntry ->
             val args = backStackEntry.toRoute<Screen.CategoryProducts>()
             CategoryProductsScreen(
-                categoryHandle = args.categoryHandle,
+                categoryId = args.categoryId,
+                categoryName = args.categoryName,
+                onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -266,8 +266,12 @@ fun AppNavGraph(
             val args = backStackEntry.toRoute<Screen.BrandProducts>()
             BrandProductsScreen(
                 vendor = args.vendor,
+                onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }

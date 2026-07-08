@@ -6,7 +6,7 @@
     <string name="order_history_empty_subtitle">Your completed orders will appear here.</string>
     <string name="order_status_delivered">Delivered</string>
     <string name="order_status_in_transit">In transit</string>
-    <string name="order_status_processing">Processing</string>
+    <string name="order_status_processing">Preparing</string>
     <string name="order_status_cancelled">Cancelled</string>
     <string name="order_status_pending">Pending</string>
     <string name="order_quantity_format">Qty: %1$d</string>

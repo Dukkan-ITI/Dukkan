@@ -213,14 +213,14 @@ class ProductsRepositoryImplTest {
     }
 
     @Test
-    fun `getProductsByCollectionHandle forwards settings and returns data source result`() = runTest {
+    fun `getProductsByCollectionId forwards settings and returns data source result`() = runTest {
         val expected = listOf(
             mockk<Product>(relaxed = true),
             mockk<Product>(relaxed = true),
         )
         coEvery {
-            productsDataSource.getProductsByCollectionHandle(
-                handle = "summer",
+            productsDataSource.getProductsByCollectionId(
+                categoryId = "summer",
                 first = 5,
                 after = "cursor-1",
                 country = "EG",
@@ -228,16 +228,16 @@ class ProductsRepositoryImplTest {
             )
         } returns expected
 
-        val result = repository.getProductsByCollectionHandle(
-            handle = "summer",
+        val result = repository.getProductsByCollectionId(
+            categoryId = "summer",
             limit = 5,
             after = "cursor-1",
         )
 
         assertEquals(expected, result)
         coVerify {
-            productsDataSource.getProductsByCollectionHandle(
-                handle = "summer",
+            productsDataSource.getProductsByCollectionId(
+                categoryId = "summer",
                 first = 5,
                 after = "cursor-1",
                 country = "EG",

@@ -28,6 +28,36 @@
     <string name="search_clear">مسح</string>
     <string name="search_failed">فشل البحث</string>
     <string name="search_load_more_failed">فشل تحميل المزيد</string>
+    <!-- machine-translated -->
+    <string name="search_ai_assistant_title">Dukkan AI</string>
+    <!-- machine-translated -->
+    <string name="search_ai_answer_placeholder">مثال: للجري، أحمر، أقل من 100 دولار...</string>
+    <!-- machine-translated -->
+    <string name="search_ai_send_answer">إرسال</string>
+    <!-- machine-translated -->
+    <string name="search_retry">إعادة المحاولة</string>
+    <!-- machine-translated -->
+    <string name="search_ai_fallback_message">لم أتمكن من إتمام هذا البحث الآن. سيتم عرض النتائج القياسية بدلاً من ذلك.</string>
+    <!-- machine-translated -->
+    <string name="search_ai_clarify_fallback">لم أتمكن من إتمام هذا البحث. هل يمكنك إعادة الصياغة أو تقديم مزيد من التفاصيل؟</string>
+    <!-- machine-translated -->
+    <string name="search_ai_still_searching">لا يزال البحث جارياً... يستغرق هذا وقتاً أطول قليلاً من المعتاد.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_rate_limited">تحتاج Dukkan AI إلى استراحة قصيرة — يرجى المحاولة مرة أخرى بعد قليل.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_timeout">يبدو أن خوادمنا بطيئة بعض الشيء الآن. حاول مرة أخرى!</string>
+    <!-- machine-translated -->
+    <string name="error_ai_configuration_missing">لم يتم تهيئة Dukkan AI بعد.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_unknown">حدث خطأ ما من جانبنا. يرجى المحاولة مرة أخرى.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_clarification_limit">أحتاج إلى مزيد من التفاصيل. يرجى تجربة بحث أكثر تحديداً.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_max_steps">استغرق البحث خطوات كثيرة جداً. يرجى تجربة طلب أكثر تحديداً.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_timeout_exceeded">استغرق البحث بالذكاء الاصطناعي وقتاً طويلاً. يرجى المحاولة مرة أخرى.</string>
+    <!-- machine-translated -->
+    <string name="error_ai_search_failed">فشل البحث بالذكاء الاصطناعي.</string>
     <string name="search_voice_not_understood">لم أفهم ذلك، يرجى المحاولة مرة أخرى</string>
     <string name="search_voice_input">البحث الصوتي</string>
     <string name="search_voice_listening">جارٍ الاستماع…</string>
