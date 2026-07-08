@@ -37,6 +37,8 @@ fun AppNavGraph(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val cashOrderPlacedMessage = context.getString(R.string.payment_cash_order_placed)
+    val successOrderConfirmedMessage = context.getString(R.string.payment_success_order_confirmed)
 
     NavHost(
         navController = navController,
@@ -158,13 +160,13 @@ fun AppNavGraph(
                         if (result.paymentMethod == "CASH") {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.payment_cash_order_placed),
+                                cashOrderPlacedMessage,
                                 Toast.LENGTH_LONG
                             ).show()
                         } else {
                             Toast.makeText(
                                 context,
-                                context.getString(R.string.payment_success_order_confirmed),
+                                successOrderConfirmedMessage,
                                 Toast.LENGTH_LONG
                             ).show()
                         }
