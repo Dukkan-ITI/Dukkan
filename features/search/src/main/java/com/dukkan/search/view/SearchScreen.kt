@@ -45,12 +45,14 @@ import com.dukkan.search.components.SearchEmptyState
 import com.dukkan.search.components.SearchLoadingState
 import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.viewmodel.SearchViewModel
+import com.dukkan.design_system.components.ChatFab
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
-    onNavigateToProductDetails: (productId: String) -> Unit = {}
+    onNavigateToProductDetails: (productId: String) -> Unit = {},
+    onNavigateToChat: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -87,6 +89,7 @@ fun SearchScreen(
         onClarificationAnswerSubmit = viewModel::onClarificationAnswered,
         onRetryAiSearch = viewModel::onRetryAiSearch,
         onCancelAiSearch = viewModel::onCancelAiSearch,
+        onNavigateToChat = onNavigateToChat,
         onMicClick = {
             if (!uiState.isListening) {
                 if (androidx.core.content.ContextCompat.checkSelfPermission(context, android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -147,6 +150,7 @@ fun SearchScreenContent(
     onClarificationAnswerSubmit: () -> Unit,
     onRetryAiSearch: () -> Unit,
     onCancelAiSearch: () -> Unit,
+    onNavigateToChat: () -> Unit = {},
     onMicClick: () -> Unit
 ) {
     val listState = rememberLazyListState()
@@ -178,7 +182,10 @@ fun SearchScreenContent(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            ChatFab(onClick = onNavigateToChat)
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier

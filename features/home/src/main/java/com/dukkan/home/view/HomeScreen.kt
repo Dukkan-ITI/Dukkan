@@ -1,9 +1,5 @@
 package com.dukkan.home.view
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,16 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,28 +21,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
+import com.dukkan.design_system.components.ChatFab
 import com.dukkan.design_system.components.FloatingBottomBarMargin
-import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
-
 import com.dukkan.home.components.HomeBrandsSection
-
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.homeProductSection
 import com.dukkan.home.uistate.HomeUiState
-import com.dukkan.home.R
 import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
 import com.dukkan.domain.model.Product
-import com.dukkan.home.isScrollingUp
 
 @Composable
 fun HomeScreen(
@@ -116,25 +100,7 @@ fun HomeScreenContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToChat,
-                modifier = Modifier.padding(bottom = bottomBarSpace()),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 12.dp,
-                    focusedElevation = 10.dp
-                )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "Open AI Assistant Chat",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(56.dp)
-                )
-            }
+            ChatFab(onClick = onNavigateToChat)
         }
     ) { innerPadding ->
         LazyVerticalGrid(

@@ -1,6 +1,5 @@
 package com.dukkan.settings.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,9 +23,11 @@ import com.dukkan.settings.components.WishlistRow
 import com.dukkan.settings.viewmodel.ProfileState
 import com.dukkan.settings.viewmodel.ProfileViewModel
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.design_system.components.ChatFab
 import com.dukkan.domain.model.AppCurrency
 import com.dukkan.domain.model.AppLanguage
 import com.dukkan.domain.model.ThemeMode
+import androidx.compose.material3.Scaffold
 
 @Composable
 fun ProfileScreen(
@@ -34,6 +35,7 @@ fun ProfileScreen(
     onNavigateToFavorites: () -> Unit,
     onNavigateToOrderList: () -> Unit,
     onNavigateToSavedAddresses: () -> Unit,
+    onNavigateToChat: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
@@ -49,6 +51,7 @@ fun ProfileScreen(
         onSignInClick = onNavigateToAuth,
         onLogoutClick = { viewModel.onLogout(onComplete = onNavigateToAuth) },
         onSeeAllClick = onNavigateToOrderList,
+        onNavigateToChat = onNavigateToChat,
         modifier = modifier,
     )
 }
@@ -64,45 +67,54 @@ private fun ProfileContent(
     onSignInClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onSeeAllClick: () -> Unit,
+    onNavigateToChat: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 24.dp)
-            .padding(bottom = bottomBarSpace(), top = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        ProfileHeader(
-            user = state.user,
-            onSignInClick = onSignInClick,
-        )
-
-        SettingsCard(
-            themeMode = state.themeMode,
-            currency = state.currency,
-            language = state.language,
-            onThemeSelected = onThemeSelected,
-            onCurrencySelected = onCurrencySelected,
-            onLanguageSelected = onLanguageSelected,
-        )
-
-        if (state.isLoggedIn) {
-            OrderHistorySection(
-                orders = state.orders,
-                onSeeAllClick = onSeeAllClick,
-                isLoading = state.ordersLoading,
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background,
+        floatingActionButton = {
+            ChatFab(onClick = onNavigateToChat)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 24.dp)
+                .padding(bottom = bottomBarSpace(), top = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            ProfileHeader(
+                user = state.user,
+                onSignInClick = onSignInClick,
             )
 
-            Column {
-                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                SavedAddressesRow(onClick = onSavedAddressesClick)
-                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                LogoutRow(onClick = onLogoutClick)
+            SettingsCard(
+                themeMode = state.themeMode,
+                currency = state.currency,
+                language = state.language,
+                onThemeSelected = onThemeSelected,
+                onCurrencySelected = onCurrencySelected,
+                onLanguageSelected = onLanguageSelected,
+            )
+
+            if (state.isLoggedIn) {
+                OrderHistorySection(
+                    orders = state.orders,
+                    onSeeAllClick = onSeeAllClick,
+                    isLoading = state.ordersLoading,
+                )
+
+                Column {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                    WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                    SavedAddressesRow(onClick = onSavedAddressesClick)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                    LogoutRow(onClick = onLogoutClick)
+                }
             }
         }
     }
