@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.ui.platform.LocalContext
 import android.widget.Toast
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.dukkan.address.view.SavedAddressesScreen
 import com.dukkan.auth.view.AuthScreen
@@ -155,9 +156,17 @@ fun AppNavGraph(
                 when (result) {
                     is PaymentResult.Success -> {
                         if (result.paymentMethod == "CASH") {
-                            Toast.makeText(context, "Order placed! You will pay with cash upon delivery.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.payment_cash_order_placed),
+                                Toast.LENGTH_LONG
+                            ).show()
                         } else {
-                            Toast.makeText(context, "Payment successful! Order confirmed.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.payment_success_order_confirmed),
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                     is PaymentResult.Failed -> {
@@ -208,7 +217,14 @@ fun AppNavGraph(
             )
         }
 
-        composable<Screen.ProductDetail> {
+        composable<Screen.ProductDetail>(
+            deepLinks = listOf(
+                navDeepLink<Screen.ProductDetail>(
+                    basePath = "https://dukkan-iti.github.io/Dukkan/products"
+                )
+            )
+        ) {
+            // Cold-start deep links open ProductDetail directly; system back exits the app.
             ProductDetailsScreen(
                 onBackClick = { navController.popBackStack() },
                 onSignInClick = {

@@ -1,5 +1,6 @@
 package com.dukkan.product_details.view
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,11 +65,24 @@ fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 ProductDetailsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+                is ProductDetailsEvent.ShareProduct -> {
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, event.url)
+                    }
+                    context.startActivity(
+                        Intent.createChooser(
+                            intent,
+                            context.getString(R.string.product_details_share_product)
+                        )
+                    )
+                }
             }
         }
     }
@@ -85,6 +100,7 @@ fun ProductDetailsScreen(
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
         onAddToCartClick = viewModel::addToCart,
+        onShareClick = viewModel::onShareClick,
         onWriteReviewClick = viewModel::openReviewSheet,
         onDismissReviewSheet = viewModel::dismissReviewSheet,
         onSubmitReview = viewModel::submitReview,
@@ -98,6 +114,7 @@ private fun ProductDetailsContent(
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
     onAddToCartClick: (String) -> Unit,
+    onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
@@ -111,6 +128,7 @@ private fun ProductDetailsContent(
             onBackClick = onBackClick,
             onFavoriteClick = onFavoriteClick,
             onAddToCartClick = onAddToCartClick,
+            onShareClick = onShareClick,
             onWriteReviewClick = onWriteReviewClick,
             onDismissReviewSheet = onDismissReviewSheet,
             onSubmitReview = onSubmitReview,
@@ -125,6 +143,7 @@ private fun LoadedProductDetails(
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
     onAddToCartClick: (String) -> Unit,
+    onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
@@ -151,6 +170,7 @@ private fun LoadedProductDetails(
                     isFavorite = isFavorite,
                     onBackClick = onBackClick,
                     onFavoriteClick = { onFavoriteClick(product, isFavorite) },
+                    onShareClick = onShareClick,
                 )
 
                 Column(
@@ -260,7 +280,7 @@ private fun LoadedProductDetails(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Review submitted!",
+                    text = stringResource(R.string.product_details_review_submitted),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.labelLarge
                 )

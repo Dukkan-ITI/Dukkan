@@ -52,6 +52,7 @@ fun ProductImagePager(
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
@@ -93,11 +94,17 @@ fun ProductImagePager(
                 contentDescription = stringResource(R.string.product_details_back),
                 onClick = onBackClick,
             ) { tint -> drawBackChevron(tint) }
-            CircleIconButton(
-                contentDescription = stringResource(R.string.product_details_favorite),
-                tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
-                onClick = onFavoriteClick,
-            ) { tint -> drawHeart(tint, filled = isFavorite) }
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                CircleIconButton(
+                    contentDescription = stringResource(R.string.product_details_share_product),
+                    onClick = onShareClick,
+                ) { tint -> drawShare(tint) }
+                CircleIconButton(
+                    contentDescription = stringResource(R.string.product_details_favorite),
+                    tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
+                    onClick = onFavoriteClick,
+                ) { tint -> drawHeart(tint, filled = isFavorite) }
+            }
         }
 
         if (images.size > 1) {
@@ -181,6 +188,20 @@ private fun DrawScope.drawHeart(tint: Color, filled: Boolean) {
             ),
         )
     }
+}
+
+private fun DrawScope.drawShare(tint: Color) {
+    val start = androidx.compose.ui.geometry.Offset(size.width * 0.28f, size.height * 0.52f)
+    val top = androidx.compose.ui.geometry.Offset(size.width * 0.68f, size.height * 0.28f)
+    val bottom = androidx.compose.ui.geometry.Offset(size.width * 0.68f, size.height * 0.72f)
+    val strokeWidth = 1.8.dp.toPx()
+    val radius = 2.4.dp.toPx()
+
+    drawLine(color = tint, start = start, end = top, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+    drawLine(color = tint, start = start, end = bottom, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+    drawCircle(color = tint, radius = radius, center = start)
+    drawCircle(color = tint, radius = radius, center = top)
+    drawCircle(color = tint, radius = radius, center = bottom)
 }
 
 @Composable
