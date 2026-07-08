@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +15,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,7 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -81,14 +89,18 @@ internal fun CheckoutScreen(
     }
 
     
-    if (uiState.isEditingAddress) {
+    var isEditingAddress by remember { mutableStateOf(false) }
+
+    if (isEditingAddress) {
         AddressEditSheet(
-            currentAddress = (uiState.selectedAddress as? CheckoutAddress.Saved)?.let { saved ->
+            currentAddress = if (uiState.selectedAddress is CheckoutAddress.Saved) {
+                val saved = uiState.selectedAddress as CheckoutAddress.Saved
                 uiState.addresses.find { it.id == saved.addressId }
-            } ?: (uiState.selectedAddress as? CheckoutAddress.OneOff)?.address,
-            onDismiss = { onEvent(CheckoutEvent.SetEditingAddress(false)) },
+            } else (uiState.selectedAddress as? CheckoutAddress.OneOff)?.address,
+            onDismiss = { isEditingAddress = false },
             onSave = { newAddress ->
                 onEvent(CheckoutEvent.SelectAddress(CheckoutAddress.OneOff(newAddress)))
+                isEditingAddress = false
             }
         )
     }
@@ -136,6 +148,7 @@ internal fun CheckoutScreen(
     CheckoutContent(
         uiState = uiState,
         onEvent = onEvent,
+        onEditAddress = { isEditingAddress = true },
         onBack = { onPaymentResult(PaymentResult.Cancelled) },
     )
 }
@@ -144,12 +157,20 @@ internal fun CheckoutScreen(
 internal fun CheckoutContent(
     uiState: CheckoutUiState,
     onEvent: (CheckoutEvent) -> Unit,
+    onEditAddress: () -> Unit,
     onBack: () -> Unit,
 ) {
+    var isVisible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding(),
     ) {
         CheckoutHeader(
             title = stringResource(R.string.payment_title),
@@ -162,33 +183,41 @@ internal fun CheckoutContent(
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(top = 6.dp, bottom = 28.dp),
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = isVisible,
+                    enter = slideInVertically(
+                        initialOffsetY = { 50 },
+                        animationSpec = tween(500)
+                    ) + fadeIn(animationSpec = tween(500))
                 ) {
-                    AddressSection(
-                        selectedAddress = uiState.selectedAddress,
-                        addresses = uiState.addresses,
-                        onEditClick = { onEvent(CheckoutEvent.SetEditingAddress(true)) },
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    MethodSection(
-                        selectedMethod = uiState.selectedMethod,
-                        onMethodSelect = { onEvent(CheckoutEvent.SelectMethod(it)) },
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    OrderTotalsCard(
-                        cartSummary = uiState.cartSummary,
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 22.dp),
-                    )
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(top = 6.dp, bottom = 28.dp),
+                    ) {
+                        AddressSection(
+                            selectedAddress = uiState.selectedAddress,
+                            addresses = uiState.addresses,
+                            onEditClick = onEditAddress,
+                        )
+    
+                        Spacer(modifier = Modifier.height(24.dp))
+    
+                        MethodSection(
+                            selectedMethod = uiState.selectedMethod,
+                            onMethodSelect = { onEvent(CheckoutEvent.SelectMethod(it)) },
+                        )
+    
+                        Spacer(modifier = Modifier.height(24.dp))
+    
+                        OrderTotalsCard(
+                            cartSummary = uiState.cartSummary,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 22.dp),
+                        )
+                    }
                 }
             }
         }

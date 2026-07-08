@@ -31,6 +31,9 @@ data class OrderUi(
 enum class OrderStatus {
     DELIVERED,
     IN_TRANSIT,
+    PROCESSING,
+    CANCELLED,
+    PENDING
 }
 
 @Composable
@@ -78,13 +81,18 @@ fun OrderCard(order: OrderUi) {
                     text = when (order.status) {
                         OrderStatus.DELIVERED -> stringResource(R.string.profile_order_status_delivered)
                         OrderStatus.IN_TRANSIT -> stringResource(R.string.profile_order_status_in_transit)
+                        OrderStatus.PROCESSING -> stringResource(R.string.profile_order_status_processing)
+                        OrderStatus.CANCELLED -> stringResource(R.string.profile_order_status_cancelled)
+                        OrderStatus.PENDING -> stringResource(R.string.profile_order_status_pending)
                     },
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = when (order.status) {
                         OrderStatus.DELIVERED -> MaterialTheme.colorScheme.primary
                         OrderStatus.IN_TRANSIT -> AppThemeDefaults.extendedColors.orderStatusInTransit
-
+                        OrderStatus.PROCESSING -> AppThemeDefaults.extendedColors.orderStatusProcessing
+                        OrderStatus.CANCELLED -> MaterialTheme.colorScheme.error
+                        OrderStatus.PENDING -> MaterialTheme.colorScheme.onSurfaceVariant
                     },
                 )
             }
