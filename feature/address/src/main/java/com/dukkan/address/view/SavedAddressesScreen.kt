@@ -35,7 +35,7 @@ import com.dukkan.address.components.DeleteAddressDialog
 import com.dukkan.address.viewmodel.SavedAddressesState
 import com.dukkan.address.viewmodel.SavedAddressesViewModel
 import com.dukkan.design_system.components.ErrorScreen
-import com.dukkan.design_system.components.GuestPlaceholderScreen
+import com.dukkan.design_system.components.GuestAuthDialog
 import com.dukkan.design_system.components.LoadingScreen
 import com.dukkan.design_system.components.PrimaryButton
 import com.dukkan.design_system.theme.AppTheme
@@ -51,8 +51,8 @@ fun SavedAddressesScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     if (!isLoggedIn) {
-        GuestPlaceholderScreen(
-            title = stringResource(R.string.saved_addresses_title),
+        GuestAuthDialog(
+            onDismiss = { onBackClick() },
             onSignInClick = onSignInClick,
         )
         return

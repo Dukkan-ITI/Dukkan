@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.Product
 import com.dukkan.home.R
 import com.dukkan.home.uistate.AllProductsUiState
+import com.dukkan.home.viewmodel.AllProductsEvent
 import com.dukkan.home.viewmodel.AllProductsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,9 +42,18 @@ import com.dukkan.home.viewmodel.AllProductsViewModel
 fun AllProductsScreen(
     onBackClick: () -> Unit,
     onProductClick: (Product) -> Unit,
+    onNavigateToFavorites: () -> Unit = {},
     viewModel: AllProductsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                AllProductsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+            }
+        }
+    }
 
     Scaffold(
         topBar = {

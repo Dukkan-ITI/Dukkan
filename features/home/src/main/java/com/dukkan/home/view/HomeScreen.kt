@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.FloatingBottomBarMargin
+import com.dukkan.design_system.components.GuestAuthDialog
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
 

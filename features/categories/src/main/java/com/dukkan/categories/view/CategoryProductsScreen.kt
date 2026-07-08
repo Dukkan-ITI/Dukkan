@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.categories.R
 import com.dukkan.categories.uistate.CategoryProductsUiState
+import com.dukkan.categories.viewmodel.CategoryProductsEvent
 import com.dukkan.categories.viewmodel.CategoryProductsViewModel
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.domain.model.Product
@@ -30,9 +31,18 @@ import com.dukkan.domain.model.Product
 fun CategoryProductsScreen(
     categoryHandle: String,
     viewModel: CategoryProductsViewModel = hiltViewModel(),
-    onProductClick: (Product) -> Unit = {}
+    onProductClick: (Product) -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                CategoryProductsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+            }
+        }
+    }
 
     LaunchedEffect(categoryHandle) {
         viewModel.fetchProductsByHandle(categoryHandle)

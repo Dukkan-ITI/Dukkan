@@ -17,14 +17,20 @@ import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import com.dukkan.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+
+sealed interface ProductDetailsEvent {
+    data object NavigateToFavoritesGuest : ProductDetailsEvent
+}
 
 @HiltViewModel
 class ProductDetailsViewModel @Inject constructor(
@@ -40,6 +46,9 @@ class ProductDetailsViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProductDetailsState())
     val state = _state.asStateFlow()
+
+    private val _events = Channel<ProductDetailsEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     private val productId: String = savedStateHandle.toRoute<Screen.ProductDetail>().productId
 
@@ -77,7 +86,9 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun toggleFavorite(product: Product, isCurrentlyFavorite: Boolean) {
         if (!_state.value.isLoggedIn) {
-            _state.update { it.copy(showGuestDialog = true) }
+            viewModelScope.launch {
+                _events.send(ProductDetailsEvent.NavigateToFavoritesGuest)
+            }
             return
         }
 

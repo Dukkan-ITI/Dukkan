@@ -47,6 +47,7 @@ lifecycleCompose = "2.9.2"
 uiToolingPreview = "1.11.3"
 uiTooling = "1.11.3"
 runtime = "1.11.3"
+lottie = "6.7.1"
 foundationLayout = "1.11.3"
 uiGraphics = "1.11.3"
 firebaseAuthKtx = "24.1.0"
@@ -138,6 +139,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", vers
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie" }
 
 # Networking (feature-payment)
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }

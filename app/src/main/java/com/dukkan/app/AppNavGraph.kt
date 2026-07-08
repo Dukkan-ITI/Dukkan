@@ -28,7 +28,6 @@ import com.dukkan.search.view.SearchScreen
 import com.dukkan.settings.view.ProfileScreen
 import com.dukkan.shopping_cart.view.ShoppingCartView
 import com.dukkan.product_details.view.ProductDetailsScreen
-import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun AppNavGraph(
@@ -121,6 +120,9 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -197,20 +199,13 @@ fun AppNavGraph(
         composable<Screen.ProductDetail> {
             ProductDetailsScreen(
                 onBackClick = { navController.popBackStack() },
-                onNavigateToGuestPlaceholder = { title ->
-                    navController.navigate(Screen.GuestPlaceholder(title = title))
-                }
-            )
-        }
-
-        composable<Screen.GuestPlaceholder> { backStackEntry ->
-            val args = backStackEntry.toRoute<Screen.GuestPlaceholder>()
-            GuestPlaceholderScreen(
-                title = args.title,
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
                     }
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -237,6 +232,9 @@ fun AppNavGraph(
                 categoryHandle = args.categoryHandle,
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }
@@ -256,6 +254,9 @@ fun AppNavGraph(
                 vendor = args.vendor,
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
+                },
+                onNavigateToFavorites = {
+                    navController.navigate(Screen.Favorite)
                 }
             )
         }

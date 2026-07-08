@@ -42,5 +42,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom.v20240200))
     implementation(libs.coil.compose)
+    implementation(libs.lottie.compose)
     debugImplementation(libs.androidx.ui.tooling)
 }

@@ -59,8 +59,5 @@ sealed class Screen {
     object Payment
 
     @Serializable
-    data class GuestPlaceholder(val title: String)
-
-    @Serializable
     object Chatbot
 }
