@@ -24,10 +24,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,8 +40,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.dukkan.design_system.components.OrderCard
 import com.dukkan.order_list.R
-import com.dukkan.order_list.components.OrderCard
+import com.dukkan.order_list.mappers.toOrderUi
 import com.dukkan.order_list.uistate.OrderHistoryUIState
 import com.dukkan.order_list.viewmodel.OrderHistoryViewModel
 
@@ -126,7 +127,9 @@ private fun OrderHistoryContent(
         }
 
         Box(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
             when {
                 state.isLoading && state.orders.isEmpty() -> {
@@ -172,7 +175,7 @@ private fun OrderHistoryContent(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(state.orders, key = { it.id }) { order ->
-                            OrderCard(order = order, expandable = true)
+                            OrderCard(order = order.toOrderUi(), expandable = true)
                         }
 
                         if (state.isPaginating) {

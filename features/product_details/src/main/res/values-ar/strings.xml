@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- machine-translated -->
+    <string name="product_details_total">الإجمالي</string>
+    <!-- machine-translated -->
+    <string name="product_details_add_to_cart">أضف إلى السلة</string>
+    <!-- machine-translated -->
+    <string name="product_details_select_size">اختر المقاس</string>
+    <!-- machine-translated -->
+    <string name="product_details_details">التفاصيل</string>
+    <!-- machine-translated -->
+    <string name="product_details_back">رجوع</string>
+    <!-- machine-translated -->
+    <string name="product_details_favorite">إضافة إلى المفضلة</string>
+    <!-- machine-translated -->
+    <string name="product_details_image_desc">صورة المنتج</string>
+    <!-- machine-translated -->
+    <string name="product_details_added_to_cart">تمت الإضافة إلى السلة!</string>
+    <!-- machine-translated -->
+    <string name="product_details_success">تم بنجاح</string>
+    <!-- machine-translated -->
+    <string name="product_details_write_review">اكتب تقييماً</string>
+    <!-- machine-translated -->
+    <string name="product_details_your_rating">تقييمك</string>
+    <!-- machine-translated -->
+    <string name="product_details_stars">%1$d نجوم</string>
+    <!-- machine-translated -->
+    <string name="product_details_title_optional">العنوان (اختياري)</string>
+    <!-- machine-translated -->
+    <string name="product_details_your_review">تقييمك</string>
+    <!-- machine-translated -->
+    <string name="product_details_submit_review">إرسال التقييم</string>
+    <!-- machine-translated -->
+    <string name="product_details_customer_reviews">تقييمات العملاء</string>
+    <!-- machine-translated -->
+    <string name="product_details_no_reviews_yet">لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!</string>
+</resources>

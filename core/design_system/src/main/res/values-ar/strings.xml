@@ -13,6 +13,12 @@
     <string name="profile_order_items">%1$d عناصر</string>
     <string name="profile_order_status_delivered">تم التوصيل</string>
     <string name="profile_order_status_in_transit">قيد الشحن</string>
+    <!-- machine-translated -->
+    <string name="profile_order_status_processing">قيد التحضير</string>
+    <!-- machine-translated -->
+    <string name="profile_order_status_cancelled">ملغي</string>
+    <!-- machine-translated -->
+    <string name="profile_order_status_pending">قيد الانتظار</string>
     <string name="retry_btn">إعادة المحاولة</string>
     <string name="error_message_default">حدث خطأ ما أثناء تحميل هذه الصفحة.</string>
     <string name="sign_in_access_title">سجّل الدخول للوصول إلى %1$s</string>
@@ -24,4 +30,8 @@
     <string name="guest_dialog_message">يجب أن تكون مسجلاً للقيام بهذا الإجراء. هل ترغب في تسجيل الدخول الآن أم الاستمرار كضيف؟</string>
     <string name="guest_dialog_ok">الاستمرار كضيف</string>
     <string name="guest_dialog_sign_in">تسجيل الدخول</string>
+    <!-- machine-translated -->
+    <string name="profile_order_paid">مدفوع</string>
+    <!-- machine-translated -->
+    <string name="order_quantity_format">الكمية: %1$d</string>
 </resources>

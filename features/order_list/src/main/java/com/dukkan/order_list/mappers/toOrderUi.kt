@@ -1,4 +1,4 @@
-package com.dukkan.settings.mapper
+package com.dukkan.order_list.mappers
 
 import com.dukkan.design_system.components.OrderItemUi
 import com.dukkan.design_system.components.OrderStatus
