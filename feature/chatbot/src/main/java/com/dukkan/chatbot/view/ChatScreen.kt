@@ -1,6 +1,9 @@
 package com.dukkan.chatbot.view
 
+import com.dukkan.chatbot.R
+
 import androidx.compose.foundation.background
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -80,7 +83,7 @@ fun ChatContent(
 
             if (messages.isEmpty() && !isLoading) {
                 Text(
-                    text = "Dukkan AI is ready!\nAsk me anything.",
+                    text = stringResource(R.string.chatbot_ready),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

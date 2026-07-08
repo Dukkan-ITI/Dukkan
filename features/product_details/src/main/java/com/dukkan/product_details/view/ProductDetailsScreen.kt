@@ -213,7 +213,7 @@ private fun LoadedProductDetails(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Compare with another product",
+                            text = stringResource(R.string.compare_another_product),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
                         )

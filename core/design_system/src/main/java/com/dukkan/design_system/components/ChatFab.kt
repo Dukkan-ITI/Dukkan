@@ -1,6 +1,7 @@
 package com.dukkan.design_system.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -188,7 +189,7 @@ fun ChatFab(
             colors = listOf(primary, tertiary)
         )
         Text(
-            text = "D",
+            text = stringResource(R.string.chat_fab_icon),
             modifier = Modifier.graphicsLayer {
                 val currentFab = fabOffsetState.value
                 val currentAbs = letterAbsOffset.value

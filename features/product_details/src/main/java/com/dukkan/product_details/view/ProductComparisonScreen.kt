@@ -1,6 +1,9 @@
 package com.dukkan.product_details.view
 
+import com.dukkan.product_details.R
+
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -61,7 +64,7 @@ fun ProductComparisonScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("AI Product Comparison", style = MaterialTheme.typography.titleMedium) },
+                title = { Text(stringResource(R.string.ai_product_comparison), style = MaterialTheme.typography.titleMedium) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
@@ -105,7 +108,7 @@ fun ProductComparisonScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.retry() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -128,14 +131,14 @@ fun ProductComparisonScreen(
                             value = state.answerInput,
                             onValueChange = viewModel::onAnswerInputChanged,
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Or type your answer here...") }
+                            label = { Text(stringResource(R.string.type_answer_here)) }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
                             onClick = { viewModel.submitAnswer() },
                             modifier = Modifier.align(Alignment.End)
                         ) {
-                            Text("Submit")
+                            Text(stringResource(R.string.submit))
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
@@ -206,7 +209,7 @@ fun ProductComparisonScreen(
                         }
 
                         Text(
-                            text = "Detailed Comparison",
+                            text = stringResource(R.string.detailed_comparison),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -233,7 +236,7 @@ fun ProductComparisonScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.retry() }) {
-                            Text("Retry")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }

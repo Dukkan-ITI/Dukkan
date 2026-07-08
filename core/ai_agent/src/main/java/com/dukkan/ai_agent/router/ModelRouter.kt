@@ -15,7 +15,7 @@ class ModelRouter @Inject constructor(
     private val providerFailures = mutableMapOf<String, Long>()
 
     fun providersFor(taskType: TaskType): List<AiProvider> {
-        return providers.toList()
+        return providers.sortedByDescending { it.providerId == "ollama" }
     }
 
     suspend fun generateWithFallback(request: AiRequest): Result<AiResponse> {
@@ -26,6 +26,7 @@ class ModelRouter @Inject constructor(
         }
 
         val providersToTry = availableProviders.ifEmpty { providers }
+            .sortedByDescending { it.providerId == "ollama" }
 
         var lastError: Throwable = AiError.ModelUnavailable
 

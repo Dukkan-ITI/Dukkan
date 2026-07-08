@@ -29,4 +29,6 @@
     <string name="guest_dialog_sign_in">Sign In</string>
     <string name="profile_order_paid">Paid</string>
     <string name="order_quantity_format">Qty: %1$d</string>
+    <string name="chat_fab_icon">D</string>
+    <string name="add_to_cart_default">Add To cart</string>
 </resources>
