@@ -13,6 +13,7 @@ import com.dukkan.domain.usecase.auth.SignOutUseCase
 import com.dukkan.domain.usecase.cart.ClearCartOnLogoutUseCase
 import com.dukkan.domain.usecase.favorite.ClearFavoritesOnLogoutUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
+import com.dukkan.domain.usecase.order.GetRecentOrdersUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import com.dukkan.domain.usecase.settings.GetThemeUseCase
@@ -20,7 +21,6 @@ import com.dukkan.domain.usecase.settings.SetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.SetLanguageUseCase
 import com.dukkan.domain.usecase.settings.SetThemeUseCase
 import com.dukkan.settings.mapper.toOrderUi
-import com.dukkan.domain.usecase.order.GetRecentOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
