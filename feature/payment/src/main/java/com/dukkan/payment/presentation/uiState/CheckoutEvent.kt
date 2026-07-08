@@ -7,7 +7,6 @@ import com.dukkan.payment.presentation.components.PaymobSdkStatus
 internal sealed interface CheckoutEvent {
     data class SelectAddress(val address: CheckoutAddress) : CheckoutEvent
     data class SelectMethod(val method: PaymentMethod) : CheckoutEvent
-    data class SetEditingAddress(val isEditing: Boolean) : CheckoutEvent
     
     object SubmitOrder : CheckoutEvent
     data class PaymobSdkFinished(

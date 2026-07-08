@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.animation.Crossfade
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,8 +39,8 @@ fun ChatInputBar(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding() // Prevents overlapping with the system navigation gesture bar
-            .imePadding()            // Smoothly shifts the entire bar upward when the soft keyboard appears
+            .navigationBarsPadding()
+            .imePadding()
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -53,21 +55,41 @@ fun ChatInputBar(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        IconButton(
-            onClick = {
-                onSend(text)
-                text = ""
-            },
-            enabled = text.isNotBlank() && !isLoading,
-            modifier = Modifier
-                .size(48.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
-        ) {
-            Icon(
-                imageVector = Icons.Default.Send,
-                contentDescription = "Send",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
+        Crossfade(targetState = text.isBlank(), label = "SendOrMic") { isBlank ->
+            if (isBlank) {
+                IconButton(
+                    onClick = { /* Trigger voice input */ },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(24.dp))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Mic,
+                        contentDescription = "Voice Input",
+                        tint = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+            } else {
+                IconButton(
+                    onClick = {
+                        onSend(text)
+                        text = ""
+                    },
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            if (isLoading) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.primary, 
+                            RoundedCornerShape(24.dp)
+                        )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Send,
+                        contentDescription = "Send",
+                        tint = if (isLoading) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
         }
     }
 }

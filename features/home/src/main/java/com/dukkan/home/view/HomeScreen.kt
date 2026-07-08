@@ -109,25 +109,10 @@ fun HomeScreenContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(
+            com.dukkan.home.components.AiBotFab(
                 onClick = onNavigateToChat,
-                modifier = Modifier.padding(bottom = bottomBarSpace()),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                elevation = FloatingActionButtonDefaults.elevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 12.dp,
-                    focusedElevation = 10.dp
-                )
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = "Open AI Assistant Chat",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(56.dp)
-                )
-            }
+                modifier = Modifier.padding(bottom = bottomBarSpace())
+            )
         }
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -137,7 +122,7 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarMargin)
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = bottomBarSpace())
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {
