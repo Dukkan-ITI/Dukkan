@@ -53,6 +53,7 @@ import com.dukkan.product_details.components.ProductImagePager
 import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
 import com.dukkan.product_details.components.WriteReviewBottomSheet
+import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
@@ -153,6 +154,8 @@ private fun LoadedProductDetails(
 
     var selectedVariant by remember(product.id) { mutableStateOf(variants.firstOrNull()) }
     val isFavorite = state.favoriteIds.contains(product.id)
+    val scrollState = rememberScrollState()
+    val isScrolled = scrollState.value > 0
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -163,7 +166,7 @@ private fun LoadedProductDetails(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState),
             ) {
                 ProductImagePager(
                     images = images.mapNotNull { it },
@@ -222,6 +225,14 @@ private fun LoadedProductDetails(
                     .navigationBarsPadding(),
             )
         }
+
+        ProductTopBar(
+            isFavorite = isFavorite,
+            isScrolled = isScrolled,
+            onBackClick = onBackClick,
+            onFavoriteClick = { onFavoriteClick(product, isFavorite) },
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
 
         // Cart added toast
         AnimatedVisibility(
