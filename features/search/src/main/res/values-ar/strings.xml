@@ -62,4 +62,5 @@
     <string name="search_voice_input">البحث الصوتي</string>
     <string name="search_voice_listening">جارٍ الاستماع…</string>
     <string name="search_voice_permission_denied">تم رفض الإذن. يرجى تمكين إذن الميكروفون في الإعدادات.</string>
+    <string name="search_ai_offline_error">يتطلب البحث بالذكاء الاصطناعي اتصالاً بالإنترنت.</string>
 </resources>
