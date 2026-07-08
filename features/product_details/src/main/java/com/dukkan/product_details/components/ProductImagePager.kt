@@ -49,9 +49,6 @@ import com.dukkan.domain.model.NetworkImage
 @Composable
 fun ProductImagePager(
     images: List<NetworkImage>,
-    isFavorite: Boolean,
-    onBackClick: () -> Unit,
-    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
@@ -82,23 +79,6 @@ fun ProductImagePager(
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            CircleIconButton(
-                contentDescription = stringResource(R.string.product_details_back),
-                onClick = onBackClick,
-            ) { tint -> drawBackChevron(tint) }
-            CircleIconButton(
-                contentDescription = stringResource(R.string.product_details_favorite),
-                tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onBackground,
-                onClick = onFavoriteClick,
-            ) { tint -> drawHeart(tint, filled = isFavorite) }
-        }
 
         if (images.size > 1) {
             PageIndicator(
@@ -112,76 +92,6 @@ fun ProductImagePager(
     }
 }
 
-@Composable
-private fun CircleIconButton(
-    contentDescription: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    tint: Color = MaterialTheme.colorScheme.onBackground,
-    icon: DrawScope.(tint: Color) -> Unit,
-) {
-    Surface(
-        onClick = onClick,
-        modifier = modifier.size(44.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surface,
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Canvas(
-                modifier = Modifier
-                    .size(22.dp)
-                    .semantics { this.contentDescription = contentDescription },
-            ) {
-                icon(tint)
-            }
-        }
-    }
-}
-
-private fun DrawScope.drawBackChevron(tint: Color) {
-    val w = size.width
-    val h = size.height
-    val path = Path().apply {
-        moveTo(w * 0.6f, h * 0.22f)
-        lineTo(w * 0.34f, h * 0.5f)
-        lineTo(w * 0.6f, h * 0.78f)
-    }
-    drawPath(
-        path = path,
-        color = tint,
-        style = Stroke(
-            width = 2.dp.toPx(),
-            cap = StrokeCap.Round,
-            join = StrokeJoin.Round,
-        ),
-    )
-}
-
-private fun DrawScope.drawHeart(tint: Color, filled: Boolean) {
-    val w = size.width
-    val h = size.height
-    val path = Path().apply {
-        moveTo(w * 0.5f, h * 0.84f)
-        cubicTo(w * 0.12f, h * 0.56f, w * 0.06f, h * 0.30f, w * 0.27f, h * 0.21f)
-        cubicTo(w * 0.40f, h * 0.16f, w * 0.50f, h * 0.27f, w * 0.5f, h * 0.33f)
-        cubicTo(w * 0.50f, h * 0.27f, w * 0.60f, h * 0.16f, w * 0.73f, h * 0.21f)
-        cubicTo(w * 0.94f, h * 0.30f, w * 0.88f, h * 0.56f, w * 0.5f, h * 0.84f)
-        close()
-    }
-    if (filled) {
-        drawPath(path = path, color = tint)
-    } else {
-        drawPath(
-            path = path,
-            color = tint,
-            style = Stroke(
-                width = 1.8.dp.toPx(),
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round,
-            ),
-        )
-    }
-}
 
 @Composable
 private fun PageIndicator(
