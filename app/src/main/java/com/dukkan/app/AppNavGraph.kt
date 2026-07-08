@@ -218,7 +218,41 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onCompareClick = { productId, productTitle ->
+                    navController.navigate(Screen.CompareProductSearch(baseProductId = productId, baseProductTitle = productTitle))
                 }
+            )
+        }
+
+        composable<Screen.CompareProductSearch> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.CompareProductSearch>()
+            val searchViewModel: com.dukkan.search.viewmodel.SearchViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+            
+            androidx.compose.runtime.LaunchedEffect(args.baseProductTitle) {
+                if (searchViewModel.uiState.value.queryInput.isEmpty()) {
+                    searchViewModel.onQueryInputChanged(args.baseProductTitle)
+                    searchViewModel.onSearchSubmitted(args.baseProductTitle)
+                }
+            }
+            
+            SearchScreen(
+                modifier = Modifier.fillMaxSize(),
+                viewModel = searchViewModel,
+                onNavigateToProductDetails = { selectedProductId ->
+                    navController.navigate(Screen.ProductComparison(productId1 = args.baseProductId, productId2 = selectedProductId)) {
+                        popUpTo<Screen.CompareProductSearch> { inclusive = true }
+                    }
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
+                }
+            )
+        }
+
+        composable<Screen.ProductComparison> {
+            com.dukkan.product_details.view.ProductComparisonScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 

@@ -169,4 +169,9 @@ object DataModule {
     @Provides
     fun providePlacesRepository(apiService: LocationIQApiService): PlacesRepository =
         PlacesRepositoryImpl(apiService, BuildConfig.LOCATION_IQ_API_KEY)
+
+    @Singleton
+    @Provides
+    fun provideProductComparisonRepository(aiAgentOrchestrator: com.dukkan.ai_agent.orchestrator.AiAgentOrchestrator): com.dukkan.domain.repository.ProductComparisonRepository =
+        com.dukkan.data.repository.ProductComparisonRepositoryImpl(aiAgentOrchestrator)
 }

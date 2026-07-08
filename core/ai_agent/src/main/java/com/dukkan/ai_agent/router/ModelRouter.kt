@@ -22,10 +22,12 @@ class ModelRouter @Inject constructor(
         val now = System.currentTimeMillis()
         val availableProviders = providers.filter {
             val lastFailure = providerFailures[it.providerId] ?: 0L
-            now - lastFailure > 60_000L // 1 minute cooldown
+            now - lastFailure > 60_000L
         }
 
-        val providersToTry = availableProviders.ifEmpty { providers } // If all failed, try all again
+        val providersToTry = availableProviders.ifEmpty { providers }
+
+        var lastError: Throwable = AiError.ModelUnavailable
 
         for (provider in providersToTry) {
             val result = provider.generate(request)
@@ -34,9 +36,10 @@ class ModelRouter @Inject constructor(
                 return result
             } else {
                 providerFailures[provider.providerId] = System.currentTimeMillis()
+                lastError = result.exceptionOrNull() ?: AiError.ModelUnavailable
             }
         }
 
-        return Result.failure(AiError.ModelUnavailable)
+        return Result.failure(lastError)
     }
 }
