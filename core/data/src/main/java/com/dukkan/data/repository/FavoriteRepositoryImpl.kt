@@ -56,13 +56,17 @@ class FavoriteRepositoryImpl @Inject constructor(
 
     override suspend fun syncFavoritesOnLogin(userId: String) {
         try {
-            val remoteProductIds = firestoreDataSource.getFavoriteProductIds(userId)
-            Log.d(TAG, "Syncing ${remoteProductIds.size} favorites from Firestore on login")
 
-            val localIds = localDataSource.getAllFavorites().first().map { it.id }.toSet()
+            val localFavorites = localDataSource.getAllFavorites().first()
+            localFavorites.forEach { favorite ->
+                firestoreDataSource.addFavoriteProductId(favorite.id, userId)
+            }
+
+            val remoteProductIds = firestoreDataSource.getFavoriteProductIds(userId)
+            val localIds = localFavorites.map { it.id }.toSet()
 
             remoteProductIds.forEach { productId ->
-                if (productId in localIds) return@forEach // موجود بالفعل محليًا، تخطاه
+                if (productId in localIds) return@forEach
 
                 getProductByIdUseCase(productId)
                     .onSuccess { product ->
