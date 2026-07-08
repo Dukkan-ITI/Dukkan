@@ -1,5 +1,11 @@
 package com.dukkan.shopping_cart.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,21 +16,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +56,7 @@ import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import androidx.compose.material3.Scaffold
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun ShoppingCartView(
@@ -108,10 +122,11 @@ private fun ShoppingCartContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
             ) {
                 Row(
                     modifier = Modifier
@@ -140,6 +155,25 @@ private fun ShoppingCartContent(
                     }
                 }
 
+                if (!state.isOnline) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 10.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                            .padding(vertical = 6.dp),
+                        contentAlignment = androidx.compose.ui.Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(com.dukkan.design_system.R.string.viewing_cached_data),
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -162,7 +196,7 @@ private fun ShoppingCartContent(
                         item {
                             Box(modifier = Modifier
                                 .fillMaxWidth()
-                                .height(300.dp)) {
+                                .height(220.dp)) {
                                 EmptyCartState(onStartShoppingClick)
                             }
                         }
@@ -196,7 +230,7 @@ private fun ShoppingCartContent(
                     item {
                         Button(
                             onClick = onCheckoutClick,
-                            enabled = !state.cart?.lines.isNullOrEmpty(),
+                            enabled = !state.cart?.lines.isNullOrEmpty() && state.isOnline,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(64.dp)
@@ -204,7 +238,9 @@ private fun ShoppingCartContent(
                             shape = RoundedCornerShape(16.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
+                                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         ) {
                             Text(
@@ -232,6 +268,38 @@ private fun ShoppingCartContent(
                     onDismiss = onDismissRemoveDialog,
                     onConfirm = onConfirmRemoveItem
                 )
+            }
+
+            // Offline toast
+            AnimatedVisibility(
+                visible = state.showOfflineToast,
+                enter = fadeIn() + slideInVertically { it },
+                exit = fadeOut() + slideOutVertically { it },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 100.dp, start = 24.dp, end = 24.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .background(MaterialTheme.colorScheme.error, RoundedCornerShape(24.dp))
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.WifiOff,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onError,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(DesignSystemR.string.offline_title),
+                        color = MaterialTheme.colorScheme.onError,
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
     }

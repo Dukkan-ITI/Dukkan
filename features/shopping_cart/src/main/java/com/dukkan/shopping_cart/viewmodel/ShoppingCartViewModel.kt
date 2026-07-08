@@ -13,6 +13,7 @@ import com.dukkan.domain.repository.SettingsRepository
 import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.CartUseCases
 import com.dukkan.domain.usecase.coupon.CouponUseCases
+import com.dukkan.domain.util.NetworkMonitor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +31,7 @@ class ShoppingCartViewModel @Inject constructor(
     private val getCurrentUser: GetCurrentUserUseCase,
     private val couponUseCases: CouponUseCases,
     private val settingsRepository: SettingsRepository,
+    private val networkMonitor: NetworkMonitor,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -40,6 +42,15 @@ class ShoppingCartViewModel @Inject constructor(
     val state: StateFlow<ShoppingCartState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { isOnline ->
+                _state.update { it.copy(isOnline = isOnline) }
+                if (isOnline && _isLoggedIn.value) {
+                    refreshCart()
+                }
+            }
+        }
+
         viewModelScope.launch {
             val user = getCurrentUser()
             _isLoggedIn.value = user != null
@@ -91,6 +102,10 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun updateQuantity(cartLine: CartLine, newQuantity: Int) {
+        if (!_state.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         viewModelScope.launch {
             _state.update { state ->
                 val cart = state.cart ?: return@update state
@@ -116,6 +131,10 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun showRemoveDialog(cartLine: CartLine) {
+        if (!_state.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         _state.update {
             it.copy(showRemoveDialogForItem = cartLine)
         }
@@ -128,6 +147,10 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun confirmRemoveItem() {
+        if (!_state.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         _state.value.showRemoveDialogForItem?.let { item ->
             viewModelScope.launch {
                 _state.update {
@@ -153,6 +176,10 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun applyPromoCode() {
+        if (!_state.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         val code = _state.value.promoCode
 
         if (code.isBlank()) return
@@ -192,6 +219,10 @@ class ShoppingCartViewModel @Inject constructor(
     }
 
     fun removePromoCode(codeToRemove: String) {
+        if (!_state.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         _state.update {
             it.copy(isApplyingPromo = true)
         }
@@ -203,6 +234,14 @@ class ShoppingCartViewModel @Inject constructor(
             _state.update {
                 it.copy(isApplyingPromo = false)
             }
+        }
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _state.update { it.copy(showOfflineToast = true) }
+            kotlinx.coroutines.delay(2000)
+            _state.update { it.copy(showOfflineToast = false) }
         }
     }
 

@@ -23,10 +23,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.ui.res.stringResource
 import com.dukkan.product_details.R
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -109,31 +113,33 @@ private fun ProductDetailsContent(
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
 ) {
-    when {
-        state.isLoading -> LoadingScreen()
-        state.error != null -> {
-            if (!isOnline && state.product == null) {
-                ErrorScreen(
-                    title = stringResource(DesignSystemR.string.offline_title),
-                    message = stringResource(DesignSystemR.string.offline_message),
-                    lottieRawRes = DesignSystemR.raw.no_internet,
-                    onRetry = onRefresh
-                )
-            } else {
-                ErrorScreen(message = state.error, onRetry = onRefresh)
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            state.isLoading -> LoadingScreen()
+            state.error != null -> {
+                if (!isOnline && state.product == null) {
+                    ErrorScreen(
+                        title = stringResource(DesignSystemR.string.offline_title),
+                        message = stringResource(DesignSystemR.string.offline_message),
+                        lottieRawRes = DesignSystemR.raw.no_internet,
+                        onRetry = onRefresh
+                    )
+                } else {
+                    ErrorScreen(message = state.error, onRetry = onRefresh)
+                }
             }
+            state.product != null -> LoadedProductDetails(
+                product = state.product,
+                state = state,
+                isOnline = isOnline,
+                onBackClick = onBackClick,
+                onFavoriteClick = onFavoriteClick,
+                onAddToCartClick = onAddToCartClick,
+                onWriteReviewClick = onWriteReviewClick,
+                onDismissReviewSheet = onDismissReviewSheet,
+                onSubmitReview = onSubmitReview,
+            )
         }
-        state.product != null -> LoadedProductDetails(
-            product = state.product,
-            state = state,
-            isOnline = isOnline,
-            onBackClick = onBackClick,
-            onFavoriteClick = onFavoriteClick,
-            onAddToCartClick = onAddToCartClick,
-            onWriteReviewClick = onWriteReviewClick,
-            onDismissReviewSheet = onDismissReviewSheet,
-            onSubmitReview = onSubmitReview,
-        )
     }
 }
 
@@ -300,6 +306,38 @@ private fun LoadedProductDetails(
                 Text(
                     text = "Review submitted!",
                     color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+
+        // Offline toast
+        AnimatedVisibility(
+            visible = state.showOfflineToast,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(MaterialTheme.colorScheme.error, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WifiOff,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(DesignSystemR.string.offline_title),
+                    color = MaterialTheme.colorScheme.onError,
                     style = MaterialTheme.typography.labelLarge
                 )
             }

@@ -9,5 +9,7 @@ data class ShoppingCartState(
     val promoCode: String = "",
     val isApplyingPromo: Boolean = false,
     val promoError: String? = null,
-    val showRemoveDialogForItem: CartLine? = null
+    val showRemoveDialogForItem: CartLine? = null,
+    val isOnline: Boolean = true,
+    val showOfflineToast: Boolean = false
 )

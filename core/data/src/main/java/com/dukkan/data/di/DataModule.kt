@@ -37,6 +37,7 @@ import com.dukkan.domain.repository.CouponRepository
 import com.dukkan.domain.repository.PlacesRepository
 import com.dukkan.domain.repository.ProductsRepository
 import com.dukkan.domain.repository.SettingsRepository
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,6 +51,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+    @Singleton
+    @Provides
+    fun provideGson(): Gson = Gson()
+
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()

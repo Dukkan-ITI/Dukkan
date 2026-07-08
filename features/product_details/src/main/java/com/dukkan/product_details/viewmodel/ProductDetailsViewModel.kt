@@ -1,9 +1,11 @@
 package com.dukkan.product_details.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.dukkan.product_details.R
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
@@ -17,6 +19,7 @@ import com.dukkan.domain.usecase.settings.GetLanguageUseCase
 import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -117,6 +120,10 @@ class ProductDetailsViewModel @Inject constructor(
     }
 
     fun addToCart(variantId: String) {
+        if (!isOnline.value) {
+            showOfflineToast()
+            return
+        }
         if (!_state.value.isLoggedIn) {
             _state.update { it.copy(showGuestDialog = true) }
             return
@@ -163,6 +170,10 @@ class ProductDetailsViewModel @Inject constructor(
     }
 
     fun submitReview(rating: Int, title: String, body: String) {
+        if (!isOnline.value) {
+            showOfflineToast()
+            return
+        }
         val product = _state.value.product ?: return
         viewModelScope.launch {
             _state.update { it.copy(isSubmittingReview = true, reviewError = null) }
@@ -194,6 +205,14 @@ class ProductDetailsViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _state.update { it.copy(showOfflineToast = true) }
+            delay(2000)
+            _state.update { it.copy(showOfflineToast = false) }
         }
     }
 }
