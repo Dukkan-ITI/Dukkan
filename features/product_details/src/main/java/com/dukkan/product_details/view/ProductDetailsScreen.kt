@@ -71,7 +71,6 @@ fun ProductDetailsScreen(
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                ProductDetailsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
                 is ProductDetailsEvent.ShareProduct -> {
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"

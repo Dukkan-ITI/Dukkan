@@ -93,6 +93,11 @@ fun AppNavGraph(
                 },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chatbot)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -133,6 +138,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -261,6 +271,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -284,6 +299,11 @@ fun AppNavGraph(
                 },
                 onNavigateToFavorites = {
                     navController.navigate(Screen.Favorite)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
