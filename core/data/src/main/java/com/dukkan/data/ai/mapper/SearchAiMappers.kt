@@ -58,6 +58,7 @@ fun List<SearchProduct>.toAiToolResponse(totalCount: Int): JsonObject =
                 take(8).map { product ->
                     JsonObject(
                         mapOf(
+                            "id" to JsonPrimitive(product.id),
                             "title" to JsonPrimitive(product.title),
                             "vendor" to JsonPrimitive(product.vendor),
                             "productType" to JsonPrimitive(product.productType),
