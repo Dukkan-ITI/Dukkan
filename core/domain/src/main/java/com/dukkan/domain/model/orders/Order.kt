@@ -17,6 +17,7 @@ data class Order(
     val displayStatus: OrderDisplayStatus
         get() = when {
             financialStatus == "REFUNDED" || financialStatus == "VOIDED" -> OrderDisplayStatus.CANCELLED
+            financialStatus == "PENDING" -> OrderDisplayStatus.PENDING
             fulfillmentStatus == "FULFILLED" -> OrderDisplayStatus.DELIVERED
             fulfillmentStatus == "IN_PROGRESS" -> OrderDisplayStatus.IN_TRANSIT
             fulfillmentStatus == "OPEN" || fulfillmentStatus == "UNFULFILLED" -> OrderDisplayStatus.PROCESSING
