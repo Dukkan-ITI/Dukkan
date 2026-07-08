@@ -17,18 +17,30 @@ class ProductsRepositoryImpl(
     override suspend fun getProductById(productId: String): Result<Product> {
         val country = settingsRepository.currency.first().countryCode
         val language = settingsRepository.language.first().languageCode
-        
-        // Try to get from local home cache first (only if it matches the ID)
-        val cached = homeDao.getProducts().first().find { it.id == productId }
-        if (cached != null) {
-            return Result.success(cached.toDomainModel())
-        }
 
-        productsDataSource.getProductById(productId, country = country, language = language).also {
-            return if (it != null) {
-                Result.success(it.toDomainModel())
+        return try {
+            val remoteProduct = productsDataSource.getProductById(productId, country = country, language = language)
+            if (remoteProduct != null) {
+                val domainProduct = remoteProduct.toDomainModel()
+                // Cache the full product details
+                homeDao.insertProducts(listOf(domainProduct.toHomeEntity()))
+                Result.success(domainProduct)
             } else {
-                Result.failure(Exception("Unknown error occurred"))
+                // Fallback to cache if remote is null (e.g., deleted or hidden, but we might still have it)
+                val cached = homeDao.getProducts().first().find { it.id == productId }
+                if (cached != null) {
+                    Result.success(cached.toDomainModel())
+                } else {
+                    Result.failure(Exception("Product not found"))
+                }
+            }
+        } catch (e: Exception) {
+            // Fallback to cache on network error
+            val cached = homeDao.getProducts().first().find { it.id == productId }
+            if (cached != null) {
+                Result.success(cached.toDomainModel())
+            } else {
+                Result.failure(e)
             }
         }
     }

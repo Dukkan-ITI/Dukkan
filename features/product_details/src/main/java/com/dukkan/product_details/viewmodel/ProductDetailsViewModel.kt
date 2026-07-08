@@ -14,15 +14,19 @@ import com.dukkan.domain.usecase.product.GetProductByIdUseCase
 import com.dukkan.domain.usecase.review.AddReviewUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,9 +47,17 @@ class ProductDetailsViewModel @Inject constructor(
     private val addReviewUseCase: AddReviewUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProductDetailsState())
     val state = _state.asStateFlow()
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
 
     private val _events = Channel<ProductDetailsEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()

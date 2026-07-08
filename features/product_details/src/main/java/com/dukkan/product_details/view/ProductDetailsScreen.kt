@@ -35,9 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.design_system.components.ErrorScreen
@@ -54,6 +57,7 @@ import com.dukkan.product_details.components.WriteReviewBottomSheet
 import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun ProductDetailsScreen(
@@ -63,6 +67,7 @@ fun ProductDetailsScreen(
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -81,6 +86,7 @@ fun ProductDetailsScreen(
 
     ProductDetailsContent(
         state = state,
+        isOnline = isOnline,
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
@@ -94,6 +100,7 @@ fun ProductDetailsScreen(
 @Composable
 private fun ProductDetailsContent(
     state: ProductDetailsState,
+    isOnline: Boolean,
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
@@ -104,10 +111,22 @@ private fun ProductDetailsContent(
 ) {
     when {
         state.isLoading -> LoadingScreen()
-        state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
+        state.error != null -> {
+            if (!isOnline && state.product == null) {
+                ErrorScreen(
+                    title = stringResource(DesignSystemR.string.offline_title),
+                    message = stringResource(DesignSystemR.string.offline_message),
+                    lottieRawRes = DesignSystemR.raw.no_internet,
+                    onRetry = onRefresh
+                )
+            } else {
+                ErrorScreen(message = state.error, onRetry = onRefresh)
+            }
+        }
         state.product != null -> LoadedProductDetails(
             product = state.product,
             state = state,
+            isOnline = isOnline,
             onBackClick = onBackClick,
             onFavoriteClick = onFavoriteClick,
             onAddToCartClick = onAddToCartClick,
@@ -122,6 +141,7 @@ private fun ProductDetailsContent(
 private fun LoadedProductDetails(
     product: Product,
     state: ProductDetailsState,
+    isOnline: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
     onAddToCartClick: (String) -> Unit,
@@ -157,6 +177,24 @@ private fun LoadedProductDetails(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
+                    if (!isOnline) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .background(MaterialTheme.colorScheme.errorContainer)
+                                .padding(vertical = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(DesignSystemR.string.viewing_cached_data),
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
                     ProductHeader(
                         title = product.title,
                         price = selectedVariant?.price ?: product.maxPrice,

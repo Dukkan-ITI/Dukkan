@@ -11,11 +11,25 @@ import com.dukkan.domain.model.Product
 import com.dukkan.domain.model.ProductSummary
 import com.dukkan.domain.model.ProductVariant
 import com.dukkan.domain.model.Review
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.math.BigDecimal
+
+private val gson = Gson()
 
 fun HomeProductEntity.toDomainModel(): Product {
     val dummyReviews = List(reviewCount ?: 0) {
         Review(id = "", authorName = "", rating = rating?.toInt() ?: 0, title = "", body = "", createdAt = "", approved = true)
+    }
+
+    val images: List<NetworkImage>? = imagesJson?.let {
+        val type = object : TypeToken<List<NetworkImage>>() {}.type
+        gson.fromJson(it, type)
+    }
+
+    val variants: List<ProductVariant>? = variantsJson?.let {
+        val type = object : TypeToken<List<ProductVariant>>() {}.type
+        gson.fromJson(it, type)
     }
 
     return Product(
@@ -27,8 +41,8 @@ fun HomeProductEntity.toDomainModel(): Product {
         maxPrice = Money(amount = BigDecimal(priceAmount), currencyCode = currencyCode),
         description = description,
         productType = productType,
-        images = null,
-        variants = null,
+        images = images,
+        variants = variants,
         reviews = dummyReviews,
         averageRating = rating,
     )
@@ -46,8 +60,8 @@ fun Product.toHomeEntity(): HomeProductEntity {
         reviewCount = reviews.size,
         productType = productType,
         description = description,
-        imagesJson = null,
-        variantsJson = null
+        imagesJson = gson.toJson(images),
+        variantsJson = gson.toJson(variants)
     )
 }
 
