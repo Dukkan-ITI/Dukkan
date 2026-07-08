@@ -2,6 +2,8 @@ package com.dukkan.data.di
 
 import android.content.Context
 import com.apollographql.apollo.ApolloClient
+import com.dukkan.data.util.ConnectivityManagerNetworkMonitor
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
@@ -169,4 +171,10 @@ object DataModule {
     @Provides
     fun providePlacesRepository(apiService: LocationIQApiService): PlacesRepository =
         PlacesRepositoryImpl(apiService, BuildConfig.LOCATION_IQ_API_KEY)
+
+    @Singleton
+    @Provides
+    fun provideNetworkMonitor(
+        @ApplicationContext context: Context,
+    ): NetworkMonitor = ConnectivityManagerNetworkMonitor(context)
 }

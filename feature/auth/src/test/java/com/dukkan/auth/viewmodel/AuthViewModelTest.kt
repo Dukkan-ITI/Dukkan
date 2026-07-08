@@ -8,6 +8,7 @@ import com.dukkan.domain.usecase.LoginWithGoogleUseCase
 import com.dukkan.domain.usecase.RegisterUseCase
 import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.android.gms.tasks.Tasks
@@ -16,6 +17,8 @@ import io.mockk.impl.annotations.MockK
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.*
 import app.cash.turbine.test
 import org.junit.After
@@ -50,6 +53,9 @@ class AuthViewModelTest {
     lateinit var syncCartOnLoginUseCase: SyncCartOnLoginUseCase
 
     @MockK
+    lateinit var networkMonitor: NetworkMonitor
+
+    @MockK
     lateinit var firebaseAuth: FirebaseAuth
 
     private lateinit var viewModel: AuthViewModel
@@ -68,6 +74,7 @@ class AuthViewModelTest {
         
         every { FirebaseAuth.getInstance() } returns firebaseAuth
         every { firebaseAuth.signOut() } just Runs
+        every { networkMonitor.isOnline } returns flowOf(true)
 
         viewModel = AuthViewModel(
             context,
@@ -76,7 +83,8 @@ class AuthViewModelTest {
             loginWithGoogleUseCase,
             getShopifyTokenUseCase,
             syncFavoritesOnLoginUseCase,
-            syncCartOnLoginUseCase
+            syncCartOnLoginUseCase,
+            networkMonitor
         )
     }
 
@@ -458,6 +466,32 @@ class AuthViewModelTest {
         val finalState = viewModel.uiState.value as AuthUiState.Form
         assertTrue(finalState.isLoginMode)
         assertEquals(newEmail, finalState.email)
+    }
+
+    @Test
+    fun `isOnline flow reflects network monitor status`() = runTest(testDispatcher) {
+        val networkFlow = MutableSharedFlow<Boolean>()
+        every { networkMonitor.isOnline } returns networkFlow
+        
+        // Re-create VM to use the new flow
+        val vm = AuthViewModel(
+            context, loginUseCase, registerUseCase, loginWithGoogleUseCase,
+            getShopifyTokenUseCase, syncFavoritesOnLoginUseCase, syncCartOnLoginUseCase, networkMonitor
+        )
+        
+        vm.isOnline.test {
+            // Initial value (since we use stateIn, it might emit initialValue before the flow)
+            // But stateIn uses the first value from the flow if it's available.
+            
+            networkFlow.emit(true)
+            assertTrue(awaitItem())
+            
+            networkFlow.emit(false)
+            assertFalse(awaitItem())
+            
+            networkFlow.emit(true)
+            assertTrue(awaitItem())
+        }
     }
 
     @Test

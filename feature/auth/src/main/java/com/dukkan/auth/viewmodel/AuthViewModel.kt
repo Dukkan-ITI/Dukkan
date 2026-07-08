@@ -10,15 +10,18 @@ import com.dukkan.domain.usecase.auth.LoginWithGoogleUseCase
 import com.dukkan.domain.usecase.auth.RegisterUseCase
 import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -110,7 +113,15 @@ class AuthViewModel @Inject constructor(
     private val getShopifyTokenUseCase: GetShopifyTokenUseCase,
     private val syncFavoritesOnLoginUseCase: SyncFavoritesOnLoginUseCase,
     private val syncCartOnLoginUseCase: SyncCartOnLoginUseCase,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Form())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()

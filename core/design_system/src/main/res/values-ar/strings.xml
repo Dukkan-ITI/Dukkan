@@ -34,4 +34,6 @@
     <string name="profile_order_paid">مدفوع</string>
     <!-- machine-translated -->
     <string name="order_quantity_format">الكمية: %1$d</string>
+    <string name="offline_title">أنت غير متصل</string>
+    <string name="offline_message">أنت تشاهد البيانات المخزنة مؤقتًا. ستتم مزامنة أي تغييرات تلقائيًا عند عودة الاتصال.</string>
 </resources>

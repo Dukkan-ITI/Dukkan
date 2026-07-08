@@ -29,4 +29,6 @@
     <string name="guest_dialog_sign_in">Sign In</string>
     <string name="profile_order_paid">Paid</string>
     <string name="order_quantity_format">Qty: %1$d</string>
+    <string name="offline_title">You\'re Offline</string>
+    <string name="offline_message">You\'re viewing cached data. Any changes will sync automatically when you\'re back online.</string>
 </resources>

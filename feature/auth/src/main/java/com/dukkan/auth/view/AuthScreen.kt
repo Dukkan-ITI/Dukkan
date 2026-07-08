@@ -76,6 +76,7 @@ fun AuthScreen(
 ) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
+    val isOnline by authViewModel.isOnline.collectAsStateWithLifecycle()
     val currentState = authState
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -119,56 +120,67 @@ fun AuthScreen(
 
     val onAction: (AuthAction) -> Unit = remember(authViewModel) { authViewModel::onAction }
 
-    when (val state = currentState) {
-        is AuthUiState.Loading -> {
-            val labelRes = if (rememberedLoginMode) {
-                R.string.auth_login_loading_label
-            } else {
-                R.string.auth_register_loading_label
+    if (!isOnline) {
+        com.dukkan.design_system.components.ErrorScreen(
+            title = stringResource(com.dukkan.design_system.R.string.offline_title),
+            message = stringResource(R.string.auth_offline_message),
+            lottieRawRes = com.dukkan.design_system.R.raw.no_internet,
+            onRetry = onNavigateToHome,
+            retryText = stringResource(R.string.auth_guest_link_label),
+            modifier = modifier
+        )
+    } else {
+        when (val state = currentState) {
+            is AuthUiState.Loading -> {
+                val labelRes = if (rememberedLoginMode) {
+                    R.string.auth_login_loading_label
+                } else {
+                    R.string.auth_register_loading_label
+                }
+                AuthLoadingScreen(
+                    label = stringResource(labelRes),
+                    modifier = modifier
+                )
             }
-            AuthLoadingScreen(
-                label = stringResource(labelRes),
-                modifier = modifier
-            )
-        }
 
-        is AuthUiState.Form -> {
-            AuthFormContent(
-                state = state,
-                onAction = onAction,
-                onNavigateToHome = onNavigateToHome,
-                modifier = modifier
-            )
-        }
+            is AuthUiState.Form -> {
+                AuthFormContent(
+                    state = state,
+                    onAction = onAction,
+                    onNavigateToHome = onNavigateToHome,
+                    modifier = modifier
+                )
+            }
 
-        is AuthUiState.EmailVerificationPending -> {
-            AuthEmailVerificationScreen(
-                email = state.email,
-                isResending = state.isResending,
-                isChecking = state.isChecking,
-                resendCooldownSeconds = state.resendCooldownSeconds,
-                infoMessage = state.infoMessage,
-                onResendClick = { onAction(AuthAction.ResendVerificationClicked) },
-                onCheckClick = { onAction(AuthAction.CheckVerificationClicked) },
-                onBackToLoginClick = { onAction(AuthAction.BackToLoginClicked) },
-                modifier = modifier
-            )
-        }
+            is AuthUiState.EmailVerificationPending -> {
+                AuthEmailVerificationScreen(
+                    email = state.email,
+                    isResending = state.isResending,
+                    isChecking = state.isChecking,
+                    resendCooldownSeconds = state.resendCooldownSeconds,
+                    infoMessage = state.infoMessage,
+                    onResendClick = { onAction(AuthAction.ResendVerificationClicked) },
+                    onCheckClick = { onAction(AuthAction.CheckVerificationClicked) },
+                    onBackToLoginClick = { onAction(AuthAction.BackToLoginClicked) },
+                    modifier = modifier
+                )
+            }
 
-        is AuthUiState.ForgotPassword -> {
-            AuthForgotPasswordScreen(
-                email = state.email,
-                isLoading = state.isLoading,
-                emailError = state.emailError,
-                isEmailSent = state.isEmailSent,
-                onEmailChanged = { onAction(AuthAction.ForgotPasswordEmailChanged(it)) },
-                onSendClick = { onAction(AuthAction.SendResetLinkClicked) },
-                onBackToLoginClick = { onAction(AuthAction.BackToLoginFromForgotPasswordClicked) },
-                modifier = modifier
-            )
-        }
+            is AuthUiState.ForgotPassword -> {
+                AuthForgotPasswordScreen(
+                    email = state.email,
+                    isLoading = state.isLoading,
+                    emailError = state.emailError,
+                    isEmailSent = state.isEmailSent,
+                    onEmailChanged = { onAction(AuthAction.ForgotPasswordEmailChanged(it)) },
+                    onSendClick = { onAction(AuthAction.SendResetLinkClicked) },
+                    onBackToLoginClick = { onAction(AuthAction.BackToLoginFromForgotPasswordClicked) },
+                    modifier = modifier
+                )
+            }
 
-        is AuthUiState.Success -> Unit
+            is AuthUiState.Success -> Unit
+        }
     }
 }
 
