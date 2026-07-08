@@ -34,4 +34,8 @@
     <string name="product_details_customer_reviews">تقييمات العملاء</string>
     <!-- machine-translated -->
     <string name="product_details_no_reviews_yet">لا توجد تقييمات بعد. كن أول من يقيّم هذا المنتج!</string>
+    <!-- machine-translated -->
+    <string name="product_details_share_product">مشاركة المنتج</string>
+    <!-- machine-translated -->
+    <string name="product_details_review_submitted">تم إرسال التقييم!</string>
 </resources>

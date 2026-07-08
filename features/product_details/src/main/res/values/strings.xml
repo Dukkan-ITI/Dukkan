@@ -9,6 +9,8 @@
     <string name="product_details_image_desc">Product image</string>
     <string name="product_details_added_to_cart">Added to cart!</string>
     <string name="product_details_success">Success</string>
+    <string name="product_details_share_product">Share product</string>
+    <string name="product_details_review_submitted">Review submitted!</string>
     <string name="product_details_write_review">Write a Review</string>
     <string name="product_details_your_rating">Your Rating</string>
     <string name="product_details_stars">%1$d stars</string>
