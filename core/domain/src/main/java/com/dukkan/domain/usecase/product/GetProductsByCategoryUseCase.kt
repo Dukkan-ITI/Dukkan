@@ -7,9 +7,9 @@ import javax.inject.Inject
 class GetProductsByCategoryUseCase @Inject constructor(
     private val productsRepository: ProductsRepository
 ) {
-    suspend operator fun invoke(handle: String): List<Product> {
-        return productsRepository.getProductsByCollectionHandle(
-            handle = handle,
+    suspend operator fun invoke(categoryId: String): List<Product> {
+        return productsRepository.getProductsByCollectionId(
+            categoryId = categoryId,
             limit = MAX_PRODUCT_LIMIT
         )
     }

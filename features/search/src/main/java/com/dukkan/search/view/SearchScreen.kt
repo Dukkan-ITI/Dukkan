@@ -46,6 +46,7 @@ import com.dukkan.search.components.SearchLoadingState
 import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.viewmodel.SearchViewModel
 import com.dukkan.design_system.components.ChatFab
+import com.dukkan.design_system.components.bottomBarSpace
 
 @Composable
 fun SearchScreen(
@@ -184,7 +185,8 @@ fun SearchScreenContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            ChatFab(onClick = onNavigateToChat)
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         Box(

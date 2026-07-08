@@ -9,6 +9,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.chatbot.components.ChatInputBar
@@ -48,29 +51,41 @@ fun ChatContent(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding() // Safely pushes content down past the top status bar
+            .statusBarsPadding()
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(messages) { message ->
-                MessageBubble(message = message)
+        Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(messages) { message ->
+                    MessageBubble(message)
+                }
+
+                if (isLoading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(top = 8.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
             }
 
-            if (isLoading) {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(top = 8.dp),
-                        strokeWidth = 2.dp
-                    )
-                }
+            if (messages.isEmpty() && !isLoading) {
+                Text(
+                    text = "Dukkan AI is ready!\nAsk me anything.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
             }
         }
 

@@ -22,12 +22,11 @@ import com.dukkan.favorites.components.FavoriteItem
 import com.dukkan.favorites.components.RemoveFavoriteDialog
 import com.dukkan.favorites.uistate.FavoritesUiState
 import com.dukkan.favorites.viewmodel.FavoritesViewModel
+import com.dukkan.design_system.components.AuthRequiredPlaceholder
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.design_system.components.ChatFab
 import com.dukkan.domain.model.FavoriteProduct
 import androidx.hilt.navigation.compose.hiltViewModel
-
-import com.dukkan.design_system.components.GuestPlaceholderScreen
 
 @Composable
 fun FavoritesView(
@@ -42,10 +41,9 @@ fun FavoritesView(
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
 
     if (!isLoggedIn) {
-        GuestPlaceholderScreen(
+        AuthRequiredPlaceholder(
             title = stringResource(id = R.string.wishlist_title),
-            onSignInClick = onSignInClick,
-            modifier = modifier
+            onSignInClick = onSignInClick
         )
         return
     }
@@ -54,7 +52,8 @@ fun FavoritesView(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            ChatFab(onClick = onNavigateToChat)
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         Column(

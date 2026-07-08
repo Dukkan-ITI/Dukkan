@@ -44,61 +44,111 @@ internal fun AddressSection(
             null -> null
         }
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
+        if (actualAddress != null) {
+            androidx.compose.material3.Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    if (actualAddress != null) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val name = listOfNotNull(actualAddress.firstName, actualAddress.lastName)
+                            .filter { it.isNotBlank() }
+                            .joinToString(" ")
+                        if (name.isNotBlank()) {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+                        
+                        androidx.compose.material3.TextButton(onClick = onEditClick) {
+                            Text(
+                                text = stringResource(R.string.payment_address_edit),
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                    }
+
+                    actualAddress.address1?.takeIf { it.isNotBlank() }?.let {
                         Text(
-                            text = listOfNotNull(actualAddress.firstName, actualAddress.lastName)
-                                .joinToString(" ")
-                                .ifBlank { stringResource(R.string.payment_address_unknown) },
-                            fontSize = 14.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                    actualAddress.address2?.takeIf { it.isNotBlank() }?.let {
                         Text(
-                            text = listOfNotNull(
-                                listOfNotNull(actualAddress.address1, actualAddress.city)
-                                    .filter { it.isNotBlank() }
-                                    .joinToString(", ")
-                                    .ifBlank { null },
-                                actualAddress.phone,
-                            ).joinToString("\n"),
-                            fontSize = 13.sp,
-                            lineHeight = 19.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                    } else {
+                    }
+
+                    val cityLine = listOfNotNull(actualAddress.city, actualAddress.province, actualAddress.zip)
+                        .filter { it.isNotBlank() }
+                        .joinToString(", ")
+                    if (cityLine.isNotBlank()) {
                         Text(
-                            text = stringResource(R.string.payment_address_none_selected),
-                            fontSize = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Start,
+                            text = cityLine,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    actualAddress.country?.takeIf { it.isNotBlank() }?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    actualAddress.phone?.takeIf { it.isNotBlank() }?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(1.dp))
-
-                Text(
-                    text = stringResource(R.string.payment_address_edit),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onEditClick),
-                )
+            }
+        } else {
+            androidx.compose.material3.Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.payment_address_none_selected),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    androidx.compose.material3.TextButton(onClick = onEditClick) {
+                        Text(
+                            text = "Add",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
             }
         }
     }
@@ -111,7 +161,7 @@ internal fun SectionEyebrow(text: String, modifier: Modifier = Modifier) {
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp,
-        color = MaterialTheme.colorScheme.outline,
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
         modifier = modifier,
     )
 }

@@ -1,4 +1,4 @@
-package com.dukkan.order_list.components
+package com.dukkan.design_system.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,11 +21,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.dukkan.domain.model.orders.OrderLineItem
-import com.dukkan.order_list.R
+import com.dukkan.design_system.R
+
+
+data class OrderItemUi(
+    val title: String,
+    val quantity: Int,
+    val totalPrice: String,
+    val imageUrl: String?
+)
 
 @Composable
-fun OrderLineItemRow(item: OrderLineItem) {
+fun OrderLineItemRow(item: OrderItemUi) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -62,7 +69,7 @@ fun OrderLineItemRow(item: OrderLineItem) {
         }
 
         Text(
-            text = item.totalPrice.asString(),
+            text = item.totalPrice,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary

@@ -74,7 +74,8 @@ private fun ProfileContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            ChatFab(onClick = onNavigateToChat)
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         Column(

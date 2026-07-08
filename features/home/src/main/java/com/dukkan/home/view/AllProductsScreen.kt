@@ -1,25 +1,30 @@
 package com.dukkan.home.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,56 +35,66 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.design_system.components.ProductCard
+import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Product
 import com.dukkan.home.R
 import com.dukkan.home.uistate.AllProductsUiState
+import com.dukkan.home.viewmodel.AllProductsEvent
 import com.dukkan.home.viewmodel.AllProductsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllProductsScreen(
     onBackClick: () -> Unit,
     onProductClick: (Product) -> Unit,
+    onNavigateToFavorites: () -> Unit = {},
     viewModel: AllProductsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.all_products),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { innerPadding ->
-        Box(
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                AllProductsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp)
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = stringResource(R.string.all_products),
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        Box(
+            modifier = Modifier.weight(1f),
             contentAlignment = Alignment.Center
         ) {
             when (val state = uiState) {
                 is AllProductsUiState.Loading -> {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
 
                 is AllProductsUiState.Error -> {
@@ -93,7 +108,7 @@ fun AllProductsScreen(
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(bottom = bottomBarSpace()),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {

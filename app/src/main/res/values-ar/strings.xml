@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">دكان</string>
+    <string name="bottom_bar_home">الرئيسية</string>
+    <string name="bottom_bar_search">بحث</string>
+    <string name="bottom_bar_favorites">المفضلة</string>
+    <string name="bottom_bar_cart">السلة</string>
+    <string name="bottom_bar_profile">الملف الشخصي</string>
+</resources>

@@ -83,8 +83,8 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
         return fetchCollectionNodes().filter { node -> node.handle in BRAND_HANDLES }
     }
 
-    override suspend fun getProductsByCollectionHandle(
-        handle: String,
+    override suspend fun getProductsByCollectionId(
+        categoryId: String,
         first: Int,
         after: String?,
         country: String,
@@ -92,7 +92,7 @@ class ProductsDataSourceImpl @Inject constructor(private val apolloClient: Apoll
     ): List<com.dukkan.domain.model.Product> {
         val response = apolloClient.query(
             CollectionProductsQuery(
-                handle = handle,
+                id = categoryId,
                 first = first,
                 after = Optional.presentIfNotNull(after),
                 country = CountryCode.safeValueOf(country),

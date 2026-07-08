@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.design_system.components.ErrorScreen
+import com.dukkan.design_system.components.GuestAuthDialog
 import com.dukkan.design_system.components.LoadingScreen
 import com.dukkan.domain.model.Product
 import com.dukkan.product_details.components.AddToCartBar
@@ -50,22 +51,32 @@ import com.dukkan.product_details.components.ProductImagePager
 import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
 import com.dukkan.product_details.components.WriteReviewBottomSheet
+import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
 
 @Composable
 fun ProductDetailsScreen(
     onBackClick: () -> Unit = {},
-    onNavigateToGuestPlaceholder: (String) -> Unit = {},
+    onSignInClick: () -> Unit = {},
+    onNavigateToFavorites: () -> Unit = {},
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    androidx.compose.runtime.LaunchedEffect(state.showGuestDialog) {
-        if (state.showGuestDialog) {
-            onNavigateToGuestPlaceholder("Product")
-            viewModel.dismissGuestDialog()
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                ProductDetailsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
+            }
         }
+    }
+
+    if (state.showGuestDialog) {
+        GuestAuthDialog(
+            onDismiss = { viewModel.dismissGuestDialog() },
+            onSignInClick = onSignInClick
+        )
     }
 
     ProductDetailsContent(

@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.address.R
@@ -35,7 +38,7 @@ import com.dukkan.address.components.DeleteAddressDialog
 import com.dukkan.address.viewmodel.SavedAddressesState
 import com.dukkan.address.viewmodel.SavedAddressesViewModel
 import com.dukkan.design_system.components.ErrorScreen
-import com.dukkan.design_system.components.GuestPlaceholderScreen
+import com.dukkan.design_system.components.GuestAuthDialog
 import com.dukkan.design_system.components.LoadingScreen
 import com.dukkan.design_system.components.PrimaryButton
 import com.dukkan.design_system.theme.AppTheme
@@ -51,8 +54,8 @@ fun SavedAddressesScreen(
     val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
 
     if (!isLoggedIn) {
-        GuestPlaceholderScreen(
-            title = stringResource(R.string.saved_addresses_title),
+        GuestAuthDialog(
+            onDismiss = { onBackClick() },
             onSignInClick = onSignInClick,
         )
         return
@@ -120,14 +123,15 @@ private fun SavedAddressesContent(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.saved_addresses_back),
-                    tint = MaterialTheme.colorScheme.onBackground,
+                    tint = MaterialTheme.colorScheme.primary,
                 )
             }
+            Spacer(Modifier.width(4.dp))
             Text(
                 text = stringResource(R.string.saved_addresses_title),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
 

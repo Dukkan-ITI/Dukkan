@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.animation.Crossfade
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme

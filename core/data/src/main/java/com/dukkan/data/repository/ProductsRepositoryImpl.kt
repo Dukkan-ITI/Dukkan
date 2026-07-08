@@ -37,15 +37,15 @@ class ProductsRepositoryImpl(
         } ?: emptyList()
     }
 
-    override suspend fun getProductsByCollectionHandle(
-        handle: String,
+    override suspend fun getProductsByCollectionId(
+        categoryId: String,
         limit: Int,
         after: String?,
     ): List<Product> {
         val country = settingsRepository.currency.first().countryCode
         val language = settingsRepository.language.first().languageCode
-        return productsDataSource.getProductsByCollectionHandle(
-            handle = handle,
+        return productsDataSource.getProductsByCollectionId(
+            categoryId = categoryId,
             first = limit,
             after = after,
             country = country,

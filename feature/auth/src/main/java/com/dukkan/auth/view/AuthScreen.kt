@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -35,11 +37,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.exceptions.GetCredentialCancellationException
@@ -61,7 +69,6 @@ import com.dukkan.auth.viewmodel.AuthEvent
 import com.dukkan.auth.viewmodel.AuthUiState
 import com.dukkan.auth.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
-
 @Composable
 fun AuthScreen(
     onNavigateToHome: () -> Unit,
@@ -177,11 +184,27 @@ private fun AuthFormContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .systemBarsPadding()
-            .padding(top = 40.dp)
+            .padding(top = 20.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(80.dp))
+        val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+        val logoRes = if (isRtl) {
+            com.dukkan.design_system.R.drawable.logo_ar
+        } else {
+            com.dukkan.design_system.R.drawable.logo_en
+        }
+
+        Image(
+            painter = painterResource(id = logoRes),
+            contentDescription = null,
+            modifier = Modifier
+                .height(100.dp)
+                .fillMaxWidth(),
+            contentScale = ContentScale.Fit
+        )
+
 
         AuthHeadline(
             title = if (state.isLoginMode) stringResource(R.string.auth_login_title) else stringResource(
@@ -254,6 +277,7 @@ private fun AuthFormContent(
                 onValueChange = { onAction(AuthAction.EmailChanged(it)) },
                 placeholder = stringResource(if (state.isLoginMode) R.string.auth_login_email_placeholder else R.string.auth_register_email_placeholder),
                 errorMessage = state.emailError,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
             )
 
@@ -366,15 +390,15 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
             Text(
                 text = targetTitle,
                 style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 30.sp,
-                    lineHeight = 32.sp,
-                    letterSpacing = (-0.9).sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 34.sp,
+                    lineHeight = 38.sp,
+                    letterSpacing = (-1).sp,
+                    fontWeight = FontWeight.ExtraBold
                 ),
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(4.dp))
         AnimatedContent(
             targetState = subtitle,
             transitionSpec = {
@@ -386,9 +410,9 @@ private fun AuthHeadline(title: String, subtitle: String, modifier: Modifier = M
         ) { targetSubtitle ->
             Text(
                 text = targetSubtitle,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 21.sp,
+                lineHeight = 24.sp,
             )
         }
     }

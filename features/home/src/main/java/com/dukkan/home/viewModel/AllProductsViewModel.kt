@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
+import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
@@ -11,24 +12,34 @@ import com.dukkan.home.R
 import com.dukkan.home.uistate.AllProductsUiState
 import com.dukkan.home.uistate.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed interface AllProductsEvent {
+    data object NavigateToFavoritesGuest : AllProductsEvent
+}
 
 @HiltViewModel
 class AllProductsViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     getFavorites: GetFavoritesUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
 ) : ViewModel() {
 
     private val _products = MutableStateFlow<List<Product>>(emptyList())
     private val _isLoading = MutableStateFlow(true)
     private val _error = MutableStateFlow<UiText?>(null)
+
+    private val _events = Channel<AllProductsEvent>(Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     private companion object {
         const val DEFAULT_PRODUCTS_LIMIT = 50
@@ -74,6 +85,12 @@ class AllProductsViewModel @Inject constructor(
 
     fun onFavoriteClick(product: Product, isCurrentlyFavorite: Boolean) {
         viewModelScope.launch {
+            val user = getCurrentUserUseCase()
+            if (user == null) {
+                _events.send(AllProductsEvent.NavigateToFavoritesGuest)
+                return@launch
+            }
+
             val favoriteProduct = FavoriteProduct(
                 id = product.id,
                 title = product.title,

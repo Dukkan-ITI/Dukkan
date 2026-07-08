@@ -26,7 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.ads.components.CouponBannerSection
 import com.dukkan.design_system.components.ChatFab
+import com.dukkan.design_system.components.FloatingBottomBarHeight
 import com.dukkan.design_system.components.FloatingBottomBarMargin
+import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Brand
 import com.dukkan.home.components.HomeBrandsSection
 import com.dukkan.home.components.HomeCategoriesSection
@@ -44,7 +46,7 @@ fun HomeScreen(
     onNavigateToProductDetails: (productId: String) -> Unit = {},
     onSeeAllClicked: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
+    onCategoryClick: (com.dukkan.domain.model.Category.Category) -> Unit = {},
     onNavigateToBrands: () -> Unit = {},
     onBrandClick: (Brand) -> Unit = {},
     onNavigateToFavorites: () -> Unit = {},
@@ -89,7 +91,7 @@ fun HomeScreenContent(
     onFavoriteClick: (product: Product, isFavorite: Boolean) -> Unit,
     onProductClick: (product: Product) -> Unit,
     onNavigateToCategories: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {},
+    onCategoryClick: (com.dukkan.domain.model.Category.Category) -> Unit = {},
     onNavigateToBrands: () -> Unit = {},
     onBrandClick: (Brand) -> Unit = {},
     onNavigateToChat: () -> Unit = {},
@@ -100,7 +102,8 @@ fun HomeScreenContent(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            ChatFab(onClick = onNavigateToChat)
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         LazyVerticalGrid(
@@ -110,7 +113,7 @@ fun HomeScreenContent(
                 .padding(innerPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarMargin)
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarHeight)
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {

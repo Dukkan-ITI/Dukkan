@@ -30,8 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.design_system.components.GuestPlaceholderScreen
 import com.dukkan.design_system.components.ChatFab
+import com.dukkan.design_system.components.AuthRequiredPlaceholder
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.shopping_cart.R
 import com.dukkan.shopping_cart.components.CartItemRow
@@ -42,6 +42,7 @@ import com.dukkan.shopping_cart.components.SummarySection
 import com.dukkan.shopping_cart.uistate.ShoppingCartState
 import com.dukkan.shopping_cart.viewmodel.ShoppingCartViewModel
 import androidx.compose.material3.Scaffold
+import com.dukkan.design_system.components.bottomBarSpace
 
 @Composable
 fun ShoppingCartView(
@@ -59,7 +60,7 @@ fun ShoppingCartView(
     }
 
     if (!isLoggedIn) {
-        GuestPlaceholderScreen(
+        AuthRequiredPlaceholder(
             title = stringResource(id = R.string.cart_title),
             onSignInClick = onSignInClick
         )
@@ -99,7 +100,8 @@ private fun ShoppingCartContent(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            ChatFab(onClick = onNavigateToChat)
+            ChatFab(onClick = onNavigateToChat,
+                modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
         Box(
