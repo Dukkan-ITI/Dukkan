@@ -345,7 +345,11 @@ fun AppNavGraph(
         }
 
         composable<Screen.Chatbot> {
-            ChatScreen()
+            ChatScreen(
+                onNavigateToProduct = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
+            )
         }
     }
 }

@@ -19,20 +19,33 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dukkan.chatbot.components.ChatInputBar
 import com.dukkan.chatbot.components.MessageBubble
+import com.dukkan.chatbot.viewModel.ChatEvent
 import com.dukkan.chatbot.viewModel.ChatViewModel
+import com.dukkan.domain.model.SearchProduct
 import com.dukkan.domain.model.chatbot.ChatMessage
 
 @Composable
 fun ChatScreen(
-    viewModel: ChatViewModel = hiltViewModel()
+    viewModel: ChatViewModel = hiltViewModel(),
+    onNavigateToProduct: (String) -> Unit = {}
 ) {
     val messages by viewModel.messages.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is ChatEvent.NavigateToProduct -> onNavigateToProduct(event.productId)
+            }
+        }
+    }
+
     ChatContent(
         messages = messages,
         isLoading = isLoading,
-        onSendMessage = { text -> viewModel.sendMessage(text) }
+        onSendMessage = { text -> viewModel.sendMessage(text) },
+        onProductClick = viewModel::onProductClick,
+        onFavoriteClick = viewModel::onFavoriteClick
     )
 }
 
@@ -40,7 +53,9 @@ fun ChatScreen(
 fun ChatContent(
     messages: List<ChatMessage>,
     isLoading: Boolean,
-    onSendMessage: (String) -> Unit
+    onSendMessage: (String) -> Unit,
+    onProductClick: (String) -> Unit,
+    onFavoriteClick: (SearchProduct) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -66,7 +81,11 @@ fun ChatContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(messages) { message ->
-                    MessageBubble(message)
+                    MessageBubble(
+                        message = message,
+                        onProductClick = onProductClick,
+                        onFavoriteClick = onFavoriteClick
+                    )
                 }
 
                 if (isLoading) {
