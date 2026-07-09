@@ -114,23 +114,6 @@ internal fun CheckoutScreen(
         )
     }
 
-    var isEditingAddress by remember { mutableStateOf(false) }
-
-    if (isEditingAddress) {
-        AddressEditSheet(
-            currentAddress = if (uiState.selectedAddress is CheckoutAddress.Saved) {
-                val saved = uiState.selectedAddress as CheckoutAddress.Saved
-                uiState.addresses.find { it.id == saved.addressId }
-            } else (uiState.selectedAddress as? CheckoutAddress.OneOff)?.address,
-            onDismiss = { isEditingAddress = false },
-            onSave = { newAddress ->
-                onEvent(CheckoutEvent.SelectAddress(CheckoutAddress.OneOff(newAddress)))
-                isEditingAddress = false
-            }
-        )
-    }
-
-    
     uiState.result?.let { result ->
         PaymentResultOverlay(
             result = result,
