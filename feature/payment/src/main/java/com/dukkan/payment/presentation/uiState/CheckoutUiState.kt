@@ -1,7 +1,6 @@
 package com.dukkan.payment.presentation.uiState
 
 import androidx.compose.runtime.Immutable
-import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentMethod
 import com.dukkan.payment.domain.model.PaymobCredentials
 import com.dukkan.domain.model.Address
@@ -9,6 +8,7 @@ import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.payment.presentation.UiText
+import com.google.android.gms.maps.model.LatLng
 
 @Immutable
 internal data class CheckoutUiState(
@@ -16,12 +16,19 @@ internal data class CheckoutUiState(
     val cartSummary: CartSummary? = null,
     val storeCart: StoreCart? = null,
     val addresses: List<Address> = emptyList(),
-    val selectedAddress: CheckoutAddress? = null,
+    val selectedAddressId: String? = null,
     val selectedMethod: PaymentMethod? = null,
     val isCreatingIntention: Boolean = false,
     val paymobCredentials: PaymobCredentials? = null,
     val result: OrderResult? = null,
     val error: UiText? = null,
+    // Address selection / add-new flow
+    val isAddressSheetVisible: Boolean = false,
+    val isAddressFormVisible: Boolean = false,
+    val isSavingAddress: Boolean = false,
+    val addressFormError: String? = null,
+    val isMapVisible: Boolean = false,
+    val selectedLatLng: LatLng? = null,
 )
 
 internal sealed interface OrderResult {

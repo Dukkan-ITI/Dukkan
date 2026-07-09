@@ -14,9 +14,11 @@
     <string name="payment_address_phone">Phone number</string>
     <string name="payment_address_confirm">Confirm address</string>
     <string name="payment_address_city_country">%1$s, %2$s</string>
-    <string name="payment_address_edit">Edit</string>
+    <string name="payment_address_edit">Change</string>
     <string name="payment_address_none_selected">No address selected yet.</string>
     <string name="payment_address_unknown">Unknown</string>
+    <string name="payment_select_address_title">Delivery address</string>
+    <string name="payment_add_new_address">Add new address</string>
 
     <!-- ===== Payment method step ===== -->
     <string name="payment_step_method_title">Payment method</string>

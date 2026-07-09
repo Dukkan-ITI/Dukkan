@@ -1,4 +1,4 @@
-package com.dukkan.address.components
+package com.dukkan.address_ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dukkan.address.viewmodel.PlacesViewModel
 import com.dukkan.domain.model.LocationDetail
 
 @Composable
@@ -27,7 +26,7 @@ fun PlacesAutocompleteField(
     Column(modifier = modifier.fillMaxWidth()) {
         AddressTextField(
             value = query,
-            onValueChange = { 
+            onValueChange = {
                 query = it
                 viewModel.searchPlaces(it)
             },

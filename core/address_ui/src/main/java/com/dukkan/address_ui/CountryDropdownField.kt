@@ -1,4 +1,4 @@
-package com.dukkan.address.components
+package com.dukkan.address_ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

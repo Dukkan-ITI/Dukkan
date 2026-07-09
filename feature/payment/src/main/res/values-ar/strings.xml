@@ -14,9 +14,11 @@
     <string name="payment_address_phone">رقم الهاتف</string>
     <string name="payment_address_confirm">تأكيد العنوان</string>
     <string name="payment_address_city_country">%1$s، %2$s</string>
-    <string name="payment_address_edit">تعديل</string>
+    <string name="payment_address_edit">تغيير</string>
     <string name="payment_address_none_selected">لم يتم اختيار عنوان بعد.</string>
     <string name="payment_address_unknown">غير معروف</string>
+    <string name="payment_select_address_title">عنوان التوصيل</string>
+    <string name="payment_add_new_address">إضافة عنوان جديد</string>
 
     <!-- ===== Payment method step ===== -->
     <string name="payment_step_method_title">طريقة الدفع</string>

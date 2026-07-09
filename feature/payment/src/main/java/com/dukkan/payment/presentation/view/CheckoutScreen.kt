@@ -39,15 +39,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dukkan.address_ui.AddressFormSheet
+import com.dukkan.address_ui.LocationPickerScreen
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.R
-import com.dukkan.payment.domain.model.CheckoutAddress
-import com.dukkan.payment.presentation.AddressEditSheet
 import com.dukkan.payment.presentation.viewModel.CheckoutEffect
 import com.dukkan.payment.presentation.uiState.CheckoutEvent
 import com.dukkan.payment.presentation.uiState.CheckoutUiState
 import com.dukkan.payment.presentation.viewModel.CheckoutViewModel
 import com.dukkan.payment.presentation.components.AddressSection
+import com.dukkan.payment.presentation.components.AddressSelectSheet
 import com.dukkan.payment.presentation.components.CheckoutHeader
 import com.dukkan.payment.presentation.components.MethodSection
 import com.dukkan.payment.presentation.components.OrderSummaryBar
@@ -88,24 +89,6 @@ internal fun CheckoutScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    
-    var isEditingAddress by remember { mutableStateOf(false) }
-
-    if (isEditingAddress) {
-        AddressEditSheet(
-            currentAddress = if (uiState.selectedAddress is CheckoutAddress.Saved) {
-                val saved = uiState.selectedAddress as CheckoutAddress.Saved
-                uiState.addresses.find { it.id == saved.addressId }
-            } else (uiState.selectedAddress as? CheckoutAddress.OneOff)?.address,
-            onDismiss = { isEditingAddress = false },
-            onSave = { newAddress ->
-                onEvent(CheckoutEvent.SelectAddress(CheckoutAddress.OneOff(newAddress)))
-                isEditingAddress = false
-            }
-        )
-    }
-
-    
     uiState.result?.let { result ->
         PaymentResultOverlay(
             result = result,
@@ -148,7 +131,6 @@ internal fun CheckoutScreen(
     CheckoutContent(
         uiState = uiState,
         onEvent = onEvent,
-        onEditAddress = { isEditingAddress = true },
         onBack = { onPaymentResult(PaymentResult.Cancelled) },
     )
 }
@@ -157,9 +139,16 @@ internal fun CheckoutScreen(
 internal fun CheckoutContent(
     uiState: CheckoutUiState,
     onEvent: (CheckoutEvent) -> Unit,
-    onEditAddress: () -> Unit,
     onBack: () -> Unit,
 ) {
+    if (uiState.isMapVisible) {
+        LocationPickerScreen(
+            onLocationSelected = { onEvent(CheckoutEvent.LocationSelected(it)) },
+            onCancel = { onEvent(CheckoutEvent.DismissMap) },
+        )
+        return
+    }
+
     var isVisible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         isVisible = true
@@ -197,9 +186,9 @@ internal fun CheckoutContent(
                             .padding(top = 6.dp, bottom = 28.dp),
                     ) {
                         AddressSection(
-                            selectedAddress = uiState.selectedAddress,
+                            selectedAddressId = uiState.selectedAddressId,
                             addresses = uiState.addresses,
-                            onEditClick = onEditAddress,
+                            onEditClick = { onEvent(CheckoutEvent.OpenAddressSheet) },
                         )
     
                         Spacer(modifier = Modifier.height(24.dp))
@@ -222,7 +211,7 @@ internal fun CheckoutContent(
             }
         }
 
-        val isCtaEnabled = uiState.selectedAddress != null &&
+        val isCtaEnabled = uiState.selectedAddressId != null &&
                 uiState.selectedMethod != null &&
                 !uiState.isCreatingIntention &&
                 uiState.result == null &&
@@ -233,6 +222,29 @@ internal fun CheckoutContent(
             isLoading = uiState.isCreatingIntention,
             enabled = isCtaEnabled,
             onSubmit = { onEvent(CheckoutEvent.SubmitOrder) },
+        )
+    }
+
+    if (uiState.isAddressSheetVisible) {
+        AddressSelectSheet(
+            addresses = uiState.addresses,
+            selectedAddressId = uiState.selectedAddressId,
+            onSelect = { onEvent(CheckoutEvent.SelectAddress(it)) },
+            onAddNew = { onEvent(CheckoutEvent.OpenAddNewAddress) },
+            onDismissRequest = { onEvent(CheckoutEvent.DismissAddressSheet) },
+        )
+    }
+
+    if (uiState.isAddressFormVisible) {
+        AddressFormSheet(
+            initialAddress = null,
+            isSaving = uiState.isSavingAddress,
+            formError = uiState.addressFormError,
+            selectedLatLng = uiState.selectedLatLng,
+            onMapClick = { onEvent(CheckoutEvent.OpenMap) },
+            onClearSelectedLatLng = { onEvent(CheckoutEvent.ClearSelectedLatLng) },
+            onDismissRequest = { onEvent(CheckoutEvent.DismissAddressForm) },
+            onSave = { onEvent(CheckoutEvent.SaveNewAddress(it)) },
         )
     }
 }

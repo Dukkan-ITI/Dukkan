@@ -8,12 +8,12 @@ import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.domain.model.cart.CartSummary
 import com.dukkan.domain.model.cart.StoreCart
+import com.dukkan.domain.usecase.address.AddAddressUseCase
 import com.dukkan.domain.usecase.address.GetAddressesUseCase
 import com.dukkan.domain.usecase.cart.GetCartUseCase
 import com.dukkan.domain.usecase.customer.GetCustomerIdUseCase
 import com.dukkan.payment.PaymentResult
 import com.dukkan.payment.R
-import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.OrderDraft
 import com.dukkan.payment.domain.model.OrderFinancialStatus
 import com.dukkan.payment.domain.model.OrderLineItemDraft
@@ -26,7 +26,7 @@ import com.dukkan.payment.domain.usecase.MarkOrderPaidUseCase
 import com.dukkan.payment.domain.usecase.VerifyPaymentStatusUseCase
 import com.dukkan.payment.domain.usecase.DeleteOrderUseCase
 import com.dukkan.domain.usecase.cart.ClearCartFullyUseCase
-import com.google.gson.Gson
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +39,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_IDEMPOTENCY_KEY
-import com.dukkan.payment.presentation.CheckoutConstants.KEY_ONE_OFF_ADDRESS_JSON
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_ORDER_ID
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_SAVED_ADDRESS_ID
 import com.dukkan.payment.presentation.CheckoutConstants.KEY_SELECTED_METHOD
@@ -71,9 +70,8 @@ internal class CheckoutViewModel @Inject constructor(
     private val getCustomerIdUseCase: GetCustomerIdUseCase,
     private val getCartUseCase: GetCartUseCase,
     private val getAddressesUseCase: GetAddressesUseCase,
+    private val addAddressUseCase: AddAddressUseCase,
 ) : ViewModel() {
-
-    private val gson = Gson()
 
     private var orderId: String?
         get() = savedStateHandle[KEY_ORDER_ID]
@@ -89,37 +87,13 @@ internal class CheckoutViewModel @Inject constructor(
         }
         set(value) { savedStateHandle[KEY_SELECTED_METHOD] = value?.name }
 
-    private var persistedAddress: CheckoutAddress?
-        get() {
-            val savedId = savedStateHandle.get<String>(KEY_SAVED_ADDRESS_ID)
-            if (savedId != null) return CheckoutAddress.Saved(savedId)
-            
-            val oneOffJson = savedStateHandle.get<String>(KEY_ONE_OFF_ADDRESS_JSON)
-            if (oneOffJson != null) {
-                return runCatching { CheckoutAddress.OneOff(gson.fromJson(oneOffJson, Address::class.java)) }.getOrNull()
-            }
-            return null
-        }
-        set(value) {
-            when (value) {
-                is CheckoutAddress.Saved -> {
-                    savedStateHandle[KEY_SAVED_ADDRESS_ID] = value.addressId
-                    savedStateHandle.remove<String>(KEY_ONE_OFF_ADDRESS_JSON)
-                }
-                is CheckoutAddress.OneOff -> {
-                    savedStateHandle.remove<String>(KEY_SAVED_ADDRESS_ID)
-                    savedStateHandle[KEY_ONE_OFF_ADDRESS_JSON] = gson.toJson(value.address)
-                }
-                null -> {
-                    savedStateHandle.remove<String>(KEY_SAVED_ADDRESS_ID)
-                    savedStateHandle.remove<String>(KEY_ONE_OFF_ADDRESS_JSON)
-                }
-            }
-        }
+    private var persistedAddressId: String?
+        get() = savedStateHandle[KEY_SAVED_ADDRESS_ID]
+        set(value) { savedStateHandle[KEY_SAVED_ADDRESS_ID] = value }
 
     private val _uiState = MutableStateFlow(
         CheckoutUiState(
-            selectedAddress = persistedAddress,
+            selectedAddressId = persistedAddressId,
             selectedMethod = persistedMethod,
         )
     )
@@ -148,12 +122,14 @@ internal class CheckoutViewModel @Inject constructor(
             val addresses = getAddressesUseCase().getOrElse { emptyList() }
             
             
-            if (persistedAddress == null && addresses.isNotEmpty()) {
+
+            val currentSelectedId = persistedAddressId
+            val hasValidSelection = currentSelectedId != null && addresses.any { it.id == currentSelectedId }
+            if (!hasValidSelection && addresses.isNotEmpty()) {
                 val defaultAddress = addresses.firstOrNull { it.isDefault } ?: addresses.first()
                 defaultAddress.id?.let { id ->
-                    val defaultSaved = CheckoutAddress.Saved(id)
-                    persistedAddress = defaultSaved
-                    _uiState.update { it.copy(selectedAddress = defaultSaved) }
+                    persistedAddressId = id
+                    _uiState.update { it.copy(selectedAddressId = id) }
                 }
             }
 
@@ -171,9 +147,45 @@ internal class CheckoutViewModel @Inject constructor(
     fun onEvent(event: CheckoutEvent) {
         when (event) {
             is CheckoutEvent.SelectAddress -> {
-                persistedAddress = event.address
-                _uiState.update { it.copy(selectedAddress = event.address) }
+                persistedAddressId = event.addressId
+                _uiState.update {
+                    it.copy(selectedAddressId = event.addressId, isAddressSheetVisible = false)
+                }
             }
+
+            CheckoutEvent.OpenAddressSheet ->
+                _uiState.update { it.copy(isAddressSheetVisible = true) }
+
+            CheckoutEvent.DismissAddressSheet ->
+                _uiState.update { it.copy(isAddressSheetVisible = false) }
+
+            CheckoutEvent.OpenAddNewAddress ->
+                _uiState.update {
+                    it.copy(
+                        isAddressSheetVisible = false,
+                        isAddressFormVisible = true,
+                        addressFormError = null,
+                    )
+                }
+
+            CheckoutEvent.DismissAddressForm ->
+                _uiState.update {
+                    it.copy(isAddressFormVisible = false, addressFormError = null, selectedLatLng = null)
+                }
+
+            is CheckoutEvent.SaveNewAddress -> saveNewAddress(event.address)
+
+            CheckoutEvent.OpenMap ->
+                _uiState.update { it.copy(isMapVisible = true) }
+
+            CheckoutEvent.DismissMap ->
+                _uiState.update { it.copy(isMapVisible = false) }
+
+            is CheckoutEvent.LocationSelected ->
+                _uiState.update { it.copy(isMapVisible = false, selectedLatLng = event.latLng) }
+
+            CheckoutEvent.ClearSelectedLatLng ->
+                _uiState.update { it.copy(selectedLatLng = null) }
 
             is CheckoutEvent.SelectMethod -> {
                 persistedMethod = event.method
@@ -221,7 +233,7 @@ internal class CheckoutViewModel @Inject constructor(
     }
 
     private fun submitOrder() {
-        val address = _uiState.value.selectedAddress ?: return
+        val address = selectedAddress() ?: return
         val method  = _uiState.value.selectedMethod ?: return
         val cart = _uiState.value.storeCart ?: return
 
@@ -231,7 +243,40 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun confirmCash(address: CheckoutAddress, cart: StoreCart) {
+    private fun selectedAddress(): Address? {
+        val id = _uiState.value.selectedAddressId ?: return null
+        return _uiState.value.addresses.firstOrNull { it.id == id }
+    }
+
+    private fun saveNewAddress(address: Address) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingAddress = true, addressFormError = null) }
+            addAddressUseCase(address).fold(
+                onSuccess = { created ->
+                    val addresses = getAddressesUseCase().getOrElse { _uiState.value.addresses }
+                    val newId = created.id ?: addresses.lastOrNull()?.id
+                    if (newId != null) persistedAddressId = newId
+                    _uiState.update {
+                        it.copy(
+                            isSavingAddress = false,
+                            isAddressFormVisible = false,
+                            isAddressSheetVisible = false,
+                            selectedLatLng = null,
+                            addresses = addresses,
+                            selectedAddressId = newId ?: it.selectedAddressId,
+                        )
+                    }
+                },
+                onFailure = { e ->
+                    _uiState.update {
+                        it.copy(isSavingAddress = false, addressFormError = e.message)
+                    }
+                },
+            )
+        }
+    }
+
+    private fun confirmCash(address: Address, cart: StoreCart) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val result = buildOrderDraft(address, cart)
@@ -265,7 +310,7 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private fun startOnlinePayment(address: CheckoutAddress, cart: StoreCart) {
+    private fun startOnlinePayment(address: Address, cart: StoreCart) {
         viewModelScope.launch {
             _uiState.update { it.copy(isCreatingIntention = true, error = null) }
             val orderResult = buildOrderDraft(address, cart)
@@ -289,7 +334,7 @@ internal class CheckoutViewModel @Inject constructor(
 
             val result = createPaymentIntentionUseCase(
                 idempotencyKey = idempotencyKey,
-                address        = address,
+                billingAddress = address,
                 cartId         = cart.id,
                 cartTotal      = cart.cost.totalAmount,
             )
@@ -435,7 +480,7 @@ internal class CheckoutViewModel @Inject constructor(
         }
     }
 
-    private suspend fun buildOrderDraft(address: CheckoutAddress, cart: StoreCart): Result<OrderDraft> =
+    private suspend fun buildOrderDraft(address: Address, cart: StoreCart): Result<OrderDraft> =
         getCustomerIdUseCase().mapCatching { customerId ->
             val cartTotal = cart.cost.totalAmount
             OrderDraft(
@@ -453,14 +498,8 @@ internal class CheckoutViewModel @Inject constructor(
                     price = Money(STANDARD_SHIPPING_PRICE, cartTotal.currencyCode),
                 ),
                 currency = cartTotal.currencyCode,
-                shippingAddress = address.toAddress(),
+                shippingAddress = address,
             )
-        }
-
-    private fun CheckoutAddress.toAddress(): Address? =
-        when (this) {
-            is CheckoutAddress.OneOff -> address
-            is CheckoutAddress.Saved -> _uiState.value.addresses.firstOrNull { it.id == addressId }
         }
 
     private fun mintNewIdempotencyKey(): String {

@@ -1,4 +1,4 @@
-package com.dukkan.address.components
+package com.dukkan.address_ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,7 +47,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
-import com.dukkan.address.R
 import com.dukkan.design_system.components.PrimaryButton
 import com.dukkan.domain.model.Address
 
@@ -261,63 +260,63 @@ fun AddressFormSheet(
                             enabled = !isZipDisabled
                         )
                     }
-                AddressTextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    placeholder = stringResource(R.string.saved_addresses_field_phone),
-                    keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Done,
-                    keyboardActions = KeyboardActions.Default,
-                    errorMessage = if (phone.isNotBlank() && !isPhoneValid) {
-                        stringResource(R.string.saved_addresses_error_invalid_phone)
-                    } else {
-                        null
-                    },
-                )
-
-                if (formError != null) {
-                    Text(
-                        text = formError,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
-                if (isSaving) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                } else {
-                    PrimaryButton(
-                        text = stringResource(R.string.saved_addresses_save),
-                        onClick = {
-                            if (isValid) {
-                                onSave(
-                                    Address(
-                                        id = initialAddress?.id,
-                                        firstName = firstName.trim().ifBlank { null },
-                                        lastName = lastName.trim().ifBlank { null },
-                                        company = company.trim().ifBlank { null },
-                                        address1 = address1.trim().ifBlank { null },
-                                        address2 = address2.trim().ifBlank { null },
-                                        city = city.trim().ifBlank { null },
-                                        province = province.trim().ifBlank { null },
-                                        country = country.trim().ifBlank { null },
-                                        zip = zip.trim().ifBlank { null },
-                                        phone = phone.trim().ifBlank { null },
-                                        isDefault = initialAddress?.isDefault ?: false,
-                                    )
-                                )
-                            }
+                    AddressTextField(
+                        value = phone,
+                        onValueChange = { phone = it },
+                        placeholder = stringResource(R.string.saved_addresses_field_phone),
+                        keyboardType = KeyboardType.Phone,
+                        imeAction = ImeAction.Done,
+                        keyboardActions = KeyboardActions.Default,
+                        errorMessage = if (phone.isNotBlank() && !isPhoneValid) {
+                            stringResource(R.string.saved_addresses_error_invalid_phone)
+                        } else {
+                            null
                         },
-                        modifier = Modifier.fillMaxWidth(),
                     )
+
+                    if (formError != null) {
+                        Text(
+                            text = formError,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+
+                    if (isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    } else {
+                        PrimaryButton(
+                            text = stringResource(R.string.saved_addresses_save),
+                            onClick = {
+                                if (isValid) {
+                                    onSave(
+                                        Address(
+                                            id = initialAddress?.id,
+                                            firstName = firstName.trim().ifBlank { null },
+                                            lastName = lastName.trim().ifBlank { null },
+                                            company = company.trim().ifBlank { null },
+                                            address1 = address1.trim().ifBlank { null },
+                                            address2 = address2.trim().ifBlank { null },
+                                            city = city.trim().ifBlank { null },
+                                            province = province.trim().ifBlank { null },
+                                            country = country.trim().ifBlank { null },
+                                            zip = zip.trim().ifBlank { null },
+                                            phone = phone.trim().ifBlank { null },
+                                            isDefault = initialAddress?.isDefault ?: false,
+                                        )
+                                    )
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
     }
-}
 }
 
 private val phoneRegex = Regex("^[+]?[0-9\\s-]{7,20}$")

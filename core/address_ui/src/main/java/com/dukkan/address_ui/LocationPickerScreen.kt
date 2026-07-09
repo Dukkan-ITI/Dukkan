@@ -1,6 +1,4 @@
-package com.dukkan.address.view
-
-import com.dukkan.address.R
+package com.dukkan.address_ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.res.stringResource

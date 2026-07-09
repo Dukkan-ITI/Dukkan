@@ -5,6 +5,7 @@ import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.OrderConfirmation
 import com.dukkan.domain.model.cart.StoreCart
+import com.dukkan.domain.usecase.address.AddAddressUseCase
 import com.dukkan.domain.usecase.address.GetAddressesUseCase
 import com.dukkan.domain.usecase.cart.GetCartUseCase
 import com.dukkan.domain.usecase.customer.GetCustomerIdUseCase
@@ -54,6 +55,8 @@ internal class CheckoutViewModelTest {
     lateinit var getCartUseCase: GetCartUseCase
     @MockK
     lateinit var getAddressesUseCase: GetAddressesUseCase
+    @MockK
+    lateinit var addAddressUseCase: AddAddressUseCase
 
     private lateinit var viewModel: CheckoutViewModel
     private lateinit var savedStateHandle: SavedStateHandle
@@ -82,7 +85,8 @@ internal class CheckoutViewModelTest {
         clearCartFullyUseCase,
         getCustomerIdUseCase,
         getCartUseCase,
-        getAddressesUseCase
+        getAddressesUseCase,
+        addAddressUseCase
     )
 
     @After
@@ -113,14 +117,29 @@ internal class CheckoutViewModelTest {
         assertEquals(2, state.cartSummary?.lineCount)
         assertEquals(2, state.addresses.size)
         // Should select default address
-        assertEquals("addr_1", (state.selectedAddress as? CheckoutAddress.Saved)?.addressId)
+        assertEquals("addr_1", state.selectedAddressId)
     }
 
     @Test
     fun `SelectAddress updates state`() = runTest {
-        val newAddress = CheckoutAddress.Saved("addr_new")
-        viewModel.onEvent(CheckoutEvent.SelectAddress(newAddress))
-        assertEquals(newAddress, viewModel.uiState.value.selectedAddress)
+        viewModel.onEvent(CheckoutEvent.SelectAddress("addr_new"))
+        assertEquals("addr_new", viewModel.uiState.value.selectedAddressId)
+    }
+
+    @Test
+    fun `SaveNewAddress adds address and auto-selects it`() = runTest {
+        val created = Address(id = "addr_created", firstName = "New")
+        coEvery { addAddressUseCase(any()) } returns Result.success(created)
+        coEvery { getAddressesUseCase() } returns Result.success(listOf(created))
+
+        viewModel.onEvent(CheckoutEvent.SaveNewAddress(Address(firstName = "New")))
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        coVerify { addAddressUseCase(any()) }
+        assertEquals("addr_created", state.selectedAddressId)
+        assertFalse(state.isAddressFormVisible)
+        assertFalse(state.isAddressSheetVisible)
     }
 
     @Test
