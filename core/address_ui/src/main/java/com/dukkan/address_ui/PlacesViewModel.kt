@@ -1,4 +1,4 @@
-package com.dukkan.address.viewmodel
+package com.dukkan.address_ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

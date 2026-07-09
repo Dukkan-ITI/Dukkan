@@ -95,6 +95,7 @@ fun DukkanBottomBar(
     navController: NavHostController,
     isLoggedIn: Boolean,
     cartCount: Int = 0,
+    favCount: Int = 0,
     onShowGuestDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -139,7 +140,11 @@ fun DukkanBottomBar(
                             }
                         }
                     },
-                    cartCount = if (dest == TopLevelDestination.CART) cartCount else 0
+                    badgeCount = when (dest) {
+                        TopLevelDestination.CART -> cartCount
+                        TopLevelDestination.FAVORITE -> favCount
+                        else -> 0
+                    }
                 )
             }
         }
@@ -151,7 +156,7 @@ private fun DukkanBottomBarItem(
     destination: TopLevelDestination,
     selected: Boolean,
     onClick: () -> Unit,
-    cartCount: Int = 0,
+    badgeCount: Int = 0,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Box(
@@ -166,11 +171,11 @@ private fun DukkanBottomBarItem(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        if (cartCount > 0) {
+        if (badgeCount > 0) {
             androidx.compose.material3.BadgedBox(
                 badge = {
                     androidx.compose.material3.Badge {
-                        androidx.compose.material3.Text(cartCount.toString())
+                        androidx.compose.material3.Text(badgeCount.toString())
                     }
                 }
             ) {

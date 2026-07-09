@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dukkan.settings.R
 import com.dukkan.design_system.components.OrderCard
+import com.dukkan.design_system.components.OrderCardShimmer
 import com.dukkan.design_system.components.OrderUi
 
 @Composable
@@ -46,7 +46,7 @@ fun OrderHistorySection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
             )
-            if (hasOrders) {
+            if (hasOrders || isLoading) {
                 Text(
                     text = stringResource(R.string.profile_see_all),
                     style = MaterialTheme.typography.bodyMedium,
@@ -62,11 +62,9 @@ fun OrderHistorySection(
 
         when {
             isLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 2.dp,
-                )
+                repeat(2) {
+                    OrderCardShimmer()
+                }
             }
             hasOrders -> {
                 orders.forEach { order ->

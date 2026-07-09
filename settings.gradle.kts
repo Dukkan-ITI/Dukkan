@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 rootProject.name = "Dukkan"
 include(":app")
 include(":core:design_system")
+include(":core:address_ui")
 include(":feature:auth")
 
 include(":core:data")

@@ -66,6 +66,9 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":core:design_system"))
+    implementation(project(":core:address_ui"))
+
+    implementation(libs.play.services.maps)
 
     implementation(":paymob-sdk@aar")
 

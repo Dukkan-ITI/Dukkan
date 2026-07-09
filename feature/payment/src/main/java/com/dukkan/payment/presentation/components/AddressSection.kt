@@ -22,13 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.domain.model.Address
 import com.dukkan.payment.R
-import com.dukkan.payment.domain.model.CheckoutAddress
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.clickable
 
 @Composable
 internal fun AddressSection(
-    selectedAddress: CheckoutAddress?,
+    selectedAddressId: String?,
     addresses: List<Address>,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -39,11 +38,7 @@ internal fun AddressSection(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        val actualAddress = when (selectedAddress) {
-            is CheckoutAddress.Saved -> addresses.find { it.id == selectedAddress.addressId }
-            is CheckoutAddress.OneOff -> selectedAddress.address
-            null -> null
-        }
+        val actualAddress = selectedAddressId?.let { id -> addresses.find { it.id == id } }
 
         if (actualAddress != null) {
             androidx.compose.material3.Surface(

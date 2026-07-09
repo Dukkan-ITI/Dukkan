@@ -56,10 +56,10 @@ fun CouponBannerCard(
             Image(
                 painter = painterResource(coupon.toImageResId()),
                 contentDescription = coupon.title,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(160.dp)
             )
 
             Row(
@@ -116,33 +116,6 @@ fun CouponBannerCard(
                     ),
                     lineHeight = 24.sp,
                     color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .clickable {
-                        onShopClick()
-                    }
-                    .padding(horizontal = 17.dp, vertical = 11.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = stringResource(R.string.shop_now),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(15.dp)
                 )
             }
         }

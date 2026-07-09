@@ -4,7 +4,6 @@ import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.Money
 import com.dukkan.payment.data.remote.PaymentApi
 import com.dukkan.payment.data.remote.dto.PaymobIntentionResponse
-import com.dukkan.payment.domain.model.CheckoutAddress
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
@@ -33,7 +32,7 @@ internal class PaymentRepositoryImplTest {
         val cartTotal = Money(BigDecimal("100.0"), "EGP")
         val result = repository.confirmCashOrder(
             idempotencyKey = "key",
-            address = mockk<CheckoutAddress.Saved>(),
+            billingAddress = Address(firstName = "John"),
             cartId = "cart_1",
             cartTotal = cartTotal
         )
@@ -48,9 +47,8 @@ internal class PaymentRepositoryImplTest {
     @Test
     fun `createPaymentIntention success returns result`() = runTest {
         val address = Address(firstName = "John", lastName = "Doe")
-        val checkoutAddress = CheckoutAddress.OneOff(address)
         val cartTotal = Money(BigDecimal("100.0"), "EGP")
-        
+
         val mockResponse = PaymobIntentionResponse(
             clientSecret = "secret",
             publicKey = "pub"
@@ -60,7 +58,7 @@ internal class PaymentRepositoryImplTest {
 
         val result = repository.createPaymentIntention(
             idempotencyKey = "key",
-            address = checkoutAddress,
+            billingAddress = address,
             cartId = "cart_1",
             cartTotal = cartTotal
         )

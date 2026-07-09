@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_addresses_form_title_add">إضافة عنوان</string>
+    <string name="saved_addresses_form_title_edit">تعديل العنوان</string>
+    <string name="saved_addresses_field_first_name">الاسم الأول</string>
+    <string name="saved_addresses_field_last_name">اسم العائلة</string>
+    <string name="saved_addresses_field_company">الشركة</string>
+    <string name="saved_addresses_field_address1">العنوان*</string>
+    <string name="saved_addresses_field_address2">شقة، جناح، إلخ</string>
+    <string name="saved_addresses_field_city">المدينة*</string>
+    <string name="saved_addresses_field_province">المحافظة</string>
+    <string name="saved_addresses_field_country">الدولة*</string>
+    <string name="saved_addresses_field_zip">الرمز البريدي</string>
+    <string name="saved_addresses_field_phone">رقم الهاتف*</string>
+    <string name="saved_addresses_error_invalid_phone">أدخل رقم هاتف صحيح</string>
+    <string name="saved_addresses_save">حفظ العنوان</string>
+
+    <string name="cancel">إلغاء</string>
+</resources>
