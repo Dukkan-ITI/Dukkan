@@ -15,6 +15,7 @@ data class ProfileState(
     val language: AppLanguage = AppLanguage.ENGLISH,
     val orders: List<OrderUi> = emptyList(),
     val ordersLoading: Boolean = false,
+    val isOnline: Boolean = true,
 ) {
     val isLoggedIn: Boolean get() = user != null
 }

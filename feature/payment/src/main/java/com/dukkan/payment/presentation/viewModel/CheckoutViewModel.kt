@@ -71,6 +71,7 @@ internal class CheckoutViewModel @Inject constructor(
     private val getCartUseCase: GetCartUseCase,
     private val getAddressesUseCase: GetAddressesUseCase,
     private val addAddressUseCase: AddAddressUseCase,
+    private val networkMonitor: com.dukkan.domain.util.NetworkMonitor,
 ) : ViewModel() {
 
     private var orderId: String?
@@ -104,6 +105,22 @@ internal class CheckoutViewModel @Inject constructor(
 
     init {
         loadCartAndAddresses()
+        observeConnectivity()
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { online ->
+                val wasOnline = _uiState.value.isOnline
+                _uiState.update { 
+                    it.copy(
+                        isOnline = online,
+                        // Show popup if connection was lost while in checkout
+                        showOfflinePopup = if (!online && wasOnline) true else if (online) false else it.showOfflinePopup
+                    ) 
+                }
+            }
+        }
     }
 
     private fun loadCartAndAddresses() {
@@ -206,6 +223,10 @@ internal class CheckoutViewModel @Inject constructor(
             CheckoutEvent.DismissResult -> {
                 _uiState.update { it.copy(result = null) }
             }
+
+            CheckoutEvent.DismissOfflinePopup -> {
+                _uiState.update { it.copy(showOfflinePopup = false) }
+            }
             
             is CheckoutEvent.AcknowledgeResult -> {
                 val methodStr = if (_uiState.value.selectedMethod == PaymentMethod.CASH) "CASH" else "CARD"
@@ -234,6 +255,10 @@ internal class CheckoutViewModel @Inject constructor(
 
     private fun submitOrder() {
         val address = selectedAddress() ?: return
+        if (!_uiState.value.isOnline) {
+            showOfflineToast()
+            return
+        }
         val method  = _uiState.value.selectedMethod ?: return
         val cart = _uiState.value.storeCart ?: return
 
@@ -273,6 +298,14 @@ internal class CheckoutViewModel @Inject constructor(
                     }
                 },
             )
+        }
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(showOfflineToast = true) }
+            delay(3000)
+            _uiState.update { it.copy(showOfflineToast = false) }
         }
     }
 

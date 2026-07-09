@@ -34,5 +34,6 @@ internal sealed interface CheckoutEvent {
     object AppResumedDuringPayment : CheckoutEvent
     object Retry : CheckoutEvent
     object DismissResult : CheckoutEvent
+    object DismissOfflinePopup : CheckoutEvent
     data class AcknowledgeResult(val isPending: Boolean) : CheckoutEvent
 }

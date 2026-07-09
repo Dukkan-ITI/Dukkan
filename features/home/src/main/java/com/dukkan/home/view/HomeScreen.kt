@@ -113,27 +113,71 @@ fun HomeScreenContent(
                 modifier = Modifier.padding(bottom = bottomBarSpace()))
         }
     ) { innerPadding ->
-        if (!isOnline && uiState !is HomeUiState.Success && uiState !is HomeUiState.Loading) {
-            com.dukkan.design_system.components.ErrorScreen(
-                title = stringResource(com.dukkan.design_system.R.string.offline_title),
-                message = stringResource(com.dukkan.design_system.R.string.no_cache_available),
-                lottieRawRes = com.dukkan.design_system.R.raw.no_internet,
-                modifier = Modifier.fillMaxSize()
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(
+                start = 22.dp,
+                end = 22.dp,
+                bottom = FloatingBottomBarHeight
             )
-        } else {
-            LazyVerticalGrid(
-                state = gridState,
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(
-                    start = 22.dp,
-                    end = 22.dp,
-                    bottom = FloatingBottomBarHeight
-                )
-            ) {
+        ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                HomeHeader(firstName = firstName, isOnline = isOnline)
+            }
+
+            if (!isOnline && uiState is HomeUiState.Success) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp)
+                            .clip(MaterialTheme.shapes.small)
+                            .background(MaterialTheme.colorScheme.errorContainer)
+                            .padding(vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(com.dukkan.design_system.R.string.viewing_cached_data),
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                CouponBannerSection(onShopClick = {})
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            val isSuccess = uiState is HomeUiState.Success
+            val isEmpty = isSuccess && (uiState as HomeUiState.Success).let { 
+                it.products.isEmpty() && it.categories.isEmpty() && it.brands.isEmpty() 
+            }
+
+            if (!isOnline && (uiState is HomeUiState.Error || isEmpty)) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    com.dukkan.design_system.components.ErrorScreen(
+                        title = stringResource(com.dukkan.design_system.R.string.offline_title),
+                        message = stringResource(com.dukkan.design_system.R.string.home_offline_subtitle),
+                        lottieRawRes = com.dukkan.design_system.R.raw.no_internet,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp)
+                    )
+                }
+            } else {
                 when (uiState) {
                     is HomeUiState.Loading -> {
                         item(span = { GridItemSpan(maxLineSpan) }) {
@@ -165,59 +209,30 @@ fun HomeScreenContent(
                     }
 
                     is HomeUiState.Success -> {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            HomeHeader(firstName = firstName, isOnline = isOnline)
-                        }
-
-                        if (!isOnline) {
+                        if (uiState.categories.isNotEmpty()) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(bottom = 10.dp)
-                                        .clip(MaterialTheme.shapes.small)
-                                        .background(MaterialTheme.colorScheme.errorContainer)
-                                        .padding(vertical = 6.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = stringResource(com.dukkan.design_system.R.string.viewing_cached_data),
-                                        color = MaterialTheme.colorScheme.onErrorContainer,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
+                                HomeCategoriesSection(
+                                    categories = uiState.categories,
+                                    onSeeAllClick = onNavigateToCategories,
+                                    onCategoryClick = onCategoryClick
+                                )
+                            }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Spacer(modifier = Modifier.height(16.dp))
                             }
                         }
 
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            CouponBannerSection(onShopClick = {})
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            HomeCategoriesSection(
-                                categories = uiState.categories,
-                                onSeeAllClick = onNavigateToCategories,
-                                onCategoryClick = onCategoryClick
-                            )
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            HomeBrandsSection(
-                                brands = uiState.brands,
-                                onSeeAllClick = onNavigateToBrands,
-                                onBrandClick = onBrandClick
-                            )
-                        }
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Spacer(modifier = Modifier.height(16.dp))
+                        if (uiState.brands.isNotEmpty()) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                HomeBrandsSection(
+                                    brands = uiState.brands,
+                                    onSeeAllClick = onNavigateToBrands,
+                                    onBrandClick = onBrandClick
+                                )
+                            }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
                         }
 
                         homeProductSection(

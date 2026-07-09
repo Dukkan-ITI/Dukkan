@@ -20,6 +20,7 @@ import com.dukkan.domain.usecase.settings.GetThemeUseCase
 import com.dukkan.domain.usecase.settings.SetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.SetLanguageUseCase
 import com.dukkan.domain.usecase.settings.SetThemeUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.settings.mapper.toOrderUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,9 +46,8 @@ class ProfileViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val clearFavoritesOnLogoutUseCase: ClearFavoritesOnLogoutUseCase,
     private val clearCartOnLogoutUseCase: ClearCartOnLogoutUseCase,
-
-
-    ) : ViewModel() {
+    networkMonitor: NetworkMonitor,
+) : ViewModel() {
 
     private val _user = MutableStateFlow<AuthUser?>(null)
     private val _isLoading = MutableStateFlow(true)
@@ -88,12 +88,13 @@ class ProfileViewModel @Inject constructor(
     }
 
     val state: StateFlow<ProfileState> = combine(
-        _user,
-        _isLoading,
+        combine(_user, _isLoading) { user, loading -> user to loading },
         ordersState,
         getFavoritesUseCase().map { it.size },
         settings,
-    ) { user, isLoading, ordersData, favoritesCount, settingsTriple ->
+        networkMonitor.isOnline
+    ) { userData, ordersData, favoritesCount, settingsTriple, isOnline ->
+        val (user, isLoading) = userData
         val (orders, ordersLoading) = ordersData
         val (theme, currency, language) = settingsTriple
         ProfileState(
@@ -105,6 +106,7 @@ class ProfileViewModel @Inject constructor(
             language = language,
             orders = orders,
             ordersLoading = ordersLoading,
+            isOnline = isOnline,
         )
     }.stateIn(
         scope = viewModelScope,

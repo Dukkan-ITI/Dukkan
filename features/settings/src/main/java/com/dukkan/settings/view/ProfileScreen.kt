@@ -106,8 +106,9 @@ private fun ProfileContent(
 
                 Column {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                    SavedAddressesRow(onClick = onSavedAddressesClick)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+
+                    SavedAddressesRow(onClick = onSavedAddressesClick, enabled = state.isOnline)
+
                     LogoutRow(onClick = onLogoutClick)
                 }
             }

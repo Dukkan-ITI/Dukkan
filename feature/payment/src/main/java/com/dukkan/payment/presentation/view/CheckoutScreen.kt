@@ -35,6 +35,25 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -89,6 +108,29 @@ internal fun CheckoutScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+    if (uiState.showOfflinePopup) {
+        com.dukkan.design_system.components.OfflineDialog(
+            onDismiss = { onEvent(CheckoutEvent.DismissOfflinePopup) }
+        )
+    }
+
+    var isEditingAddress by remember { mutableStateOf(false) }
+
+    if (isEditingAddress) {
+        AddressEditSheet(
+            currentAddress = if (uiState.selectedAddress is CheckoutAddress.Saved) {
+                val saved = uiState.selectedAddress as CheckoutAddress.Saved
+                uiState.addresses.find { it.id == saved.addressId }
+            } else (uiState.selectedAddress as? CheckoutAddress.OneOff)?.address,
+            onDismiss = { isEditingAddress = false },
+            onSave = { newAddress ->
+                onEvent(CheckoutEvent.SelectAddress(CheckoutAddress.OneOff(newAddress)))
+                isEditingAddress = false
+            }
+        )
+    }
+
+    
     uiState.result?.let { result ->
         PaymentResultOverlay(
             result = result,
@@ -133,7 +175,10 @@ internal fun CheckoutScreen(
         onEvent = onEvent,
         onBack = { onPaymentResult(PaymentResult.Cancelled) },
     )
+
+    com.dukkan.design_system.components.OfflineToast(visible = uiState.showOfflineToast)
 }
+
 
 @Composable
 internal fun CheckoutContent(
@@ -189,6 +234,7 @@ internal fun CheckoutContent(
                             selectedAddressId = uiState.selectedAddressId,
                             addresses = uiState.addresses,
                             onEditClick = { onEvent(CheckoutEvent.OpenAddressSheet) },
+                            enabled = uiState.isOnline,
                         )
     
                         Spacer(modifier = Modifier.height(24.dp))

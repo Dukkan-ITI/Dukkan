@@ -15,4 +15,5 @@ data class SavedAddressesState(
     val updatingDefaultId: String? = null,
     val isMapVisible: Boolean = false,
     val selectedLatLng: com.google.android.gms.maps.model.LatLng? = null,
+    val isOnline: Boolean = true,
 )

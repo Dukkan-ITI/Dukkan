@@ -31,6 +31,7 @@ internal fun AddressSection(
     addresses: List<Address>,
     onEditClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 22.dp)) {
         SectionEyebrow(text = stringResource(R.string.payment_step_address_title))
@@ -67,7 +68,10 @@ internal fun AddressSection(
                             )
                         }
                         
-                        androidx.compose.material3.TextButton(onClick = onEditClick) {
+                        androidx.compose.material3.TextButton(
+                            onClick = onEditClick,
+                            enabled = enabled
+                        ) {
                             Text(
                                 text = stringResource(R.string.payment_address_edit),
                                 style = MaterialTheme.typography.labelLarge,
@@ -136,7 +140,10 @@ internal fun AddressSection(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    androidx.compose.material3.TextButton(onClick = onEditClick) {
+                    androidx.compose.material3.TextButton(
+                        onClick = onEditClick,
+                        enabled = enabled
+                    ) {
                         Text(
                             text = stringResource(R.string.add_address),
                             style = MaterialTheme.typography.labelLarge,
