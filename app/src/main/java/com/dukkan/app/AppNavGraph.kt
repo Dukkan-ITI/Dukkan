@@ -1,5 +1,7 @@
 package com.dukkan.app
 
+import com.dukkan.app.R
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -7,7 +9,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import android.widget.Toast
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.dukkan.address.view.SavedAddressesScreen
 import com.dukkan.auth.view.AuthScreen
@@ -36,6 +40,8 @@ fun AppNavGraph(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val cashOrderPlacedMessage = stringResource(R.string.payment_cash_order_placed)
+    val successOrderConfirmedMessage = stringResource(R.string.payment_success_order_confirmed)
 
     NavHost(
         navController = navController,
@@ -84,11 +90,13 @@ fun AppNavGraph(
                 onBrandClick = { brand ->
                     navController.navigate(Screen.BrandProducts(brand.name))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
-                },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chatbot)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -127,8 +135,10 @@ fun AppNavGraph(
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -154,11 +164,12 @@ fun AppNavGraph(
                 // Here is where other modules are informed of the payment outcome
                 when (result) {
                     is PaymentResult.Success -> {
-                        if (result.paymentMethod == "CASH") {
-                            Toast.makeText(context, "Order placed! You will pay with cash upon delivery.", Toast.LENGTH_LONG).show()
+                        val message = if (result.paymentMethod == "CASH") {
+                            cashOrderPlacedMessage
                         } else {
-                            Toast.makeText(context, "Payment successful! Order confirmed.", Toast.LENGTH_LONG).show()
+                            successOrderConfirmedMessage
                         }
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                     }
                     is PaymentResult.Failed -> {
                         // Payment failed! You can show an error or log it.
@@ -208,7 +219,14 @@ fun AppNavGraph(
             )
         }
 
-        composable<Screen.ProductDetail> {
+        composable<Screen.ProductDetail>(
+            deepLinks = listOf(
+                navDeepLink<Screen.ProductDetail>(
+                    basePath = "https://dukkan-iti.github.io/Dukkan/products"
+                )
+            )
+        ) {
+            // Cold-start deep links open ProductDetail directly; system back exits the app.
             ProductDetailsScreen(
                 onBackClick = { navController.popBackStack() },
                 onSignInClick = {
@@ -216,9 +234,40 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
+                onCompareClick = { productId, productTitle ->
+                    navController.navigate(Screen.CompareProductSearch(baseProductId = productId, baseProductTitle = productTitle))
                 }
+            )
+        }
+
+        composable<Screen.CompareProductSearch> { backStackEntry ->
+            val args = backStackEntry.toRoute<Screen.CompareProductSearch>()
+            val searchViewModel: com.dukkan.search.viewmodel.SearchViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+            
+            androidx.compose.runtime.LaunchedEffect(args.baseProductTitle) {
+                if (searchViewModel.uiState.value.queryInput.isEmpty()) {
+                    searchViewModel.onQueryInputChanged(args.baseProductTitle)
+                    searchViewModel.onSearchSubmitted(args.baseProductTitle)
+                }
+            }
+            
+            SearchScreen(
+                modifier = Modifier.fillMaxSize(),
+                viewModel = searchViewModel,
+                onNavigateToProductDetails = { selectedProductId ->
+                    navController.navigate(Screen.ProductComparison(productId1 = args.baseProductId, productId2 = selectedProductId)) {
+                        popUpTo<Screen.CompareProductSearch> { inclusive = true }
+                    }
+                },
+                onNavigateToChat = {
+                    navController.navigate(Screen.Chatbot)
+                }
+            )
+        }
+
+        composable<Screen.ProductComparison> {
+            com.dukkan.product_details.view.ProductComparisonScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
@@ -247,8 +296,10 @@ fun AppNavGraph(
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
@@ -270,14 +321,20 @@ fun AppNavGraph(
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
+                onSignInClick = {
+                    navController.navigate(Screen.Auth) {
+                        popUpTo<Screen.Home> { inclusive = true }
+                    }
                 }
             )
         }
 
         composable<Screen.Chatbot> {
-            ChatScreen()
+            ChatScreen(
+                onNavigateToProduct = { productId ->
+                    navController.navigate(Screen.ProductDetail(productId = productId))
+                }
+            )
         }
     }
 }

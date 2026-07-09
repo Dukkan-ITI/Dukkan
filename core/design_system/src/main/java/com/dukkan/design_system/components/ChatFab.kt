@@ -1,6 +1,7 @@
 package com.dukkan.design_system.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -43,12 +44,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dukkan.design_system.R
@@ -124,8 +127,16 @@ fun ChatFab(
 
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
     val screenHeightPx = with(density) { configuration.screenHeightDp.dp.toPx() }
+    
+    // Convert margins to px properly using density to avoid being too small on high-density screens
+    val safeMarginX = with(density) { 80.dp.toPx() }
+    val safeMarginTop = with(density) { 140.dp.toPx() }
+    
+    // In both LTR and RTL, moving towards Start means negative offset. 
+    val xBounds = (-screenWidthPx + safeMarginX)..0f
 
     Box(
         modifier = modifier
@@ -134,8 +145,13 @@ fun ChatFab(
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     val current = fabOffsetState.value
-                    val newX = (current.x + dragAmount.x).coerceIn(-screenWidthPx + 150f, 0f)
-                    val newY = (current.y + dragAmount.y).coerceIn(-screenHeightPx + 200f, 0f)
+                    
+                    // In RTL, positive dragAmount.x (swiping right) means moving towards Start.
+                    // Modifier.offset in RTL moves left for positive x. So we must invert dragAmount.x.
+                    val deltaX = if (layoutDirection == LayoutDirection.Rtl) -dragAmount.x else dragAmount.x
+                    
+                    val newX = (current.x + deltaX).coerceIn(xBounds.start, xBounds.endInclusive)
+                    val newY = (current.y + dragAmount.y).coerceIn(-screenHeightPx + safeMarginTop, 0f)
                     fabOffsetState.value = Offset(newX, newY)
                 }
             }
@@ -173,7 +189,7 @@ fun ChatFab(
             colors = listOf(primary, tertiary)
         )
         Text(
-            text = "D",
+            text = stringResource(R.string.chat_fab_icon),
             modifier = Modifier.graphicsLayer {
                 val currentFab = fabOffsetState.value
                 val currentAbs = letterAbsOffset.value

@@ -34,4 +34,6 @@
     <string name="home_offline_message">You\'re viewing cached data. New content will be loaded automatically once you\'re back online.</string>
     <string name="viewing_cached_data">Viewing cached data</string>
     <string name="no_cache_available">No cached data found. You need to be online to load content for the first time.</string>
+    <string name="chat_fab_icon">D</string>
+    <string name="add_to_cart_default">Add To cart</string>
 </resources>

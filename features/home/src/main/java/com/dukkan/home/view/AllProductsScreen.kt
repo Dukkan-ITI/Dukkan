@@ -47,15 +47,22 @@ fun AllProductsScreen(
     onBackClick: () -> Unit,
     onProductClick: (Product) -> Unit,
     onNavigateToFavorites: () -> Unit = {},
+    onSignInClick: () -> Unit = {},
     viewModel: AllProductsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val showGuestDialog by viewModel.showGuestAuthDialog.collectAsStateWithLifecycle()
+
+    if (showGuestDialog) {
+        com.dukkan.design_system.components.GuestAuthDialog(
+            onDismiss = { viewModel.dismissGuestAuthDialog() },
+            onSignInClick = onSignInClick
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
-            when (event) {
-                AllProductsEvent.NavigateToFavoritesGuest -> onNavigateToFavorites()
-            }
+            // Handle other events here if any
         }
     }
 

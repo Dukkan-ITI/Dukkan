@@ -1,6 +1,9 @@
 package com.dukkan.address.view
 
+import com.dukkan.address.R
+
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
@@ -59,7 +62,7 @@ fun LocationPickerScreen(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Move the map to select your delivery location",
+                    text = stringResource(R.string.move_map_delivery),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
@@ -71,10 +74,10 @@ fun LocationPickerScreen(
                         onClick = onCancel,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                     PrimaryButton(
-                        text = "Confirm Location",
+                        text = stringResource(R.string.confirm_location),
                         onClick = { onLocationSelected(cameraPositionState.position.target) },
                         modifier = Modifier.weight(1f)
                     )

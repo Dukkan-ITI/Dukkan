@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
                 ThemeMode.SYSTEM -> isSystemInDarkTheme()
             }
 
+            val isLoggedIn by appViewModel.isLoggedIn.collectAsState()
+            val showGuestDialog by appViewModel.showGuestDialog.collectAsState()
+
             LaunchedEffect(language) {
                 AppCompatDelegate.setApplicationLocales(
                     LocaleListCompat.forLanguageTags(language!!.tag)
@@ -55,6 +58,16 @@ class MainActivity : AppCompatActivity() {
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val showBottomBar = isTopLevelDestination(currentBackStackEntry?.destination)
 
+                if (showGuestDialog) {
+                    com.dukkan.design_system.components.GuestAuthDialog(
+                        onDismiss = { appViewModel.dismissGuestDialog() },
+                        onSignInClick = {
+                            appViewModel.dismissGuestDialog()
+                            navController.navigate(com.dukkan.navigation.Screen.Auth)
+                        }
+                    )
+                }
+
                 Box(modifier = Modifier.fillMaxSize()) {
                     AppNavGraph(
                         navController = navController,
@@ -64,6 +77,8 @@ class MainActivity : AppCompatActivity() {
                     if (showBottomBar) {
                         DukkanBottomBar(
                             navController = navController,
+                            isLoggedIn = isLoggedIn,
+                            onShowGuestDialog = { appViewModel.showGuestDialog() },
                             modifier = Modifier.align(Alignment.BottomCenter)
                         )
                     }

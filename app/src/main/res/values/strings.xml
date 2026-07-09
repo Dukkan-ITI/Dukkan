@@ -5,4 +5,6 @@
     <string name="bottom_bar_favorites">Favorites</string>
     <string name="bottom_bar_cart">Cart</string>
     <string name="bottom_bar_profile">Profile</string>
+    <string name="payment_cash_order_placed">Order placed! You will pay with cash upon delivery.</string>
+    <string name="payment_success_order_confirmed">Payment successful! Order confirmed.</string>
 </resources>

@@ -187,4 +187,9 @@ object DataModule {
     fun provideNetworkMonitor(
         @ApplicationContext context: Context,
     ): NetworkMonitor = ConnectivityManagerNetworkMonitor(context)
+
+    @Singleton
+    @Provides
+    fun provideProductComparisonRepository(aiAgentOrchestrator: com.dukkan.ai_agent.orchestrator.AiAgentOrchestrator): com.dukkan.domain.repository.ProductComparisonRepository =
+        com.dukkan.data.repository.ProductComparisonRepositoryImpl(aiAgentOrchestrator)
 }

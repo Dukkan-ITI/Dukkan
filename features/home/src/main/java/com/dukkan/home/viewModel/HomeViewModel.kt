@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface HomeEvent {
-    data object NavigateToFavoritesGuest : HomeEvent
+    // Add events if needed in the future
 }
 
 @HiltViewModel
@@ -189,11 +189,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private val _showGuestAuthDialog = MutableStateFlow(false)
+    val showGuestAuthDialog: StateFlow<Boolean> = _showGuestAuthDialog.asStateFlow()
+
+    fun dismissGuestAuthDialog() {
+        _showGuestAuthDialog.value = false
+    }
+
     fun onFavoriteClick(product: Product, isCurrentlyFavorite: Boolean) {
         viewModelScope.launch {
             val user = getCurrentUserUseCase()
             if (user == null) {
-                _events.send(HomeEvent.NavigateToFavoritesGuest)
+                _showGuestAuthDialog.value = true
                 return@launch
             }
 
