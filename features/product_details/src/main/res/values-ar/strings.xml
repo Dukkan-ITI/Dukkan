@@ -38,5 +38,21 @@
     <string name="product_details_share_product">مشاركة المنتج</string>
     <!-- machine-translated -->
     <string name="product_details_review_submitted">تم إرسال التقييم!</string>
+    <string name="ai_product_comparison">مقارنة المنتجات بالذكاء الاصطناعي</string>
+    <string name="detailed_comparison">مقارنة تفصيلية</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="type_answer_here">أو اكتب إجابتك هنا…</string>
+    <string name="submit">إرسال</string>
+    <string name="suggested_answers">إجابات مقترحة:</string>
+    <string name="compare_another_product">قارن مع منتج آخر</string>
+    <string name="comparison_analyzing">جارٍ تحليل المنتجات…</string>
+    <string name="comparison_status_comparing_specs">جارٍ مقارنة المواصفات…</string>
+    <string name="comparison_status_weighing">جارٍ موازنة الإيجابيات والسلبيات…</string>
+    <string name="comparison_status_recommendation">جارٍ إعداد التوصية…</string>
+    <string name="comparison_error_generic">حدث خطأ</string>
+    <string name="comparison_or">أو</string>
+    <string name="comparison_winner">الفائز</string>
+    <string name="comparison_back">رجوع</string>
+    <string name="comparison_vs">ضد</string>
     <string name="offline_action_message">أنت غير متصل بالإنترنت. هذا الإجراء يتطلب اتصالاً بالإنترنت.</string>
 </resources>
