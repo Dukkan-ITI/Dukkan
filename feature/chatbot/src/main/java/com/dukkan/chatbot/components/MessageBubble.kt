@@ -55,64 +55,75 @@ fun MessageBubble(
         MaterialTheme.colorScheme.inverseOnSurface
     }
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
+        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start,
+        verticalAlignment = Alignment.Top
     ) {
-        if (message.text.isNotBlank()) {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomStart = if (isUser) 16.dp else 4.dp,
-                            bottomEnd = if (isUser) 4.dp else 16.dp
-                        )
-                    )
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
-            ) {
-                Text(
-                    text = message.text,
-                    color = textColor,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+        if (!isUser) {
+            BotAvatar()
+            Spacer(modifier = Modifier.width(8.dp))
         }
 
-        if (message.products.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(end = 32.dp)
-            ) {
-                items(message.products) { product ->
-                    ProductCard(
-                        title = product.title,
-                        priceLabel = product.price.asString(),
-                        imageUrl = product.imageUrl,
-                        isFavorite = false,
-                        onFavoriteClick = { onFavoriteClick(product) },
-                        onCardClick = { onProductClick(product.id) },
-                        modifier = Modifier.width(160.dp),
-                        rating = product.averageRating,
-                        reviewCount = product.reviewCount
+        Column(
+            modifier = Modifier.weight(1f, fill = false),
+            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
+        ) {
+            if (message.text.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = backgroundColor,
+                            shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomStart = if (isUser) 16.dp else 4.dp,
+                                bottomEnd = if (isUser) 4.dp else 16.dp
+                            )
+                        )
+                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                ) {
+                    Text(
+                        text = message.text,
+                        color = textColor,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
-        }
 
-        if (message.orders.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                message.orders.forEach { order ->
-                    OrderCard(
-                        order = order.toUiModel(),
-                        modifier = Modifier.fillMaxWidth(0.9f)
-                    )
+            if (message.products.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(end = 32.dp)
+                ) {
+                    items(message.products) { product ->
+                        ProductCard(
+                            title = product.title,
+                            priceLabel = product.price.asString(),
+                            imageUrl = product.imageUrl,
+                            isFavorite = false,
+                            onFavoriteClick = { onFavoriteClick(product) },
+                            onCardClick = { onProductClick(product.id) },
+                            modifier = Modifier.width(160.dp),
+                            rating = product.averageRating,
+                            reviewCount = product.reviewCount
+                        )
+                    }
+                }
+            }
+
+            if (message.orders.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    message.orders.forEach { order ->
+                        OrderCard(
+                            order = order.toUiModel(),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
