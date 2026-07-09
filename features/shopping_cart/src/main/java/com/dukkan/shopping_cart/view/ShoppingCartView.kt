@@ -48,6 +48,7 @@ import com.dukkan.design_system.components.AuthRequiredPlaceholder
 import com.dukkan.domain.model.cart.CartLine
 import com.dukkan.shopping_cart.R
 import com.dukkan.shopping_cart.components.CartItemRow
+import com.dukkan.shopping_cart.components.CartItemRowShimmer
 import com.dukkan.shopping_cart.components.EmptyCartState
 import com.dukkan.shopping_cart.components.PromoCodeSection
 import com.dukkan.shopping_cart.components.RemoveItemDialog
@@ -182,15 +183,8 @@ private fun ShoppingCartContent(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     if (state.isLoading) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(300.dp),
-                                contentAlignment = androidx.compose.ui.Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                            }
+                        items(3) {
+                            CartItemRowShimmer()
                         }
                     } else if (state.cart?.lines.isNullOrEmpty()) {
                         item {

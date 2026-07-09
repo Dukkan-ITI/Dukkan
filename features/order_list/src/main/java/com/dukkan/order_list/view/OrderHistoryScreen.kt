@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.dukkan.design_system.components.OrderCard
+import com.dukkan.design_system.components.OrderCardShimmer
 import com.dukkan.order_list.R
 import com.dukkan.order_list.mappers.toOrderUi
 import com.dukkan.order_list.uistate.OrderHistoryUIState
@@ -133,10 +134,14 @@ private fun OrderHistoryContent(
         ) {
             when {
                 state.isLoading && state.orders.isEmpty() -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        repeat(5) {
+                            OrderCardShimmer()
+                        }
+                    }
                 }
 
                 !state.isLoading && state.orders.isEmpty() && state.error == null -> {
