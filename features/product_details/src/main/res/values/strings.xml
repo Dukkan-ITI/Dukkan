@@ -26,5 +26,14 @@
     <string name="submit">Submit</string>
     <string name="suggested_answers">Suggested answers:</string>
     <string name="compare_another_product">Compare with another product</string>
+    <string name="comparison_analyzing">Analyzing products…</string>
+    <string name="comparison_status_comparing_specs">Comparing specs…</string>
+    <string name="comparison_status_weighing">Weighing the trade-offs…</string>
+    <string name="comparison_status_recommendation">Preparing a recommendation…</string>
+    <string name="comparison_error_generic">An error occurred</string>
+    <string name="comparison_or">or</string>
+    <string name="comparison_winner">Winner</string>
+    <string name="comparison_back">Back</string>
+    <string name="comparison_vs">VS</string>
     <string name="offline_action_message">You\'re offline. This action requires an internet connection.</string>
 </resources>
