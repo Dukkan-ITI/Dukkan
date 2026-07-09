@@ -1,18 +1,17 @@
 plugins {
     id("dukkan.feature")
-    alias(libs.plugins.secrets)
 }
 
 android {
-    namespace = "com.dukkan.address"
+    namespace = "com.dukkan.address_ui"
 }
 
 dependencies {
     implementation(project(":core:design_system"))
     implementation(project(":core:domain"))
-    implementation(project(":core:address_ui"))
 
     implementation(libs.androidx.compose.material.icons.core)
 
+    implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
 }

@@ -5,7 +5,6 @@ import com.dukkan.payment.data.remote.PaymentApi
 import com.dukkan.payment.data.remote.dto.PaymobBillingData
 import com.dukkan.payment.data.remote.dto.PaymobIntentionRequest
 import com.dukkan.payment.data.remote.dto.PaymobItem
-import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentIntentionResult
 import com.dukkan.payment.domain.repository.PaymentRepository
 import com.dukkan.domain.model.Address
@@ -21,7 +20,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun confirmCashOrder(
         idempotencyKey: String,
-        address: CheckoutAddress,
+        billingAddress: Address,
         cartId: String,
         cartTotal: Money,
     ): Result<OrderConfirmation> = runCatching {
@@ -34,7 +33,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
 
     override suspend fun createPaymentIntention(
         idempotencyKey: String,
-        address: CheckoutAddress,
+        billingAddress: Address,
         cartId: String,
         cartTotal: Money,
     ): Result<PaymentIntentionResult> = runCatching {
@@ -42,15 +41,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
             .multiply(BigDecimal("100"))
             .toLong()
 
-        val billing = when (address) {
-            is CheckoutAddress.OneOff -> address.address.toBillingData()
-            is CheckoutAddress.Saved  -> PaymobBillingData(
-                firstName   = "Customer",
-                lastName    = ".",
-                phoneNumber = "N/A",
-                email       = "customer@example.com",
-            )
-        }
+        val billing = billingAddress.toBillingData()
 
         val request = PaymobIntentionRequest(
             amount         = amountInPiasters,

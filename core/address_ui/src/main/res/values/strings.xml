@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_addresses_form_title_add">Add Address</string>
+    <string name="saved_addresses_form_title_edit">Edit Address</string>
+    <string name="saved_addresses_field_first_name">First name</string>
+    <string name="saved_addresses_field_last_name">Last name</string>
+    <string name="saved_addresses_field_company">Company</string>
+    <string name="saved_addresses_field_address1">Address*</string>
+    <string name="saved_addresses_field_address2">Apartment, suite, etc.</string>
+    <string name="saved_addresses_field_city">City*</string>
+    <string name="saved_addresses_field_province">Province</string>
+    <string name="saved_addresses_field_country">Country*</string>
+    <string name="saved_addresses_field_zip">ZIP code</string>
+    <string name="saved_addresses_field_phone">Phone*</string>
+    <string name="saved_addresses_error_invalid_phone">Enter a valid phone number</string>
+    <string name="saved_addresses_save">Save Address</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="choose_on_map">Choose on map</string>
+    <string name="move_map_delivery">Move the map to select your delivery location</string>
+    <string name="confirm_location">Confirm Location</string>
+</resources>

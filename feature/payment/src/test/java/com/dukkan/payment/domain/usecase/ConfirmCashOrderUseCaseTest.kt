@@ -1,8 +1,8 @@
 package com.dukkan.payment.domain.usecase
 
+import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.Money
 import com.dukkan.domain.model.OrderConfirmation
-import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.repository.PaymentRepository
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -27,7 +27,7 @@ class ConfirmCashOrderUseCaseTest {
 
     @Test
     fun `invoke calls repository confirmCashOrder`() = runTest {
-        val address = mockk<CheckoutAddress>()
+        val address = Address(firstName = "John")
         val total = Money(BigDecimal.ZERO, "EGP")
         val result = Result.success(mockk<OrderConfirmation>())
         coEvery { repository.confirmCashOrder("key", address, "cart", total) } returns result

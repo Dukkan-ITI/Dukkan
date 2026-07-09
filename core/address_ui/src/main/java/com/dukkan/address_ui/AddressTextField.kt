@@ -1,4 +1,4 @@
-package com.dukkan.payment.presentation.components
+package com.dukkan.address_ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -31,11 +31,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dukkan.design_system.theme.AppTheme
 
 @Composable
-internal fun PaymentAddressTextField(
+fun AddressTextField(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
@@ -122,5 +124,18 @@ internal fun PaymentAddressTextField(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AddressTextFieldPreview() {
+    AppTheme {
+        AddressTextField(
+            value = "",
+            onValueChange = {},
+            placeholder = "Address line 1",
+            modifier = Modifier.padding(16.dp),
+        )
     }
 }

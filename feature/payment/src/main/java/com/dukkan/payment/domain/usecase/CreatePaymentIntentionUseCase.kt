@@ -1,8 +1,8 @@
 package com.dukkan.payment.domain.usecase
 
+import com.dukkan.domain.model.Address
 import com.dukkan.payment.domain.model.PaymentIntentionResult
 import com.dukkan.payment.domain.repository.PaymentRepository
-import com.dukkan.payment.domain.model.CheckoutAddress
 import javax.inject.Inject
 
 internal class CreatePaymentIntentionUseCase @Inject constructor(
@@ -10,12 +10,12 @@ internal class CreatePaymentIntentionUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         idempotencyKey: String,
-        address: CheckoutAddress,
+        billingAddress: Address,
         cartId: String,
         cartTotal: com.dukkan.domain.model.Money,
     ): Result<PaymentIntentionResult> = repository.createPaymentIntention(
         idempotencyKey = idempotencyKey,
-        address        = address,
+        billingAddress = billingAddress,
         cartId         = cartId,
         cartTotal      = cartTotal,
     )

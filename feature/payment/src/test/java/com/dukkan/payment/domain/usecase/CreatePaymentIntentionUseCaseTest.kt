@@ -1,7 +1,7 @@
 package com.dukkan.payment.domain.usecase
 
+import com.dukkan.domain.model.Address
 import com.dukkan.domain.model.Money
-import com.dukkan.payment.domain.model.CheckoutAddress
 import com.dukkan.payment.domain.model.PaymentIntentionResult
 import com.dukkan.payment.domain.repository.PaymentRepository
 import io.mockk.coEvery
@@ -24,7 +24,7 @@ class CreatePaymentIntentionUseCaseTest {
 
     @Test
     fun `invoke calls repository createPaymentIntention`() = runTest {
-        val address = mockk<CheckoutAddress>()
+        val address = Address(firstName = "John")
         val total = Money(BigDecimal.ZERO, "EGP")
         val result = Result.success(mockk<PaymentIntentionResult>())
         coEvery { repository.createPaymentIntention("key", address, "cart", total) } returns result
