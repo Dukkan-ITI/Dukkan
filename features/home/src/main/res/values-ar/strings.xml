@@ -18,7 +18,9 @@
     <string name="search">بحث</string>
     <string name="search_products">ابحث عن المنتجات...</string>
     <string name="categories">الفئات (%1$d)</string>
-    <string name="brands">العلامات التجارية</string>
+    <string name="categories_loading">الفئات</string>
+    <string name="brands">العلامات التجارية (%1$d)</string>
+    <string name="brands_loading">العلامات التجارية</string>
     <string name="hey_there">مرحبًا</string>
     <string name="hey_name">مرحبًا %1$s 👋</string>
     <string name="profile_picture">الصورة الشخصية</string>

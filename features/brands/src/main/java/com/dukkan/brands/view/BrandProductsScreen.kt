@@ -63,6 +63,12 @@ fun BrandProductsScreen(
         )
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+
+        }
+    }
+
     LaunchedEffect(vendor) {
         viewModel.fetchProductsByVendor(vendor)
     }

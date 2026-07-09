@@ -51,10 +51,10 @@ import com.dukkan.product_details.components.AddToCartBar
 import com.dukkan.product_details.components.ProductDetailsSection
 import com.dukkan.product_details.components.ProductHeader
 import com.dukkan.product_details.components.ProductImagePager
+import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
 import com.dukkan.product_details.components.WriteReviewBottomSheet
-import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
@@ -87,6 +87,7 @@ fun ProductDetailsScreen(
                         )
                     )
                 }
+
             }
         }
     }
@@ -157,11 +158,26 @@ private fun ProductDetailsContent(
                 onSubmitReview = onSubmitReview,
             )
         }
+    when {
+        state.isLoading -> LoadingScreen()
+        state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
+        state.product != null -> LoadedProductDetails(
+            product = state.product,
+            state = state,
+            onBackClick = onBackClick,
+            onFavoriteClick = onFavoriteClick,
+            onCompareClick = onCompareClick,
+            onAddToCartClick = onAddToCartClick,
+            onShareClick = onShareClick,
+            onWriteReviewClick = onWriteReviewClick,
+            onDismissReviewSheet = onDismissReviewSheet,
+            onSubmitReview = onSubmitReview,
+        )
     }
 }
 
 @Composable
-private fun LoadedProductDetails(
+fun LoadedProductDetails(
     product: Product,
     state: ProductDetailsState,
     isOnline: Boolean,
@@ -404,3 +420,4 @@ private fun LoadedProductDetails(
         )
     }
 }
+    }
