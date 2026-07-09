@@ -4,7 +4,10 @@ package com.dukkan.data.di
 import android.content.Context
 import androidx.room.Room
 import com.dukkan.data.source.local.LocalConstants
+import com.dukkan.data.source.local.dao.CartDao
 import com.dukkan.data.source.local.dao.FavoriteDao
+import com.dukkan.data.source.local.dao.HomeDao
+import com.dukkan.data.source.local.dao.OrderDao
 import com.dukkan.data.source.local.database.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -35,5 +38,13 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideOrderDao(db: AppDatabase): com.dukkan.data.source.local.dao.OrderDao = db.orderDao()
+    fun provideOrderDao(db: AppDatabase): OrderDao = db.orderDao()
+
+    @Provides
+    @Singleton
+    fun provideHomeDao(db: AppDatabase): HomeDao = db.homeDao()
+
+    @Provides
+    @Singleton
+    fun provideCartDao(db: AppDatabase): CartDao = db.cartDao()
 }

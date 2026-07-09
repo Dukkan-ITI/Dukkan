@@ -1,9 +1,11 @@
 package com.dukkan.product_details.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.dukkan.product_details.R
 import com.dukkan.domain.model.FavoriteProduct
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
@@ -14,15 +16,20 @@ import com.dukkan.domain.usecase.product.GetProductByIdUseCase
 import com.dukkan.domain.usecase.review.AddReviewUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
@@ -45,9 +52,17 @@ class ProductDetailsViewModel @Inject constructor(
     private val addReviewUseCase: AddReviewUseCase,
     getCurrency: GetCurrencyUseCase,
     getLanguage: GetLanguageUseCase,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProductDetailsState())
     val state = _state.asStateFlow()
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
 
     private val _events = Channel<ProductDetailsEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
@@ -115,6 +130,10 @@ class ProductDetailsViewModel @Inject constructor(
         "$PRODUCT_SHARE_BASE_URL/${product.id.toUrlPathSegment()}"
 
     fun addToCart(variantId: String) {
+        if (!isOnline.value) {
+            showOfflineToast()
+            return
+        }
         if (!_state.value.isLoggedIn) {
             _state.update { it.copy(showGuestDialog = true) }
             return
@@ -161,6 +180,10 @@ class ProductDetailsViewModel @Inject constructor(
     }
 
     fun submitReview(rating: Int, title: String, body: String) {
+        if (!isOnline.value) {
+            showOfflineToast()
+            return
+        }
         val product = _state.value.product ?: return
         viewModelScope.launch {
             _state.update { it.copy(isSubmittingReview = true, reviewError = null) }
@@ -192,6 +215,14 @@ class ProductDetailsViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _state.update { it.copy(showOfflineToast = true) }
+            delay(2000)
+            _state.update { it.copy(showOfflineToast = false) }
         }
     }
 

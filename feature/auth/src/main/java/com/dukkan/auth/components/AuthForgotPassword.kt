@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +47,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.dukkan.auth.R
 
 @Composable
@@ -57,6 +62,7 @@ fun AuthForgotPasswordScreen(
     onEmailChanged: (String) -> Unit,
     onSendClick: () -> Unit,
     onBackToLoginClick: () -> Unit,
+    isOnline: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -76,17 +82,36 @@ fun AuthForgotPasswordScreen(
             com.dukkan.design_system.R.drawable.logo_en
         }
 
-        Image(
-            painter = painterResource(id = logoRes),
-            contentDescription = null,
+        Box(
             modifier = Modifier
-                .height(100.dp)
                 .fillMaxWidth(),
-            contentScale = ContentScale.Fit
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = logoRes),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Fit
+            )
 
+            if (!isOnline) {
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.RawRes(com.dukkan.design_system.R.raw.no_internet)
+                )
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    modifier = Modifier
+                        .size(100.dp)
+                        .align(Alignment.CenterEnd)
+                )
+            }
+        }
 
         Column(modifier = Modifier.fillMaxWidth()) {
+            // ... (rest of title content)
             AnimatedContent(
                 targetState = isEmailSent,
                 transitionSpec = {
@@ -168,7 +193,9 @@ fun AuthForgotPasswordScreen(
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 ) {
                     if (isLoading) {

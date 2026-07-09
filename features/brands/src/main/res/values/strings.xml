@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="brands">Brands</string>
-    <string name="no_products_found">No products found in this category.</string>
+    <string name="no_products_found">No products found for this brand.</string>
+    <string name="no_brands_found">No brands available.</string>
     <string name="back">Back</string>
 </resources>

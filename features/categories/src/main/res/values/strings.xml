@@ -2,5 +2,6 @@
 <resources>
     <string name="categories">Categories</string>
     <string name="back">Back</string>
-    <string name="no_products_found">No products found in this category.</string>
+    <string name="no_products_found">No products found for this category.</string>
+    <string name="no_categories_found">No categories available.</string>
 </resources>

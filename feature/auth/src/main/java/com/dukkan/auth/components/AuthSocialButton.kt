@@ -79,6 +79,7 @@ fun AuthSocialRow(
     onGoogleClick: () -> Unit,
     modifier: Modifier = Modifier,
     isGoogleLoading: Boolean = false,
+    enabled: Boolean = true,
 ) {
     AuthSocialButton(
         label = stringResource(R.string.auth_social_google),
@@ -87,6 +88,7 @@ fun AuthSocialRow(
         onClick = onGoogleClick,
         modifier = modifier.fillMaxWidth(),
         isLoading = isGoogleLoading,
+        enabled = enabled,
     )
 }
 

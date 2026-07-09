@@ -28,6 +28,9 @@ import com.dukkan.search.R
 import javax.inject.Inject
 
 import com.dukkan.domain.repository.ReviewRepository
+import com.dukkan.domain.util.NetworkMonitor
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -36,8 +39,16 @@ class SearchViewModel @Inject constructor(
     private val predictiveSearchUseCase: PredictiveSearchUseCase,
     private val agenticSearchUseCase: AgenticSearchUseCase,
     private val resumeSearchClarificationUseCase: ResumeSearchClarificationUseCase,
-    private val reviewRepository: ReviewRepository
+    private val reviewRepository: ReviewRepository,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
 
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
@@ -139,6 +150,18 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onAiSearchTriggered(query: String) {
+        if (!isOnline.value) {
+            _uiState.update {
+                it.copy(
+                    isAiSearchLoading = false,
+                    isAiError = true,
+                    aiMessage = UiText.StringResource(R.string.search_ai_offline_error),
+                    clarificationQuestion = null,
+                    clarificationSessionId = null
+                )
+            }
+            return
+        }
         val trimmed = query.trim()
         if (trimmed.isBlank()) return
         agenticSearchJob?.cancel()
@@ -198,6 +221,16 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onClarificationAnswered(voiceAnswer: String? = null) {
+        if (!isOnline.value) {
+            _uiState.update {
+                it.copy(
+                    isAiSearchLoading = false,
+                    isAiError = true,
+                    aiMessage = UiText.StringResource(R.string.search_ai_offline_error)
+                )
+            }
+            return
+        }
         val state = _uiState.value
         val answer = voiceAnswer?.trim() ?: state.clarificationAnswerInput.trim()
         if (answer.isBlank()) return

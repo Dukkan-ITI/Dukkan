@@ -14,5 +14,6 @@ data class ProductDetailsState(
     val showReviewSheet: Boolean = false,
     val isSubmittingReview: Boolean = false,
     val reviewError: String? = null,
-    val reviewSuccess: Boolean = false
+    val reviewSuccess: Boolean = false,
+    val showOfflineToast: Boolean = false
 )

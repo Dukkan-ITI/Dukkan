@@ -77,10 +77,10 @@ fun AnimatedAiIcon(
 
             val path = Path().apply {
                 moveTo(cx, 0f)
-                quadraticBezierTo(cx, cy, size.width, cy)
-                quadraticBezierTo(cx, cy, cx, size.height)
-                quadraticBezierTo(cx, cy, 0f, cy)
-                quadraticBezierTo(cx, cy, cx, 0f)
+                quadraticTo(cx, cy, size.width, cy)
+                quadraticTo(cx, cy, cx, size.height)
+                quadraticTo(cx, cy, 0f, cy)
+                quadraticTo(cx, cy, cx, 0f)
                 close()
             }
 

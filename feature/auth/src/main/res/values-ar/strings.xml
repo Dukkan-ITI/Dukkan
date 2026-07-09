@@ -64,5 +64,5 @@
     <string name="auth_forgot_password_back_button">العودة لتسجيل الدخول</string>
     <string name="auth_forgot_password_sent_title">تحقق من بريدك الإلكتروني</string>
     <string name="auth_forgot_password_sent_subtitle">أرسلنا رابط إعادة تعيين كلمة المرور إلى %1$s. اتبع الرابط لتعيين كلمة مرور جديدة، ثم عد وسجل الدخول.</string>
-
+    <string name="auth_offline_message">يجب أن تكون متصلاً بالإنترنت لتتمكن من تسجيل الدخول أو إنشاء حساب. يرجى التحقق من الاتصال.</string>
 </resources>

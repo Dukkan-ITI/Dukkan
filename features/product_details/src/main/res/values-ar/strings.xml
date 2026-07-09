@@ -38,4 +38,5 @@
     <string name="product_details_share_product">مشاركة المنتج</string>
     <!-- machine-translated -->
     <string name="product_details_review_submitted">تم إرسال التقييم!</string>
+    <string name="offline_action_message">أنت غير متصل بالإنترنت. هذا الإجراء يتطلب اتصالاً بالإنترنت.</string>
 </resources>

@@ -26,4 +26,5 @@
     <string name="submit">Submit</string>
     <string name="suggested_answers">Suggested answers:</string>
     <string name="compare_another_product">Compare with another product</string>
+    <string name="offline_action_message">You\'re offline. This action requires an internet connection.</string>
 </resources>

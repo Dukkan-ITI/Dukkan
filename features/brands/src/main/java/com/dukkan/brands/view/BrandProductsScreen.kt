@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,9 +38,11 @@ import com.dukkan.brands.R
 import com.dukkan.brands.uiState.BrandProductsUiState
 import com.dukkan.brands.viewModel.BrandProductsEvent
 import com.dukkan.brands.viewModel.BrandProductsViewModel
+import com.dukkan.design_system.components.ErrorScreen
 import com.dukkan.design_system.components.ProductCard
 import com.dukkan.design_system.components.bottomBarSpace
 import com.dukkan.domain.model.Product
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun BrandProductsScreen(
@@ -47,10 +50,10 @@ fun BrandProductsScreen(
     viewModel: BrandProductsViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onProductClick: (Product) -> Unit = {},
-    onNavigateToFavorites: () -> Unit = {},
     onSignInClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
     val showGuestDialog by viewModel.showGuestAuthDialog.collectAsStateWithLifecycle()
 
     if (showGuestDialog) {
@@ -62,7 +65,7 @@ fun BrandProductsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
-            // Handle other events here if any
+
         }
     }
 
@@ -109,21 +112,57 @@ fun BrandProductsScreen(
                 }
 
                 is BrandProductsUiState.Error -> {
-                    Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                    if (!isOnline) {
+                        ErrorScreen(
+                            message = stringResource(DesignSystemR.string.offline_message),
+                            title = stringResource(DesignSystemR.string.offline_title),
+                            lottieRawRes = DesignSystemR.raw.no_internet
+                        )
+                    } else {
+                        Text(text = state.message, color = MaterialTheme.colorScheme.error)
+                    }
                 }
 
                 is BrandProductsUiState.Success -> {
                     if (state.products.isEmpty()) {
-                        Text(text = stringResource(id = R.string.no_products_found))
+                        if (!isOnline) {
+                            ErrorScreen(
+                                message = stringResource(DesignSystemR.string.offline_message),
+                                title = stringResource(DesignSystemR.string.offline_title),
+                                lottieRawRes = DesignSystemR.raw.no_internet
+                            )
+                        } else {
+                            Text(text = stringResource(id = R.string.no_products_found))
+                        }
                     } else {
-                        BrandProductsGrid(
-                            products = state.products,
-                            favoriteIds = state.favoriteIds,
-                            onProductClick = onProductClick,
-                            onFavoriteClick = { product, isFav ->
-                                viewModel.onFavoriteClick(product, isFav)
-                            },
-                        )
+                        Column {
+                            if (!isOnline) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(bottom = 10.dp)
+                                        .clip(MaterialTheme.shapes.small)
+                                        .background(MaterialTheme.colorScheme.errorContainer)
+                                        .padding(vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(DesignSystemR.string.viewing_cached_data),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                            BrandProductsGrid(
+                                products = state.products,
+                                favoriteIds = state.favoriteIds,
+                                onProductClick = onProductClick,
+                                onFavoriteClick = { product, isFav ->
+                                    viewModel.onFavoriteClick(product, isFav)
+                                },
+                            )
+                        }
                     }
                 }
             }

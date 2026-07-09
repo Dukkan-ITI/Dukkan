@@ -90,9 +90,6 @@ fun AppNavGraph(
                 onBrandClick = { brand ->
                     navController.navigate(Screen.BrandProducts(brand.name))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
-                },
                 onNavigateToChat = {
                     navController.navigate(Screen.Chatbot)
                 },
@@ -137,9 +134,6 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
-                },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
                 },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
@@ -240,9 +234,6 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
-                },
                 onCompareClick = { productId, productTitle ->
                     navController.navigate(Screen.CompareProductSearch(baseProductId = productId, baseProductTitle = productTitle))
                 }
@@ -305,9 +296,6 @@ fun AppNavGraph(
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
-                },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {
                         popUpTo<Screen.Home> { inclusive = true }
@@ -332,9 +320,6 @@ fun AppNavGraph(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate(Screen.ProductDetail(productId = product.id))
-                },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
                 },
                 onSignInClick = {
                     navController.navigate(Screen.Auth) {

@@ -2,6 +2,8 @@ package com.dukkan.data.di
 
 import android.content.Context
 import com.apollographql.apollo.ApolloClient
+import com.dukkan.data.util.ConnectivityManagerNetworkMonitor
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.data.BuildConfig
 import com.dukkan.data.repository.AddressRepositoryImpl
 import com.dukkan.data.repository.AuthRepositoryImpl
@@ -16,6 +18,7 @@ import com.dukkan.data.source.local.SettingsStore
 import com.dukkan.data.source.local.SettingsStoreImpl
 import com.dukkan.data.source.local.ShopifyTokenStore
 import com.dukkan.data.source.local.ShopifyTokenStoreImpl
+import com.dukkan.data.source.local.dao.HomeDao
 import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSource
 import com.dukkan.data.source.remote.data_source.auth.FirebaseAuthDataSourceImpl
 import com.dukkan.data.source.remote.data_source.auth.FirebaseStoreDataSourceImp
@@ -34,6 +37,7 @@ import com.dukkan.domain.repository.CouponRepository
 import com.dukkan.domain.repository.PlacesRepository
 import com.dukkan.domain.repository.ProductsRepository
 import com.dukkan.domain.repository.SettingsRepository
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +51,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+    @Singleton
+    @Provides
+    fun provideGson(): Gson = Gson()
+
     @Singleton
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
@@ -71,8 +79,9 @@ object DataModule {
     fun provideProductsRepository(
         productsDataSource: ProductsDataSource,
         settingsRepository: SettingsRepository,
+        homeDao: HomeDao,
     ): ProductsRepository =
-        ProductsRepositoryImpl(productsDataSource, settingsRepository)
+        ProductsRepositoryImpl(productsDataSource, settingsRepository, homeDao)
 
     @Singleton
     @Provides
@@ -144,8 +153,11 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun provideBrandsRepository(productsDataSource: ProductsDataSource): BrandsRepository =
-        BrandsRepositoryImpl(productsDataSource)
+    fun provideBrandsRepository(
+        productsDataSource: ProductsDataSource,
+        homeDao: HomeDao,
+    ): BrandsRepository =
+        BrandsRepositoryImpl(productsDataSource, homeDao)
 
     @Singleton
     @Provides
@@ -169,6 +181,12 @@ object DataModule {
     @Provides
     fun providePlacesRepository(apiService: LocationIQApiService): PlacesRepository =
         PlacesRepositoryImpl(apiService, BuildConfig.LOCATION_IQ_API_KEY)
+
+    @Singleton
+    @Provides
+    fun provideNetworkMonitor(
+        @ApplicationContext context: Context,
+    ): NetworkMonitor = ConnectivityManagerNetworkMonitor(context)
 
     @Singleton
     @Provides

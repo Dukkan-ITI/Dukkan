@@ -9,6 +9,7 @@ query Products($first: Int = 10, $after: String, $country: CountryCode!, $langua
                 id
                 handle
                 title
+                vendor
                 productType
                 description
                 featuredImage {
