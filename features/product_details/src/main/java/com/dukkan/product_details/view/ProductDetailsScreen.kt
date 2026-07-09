@@ -87,7 +87,6 @@ fun ProductDetailsScreen(
                         )
                     )
                 }
-
             }
         }
     }
@@ -154,30 +153,23 @@ private fun ProductDetailsContent(
                 onAddToCartClick = onAddToCartClick,
                 onShareClick = onShareClick,
                 onWriteReviewClick = onWriteReviewClick,
-                onDismissReviewSheet = onDismissReviewSheet,
-                onSubmitReview = onSubmitReview,
             )
         }
-    when {
-        state.isLoading -> LoadingScreen()
-        state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
-        state.product != null -> LoadedProductDetails(
-            product = state.product,
-            state = state,
-            onBackClick = onBackClick,
-            onFavoriteClick = onFavoriteClick,
-            onCompareClick = onCompareClick,
-            onAddToCartClick = onAddToCartClick,
-            onShareClick = onShareClick,
-            onWriteReviewClick = onWriteReviewClick,
-            onDismissReviewSheet = onDismissReviewSheet,
-            onSubmitReview = onSubmitReview,
-        )
+
+        // Write review bottom sheet
+        if (state.showReviewSheet) {
+            WriteReviewBottomSheet(
+                isSubmitting = state.isSubmittingReview,
+                errorMessage = state.reviewError,
+                onDismiss = onDismissReviewSheet,
+                onSubmit = onSubmitReview,
+            )
+        }
     }
 }
 
 @Composable
-fun LoadedProductDetails(
+private fun LoadedProductDetails(
     product: Product,
     state: ProductDetailsState,
     isOnline: Boolean,
@@ -187,8 +179,6 @@ fun LoadedProductDetails(
     onAddToCartClick: (String) -> Unit,
     onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
-    onDismissReviewSheet: () -> Unit,
-    onSubmitReview: (Int, String, String) -> Unit,
 ) {
     val images = product.images?.takeIf { it.isNotEmpty() } ?: listOf(product.featuredImage)
     val variants = product.variants.orEmpty()
@@ -408,16 +398,4 @@ fun LoadedProductDetails(
             }
         }
     }
-
-
-    // Write review bottom sheet
-    if (state.showReviewSheet) {
-        WriteReviewBottomSheet(
-            isSubmitting = state.isSubmittingReview,
-            errorMessage = state.reviewError,
-            onDismiss = onDismissReviewSheet,
-            onSubmit = onSubmitReview,
-        )
-    }
 }
-    }
