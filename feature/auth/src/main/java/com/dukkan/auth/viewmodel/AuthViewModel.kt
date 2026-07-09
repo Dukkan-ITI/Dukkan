@@ -10,15 +10,18 @@ import com.dukkan.domain.usecase.auth.LoginWithGoogleUseCase
 import com.dukkan.domain.usecase.auth.RegisterUseCase
 import com.dukkan.domain.usecase.cart.SyncCartOnLoginUseCase
 import com.dukkan.domain.usecase.favorite.SyncFavoritesOnLoginUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -110,36 +113,70 @@ class AuthViewModel @Inject constructor(
     private val getShopifyTokenUseCase: GetShopifyTokenUseCase,
     private val syncFavoritesOnLoginUseCase: SyncFavoritesOnLoginUseCase,
     private val syncCartOnLoginUseCase: SyncCartOnLoginUseCase,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true
+        )
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Form())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    private val _showOfflineToast = MutableStateFlow(false)
+    val showOfflineToast: StateFlow<Boolean> = _showOfflineToast.asStateFlow()
 
     private val _events = Channel<AuthEvent>(Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
     private var cooldownJob: Job? = null
 
-    fun onAction(action: AuthAction) = when (action) {
-        is AuthAction.FirstNameChanged -> onFirstNameChanged(action.firstName)
-        is AuthAction.LastNameChanged -> onLastNameChanged(action.lastName)
-        is AuthAction.EmailChanged -> onEmailChanged(action.email)
-        is AuthAction.PasswordChanged -> onPasswordChanged(action.password)
-        is AuthAction.ConfirmPasswordChanged -> onConfirmPasswordChanged(action.password)
-        AuthAction.TogglePasswordVisibility -> togglePasswordVisibility()
-        AuthAction.ToggleConfirmPasswordVisibility -> toggleConfirmPasswordVisibility()
-        AuthAction.ToggleMode -> toggleMode()
-        AuthAction.SubmitClicked -> submit()
-        AuthAction.GoogleClicked -> triggerGoogleSignIn()
-        is AuthAction.GoogleIdTokenReceived -> loginWithGoogle(action.idToken)
-        is AuthAction.GoogleSignInFailed -> onGoogleFailure(action.message)
-        AuthAction.ResendVerificationClicked -> resendVerificationEmail()
-        AuthAction.CheckVerificationClicked -> checkEmailVerified()
-        AuthAction.BackToLoginClicked -> backToLogin()
-        AuthAction.ForgotPasswordClicked -> openForgotPassword()
-        is AuthAction.ForgotPasswordEmailChanged -> onForgotPasswordEmailChanged(action.email)
-        AuthAction.SendResetLinkClicked -> sendResetLink()
-        AuthAction.BackToLoginFromForgotPasswordClicked -> backToLoginFromForgotPassword()
+    fun onAction(action: AuthAction) {
+        if (!isOnline.value && isAuthAttempt(action)) {
+            showOfflineToast()
+            return
+        }
+        when (action) {
+            is AuthAction.FirstNameChanged -> onFirstNameChanged(action.firstName)
+            is AuthAction.LastNameChanged -> onLastNameChanged(action.lastName)
+            is AuthAction.EmailChanged -> onEmailChanged(action.email)
+            is AuthAction.PasswordChanged -> onPasswordChanged(action.password)
+            is AuthAction.ConfirmPasswordChanged -> onConfirmPasswordChanged(action.password)
+            AuthAction.TogglePasswordVisibility -> togglePasswordVisibility()
+            AuthAction.ToggleConfirmPasswordVisibility -> toggleConfirmPasswordVisibility()
+            AuthAction.ToggleMode -> toggleMode()
+            AuthAction.SubmitClicked -> submit()
+            AuthAction.GoogleClicked -> triggerGoogleSignIn()
+            is AuthAction.GoogleIdTokenReceived -> loginWithGoogle(action.idToken)
+            is AuthAction.GoogleSignInFailed -> onGoogleFailure(action.message)
+            AuthAction.ResendVerificationClicked -> resendVerificationEmail()
+            AuthAction.CheckVerificationClicked -> checkEmailVerified()
+            AuthAction.BackToLoginClicked -> backToLogin()
+            AuthAction.ForgotPasswordClicked -> openForgotPassword()
+            is AuthAction.ForgotPasswordEmailChanged -> onForgotPasswordEmailChanged(action.email)
+            AuthAction.SendResetLinkClicked -> sendResetLink()
+            AuthAction.BackToLoginFromForgotPasswordClicked -> backToLoginFromForgotPassword()
+        }
+    }
+
+    private fun isAuthAttempt(action: AuthAction): Boolean = when (action) {
+        AuthAction.SubmitClicked,
+        AuthAction.GoogleClicked,
+        AuthAction.SendResetLinkClicked,
+        AuthAction.ResendVerificationClicked,
+        AuthAction.CheckVerificationClicked -> true
+        else -> false
+    }
+
+    private fun showOfflineToast() {
+        viewModelScope.launch {
+            _showOfflineToast.value = true
+            delay(2000)
+            _showOfflineToast.value = false
+        }
     }
 
     private fun onFirstNameChanged(firstName: String) {

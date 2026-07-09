@@ -9,8 +9,10 @@ import com.dukkan.domain.usecase.settings.GetThemeUseCase
 import com.dukkan.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import com.dukkan.navigation.Screen
@@ -41,12 +43,31 @@ class AppViewModel @Inject constructor(
         initialValue = null,
     )
 
+    val isLoggedIn: StateFlow<Boolean> = kotlinx.coroutines.flow.flow {
+        emit(getCurrentUser() != null)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = false,
+    )
+
+    private val _showGuestDialog = MutableStateFlow(false)
+    val showGuestDialog: StateFlow<Boolean> = _showGuestDialog.asStateFlow()
+
+    fun showGuestDialog() {
+        _showGuestDialog.value = true
+    }
+
+    fun dismissGuestDialog() {
+        _showGuestDialog.value = false
+    }
+
     val startDestination: StateFlow<Any?> = combine(
         getOnboardingStatus(),
-        kotlinx.coroutines.flow.flow { emit(getCurrentUser()) }
-    ) { isOnboardingCompleted, user ->
+        isLoggedIn
+    ) { isOnboardingCompleted, loggedIn ->
         when {
-            user != null -> Screen.Home
+            loggedIn -> Screen.Home
             isOnboardingCompleted -> Screen.Auth
             else -> Screen.Onboarding
         }

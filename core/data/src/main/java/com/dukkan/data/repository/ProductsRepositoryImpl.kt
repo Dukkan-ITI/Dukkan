@@ -1,6 +1,8 @@
 package com.dukkan.data.repository
 
 import com.dukkan.data.mapper.toDomainModel
+import com.dukkan.data.mapper.toHomeEntity
+import com.dukkan.data.source.local.dao.HomeDao
 import com.dukkan.data.source.remote.apollo.ProductsDataSource
 import com.dukkan.domain.model.Product
 import com.dukkan.domain.repository.ProductsRepository
@@ -10,15 +12,35 @@ import kotlinx.coroutines.flow.first
 class ProductsRepositoryImpl(
     private val productsDataSource: ProductsDataSource,
     private val settingsRepository: SettingsRepository,
+    private val homeDao: HomeDao,
 ) : ProductsRepository {
     override suspend fun getProductById(productId: String): Result<Product> {
         val country = settingsRepository.currency.first().countryCode
         val language = settingsRepository.language.first().languageCode
-        productsDataSource.getProductById(productId, country = country, language = language).also {
-            return if (it != null) {
-                Result.success(it.toDomainModel())
+
+        return try {
+            val remoteProduct = productsDataSource.getProductById(productId, country = country, language = language)
+            if (remoteProduct != null) {
+                val domainProduct = remoteProduct.toDomainModel()
+                // Cache the full product details
+                homeDao.insertProducts(listOf(domainProduct.toHomeEntity()))
+                Result.success(domainProduct)
             } else {
-                Result.failure(Exception("Unknown error occurred"))
+                // Fallback to cache if remote is null (e.g., deleted or hidden, but we might still have it)
+                val cached = homeDao.getProducts().first().find { it.id == productId }
+                if (cached != null) {
+                    Result.success(cached.toDomainModel())
+                } else {
+                    Result.failure(Exception("Product not found"))
+                }
+            }
+        } catch (e: Exception) {
+            // Fallback to cache on network error
+            val cached = homeDao.getProducts().first().find { it.id == productId }
+            if (cached != null) {
+                Result.success(cached.toDomainModel())
+            } else {
+                Result.failure(e)
             }
         }
     }
@@ -26,15 +48,32 @@ class ProductsRepositoryImpl(
     override suspend fun getProducts(limit: Int, after: String?): List<Product> {
         val country = settingsRepository.currency.first().countryCode
         val language = settingsRepository.language.first().languageCode
-        val response = productsDataSource.getProducts(
-            first = limit,
-            after = after,
-            country = country,
-            language = language,
-        )
-        return response?.products?.edges?.mapNotNull { edge ->
-            edge.node?.toDomainModel()
-        } ?: emptyList()
+        
+        return try {
+            val response = productsDataSource.getProducts(
+                first = limit,
+                after = after,
+                country = country,
+                language = language,
+            )
+            val products = response?.products?.edges?.mapNotNull { edge ->
+                edge.node?.toDomainModel()
+            } ?: emptyList()
+
+            // Cache if this is the first page for Home
+            if (after == null && products.isNotEmpty()) {
+                homeDao.insertProducts(products.map { it.toHomeEntity() })
+            }
+            
+            products
+        } catch (e: Exception) {
+            // Fallback to cache if first page
+            if (after == null) {
+                homeDao.getProducts().first().map { it.toDomainModel() }
+            } else {
+                emptyList()
+            }
+        }
     }
 
     override suspend fun getProductsByCollectionId(

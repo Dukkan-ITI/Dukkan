@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="brands">العلامات التجارية</string>
-    <string name="no_products_found">لا توجد منتجات في هذه الفئة.</string>
+    <string name="no_products_found">لا توجد منتجات لهذه العلامة التجارية.</string>
+    <string name="no_brands_found">لا توجد علامات تجارية متاحة.</string>
     <string name="back">رجوع</string>
 </resources>

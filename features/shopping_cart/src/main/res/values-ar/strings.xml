@@ -29,4 +29,5 @@
     <string name="discount_amount_format">-%1$s %2$s</string>
     <string name="default_amount">0.00</string>
     <string name="promo_codes_applied">الأكواد المطبقة</string>
+    <string name="offline_action_message">أنت غير متصل بالإنترنت. هذا الإجراء يتطلب اتصالاً بالإنترنت.</string>
 </resources>

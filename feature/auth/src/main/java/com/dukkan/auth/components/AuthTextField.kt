@@ -54,6 +54,7 @@ fun AuthTextField(
     imeAction: ImeAction = ImeAction.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     errorMessage: String? = null,
+    enabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -75,6 +76,7 @@ fun AuthTextField(
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
+            enabled = enabled,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 fontSize = 14.5.sp,
                 color = MaterialTheme.colorScheme.onSurface,

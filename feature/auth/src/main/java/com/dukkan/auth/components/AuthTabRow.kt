@@ -35,6 +35,7 @@ fun AuthTabRow(
     onSignInClick: () -> Unit,
     onRegisterClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val pillBackground = MaterialTheme.colorScheme.surfaceVariant
 
@@ -50,12 +51,14 @@ fun AuthTabRow(
             label = stringResource(R.string.auth_tab_sign_in),
             selected = isSignInSelected,
             onClick = onSignInClick,
+            enabled = enabled,
             modifier = Modifier.weight(1f),
         )
         AuthTabItem(
             label = stringResource(R.string.auth_tab_register),
             selected = !isSignInSelected,
             onClick = onRegisterClick,
+            enabled = enabled,
             modifier = Modifier.weight(1f),
         )
     }
@@ -67,6 +70,7 @@ private fun AuthTabItem(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val bgColor by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.surface else Color.Transparent,
@@ -87,6 +91,7 @@ private fun AuthTabItem(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
+                enabled = enabled,
                 onClick = onClick,
             )
             .padding(vertical = 10.dp),

@@ -3,6 +3,7 @@ package com.dukkan.domain.model
 data class Product(
     val id: String,
     val title: String,
+    val vendor: String,
     val featuredImage: NetworkImage?,
     val minPrice: Money,
     val maxPrice: Money,

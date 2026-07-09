@@ -54,4 +54,5 @@
     <string name="comparison_winner">الفائز</string>
     <string name="comparison_back">رجوع</string>
     <string name="comparison_vs">ضد</string>
+    <string name="offline_action_message">أنت غير متصل بالإنترنت. هذا الإجراء يتطلب اتصالاً بالإنترنت.</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="comparison_winner">Winner</string>
     <string name="comparison_back">Back</string>
     <string name="comparison_vs">VS</string>
+    <string name="offline_action_message">You\'re offline. This action requires an internet connection.</string>
 </resources>

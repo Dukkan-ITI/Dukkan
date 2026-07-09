@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,9 +93,12 @@ fun isTopLevelDestination(destination: NavDestination?): Boolean =
 @Composable
 fun DukkanBottomBar(
     navController: NavHostController,
+    isLoggedIn: Boolean,
+    onShowGuestDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentDestination = navController.currentBackStackEntryAsState().value?.destination
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = currentBackStackEntry?.destination
 
     Surface(
         modifier = modifier
@@ -120,12 +124,19 @@ fun DukkanBottomBar(
                     destination = dest,
                     selected = selected,
                     onClick = {
-                        navController.navigate(dest.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                        val isRestricted = dest == TopLevelDestination.FAVORITE || dest == TopLevelDestination.CART
+                        val isFromHome = currentDestination?.route?.contains("Home", ignoreCase = true) == true
+
+                        if (isRestricted && !isLoggedIn && isFromHome) {
+                            onShowGuestDialog()
+                        } else {
+                            navController.navigate(dest.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     },
                 )

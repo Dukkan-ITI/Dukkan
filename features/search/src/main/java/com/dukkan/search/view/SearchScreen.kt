@@ -46,7 +46,9 @@ import com.dukkan.search.components.SearchLoadingState
 import com.dukkan.search.uistate.SearchUiState
 import com.dukkan.search.viewmodel.SearchViewModel
 import com.dukkan.design_system.components.ChatFab
+import com.dukkan.design_system.components.ErrorScreen
 import com.dukkan.design_system.components.bottomBarSpace
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun SearchScreen(
@@ -56,6 +58,7 @@ fun SearchScreen(
     onNavigateToChat: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isOnline by viewModel.isOnline.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
     val speechRecognizerLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
         contract = androidx.activity.result.contract.ActivityResultContracts.RequestPermission(),
@@ -71,6 +74,7 @@ fun SearchScreen(
     SearchScreenContent(
         modifier = modifier,
         uiState = uiState,
+        isOnline = isOnline,
         onQueryChange = viewModel::onQueryInputChanged,
         onSearchSubmit = viewModel::onSearchSubmitted,
         onAiSearchSubmit = viewModel::onAiSearchTriggered,
@@ -137,6 +141,7 @@ private fun startVoiceRecognition(context: android.content.Context, viewModel: S
 fun SearchScreenContent(
     modifier: Modifier = Modifier,
     uiState: SearchUiState,
+    isOnline: Boolean,
     onQueryChange: (String) -> Unit,
     onSearchSubmit: (String) -> Unit,
     onAiSearchSubmit: (String) -> Unit,
@@ -311,22 +316,40 @@ fun SearchScreenContent(
                     uiState.isSearchLoading -> SearchLoadingState()
 
                     uiState.error != null -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(24.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = uiState.error?.asString() ?: "",
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium
+                        if (!isOnline) {
+                            ErrorScreen(
+                                title = stringResource(DesignSystemR.string.offline_title),
+                                message = "",
+                                lottieRawRes = DesignSystemR.raw.no_internet,
+                                modifier = Modifier.fillMaxSize()
                             )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(24.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = uiState.error?.asString() ?: "",
+                                    color = MaterialTheme.colorScheme.error,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
 
                     uiState.submittedQuery.isNotBlank() && uiState.searchResults.isEmpty() -> {
-                        SearchEmptyState(query = uiState.submittedQuery)
+                        if (!isOnline) {
+                            ErrorScreen(
+                                title = stringResource(DesignSystemR.string.offline_title),
+                                message = "",
+                                lottieRawRes = DesignSystemR.raw.no_internet,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            SearchEmptyState(query = uiState.submittedQuery)
+                        }
                     }
 
                     uiState.submittedQuery.isBlank() && !showDropdown -> {

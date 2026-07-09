@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.ui.res.stringResource
 import com.dukkan.product_details.R
 import androidx.compose.material3.Icon
@@ -36,7 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -50,24 +51,26 @@ import com.dukkan.product_details.components.AddToCartBar
 import com.dukkan.product_details.components.ProductDetailsSection
 import com.dukkan.product_details.components.ProductHeader
 import com.dukkan.product_details.components.ProductImagePager
+import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.components.ReviewsSection
 import com.dukkan.product_details.components.VariantSelector
 import com.dukkan.product_details.components.WriteReviewBottomSheet
-import com.dukkan.product_details.components.ProductTopBar
 import com.dukkan.product_details.viewmodel.ProductDetailsEvent
 import com.dukkan.product_details.viewmodel.ProductDetailsState
 import com.dukkan.product_details.viewmodel.ProductDetailsViewModel
+import com.dukkan.design_system.R as DesignSystemR
 
 @Composable
 fun ProductDetailsScreen(
     onBackClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
-    onNavigateToFavorites: () -> Unit = {},
     onCompareClick: (String, String) -> Unit = { _, _ -> },
     viewModel: ProductDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+    val shareTitle = stringResource(R.string.product_details_share_product)
 
     androidx.compose.runtime.LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -80,7 +83,7 @@ fun ProductDetailsScreen(
                     context.startActivity(
                         Intent.createChooser(
                             intent,
-                            context.getString(R.string.product_details_share_product)
+                            shareTitle
                         )
                     )
                 }
@@ -97,6 +100,7 @@ fun ProductDetailsScreen(
 
     ProductDetailsContent(
         state = state,
+        isOnline = isOnline,
         onBackClick = onBackClick,
         onRefresh = { viewModel.getProductDetails() },
         onFavoriteClick = viewModel::toggleFavorite,
@@ -112,6 +116,7 @@ fun ProductDetailsScreen(
 @Composable
 private fun ProductDetailsContent(
     state: ProductDetailsState,
+    isOnline: Boolean,
     onBackClick: () -> Unit,
     onRefresh: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
@@ -122,21 +127,44 @@ private fun ProductDetailsContent(
     onDismissReviewSheet: () -> Unit,
     onSubmitReview: (Int, String, String) -> Unit,
 ) {
-    when {
-        state.isLoading -> LoadingScreen()
-        state.error != null -> ErrorScreen(message = state.error, onRetry = onRefresh)
-        state.product != null -> LoadedProductDetails(
-            product = state.product,
-            state = state,
-            onBackClick = onBackClick,
-            onFavoriteClick = onFavoriteClick,
-            onCompareClick = onCompareClick,
-            onAddToCartClick = onAddToCartClick,
-            onShareClick = onShareClick,
-            onWriteReviewClick = onWriteReviewClick,
-            onDismissReviewSheet = onDismissReviewSheet,
-            onSubmitReview = onSubmitReview,
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        when {
+            state.isLoading -> LoadingScreen()
+            state.error != null -> {
+                if (!isOnline && state.product == null) {
+                    ErrorScreen(
+                        title = stringResource(DesignSystemR.string.offline_title),
+                        message = stringResource(DesignSystemR.string.offline_message),
+                        lottieRawRes = DesignSystemR.raw.no_internet,
+                        onRetry = onRefresh
+                    )
+                } else {
+                    ErrorScreen(message = state.error, onRetry = onRefresh)
+                }
+            }
+
+            state.product != null -> LoadedProductDetails(
+                product = state.product,
+                state = state,
+                isOnline = isOnline,
+                onBackClick = onBackClick,
+                onFavoriteClick = onFavoriteClick,
+                onCompareClick = onCompareClick,
+                onAddToCartClick = onAddToCartClick,
+                onShareClick = onShareClick,
+                onWriteReviewClick = onWriteReviewClick,
+            )
+        }
+
+        // Write review bottom sheet
+        if (state.showReviewSheet) {
+            WriteReviewBottomSheet(
+                isSubmitting = state.isSubmittingReview,
+                errorMessage = state.reviewError,
+                onDismiss = onDismissReviewSheet,
+                onSubmit = onSubmitReview,
+            )
+        }
     }
 }
 
@@ -144,14 +172,13 @@ private fun ProductDetailsContent(
 private fun LoadedProductDetails(
     product: Product,
     state: ProductDetailsState,
+    isOnline: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: (Product, Boolean) -> Unit,
     onCompareClick: (String, String) -> Unit,
     onAddToCartClick: (String) -> Unit,
     onShareClick: () -> Unit,
     onWriteReviewClick: () -> Unit,
-    onDismissReviewSheet: () -> Unit,
-    onSubmitReview: (Int, String, String) -> Unit,
 ) {
     val images = product.images?.takeIf { it.isNotEmpty() } ?: listOf(product.featuredImage)
     val variants = product.variants.orEmpty()
@@ -159,7 +186,9 @@ private fun LoadedProductDetails(
     var selectedVariant by remember(product.id) { mutableStateOf(variants.firstOrNull()) }
     val isFavorite = state.favoriteIds.contains(product.id)
     val scrollState = rememberScrollState()
-    val isScrolled = scrollState.value > 0
+    val isScrolled by androidx.compose.runtime.remember {
+        androidx.compose.runtime.derivedStateOf { scrollState.value > 0 }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -180,6 +209,24 @@ private fun LoadedProductDetails(
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
+                    if (!isOnline) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.small)
+                                .background(MaterialTheme.colorScheme.errorContainer)
+                                .padding(vertical = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(DesignSystemR.string.viewing_cached_data),
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
                     ProductHeader(
                         title = product.title,
                         price = selectedVariant?.price ?: product.maxPrice,
@@ -206,7 +253,7 @@ private fun LoadedProductDetails(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                            imageVector = Icons.Default.CheckCircle,
                             contentDescription = "AI Compare",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
@@ -232,7 +279,8 @@ private fun LoadedProductDetails(
             AddToCartBar(
                 price = selectedVariant?.price ?: product.maxPrice,
                 onAddToCart = {
-                    val variantId = selectedVariant?.id ?: product.variants?.firstOrNull()?.id ?: ""
+                    val variantId =
+                        selectedVariant?.id ?: product.variants?.firstOrNull()?.id ?: ""
                     if (variantId.isNotEmpty()) {
                         onAddToCartClick(variantId)
                     }
@@ -317,16 +365,37 @@ private fun LoadedProductDetails(
                 )
             }
         }
-    }
 
-
-    // Write review bottom sheet
-    if (state.showReviewSheet) {
-        WriteReviewBottomSheet(
-            isSubmitting = state.isSubmittingReview,
-            errorMessage = state.reviewError,
-            onDismiss = onDismissReviewSheet,
-            onSubmit = onSubmitReview,
-        )
+        // Offline toast
+        AnimatedVisibility(
+            visible = state.showOfflineToast,
+            enter = fadeIn() + slideInVertically { it },
+            exit = fadeOut() + slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp, start = 24.dp, end = 24.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .background(MaterialTheme.colorScheme.error, RoundedCornerShape(24.dp))
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.WifiOff,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = stringResource(DesignSystemR.string.offline_title),
+                    color = MaterialTheme.colorScheme.onError,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
     }
 }

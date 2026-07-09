@@ -72,6 +72,12 @@ class HomeViewModelTest {
     @MockK
     lateinit var getLanguageUseCase: GetLanguageUseCase
 
+    @MockK
+    lateinit var reviewRepository: com.dukkan.domain.repository.ReviewRepository
+
+    @MockK
+    lateinit var networkMonitor: com.dukkan.domain.util.NetworkMonitor
+
     private val favoritesFlow = MutableStateFlow<List<FavoriteProduct>>(emptyList())
     private val currencyFlow = MutableStateFlow(AppCurrency.USD)
     private val languageFlow = MutableStateFlow(AppLanguage.ENGLISH)
@@ -238,16 +244,15 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `onFavoriteClick for guest sends NavigateToFavoritesGuest event`() = runTest(testDispatcher) {
+    fun `onFavoriteClick for guest shows guest auth dialog`() = runTest(testDispatcher) {
         stubHomeData(currentUser = null)
         val viewModel = createViewModel()
         val product = product(id = "p1", title = "Guest Product")
 
-        viewModel.events.test {
-            viewModel.onFavoriteClick(product, false)
-            assertEquals(HomeEvent.NavigateToFavoritesGuest, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
+        viewModel.onFavoriteClick(product, false)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.showGuestAuthDialog.value)
     }
 
     @Test
@@ -285,10 +290,14 @@ class HomeViewModelTest {
             getFavoritesUseCase,
             getCurrencyUseCase,
             getLanguageUseCase,
+            reviewRepository,
+            networkMonitor,
         ).also { createdViewModels += it }
     }
 
     private fun stubDefaults() {
+        every { reviewRepository.reviewUpdates } returns kotlinx.coroutines.flow.MutableSharedFlow()
+        every { networkMonitor.isOnline } returns flowOf(true)
         stubHomeData()
     }
 
@@ -331,12 +340,14 @@ class HomeViewModelTest {
     private fun product(
         id: String,
         title: String,
+        vendor: String = "Vendor",
         amount: String = "10.0",
         currencyCode: String = "USD",
     ): Product {
         return Product(
             id = id,
             title = title,
+            vendor = vendor,
             featuredImage = null,
             minPrice = Money.from(amount, currencyCode),
             maxPrice = Money.from(amount, currencyCode),

@@ -10,6 +10,7 @@ query GetProductsByVendor(
             node {
                 id
                 title
+                vendor
                 featuredImage {
                     url
                     thumbhash

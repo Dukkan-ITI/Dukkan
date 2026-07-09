@@ -3,13 +3,16 @@ package com.dukkan.data.repository
 import android.util.Log
 import com.dukkan.data.mapper.toDomainModel
 import com.dukkan.data.source.local.ShopifyTokenStore
+import com.dukkan.data.source.local.dao.CartDao
 import com.dukkan.data.source.local.data_source.cart.CartLocalDataSource
+import com.dukkan.data.source.local.entity.CartEntity
 import com.dukkan.data.source.remote.data_source.cart.CartRemoteDataSource
 import com.dukkan.data.source.remote.data_source.cart.CartFirestoreDataSource
 import com.dukkan.domain.repository.SettingsRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.repository.CartRepository
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -17,9 +20,11 @@ class CartRepositoryImpl @Inject constructor(
     private val localDataSource: CartLocalDataSource,
     private val remoteDataSource: CartRemoteDataSource,
     private val firestoreDataSource: CartFirestoreDataSource,
+    private val cartDao: CartDao,
     private val tokenStore: ShopifyTokenStore,
     private val firebaseAuth: FirebaseAuth,
     private val settingsRepository: SettingsRepository,
+    private val gson: Gson
 ) : CartRepository {
 
     private var cachedCart: StoreCart? = null
@@ -55,22 +60,33 @@ class CartRepositoryImpl @Inject constructor(
 
         Log.d("CartRepo", "Fetching cart from Shopify for ID: $cartId")
 
-        val cartResponse = remoteDataSource.getCart(cartId, country)
-
-        if (cartResponse == null) {
-            Log.w("CartRepo", "Shopify returned null for cart ID: $cartId")
-            return null
+        return try {
+            val cartResponse = remoteDataSource.getCart(cartId, country)
+            if (cartResponse != null) {
+                val domainCart = cartResponse.toDomainModel()
+                cachedCart = domainCart
+                cachedCurrencyCountry = country
+                // Persist to Room for offline access
+                cartDao.insertCart(CartEntity.fromDomainModel(domainCart, gson))
+                domainCart
+            } else {
+                // Fallback to Room if Shopify returns null
+                loadFromLocalCache()
+            }
+        } catch (e: Exception) {
+            Log.e("CartRepo", "Error fetching from remote, falling back to local cache", e)
+            loadFromLocalCache()
         }
+    }
 
-        Log.d(
-            "CartRepo",
-            "Shopify response cost: Subtotal=${cartResponse.cost.subtotalAmount.moneyFields.amount}, Total=${cartResponse.cost.totalAmount.moneyFields.amount}"
-        )
-
-        cachedCart = cartResponse.toDomainModel()
-        cachedCurrencyCountry = country
-
-        return cachedCart
+    private suspend fun loadFromLocalCache(): StoreCart? {
+        val localCart = cartDao.getCart().first()?.toDomainModel(gson)
+        if (localCart != null) {
+            cachedCart = localCart
+            // Note: cachedCurrencyCountry is not set here because we don't know the original country of the cached cart
+            // but for offline view it's better than nothing.
+        }
+        return localCart
     }
 
     override suspend fun addCartItem(variantId: String) {
@@ -210,6 +226,7 @@ class CartRepositoryImpl @Inject constructor(
         cachedCurrencyCountry = null
         try {
             localDataSource.deleteCartId()
+            cartDao.clearCart()
             Log.d(TAG, "Local cart cleared on logout")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to clear cart on logout", e)
@@ -221,6 +238,7 @@ class CartRepositoryImpl @Inject constructor(
         cachedCurrencyCountry = null
         try {
             localDataSource.deleteCartId()
+            cartDao.clearCart()
             val userId = firebaseAuth.currentUser?.uid
             if (userId != null) {
                 firestoreDataSource.deleteCartId(userId)

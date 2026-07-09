@@ -14,6 +14,7 @@ import com.dukkan.domain.usecase.favorite.ToggleFavoriteUseCase
 import com.dukkan.domain.usecase.product.GetProductsUseCase
 import com.dukkan.domain.usecase.settings.GetCurrencyUseCase
 import com.dukkan.domain.usecase.settings.GetLanguageUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import com.dukkan.home.uistate.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -23,8 +24,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -46,7 +49,15 @@ class HomeViewModel @Inject constructor(
     private val getCurrency: GetCurrencyUseCase,
     private val getLanguage: GetLanguageUseCase,
     private val reviewRepository: ReviewRepository,
+    networkMonitor: NetworkMonitor,
 ) : ViewModel() {
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
 
     private data class HomeContent(
         val products: List<Product>,
@@ -72,8 +83,8 @@ class HomeViewModel @Inject constructor(
     ) { content, isLoading, error, favorites ->
         val favoriteIds = favorites.map { it.id }.toSet()
         when {
-            isLoading -> HomeUiState.Loading
-            error != null -> HomeUiState.Error(error)
+            isLoading && content.products.isEmpty() -> HomeUiState.Loading
+            error != null && content.products.isEmpty() -> HomeUiState.Error(error)
             else -> HomeUiState.Success(
                 products = content.products,
                 favoriteIds = favoriteIds,
@@ -120,6 +131,16 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+        }
+
+        // Refresh data when the device comes back online
+        viewModelScope.launch {
+            isOnline.drop(1) // Skip initial value
+                .collect { online ->
+                    if (online) {
+                        loadInitialProducts()
+                    }
+                }
         }
     }
 
