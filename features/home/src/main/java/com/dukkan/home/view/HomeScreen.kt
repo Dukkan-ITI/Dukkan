@@ -34,6 +34,7 @@ import com.dukkan.home.components.HomeBrandsSection
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.homeProductSection
+import com.dukkan.home.components.homeShimmerLoading
 import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
@@ -124,16 +125,7 @@ fun HomeScreenContent(
         ) {
             when (uiState) {
                 is HomeUiState.Loading -> {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        }
-                    }
+                    homeShimmerLoading()
                 }
 
                 is HomeUiState.Error -> {
