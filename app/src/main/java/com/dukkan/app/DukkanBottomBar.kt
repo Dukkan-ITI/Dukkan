@@ -94,6 +94,7 @@ fun isTopLevelDestination(destination: NavDestination?): Boolean =
 fun DukkanBottomBar(
     navController: NavHostController,
     isLoggedIn: Boolean,
+    cartCount: Int = 0,
     onShowGuestDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -125,9 +126,8 @@ fun DukkanBottomBar(
                     selected = selected,
                     onClick = {
                         val isRestricted = dest == TopLevelDestination.FAVORITE || dest == TopLevelDestination.CART
-                        val isFromHome = currentDestination?.route?.contains("Home", ignoreCase = true) == true
 
-                        if (isRestricted && !isLoggedIn && isFromHome) {
+                        if (isRestricted && !isLoggedIn) {
                             onShowGuestDialog()
                         } else {
                             navController.navigate(dest.route) {
@@ -139,6 +139,7 @@ fun DukkanBottomBar(
                             }
                         }
                     },
+                    cartCount = if (dest == TopLevelDestination.CART) cartCount else 0
                 )
             }
         }
@@ -150,6 +151,7 @@ private fun DukkanBottomBarItem(
     destination: TopLevelDestination,
     selected: Boolean,
     onClick: () -> Unit,
+    cartCount: Int = 0,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     Box(
@@ -164,17 +166,40 @@ private fun DukkanBottomBarItem(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = painterResource(
-                if (selected) destination.selectedIcon else destination.unselectedIcon
-            ),
-            contentDescription = stringResource(destination.label),
-            tint = if (selected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            modifier = Modifier.size(26.dp),
-        )
+        if (cartCount > 0) {
+            androidx.compose.material3.BadgedBox(
+                badge = {
+                    androidx.compose.material3.Badge {
+                        androidx.compose.material3.Text(cartCount.toString())
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(
+                        if (selected) destination.selectedIcon else destination.unselectedIcon
+                    ),
+                    contentDescription = stringResource(destination.label),
+                    tint = if (selected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    modifier = Modifier.size(26.dp),
+                )
+            }
+        } else {
+            Icon(
+                painter = painterResource(
+                    if (selected) destination.selectedIcon else destination.unselectedIcon
+                ),
+                contentDescription = stringResource(destination.label),
+                tint = if (selected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(26.dp),
+            )
+        }
     }
 }

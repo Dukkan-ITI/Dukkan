@@ -14,6 +14,7 @@ import com.dukkan.domain.model.cart.StoreCart
 import com.dukkan.domain.repository.CartRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
@@ -41,6 +42,10 @@ class CartRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.w(TAG, "Failed to save cart ID to Firestore, but local save succeeded", e)
         }
+    }
+
+    override fun getCartFlow(): kotlinx.coroutines.flow.Flow<StoreCart?> {
+        return cartDao.getCart().map { it?.toDomainModel(gson) }
     }
 
     override suspend fun getCart(): StoreCart? {
@@ -113,6 +118,8 @@ class CartRepositoryImpl @Inject constructor(
             val response = remoteDataSource.addCartItem(cartId, variantId)
             if (response?.userErrors?.isNotEmpty() == true) {
                 Log.e(TAG, "Error adding item to Shopify cart: ${response.userErrors.first().message}")
+            } else {
+                getCart()
             }
         }
     }
@@ -126,6 +133,7 @@ class CartRepositoryImpl @Inject constructor(
         } else {
             remoteDataSource.updateCartItem(cartId, lineId, quantity)
         }
+        getCart()
     }
 
     override suspend fun removeCartItem(lineId: String) {
@@ -133,6 +141,7 @@ class CartRepositoryImpl @Inject constructor(
         cachedCurrencyCountry = null
         val cartId = localDataSource.getCartId() ?: return
         remoteDataSource.removeCartItem(cartId, lineId)
+        getCart()
     }
 
     override suspend fun createCart(customerAccessToken: String?): String? {
@@ -168,6 +177,7 @@ class CartRepositoryImpl @Inject constructor(
         return if (appliedCode?.applicable == false) {
             Result.failure(Exception("Promo code \"$discountCode\" is not applicable to this cart"))
         } else {
+            getCart()
             Result.success(Unit)
         }
     }
@@ -188,6 +198,7 @@ class CartRepositoryImpl @Inject constructor(
             return Result.failure(Exception(errors.first().message))
         }
 
+        getCart()
         return Result.success(Unit)
     }
 
@@ -219,6 +230,7 @@ class CartRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Failed to sync cart on login", e)
         }
+        getCart()
     }
 
     override suspend fun clearLocalCart() {

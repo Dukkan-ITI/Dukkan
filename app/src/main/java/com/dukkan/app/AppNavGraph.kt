@@ -198,9 +198,6 @@ fun AppNavGraph(
                         popUpTo<Screen.Home> { inclusive = true }
                     }
                 },
-                onNavigateToFavorites = {
-                    navController.navigate(Screen.Favorite)
-                },
                 onNavigateToOrderList = {
                     navController.navigate(Screen.OrderHistory)
                 },

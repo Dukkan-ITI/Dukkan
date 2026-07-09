@@ -19,7 +19,6 @@ import com.dukkan.settings.components.OrderHistorySection
 import com.dukkan.settings.components.ProfileHeader
 import com.dukkan.settings.components.SavedAddressesRow
 import com.dukkan.settings.components.SettingsCard
-import com.dukkan.settings.components.WishlistRow
 import com.dukkan.settings.viewmodel.ProfileState
 import com.dukkan.settings.viewmodel.ProfileViewModel
 import com.dukkan.design_system.components.bottomBarSpace
@@ -32,7 +31,6 @@ import androidx.compose.material3.Scaffold
 @Composable
 fun ProfileScreen(
     onNavigateToAuth: () -> Unit,
-    onNavigateToFavorites: () -> Unit,
     onNavigateToOrderList: () -> Unit,
     onNavigateToSavedAddresses: () -> Unit,
     onNavigateToChat: () -> Unit = {},
@@ -46,7 +44,6 @@ fun ProfileScreen(
         onThemeSelected = viewModel::onThemeSelected,
         onCurrencySelected = viewModel::onCurrencySelected,
         onLanguageSelected = viewModel::onLanguageSelected,
-        onWishlistClick = onNavigateToFavorites,
         onSavedAddressesClick = onNavigateToSavedAddresses,
         onSignInClick = onNavigateToAuth,
         onLogoutClick = { viewModel.onLogout(onComplete = onNavigateToAuth) },
@@ -62,7 +59,6 @@ private fun ProfileContent(
     onThemeSelected: (ThemeMode) -> Unit,
     onCurrencySelected: (AppCurrency) -> Unit,
     onLanguageSelected: (AppLanguage) -> Unit,
-    onWishlistClick: () -> Unit,
     onSavedAddressesClick: () -> Unit,
     onSignInClick: () -> Unit,
     onLogoutClick: () -> Unit,
@@ -110,10 +106,9 @@ private fun ProfileContent(
 
                 Column {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                    WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+
                     SavedAddressesRow(onClick = onSavedAddressesClick, enabled = state.isOnline)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+
                     LogoutRow(onClick = onLogoutClick)
                 }
             }

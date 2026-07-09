@@ -4,6 +4,7 @@ import com.dukkan.domain.model.cart.StoreCart
 
 interface CartRepository {
     suspend fun getCart(): StoreCart?
+    fun getCartFlow(): kotlinx.coroutines.flow.Flow<StoreCart?>
     suspend fun addCartItem(variantId: String)
     suspend fun updateCartItemQuantity(lineId: String, quantity: Int)
     suspend fun removeCartItem(lineId: String)

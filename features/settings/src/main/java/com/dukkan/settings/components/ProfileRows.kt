@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -74,16 +73,7 @@ private fun ProfileRow(
     }
 }
 
-@Composable
-fun WishlistRow(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    ProfileRow(
-        icon = Icons.Filled.FavoriteBorder,
-        label = stringResource(R.string.profile_my_wishlist),
-        trailing = count.toString(),
-        onClick = onClick,
-        modifier = modifier,
-    )
-}
+
 
 @Composable
 fun SavedAddressesRow(onClick: () -> Unit, enabled: Boolean = true, modifier: Modifier = Modifier) {
