@@ -66,7 +66,11 @@ fun FavoritesView(
             Spacer(Modifier.height(24.dp))
 
             when (val state = uiState) {
-                is FavoritesUiState.Loading -> CircularProgressIndicator()
+                is FavoritesUiState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
                 is FavoritesUiState.Empty -> EmptyContent()
                 is FavoritesUiState.Success -> FavoritesContent(
                     favorites = state.favorites,
