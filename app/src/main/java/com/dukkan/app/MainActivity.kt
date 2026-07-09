@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             val isLoggedIn by appViewModel.isLoggedIn.collectAsState()
+            val cartCount by appViewModel.cartCount.collectAsState()
             val showGuestDialog by appViewModel.showGuestDialog.collectAsState()
 
             LaunchedEffect(language) {
@@ -57,6 +58,10 @@ class MainActivity : AppCompatActivity() {
                 val navController = rememberNavController()
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val showBottomBar = isTopLevelDestination(currentBackStackEntry?.destination)
+
+                LaunchedEffect(currentBackStackEntry) {
+                    appViewModel.refreshLoginState()
+                }
 
                 if (showGuestDialog) {
                     com.dukkan.design_system.components.GuestAuthDialog(
@@ -78,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                         DukkanBottomBar(
                             navController = navController,
                             isLoggedIn = isLoggedIn,
+                            cartCount = cartCount,
                             onShowGuestDialog = { appViewModel.showGuestDialog() },
                             modifier = Modifier.align(Alignment.BottomCenter)
                         )
