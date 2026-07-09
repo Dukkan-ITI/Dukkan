@@ -58,20 +58,16 @@ fun OrderCard(order: OrderUi, modifier: Modifier = Modifier, expandable: Boolean
     val surfaceColor = MaterialTheme.colorScheme.surface
     val primaryColor = MaterialTheme.colorScheme.primary
 
-    val backgroundColor = remember(isExpanded) {
-        if (isExpanded) {
-            primaryColor.copy(alpha = 0.07f)
-        } else {
-            surfaceColor
-        }
+    val backgroundColor = if (isExpanded) {
+        primaryColor.copy(alpha = 0.07f)
+    } else {
+        surfaceColor
     }
 
-    val border = remember(isExpanded) {
-        if (isExpanded) {
-            null
-        } else {
-            BorderStroke(1.dp, outlineColor.copy(alpha = 0.6f))
-        }
+    val border = if (isExpanded) {
+        null
+    } else {
+        BorderStroke(1.dp, outlineColor.copy(alpha = 0.6f))
     }
 
     Surface(

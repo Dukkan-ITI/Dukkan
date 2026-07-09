@@ -56,10 +56,10 @@ fun CouponBannerCard(
             Image(
                 painter = painterResource(coupon.toImageResId()),
                 contentDescription = coupon.title,
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(220.dp)
+                    .height(160.dp)
             )
 
             Row(
