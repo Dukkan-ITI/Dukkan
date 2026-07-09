@@ -32,13 +32,15 @@ private fun ProfileRow(
     label: String,
     trailing: String? = null,
     onClick: (() -> Unit)? = null,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
+    val alpha = if (enabled) 1f else 0.5f
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .then(if (onClick != null && enabled) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(vertical = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -46,27 +48,27 @@ private fun ProfileRow(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha),
             modifier = Modifier.size(24.dp),
         )
         Text(
             text = label,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = alpha),
             modifier = Modifier.weight(1f),
         )
         if (trailing != null) {
             Text(
                 text = trailing,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
             )
         }
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha),
             modifier = Modifier.size(22.dp),
         )
     }
@@ -84,12 +86,13 @@ fun WishlistRow(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun SavedAddressesRow(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SavedAddressesRow(onClick: () -> Unit, enabled: Boolean = true, modifier: Modifier = Modifier) {
     ProfileRow(
         icon = Icons.Filled.LocationOn,
         label = stringResource(R.string.profile_saved_addresses),
         trailing = stringResource(R.string.profile_edit),
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier,
     )
 }

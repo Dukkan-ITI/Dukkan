@@ -39,4 +39,7 @@
     <string name="home_offline_message">أنت تشاهد البيانات المخزنة مؤقتًا. سيتم تحميل المحتوى الجديد تلقائيًا بمجرد عودة الاتصال.</string>
     <string name="viewing_cached_data">يتم عرض بيانات مخزنة مؤقتاً</string>
     <string name="no_cache_available">لم يتم العثور على بيانات مخزنة. يجب أن تكون متصلاً بالإنترنت لتحميل المحتوى للمرة الأولى.</string>
+    <string name="home_offline_subtitle">اتصل بالإنترنت لتحميل محتوى الصفحة الرئيسية.</string>
+    <string name="checkout_offline_message">لقد فقد الاتصال بالإنترنت. أعد الاتصال للمتابعة.</string>
+    <string name="ok">موافق</string>
 </resources>

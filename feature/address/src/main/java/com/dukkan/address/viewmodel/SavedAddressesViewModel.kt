@@ -9,10 +9,12 @@ import com.dukkan.domain.usecase.address.DeleteAddressUseCase
 import com.dukkan.domain.usecase.address.GetAddressesUseCase
 import com.dukkan.domain.usecase.address.SetDefaultAddressUseCase
 import com.dukkan.domain.usecase.address.UpdateAddressUseCase
+import com.dukkan.domain.util.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +26,7 @@ class SavedAddressesViewModel @Inject constructor(
     private val deleteAddress: DeleteAddressUseCase,
     private val setDefaultAddress: SetDefaultAddressUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
+    private val networkMonitor: NetworkMonitor,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SavedAddressesState())
@@ -36,6 +39,12 @@ class SavedAddressesViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoggedIn.value = getCurrentUser() != null
             if (_isLoggedIn.value) loadAddresses()
+        }
+
+        viewModelScope.launch {
+            networkMonitor.isOnline.collect { online ->
+                _state.update { it.copy(isOnline = online) }
+            }
         }
     }
 

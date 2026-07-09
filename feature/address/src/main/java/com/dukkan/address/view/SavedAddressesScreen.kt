@@ -176,6 +176,7 @@ private fun SavedAddressesContent(
                             onEditClick = { onEditClick(address) },
                             onDeleteClick = { onDeleteClick(address) },
                             onSetDefaultClick = { onSetDefaultClick(address) },
+                            enabled = state.isOnline,
                         )
                     }
                 }
@@ -185,6 +186,7 @@ private fun SavedAddressesContent(
         PrimaryButton(
             text = stringResource(R.string.saved_addresses_add_new),
             onClick = onAddClick,
+            enabled = state.isOnline,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),

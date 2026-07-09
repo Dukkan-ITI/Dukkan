@@ -112,7 +112,7 @@ private fun ProfileContent(
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
                     WishlistRow(count = state.favoritesCount, onClick = onWishlistClick)
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
-                    SavedAddressesRow(onClick = onSavedAddressesClick)
+                    SavedAddressesRow(onClick = onSavedAddressesClick, enabled = state.isOnline)
                     HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
                     LogoutRow(onClick = onLogoutClick)
                 }

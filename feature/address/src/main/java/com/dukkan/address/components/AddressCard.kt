@@ -30,6 +30,7 @@ fun AddressCard(
     onDeleteClick: () -> Unit,
     onSetDefaultClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -114,13 +115,13 @@ fun AddressCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(onClick = onEditClick) {
+                TextButton(onClick = onEditClick, enabled = enabled) {
                     Text(stringResource(R.string.saved_addresses_edit))
                 }
-                TextButton(onClick = onDeleteClick) {
+                TextButton(onClick = onDeleteClick, enabled = enabled) {
                     Text(
                         text = stringResource(R.string.saved_addresses_delete),
-                        color = MaterialTheme.colorScheme.error,
+                        color = if (enabled) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.error.copy(alpha = 0.38f),
                     )
                 }
                 if (!address.isDefault) {
@@ -133,7 +134,7 @@ fun AddressCard(
                             color = MaterialTheme.colorScheme.primary,
                         )
                     } else {
-                        TextButton(onClick = onSetDefaultClick) {
+                        TextButton(onClick = onSetDefaultClick, enabled = enabled) {
                             Text(stringResource(R.string.saved_addresses_set_default))
                         }
                     }
