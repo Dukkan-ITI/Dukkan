@@ -38,6 +38,7 @@ import com.dukkan.home.components.HomeBrandsSection
 import com.dukkan.home.components.HomeCategoriesSection
 import com.dukkan.home.components.HomeHeader
 import com.dukkan.home.components.homeProductSection
+import com.dukkan.home.components.homeShimmerLoading
 import com.dukkan.home.uistate.HomeUiState
 import com.dukkan.home.viewmodel.HomeEvent
 import com.dukkan.home.viewmodel.HomeViewModel
@@ -154,6 +155,19 @@ fun HomeScreenContent(
                             }
                         }
                     }
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(start = 22.dp, end = 22.dp, bottom = FloatingBottomBarHeight)
+        ) {
+            when (uiState) {
+                is HomeUiState.Loading -> {
+                    homeShimmerLoading()
+                }
 
                     is HomeUiState.Error -> {
                         item(span = { GridItemSpan(maxLineSpan) }) {

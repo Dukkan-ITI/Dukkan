@@ -18,7 +18,9 @@
     <string name="search">Search</string>
     <string name="search_products">Search products...</string>
     <string name="categories">Categories (%1$d)</string>
-    <string name="brands">Brands</string>
+    <string name="categories_loading">Categories</string>
+    <string name="brands">Brands (%1$d)</string>
+    <string name="brands_loading">Brands</string>
     <string name="hey_there">Hey there</string>
     <string name="hey_name">Hey %1$s 👋 </string>
     <string name="profile_picture">Profile Picture</string>
