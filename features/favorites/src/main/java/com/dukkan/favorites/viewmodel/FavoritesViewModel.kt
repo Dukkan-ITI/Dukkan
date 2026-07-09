@@ -91,9 +91,13 @@ class FavoritesViewModel @Inject constructor(
 
     fun confirmRemove() {
         val product = _showRemoveDialogForProduct.value ?: return
+        _showRemoveDialogForProduct.value = null
         viewModelScope.launch {
-            removeFavorite(product.id)
-            _showRemoveDialogForProduct.value = null
+            try {
+                removeFavorite(product.id)
+            } catch (e: Exception) {
+                // handle error or ignore
+            }
         }
     }
 

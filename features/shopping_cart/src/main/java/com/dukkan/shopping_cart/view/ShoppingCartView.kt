@@ -202,49 +202,49 @@ private fun ShoppingCartContent(
                                 onRemoveClick = { onRemoveClick(item) }
                             )
                         }
-                    }
 
-                    item {
-                        PromoCodeSection(
-                            promoCode = state.promoCode,
-                            appliedCodes = state.cart?.appliedDiscounts?.map { it.code }
-                                ?: emptyList(),
-                            onPromoCodeChange = onPromoCodeChange,
-                            onApplyPromoCode = onApplyPromoCode,
-                            onRemovePromoCode = onRemovePromoCode,
-                            isApplying = state.isApplyingPromo,
-                            error = state.promoError
-                        )
-                    }
-
-                    item {
-                        SummarySection(state)
-                    }
-
-                    item {
-                        Button(
-                            onClick = onCheckoutClick,
-                            enabled = !state.cart?.lines.isNullOrEmpty() && state.isOnline,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(64.dp)
-                                .padding(top = 8.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                                disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        item {
+                            PromoCodeSection(
+                                promoCode = state.promoCode,
+                                appliedCodes = state.cart?.appliedDiscounts?.map { it.code }
+                                    ?: emptyList(),
+                                onPromoCodeChange = onPromoCodeChange,
+                                onApplyPromoCode = onApplyPromoCode,
+                                onRemovePromoCode = onRemovePromoCode,
+                                isApplying = state.isApplyingPromo,
+                                error = state.promoError
                             )
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    R.string.checkout_format,
-                                    state.cart?.cost?.totalAmount?.asString()
-                                        ?: stringResource(R.string.default_amount),
-                                ),
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                        }
+
+                        item {
+                            SummarySection(state)
+                        }
+
+                        item {
+                            Button(
+                                onClick = onCheckoutClick,
+                                enabled = state.isOnline,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(64.dp)
+                                    .padding(top = 8.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        R.string.checkout_format,
+                                        state.cart?.cost?.totalAmount?.asString()
+                                            ?: stringResource(R.string.default_amount),
+                                    ),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
                         }
                     }
 

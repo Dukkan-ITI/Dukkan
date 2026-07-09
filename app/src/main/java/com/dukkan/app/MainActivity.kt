@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
             val isLoggedIn by appViewModel.isLoggedIn.collectAsState()
             val cartCount by appViewModel.cartCount.collectAsState()
+            val favCount by appViewModel.favCount.collectAsState()
             val showGuestDialog by appViewModel.showGuestDialog.collectAsState()
 
             LaunchedEffect(language) {
@@ -84,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                             navController = navController,
                             isLoggedIn = isLoggedIn,
                             cartCount = cartCount,
+                            favCount = favCount,
                             onShowGuestDialog = { appViewModel.showGuestDialog() },
                             modifier = Modifier.align(Alignment.BottomCenter)
                         )

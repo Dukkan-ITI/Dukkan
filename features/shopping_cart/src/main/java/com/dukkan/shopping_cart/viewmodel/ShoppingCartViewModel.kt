@@ -160,8 +160,11 @@ class ShoppingCartViewModel @Inject constructor(
                     )
                 }
 
-                cartUseCases.removeFromCart(item.id)
-                loadCart()
+                try {
+                    cartUseCases.removeFromCart(item.id)
+                } finally {
+                    loadCart()
+                }
             }
         }
     }
