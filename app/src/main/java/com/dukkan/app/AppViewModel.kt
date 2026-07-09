@@ -9,6 +9,7 @@ import com.dukkan.domain.usecase.settings.GetThemeUseCase
 import com.dukkan.domain.usecase.settings.GetOnboardingStatusUseCase
 import com.dukkan.domain.usecase.auth.GetCurrentUserUseCase
 import com.dukkan.domain.usecase.cart.GetCartFlowUseCase
+import com.dukkan.domain.usecase.favorite.GetFavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +33,8 @@ class AppViewModel @Inject constructor(
     getLanguage: GetLanguageUseCase,
     getOnboardingStatus: GetOnboardingStatusUseCase,
     private val getCurrentUser: GetCurrentUserUseCase,
-    getCartFlow: GetCartFlowUseCase
+    getCartFlow: GetCartFlowUseCase,
+    getFavoritesUseCase: GetFavoritesUseCase
 ) : ViewModel() {
 
     val themeMode: StateFlow<ThemeMode?> = getTheme().stateIn(
@@ -52,6 +54,14 @@ class AppViewModel @Inject constructor(
 
     val cartCount: StateFlow<Int> = getCartFlow().map { cart ->
         cart?.lines?.sumOf { it.quantity } ?: 0
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = 0,
+    )
+
+    val favCount: StateFlow<Int> = getFavoritesUseCase().map { favorites ->
+        favorites.size
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
