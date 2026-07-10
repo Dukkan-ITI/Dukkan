@@ -13,12 +13,18 @@ import com.dukkan.ai_agent.contract.ToolDefinition
 import com.dukkan.ai_agent.contract.ToolParameterType
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
+import com.google.firebase.ai.type.FunctionCallPart
 import com.google.firebase.ai.type.FunctionDeclaration
+import com.google.firebase.ai.type.FunctionResponsePart
 import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.Schema
 import com.google.firebase.ai.type.Tool
+import com.google.firebase.ai.type.content
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -60,22 +66,37 @@ class FirebaseAiProvider @Inject constructor() : AiProvider {
                         )
                     ) else emptyList()
                 )
-                val prompt = request.messages.joinToString(separator = "\n") { message ->
+                // Build a structured multi-turn history so Gemini can correlate its
+                // function calls with their responses. Flattening this to plain text
+                // breaks function calling: the model never "sees" the tool result and
+                // keeps re-issuing the same call until the turn budget runs out.
+                val contents = request.messages.mapNotNull { message ->
                     when (message.role) {
-                        AiRole.System -> "System: ${message.text}"
-                        AiRole.User -> "User: ${message.text}"
+                        AiRole.System -> null // provided via systemInstruction
+                        AiRole.User -> content(role = "user") { text(message.text) }
                         AiRole.Model, AiRole.Assistant -> {
-                            val toolCallsStr = message.toolCalls.joinToString { "Called tool ${it.name} with args ${it.args}" }
-                            val textStr = message.text
-                            val combined = listOfNotNull(textStr.takeIf { it.isNotBlank() }, toolCallsStr.takeIf { it.isNotBlank() }).joinToString(" | ")
-                            "Assistant: $combined"
+                            if (message.text.isBlank() && message.toolCalls.isEmpty()) {
+                                null
+                            } else {
+                                content(role = "model") {
+                                    if (message.text.isNotBlank()) text(message.text)
+                                    message.toolCalls.forEach { call ->
+                                        part(FunctionCallPart(call.name, call.args))
+                                    }
+                                }
+                            }
                         }
-                        AiRole.Tool -> "Tool ${message.toolResultName.orEmpty()} result: ${message.text} ${
-                            message.toolResult?.toString().orEmpty()
-                        }"
+                        AiRole.Tool -> content(role = "function") {
+                            val responseJson = when (val result = message.toolResult) {
+                                is JsonObject -> result
+                                null -> buildJsonObject { put("result", message.text) }
+                                else -> buildJsonObject { put("result", result) }
+                            }
+                            part(FunctionResponsePart(message.toolResultName.orEmpty(), responseJson))
+                        }
                     }
                 }
-                val response = model.generateContent(prompt)
+                val response = model.generateContent(contents)
                 val toolCall = response.functionCalls.firstOrNull()?.let {
                     AiToolCall(id = it.name, name = it.name, args = it.args, arguments = it.args)
                 }
