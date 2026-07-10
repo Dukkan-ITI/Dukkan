@@ -5,4 +5,10 @@
     <string name="chat_bubble_icon">D</string>
     <string name="chatbot_ready">Dukkan AI is ready!\nAsk me anything.</string>
     <string name="chatbot_error">Sorry, I couldn\'t process that request.</string>
+    <string name="chatbot_greeting_title">Hi, I\'m Dukkan AI</string>
+    <string name="chatbot_greeting_subtitle">Ask me to find products, track your orders, or get recommendations.</string>
+    <string name="chatbot_suggestion_deals">Show me today\'s deals</string>
+    <string name="chatbot_suggestion_orders">Where is my order?</string>
+    <string name="chatbot_suggestion_gift">Help me pick a gift</string>
+    <string name="chatbot_thinking">Dukkan AI is thinking</string>
 </resources>
