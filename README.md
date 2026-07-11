@@ -1,98 +1,204 @@
 # Dukkan
 
-**Dukkan** is a production-grade, multi-module Android e-commerce app built entirely in **Jetpack
-Compose** and backed by the **Shopify Storefront GraphQL API**. It pairs a strict clean-architecture
-module graph with real-world commerce concerns — Firebase auth, offline caching, Paymob payments,
-Google Maps address selection, and an AI shopping assistant that routes across multiple LLM
-providers.
+> **A production-grade Android e-commerce application built with Jetpack Compose, Clean Architecture, and Shopify's Storefront GraphQL API.**
 
-## Architecture
+Dukkan is a modern, scalable shopping application designed to demonstrate production-level Android engineering practices. The project combines a modular Clean Architecture with real-world commerce features including secure authentication, offline support, AI-powered shopping assistance, online payments, and location-based checkout.
 
-Dukkan follows **Clean Architecture** with **MVVM** at the presentation layer, split across
-independent Gradle modules. Dependencies always point inward toward `:core:domain`; features never
-depend on each other or on `:core:data`.
+The application emphasizes **maintainability**, **scalability**, **testability**, and **separation of concerns**, making it suitable as both a learning resource and a reference architecture for large Android applications.
 
-| Layer / Pattern             | Description                                                                                                                                                                                     |
-|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Clean Architecture**      | Three module groups — `core`, `feature`, `app` — with dependencies pointing inward to a pure-Kotlin domain core.                                                                                |
-| **`:core:domain`**          | Framework-agnostic business layer: domain models, repository **interfaces**, and single-responsibility use cases. Depends only on `javax.inject`.                                               |
-| **`:core:data`**            | Repository implementations over three coexisting data sources — Apollo/Shopify (remote), Firebase (auth + Firestore), and Room (local cache) — with mappers converting each into domain models. |
-| **MVVM**                    | Each feature exposes a single immutable `*State` via `StateFlow` from a `@HiltViewModel`, consumed by stateless Compose screens.                                                                |
-| **Modular navigation**      | A central `Screen` sealed class in `:core:navigation` is the single source of truth for routes; both the app `NavHost` and feature ViewModels (via `SavedStateHandle`) reference it.            |
-| **Convention plugins**      | Shared Gradle setup lives in `build-logic/` as composite-build plugins (`dukkan.feature`, `dukkan.hilt`), keeping every feature module's build script minimal.                                  |
-| **Multi-provider AI agent** | `:core:ai_agent` abstracts LLM tasks behind a provider/orchestrator/router contract, switching between Firebase AI and a local Ollama provider per task.                                        |
+---
 
-## Tech Stack
+## ✨ Features
 
-| Technology                                    | Description                                                                                                        |
-|-----------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| **Kotlin 2.0**                                | Primary language across all modules, including coroutines + `StateFlow` for async and reactive state.              |
-| **Jetpack Compose** (Material 3)              | Declarative UI toolkit for the entire app; shared theme, typography, and components live in `:core:design_system`. |
-| **Apollo Kotlin 5**                           | Type-safe GraphQL client generating Kotlin models from Shopify Storefront `.graphql` operations.                   |
-| **Shopify Storefront API**                    | Backend commerce source for products, variants, and pricing (GraphQL global IDs).                                  |
-| **Hilt + KSP**                                | Compile-time dependency injection wired at the composition root and in `:core:data`.                               |
-| **Room**                                      | Local persistence powering offline product browsing and caching.                                                   |
-| **DataStore Preferences**                     | Lightweight key-value storage for user/app preferences.                                                            |
-| **Firebase**                                  | Authentication, Firestore, App Check, and Firebase AI for the assistant.                                           |
-| **Credential Manager + Google Identity**      | Modern Google Sign-In flow.                                                                                        |
-| **Paymob SDK**                                | In-app payment processing (with Retrofit/OkHttp for the payment API surface).                                      |
-| **Google Maps Compose + Places**              | Map-based address selection in the checkout flow.                                                                  |
-| **Ollama provider**                           | Local LLM backend option routed through the AI agent alongside Firebase AI.                                        |
-| **Coil**                                      | Async image loading for product imagery.                                                                           |
-| **Lottie**                                    | Vector animations (onboarding, empty/loading states).                                                              |
-| **Navigation Compose**                        | Type-safe screen navigation driven by `:core:navigation`.                                                          |
-| **Timber**                                    | Structured logging.                                                                                                |
-| **JUnit · MockK · Turbine · Coroutines Test** | Unit testing stack for ViewModels and repositories.                                                                |
+- 🛍️ Shopify Storefront GraphQL integration
+- 🤖 AI shopping assistant with multiple LLM providers
+- 🔐 Firebase Authentication with Google Sign-In
+- 🛒 Complete shopping cart and checkout flow
+- 💳 Paymob payment integration
+- 📍 Google Maps address selection
+- ❤️ Wishlist and favorites
+- 📦 Order history
+- 🔍 Product search
+- 📱 Offline browsing using Room cache
+- 🌐 Deep Links & App Links
+- 🎨 Fully built with Jetpack Compose (Material 3)
 
-## Module Structure
+---
 
-```plaintext
-Dukkan/
-├── app/                      # Composition root: DukkanApp (@HiltAndroidApp), MainActivity, AppNavGraph
-├── build-logic/              # Composite-build convention plugins (dukkan.feature, dukkan.hilt)
-├── core/
-│   ├── domain/               # Pure Kotlin: domain models, repository interfaces, use cases
-│   ├── data/                 # Repo impls over Apollo (Shopify), Firebase, and Room + mappers + Hilt DI
-│   ├── ai_agent/             # LLM abstraction: providers (Firebase AI, Ollama), orchestrator, model router
-│   ├── navigation/           # Screen sealed class — single source of truth for all routes
-│   └── design_system/        # AppTheme, typography, colors, reusable Compose components
-├── feature/                  # Commerce & platform features
-│   ├── auth/                 # Firebase auth + Google Sign-In
-│   ├── address/              # Google Maps address selection
-│   ├── payment/              # Paymob checkout integration
-│   ├── chatbot/              # AI shopping assistant UI (drives :core:ai_agent)
-│   └── ads/                  # Promotional content
-└── features/                 # User-facing shopping screens (MVVM)
-    ├── home/                 # Storefront landing
-    ├── categories/           # Category browsing
-    ├── brands/               # Brand browsing
-    ├── search/               # Product search
-    ├── product_details/      # Product detail + variant selection
-    ├── shopping_cart/        # Cart management
-    ├── favorites/            # Wishlist
-    ├── order_list/           # Order history
-    ├── onboarding/           # First-run onboarding flow
-    └── settings/             # User & app settings
+# 🏗️ Architecture
+
+Dukkan follows **Clean Architecture** with **MVVM** and a fully modular Gradle structure. Every dependency points inward toward a pure Kotlin domain layer, allowing features to evolve independently while remaining highly testable.
+
+```text
+Presentation (Compose + MVVM)
+            │
+        Use Cases
+            │
+ Repository Interfaces
+            │
+──────────────────────────────
+ Data Layer
+ ├── Shopify (Apollo GraphQL)
+ ├── Firebase
+ └── Room Cache
 ```
 
-## Key Features
+## Architecture Highlights
 
-- **Shopify-backed catalog** — products, variants, and pricing served over the Storefront GraphQL
-  API via Apollo.
-- **Offline mode** — Room-cached product data keeps browsing available without a connection.
-- **AI shopping assistant** — a chatbot backed by a multi-provider agent that routes tasks between
-  Firebase AI and a local Ollama model.
-- **Full checkout flow** — cart, Google Maps address selection, and Paymob payment processing.
-- **Authentication** — Firebase auth with modern Google Sign-In via Credential Manager, hardened
-  with Firebase App Check.
-- **Complete shopping surface** — home, categories, brands, search, favorites, order history, and
-  settings.
-- **Strictly modular codebase** — clean-architecture boundaries enforced through Gradle convention
-  plugins for fast, isolated builds.
+| Layer | Responsibility |
+|--------|---------------|
+| **app** | Composition root, navigation graph, dependency initialization |
+| **core:domain** | Business models, repository contracts, use cases |
+| **core:data** | Repository implementations, remote/local data sources, mappers |
+| **feature** | Independent application features following MVVM |
+| **build-logic** | Convention plugins for shared Gradle configuration |
+| **core:ai_agent** | Provider-agnostic AI orchestration layer |
 
-## Team
+## Engineering Principles
 
-* [Mohannad El-Sayeh](https://github.com/mSaayeh)
-* [Hazem Abdelraouf](https://github.com/Hazem-0)
-* [Ahlam Gomaa](https://github.com/Ahlamgomaa)
-* [Thaowpsta Saiid Aziz](https://github.com/Thaowpsta)
+- Clean Architecture
+- MVVM
+- SOLID Principles
+- Repository Pattern
+- Dependency Injection
+- Unidirectional Data Flow (UDF)
+- Immutable UI State
+- Single Source of Truth (SSOT)
+- Modular Design
+
+---
+
+# 🛠️ Tech Stack
+
+| Category | Technologies |
+|-----------|--------------|
+| **Language** | Kotlin 2.0 |
+| **UI** | Jetpack Compose, Material 3 |
+| **Architecture** | Clean Architecture, MVVM |
+| **Dependency Injection** | Hilt, KSP |
+| **Networking** | Apollo Kotlin 5, Retrofit, OkHttp |
+| **Backend** | Shopify Storefront GraphQL API |
+| **Authentication** | Firebase Authentication, Credential Manager, Google Identity |
+| **Database** | Room |
+| **Preferences** | DataStore Preferences |
+| **Maps** | Google Maps Compose, Places API |
+| **Payments** | Paymob SDK |
+| **AI** | Firebase AI, Ollama |
+| **Image Loading** | Coil |
+| **Animations** | Lottie |
+| **Navigation** | Navigation Compose |
+| **Logging** | Timber |
+| **Testing** | JUnit, MockK, Turbine, Coroutines Test |
+
+---
+
+# 📦 Project Structure
+
+```text
+Dukkan/
+├── app/                      # Composition root
+├── build-logic/              # Convention plugins
+├── core/
+│   ├── ai_agent/             # AI abstraction & providers
+│   ├── data/                 # Repository implementations
+│   ├── design_system/        # Shared Compose UI
+│   ├── domain/               # Business logic & use cases
+│   └── navigation/           # Shared navigation
+├── feature/
+│   ├── address/
+│   ├── ads/
+│   ├── auth/
+│   ├── chatbot/
+│   └── payment/
+└── features/
+    ├── home/
+    ├── categories/
+    ├── brands/
+    ├── search/
+    ├── product_details/
+    ├── shopping_cart/
+    ├── favorites/
+    ├── order_list/
+    ├── onboarding/
+    └── settings/
+```
+
+---
+
+# 🧩 Core Components
+
+## 🏛️ Domain Layer
+
+- Pure Kotlin module
+- Business models
+- Repository interfaces
+- Use cases
+- Framework independent
+
+---
+
+## 📦 Data Layer
+
+Repository implementations are backed by three independent data sources:
+
+- Shopify Storefront GraphQL API (Apollo Kotlin)
+- Firebase Authentication & Firestore
+- Room local database
+
+Dedicated mapper classes convert remote and local models into domain models.
+
+---
+
+## 🎨 Design System
+
+A shared UI foundation containing:
+
+- Material 3 Theme
+- Typography
+- Color System
+- Reusable Compose Components
+
+---
+
+## 🤖 AI Agent
+
+The AI module abstracts multiple LLM providers behind a common interface.
+
+Supported providers include:
+
+- Firebase AI
+- Ollama
+
+An orchestration layer dynamically routes requests to the most suitable provider depending on the task.
+
+---
+
+# 🚀 Highlights
+
+- Production-grade modular architecture
+- Type-safe GraphQL with Apollo Kotlin
+- Offline-first data caching
+- AI-powered shopping assistant
+- Secure authentication with Firebase
+- Google Maps checkout experience
+- Paymob payment integration
+- Deep Links & Android App Links
+- Convention plugins for scalable Gradle configuration
+- Comprehensive unit testing support
+
+---
+
+# 👥 Team
+
+| Member | GitHub |
+|--------|--------|
+| Mohannad El-Sayeh | https://github.com/mSaayeh |
+| Hazem Abdelraouf | https://github.com/Hazem-0 |
+| Ahlam Gomaa | https://github.com/Ahlamgomaa |
+| Thaowpsta Saiid Aziz | https://github.com/Thaowpsta |
+
+---
+
+## 📄 License
+
+This project was developed as part of the **Information Technology Institute (ITI)** Mobile Application Development Program and is intended for educational and portfolio purposes.
