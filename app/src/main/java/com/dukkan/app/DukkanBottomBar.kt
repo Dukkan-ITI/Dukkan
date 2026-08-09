@@ -29,7 +29,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dukkan.navigation.Screen
@@ -132,7 +131,7 @@ fun DukkanBottomBar(
                             onShowGuestDialog()
                         } else {
                             navController.navigate(dest.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
+                                popUpTo<Screen.Home> {
                                     saveState = true
                                 }
                                 launchSingleTop = true

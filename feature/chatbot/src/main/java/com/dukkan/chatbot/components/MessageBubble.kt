@@ -2,9 +2,11 @@ package com.dukkan.chatbot.components
 
 import com.dukkan.chatbot.R
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.ui.res.stringResource
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,10 +17,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.rotate
@@ -55,6 +59,19 @@ fun MessageBubble(
         MaterialTheme.colorScheme.inverseOnSurface
     }
 
+    // Play a one-shot entrance the first time this bubble is composed.
+    val entered = remember {
+        MutableTransitionState(false).apply { targetState = true }
+    }
+
+    AnimatedVisibility(
+        visibleState = entered,
+        enter = fadeIn(animationSpec = tween(300)) +
+            slideInVertically(
+                animationSpec = tween(300, easing = FastOutSlowInEasing),
+                initialOffsetY = { it / 3 }
+            )
+    ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -85,11 +102,20 @@ fun MessageBubble(
                         )
                         .padding(horizontal = 16.dp, vertical = 10.dp)
                 ) {
-                    Text(
-                        text = message.text,
-                        color = textColor,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    if (isUser) {
+                        Text(
+                            text = message.text,
+                            color = textColor,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    } else {
+                        // Model replies may contain Markdown; render it richly.
+                        MarkdownText(
+                            markdown = message.text,
+                            color = textColor,
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
                 }
             }
 
@@ -127,6 +153,7 @@ fun MessageBubble(
                 }
             }
         }
+    }
     }
 }
 
@@ -202,5 +229,81 @@ fun BotAvatar() {
                 fontWeight = FontWeight.Black
             )
         )
+    }
+}
+
+/**
+ * "AI is thinking" indicator: the animated bot avatar next to a bubble with
+ * three dots that bounce and fade in sequence.
+ */
+@Composable
+fun TypingIndicator() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        BotAvatar()
+        Spacer(modifier = Modifier.width(8.dp))
+        Row(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.outline,
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp,
+                        bottomStart = 4.dp,
+                        bottomEnd = 16.dp
+                    )
+                )
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val transition = rememberInfiniteTransition(label = "TypingTransition")
+            repeat(3) { index ->
+                val alpha by transition.animateFloat(
+                    initialValue = 0.3f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = keyframes {
+                            durationMillis = 900
+                            0.3f at 0
+                            1f at 300
+                            0.3f at 600
+                        },
+                        repeatMode = RepeatMode.Restart,
+                        initialStartOffset = StartOffset(index * 150)
+                    ),
+                    label = "TypingDotAlpha$index"
+                )
+                val dotScale by transition.animateFloat(
+                    initialValue = 0.7f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = keyframes {
+                            durationMillis = 900
+                            0.7f at 0
+                            1f at 300
+                            0.7f at 600
+                        },
+                        repeatMode = RepeatMode.Restart,
+                        initialStartOffset = StartOffset(index * 150)
+                    ),
+                    label = "TypingDotScale$index"
+                )
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .scale(dotScale)
+                        .clip(CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = alpha)
+                        )
+                )
+            }
+        }
     }
 }

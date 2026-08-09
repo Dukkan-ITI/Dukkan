@@ -1,5 +1,9 @@
 package com.dukkan.chatbot.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,12 +16,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.animation.Crossfade
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dukkan.chatbot.R
@@ -36,6 +40,30 @@ fun ChatInputBar(
     isLoading: Boolean
 ) {
     var text by remember { mutableStateOf("") }
+    val canSend = text.isNotBlank() && !isLoading
+
+    // The send button grows in and lights up once there's something to send.
+    val sendScale by animateFloatAsState(
+        targetValue = if (canSend) 1f else 0.85f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "SendButtonScale"
+    )
+    val sendContainer by animateColorAsState(
+        targetValue = if (canSend) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        label = "SendButtonColor"
+    )
+    val sendTint by animateColorAsState(
+        targetValue = if (canSend) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        label = "SendButtonTint"
+    )
 
     Row(
         modifier = Modifier
@@ -59,6 +87,10 @@ fun ChatInputBar(
                 )
             },
             shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+            ),
             maxLines = 3
         )
 
@@ -69,15 +101,16 @@ fun ChatInputBar(
                 onSend(text)
                 text = ""
             },
-            enabled = text.isNotBlank() && !isLoading,
+            enabled = canSend,
             modifier = Modifier
                 .size(48.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(24.dp))
+                .scale(sendScale)
+                .background(sendContainer, RoundedCornerShape(24.dp))
         ) {
             Icon(
                 imageVector = Icons.Default.Send,
                 contentDescription = stringResource(id = R.string.send),
-                tint = MaterialTheme.colorScheme.onPrimary
+                tint = sendTint
             )
         }
     }
